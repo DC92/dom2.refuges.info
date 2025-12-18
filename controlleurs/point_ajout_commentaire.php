@@ -30,12 +30,11 @@ if (empty($point->erreur))
     $vue->correction=true;
   else
     $vue->correction=False;
-
+ 
   // on vient de valider notre formulaire, faisons le nécessaire
   $vue->banni=False;
   $vue->erreur_captcha=False;
-  if (!empty($_REQUEST['action']))
-  {
+  if (!empty($_REQUEST['action']))  {
     $commentaire->texte=stripslashes($_REQUEST['texte']);
 
     // Si on est connecté, ces valeurs ne sont pas défini, on la passe alors à ''
@@ -57,8 +56,7 @@ if (empty($point->erreur))
         $commentaire->photo['originale']=$file_path;
 
       $commentaire->demande_correction=$_REQUEST['demande_correction'] ?? '';
-
-      // Et si on trouve un mot clé "censuré" on accepte le message mais on averti les modérateurs qu'il faut aller vérifier le commentaire
+           // Et si on trouve un mot clé "censuré" on accepte le message mais on averti les modérateurs qu'il faut aller vérifier le commentaire
       if (isset ($config_wri['censure']) && preg_match ('/'.$config_wri['censure'].'/i', retrait_accents ($commentaire->texte)))
         $commentaire->demande_correction=4;
 
@@ -99,8 +97,7 @@ if (empty($point->erreur))
       else
       {
         $vue->type = "page_simple";
-        $vue->contenu="Impossible d'ajouter ce commentaire car : ".$vue->messages->message;
-		return;
+        $vue->contenu="Impossible d'ajouter ce commentaire car : ".$vue->messages->message;          return;
       }
 
       // Nettoyage de la photo envoyée qu'elle fût ou non insérée correctement comme commentaire

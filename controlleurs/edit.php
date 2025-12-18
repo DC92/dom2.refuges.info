@@ -1,5 +1,4 @@
-<?php
-// Editeur de massifs
+<?php // Editeur de massifs
 
 if (!est_moderateur()) {
   $vue->type="page_simple";

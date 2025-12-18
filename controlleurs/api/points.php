@@ -172,15 +172,13 @@ foreach ($points_bruts as $i=>$point) {
   {
     // les cabanes cachées ne sont pas exportées. Les coordonnées étant volontairement stockées fausses, les sortir ne fera que créer de la confusion
     if($point->id_type_precision_gps == $config_wri['id_coordonees_gps_fausses'])
-      break;
+      $points->$i = new stdClass();
 
-    $points->$i = new stdClass();
     $points->$i->id = $point->id_point;
     $points->$i->lien = lien_point($point);
     $points->$i->nom = mb_ucfirst($point->nom);
 
-    switch ($point->conditions_utilisation)
-	{
+    switch ($point->conditions_utilisation) {
       case 'fermeture':
       case 'detruit':
         $points->$i->sym = "Crossing";

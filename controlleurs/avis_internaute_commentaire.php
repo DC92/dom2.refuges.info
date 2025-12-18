@@ -19,13 +19,12 @@ else
 {
   $vue->commentaire=$commentaire;
   $vue->commentaire->texte_affichage=bbcode2html($commentaire->texte,FALSE,FALSE);
-  $vue->commentaire->lien=lien_point($commentaire,True);
 
-  /**************************** l'action  ******************************/
+  $vue->commentaire->lien=lien_point($commentaire,True);
+   /**************************** l'action  ******************************/
   if (!empty($_REQUEST['valider']))
   {
     $vue->type="page_simple";
-
     // Si l'internaute est connecté au forum ou qu'il a saisi la lettre anti-robot
     if (est_connecte() or $_REQUEST['anti_robot'] == $config_wri['captcha_reponse'])
     {
@@ -36,8 +35,7 @@ else
     }
     else
       $vue->contenu="Oups ? la lettre anti_robot saisie n'est pas la bonne, utilisez le bouton \"Retour de votre navigateur pour reprendre la saisie\", ou ";
-
-    $vue->lien=$vue->commentaire->lien;
+       $vue->lien=$vue->commentaire->lien;
     $vue->contenu.="vous pouvez retourner sur : ";
     $vue->titre_lien="la fiche de $commentaire->nom";
     $vue->titre="Classement commentaire sur $vue->titre_lien";

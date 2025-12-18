@@ -26,7 +26,7 @@ require_once ("upload_max_filesize.php");
 // exemples pour tester le modèle point
 $conditions = new stdClass;
 $conditions->ids_points=105;
-$point = infos_points($conditions);
+ $point = infos_points($conditions);
 // d ( ) et la fonction de debug qui print les variables passée et une trace des appels
 d($point);
 */
@@ -39,7 +39,7 @@ d($point);
 // exemples pour tester le modèle commentaire
 $conditions = new stdClass;
 $conditions->ids_points=105;
-$commentaires = infos_commentaires($conditions);
+ $commentaires = infos_commentaires($conditions);
 d($point);
 */
 

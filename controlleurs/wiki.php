@@ -13,8 +13,7 @@ require_once ("wiki.php");
 $page = $controlleur->url_decoupee[1] ?? '';
 $page=urldecode($page);
 // On est bien avec un moderateur, on peut autoriser, si demande, modification et suppression
-if (est_moderateur())
-{
+if (est_moderateur()){
   if (!empty($_REQUEST ['modification']))
     ecrire_contenu ($page, $_REQUEST ['texte']);
   if (!empty($_REQUEST ['supprimer']))

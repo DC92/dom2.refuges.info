@@ -1,8 +1,7 @@
 <?php
 /**********************************************************************************************
-Préparer un lien d'exportation direct de nos données vers plein de formats pour être ré-utilisé.
-Le traitement proprement dit est dans exportations.php
-**********************************************************************************************/
+Préparer un lien d'exportation direct de nos données vers plein de formats pour êtreré-utiliser.
+Le traitement proprement dit est dans exportations.php**********************************************************************************************/
 
 require_once ("bdd.php");
 require_once ("meta_donnee.php");
@@ -23,7 +22,7 @@ if (!isset($_REQUEST['validation'])) // rien de valider, formulaire vierge
     $vue->types_de_point->$index = new stdClass;
     $vue->types_de_point->$index->nom_type = $type_de_point->nom_type;
     $vue->types_de_point->$index->id_point_type = $type_de_point->id_point_type;
-    if ( in_array($type_de_point->id_point_type, $config_wri['tout_type_d_abri']) )
+    if ( in_array($type_de_point->id_point_type, $config_wri['tout_type_d_abri']) ) 
       $vue->types_de_point->$index->checked = true;
   }
 
@@ -64,8 +63,7 @@ else // formulaire validé, affichage du lien et d'un blabla
     $liste_id_massif = implode(',',$_REQUEST['id_massif']);
      $options_lien="?nb_points=all&amp;format=$vue->format&amp;type_points=$liste_id_point_type&amp;massif=$liste_id_massif";
      $vue->lien_export->url = "/api/massif$options_lien";
-  }
-
-  $vue->type="formulaire_exportations_validation";
-} // fin du else affichage lien
+  }  $vue->type="formulaire_exportations_validation";
+}
+// fin du else affichage lien
 
