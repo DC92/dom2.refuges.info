@@ -41,3 +41,5 @@ Rangement actuel sur le serveur :
  * /home/users/$login -> contient les dossiers de chaque développeur contenant chacun sa version dans :
  * /home/users/$login/$login.refuges.info -> contient la version de "développement" de chacun visible sur https://$login.refuges.info
  * /home/sites/refuges/www.refuges.info/ -> la version live contrôlable par l'utilisateur "refuges"
+
+TEST 251218
