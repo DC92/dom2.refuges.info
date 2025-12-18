@@ -11,8 +11,13 @@
 
 /* Liens aux couleurs de refuges.info */
 a,
+a:hover,
 a:visited {
   color: var(--couleur_lien);
+}
+
+a:hover {
+  background-color: var(--couleur_legende);
 }
 
 /* Bandeau de phpbb */
@@ -26,6 +31,11 @@ a:visited {
 #phpbb .topiclist .header * {
   background-color: var(--couleur_fond_titre);
   color: var(--couleur_titre);
+}
+
+/* Notifications non lues */
+.bg2 {
+	background-color: var(--couleur_fond) !important;
 }
 
 /* Viewforum */
@@ -63,6 +73,9 @@ dl:has(#autologin),
 
 /* liens vers la page contact qui fait doublon avec le bandeau WRI du bas */
 a[href*="contactadmin"],
+
+/* Liens dans les signatures */
+.profile-phpbb_location a,
 
 /* Changeur de couleurs de prosilver_fr */
 .style-switch {
