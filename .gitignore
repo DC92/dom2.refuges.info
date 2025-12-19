@@ -24,5 +24,12 @@
 /forum/store/*
 !/forum/store/.htaccess
 !/forum/store/index.htm
-/myol/node_modules/*
+/myol/*.js*
+/myol/*.sh
+/myol/.gitignore
+/myol/build/*
+/myol/examples/*
+/myol/gps/*
+/myol/ps/*
+/myol/src/*
 /ressources/geoip/*.dat

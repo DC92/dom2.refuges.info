@@ -43,3 +43,4 @@ Rangement actuel sur le serveur :
  * /home/sites/refuges/www.refuges.info/ -> la version live contrôlable par l'utilisateur "refuges"
 
 TEST 251218
+TEST 251219
