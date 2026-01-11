@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<!--
+Démonstrateur front-end pour refuges.info
+© Dominique Cavailhez 2026
+-->
+<html dir="ltr" lang="fr">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+  <link href="src/favicon.svg" type="image/svg+xml" rel="icon" />
+  <title>Refuges.info</title>
+
+  <link href="manifest.json" rel="manifest">
+  <script>
+    const serveurApi = "https://www.refuges.info";
+    if (!window.location.search)
+      navigator.serviceWorker.register("service-worker.js");
+  </script>
+
+  <!-- Leaflet -->
+  <link href="leaflet/leaflet.css" rel="stylesheet" />
+  <script src="leaflet/leaflet.js"></script>
+
+  <!-- Controls -->
+  <link href="geocoder/Control.Geocoder.css" rel="stylesheet" />
+  <script src="geocoder/Control.Geocoder.js"></script>
+  <link href="gps/leaflet-gps.min.css" rel="stylesheet">
+  <script src="gps/leaflet-gps.min.js"></script>
+  <script src="permalink/leaflet.permalink.min.js"></script>
+
+  <!-- Base layers -->
+  <script src="ign/GpPluginLeaflet.js"></script>
+  <link href="ign/GpPluginLeaflet.css" rel="stylesheet" />
+
+  <!-- Vector layers -->
+  <link href="markercluster/MarkerCluster.css" rel="stylesheet" />
+  <link href="markercluster/MarkerCluster.Default.css" rel="stylesheet" />
+  <script src="markercluster/leaflet.markercluster-src.js"></script>
+
+  <!-- This package -->
+  <script src="src/GeoJsonAjaxCluster.js"></script>
+  <script src="src/templeteur.js"></script>
+  <script src="src/carte.js"></script>
+  <script src="src/index.js"></script>
+  <link href="src/index.css" rel="stylesheet">
+</head>
+
+<body id="carte"><!-- id = le nom de la page courante -->
+  <div class="bandeau">
+    <h2>Refuges.info</h2>
+    <a href='#' title="Cartes géographiques te points d'intérêt">🌍<span>Cartes</span></a>
+    <a href='#nouvelles' title="Points, commentaires et photos récents">🔔<span>Nouvelles</span></a>
+    <a href='https://www.refuges.info/point_ajout' title="Ajouter un point">📌<span>Ajout</span></a>
+    <a href='https://www.refuges.info/point_formulaire_recherche' title="Rechercher un point dans la base">🔍<span>Recherche</span></a>
+    <a href='https://www.refuges.info/forum/' title="Contribuer aux discussions">💬<span>Forum</span></a>
+  </div>
+
+  <!-- Nouvelles -->
+  <div class="nouvelles">
+    <h3>Nouvelles</h3>
+    <div id="nouvelles-groupe">
+      <div><!-- Modèle pour un nouvelle -->
+        Le <span id="nouvelles-groupe-0-date_formatee"></span>
+        <a id="nouvelles-groupe-0-lien_interne">
+          <span id="nouvelles-groupe-0-nom_point"></span>
+        </a>
+        dans <span id="nouvelles-groupe-0-localisation"></span>
+        <span id="nouvelles-groupe-0-type_point"></span>
+        de <span id="nouvelles-groupe-0-auteur"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Point entête -->
+  <div class="point">
+    <h2 id="point-nom"></h2>
+    (<span id="point-type-valeur"></span>)
+    <span id="point-coord-alt"></span> m
+    <p id="point-etat-valeur"></p>
+  </div>
+
+  <div id="map"></div>
+
+  <!-- Point infos -->
+  <div class="point">
+    <a id="point-lien_externe">Voir la fiche sur le site</a>
+    <p>
+      Latitude: <span id="point-coord-lat"></span>°,
+      Longitude: <span id="point-coord-long"></span>°
+    </p>
+    <div id="point-infos-groupe">
+      <div>
+        <span id="point-infos-groupe-0-nom"></span>:
+        <span id="point-infos-groupe-0-valeur"></span>
+      </div>
+    </div>
+
+    <h3>Accès</h3>
+    <p id="point-acces-valeur"></p>
+    <h3>Remarques</h3>
+    <p id="point-remarque-valeur"></p>
+    <h3>Propriétaire</h3>
+    <p id="point-proprio-valeur"></p>
+  </div>
+
+  <div class="attente">Attente réseau</div>
+
+  <!-- Point commentaires -->
+  <div class="point">
+    <h3>Commentaires</h3>
+    <div id="commentaires-groupe">
+      <div><!-- Modèle pour un commentaire -->
+        <p>
+          <spam id="commentaires-groupe-0-auteur_commentaire"></spam>
+          <spam id="commentaires-groupe-0-date_commentaire"></spam>
+        </p>
+        <img id="commentaires-groupe-0-photo-reduite">
+        <p id="commentaires-groupe-0-texte_commentaire"></p>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

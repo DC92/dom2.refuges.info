@@ -1,0 +1,143 @@
+/* Couleurs dépendant du mode sombre / clair de l'explorateur ou du système */
+:root {
+  --couleur_texte: black;
+  --couleur_fond: white;
+  --couleur_lien: brown;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not(.light) {
+    --couleur_texte: white;
+    --couleur_fond: #642;
+    --couleur_lien: orange;
+  }
+}
+
+html {
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  background: var(--couleur_fond);
+  color: var(--couleur_texte);
+}
+
+h3 {
+  margin-bottom: 5px;
+  text-decoration: underline;
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: var(--couleur_lien);
+  text-decoration: none;
+}
+
+/* Affiche uniquement les zones liées à la page courante */
+body:not(#carte) .carte,
+body:not(#point) .point,
+body:not(#nouvelles) .nouvelles,
+body#carte .attente,
+body:not([class*="attente"]) .attente {
+  display: none;
+}
+
+/* Bandeau */
+.bandeau {
+  width: calc(100% - 20px);
+  min-height: 25px;
+  padding: 5px 10px;
+  border-bottom: 1px solid var(--couleur_texte);
+  display: flex;
+  justify-content: space-between;
+}
+
+.bandeau h2 {
+  margin: 0;
+  font-size: 1.3em;
+}
+
+@media screen and (max-width: 499px) {
+  .bandeau span {
+    display: none;
+  }
+}
+
+/* Page carte */
+#carte #map {
+  height: min(100vw, 900px, calc(100% - 36px));
+  width: min(100%, 1200px);
+  margin: auto;
+}
+
+/* Page point */
+#point #map {
+  width: 400px;
+  height: 300px;
+  margin: 10px;
+}
+
+.point {
+  margin: 0 10px;
+  text-align: justify;
+}
+
+.point h2 {
+  display: inline;
+}
+
+#nouvelles-groupe>div,
+#commentaires-groupe>div {
+  margin: 10px 0;
+  padding: 10px;
+  border: 1px solid var(--couleur_texte);
+  text-indent: 20px;
+  text-align: justify;
+}
+
+#commentaires-groupe img {
+  max-height: 400px;
+  max-width: 100%;
+  margin: 10px 0;
+}
+
+/* Général */
+.attente {
+  padding: 10px 0;
+  width: calc(100% - 8px);
+  border: 5px solid red;
+  border-style: double;
+  text-align: center;
+}
+
+/* Carte */
+#map {
+  background: grey;
+}
+
+.leaflet-control-gps .gps-button {
+  background-image: url('../gps/gps-icon.png');
+}
+
+.leaflet-tooltip {
+  top: -18px;
+  padding: 0 2px;
+  line-height: 12px;
+  border-radius: 5px;
+  opacity: 0.6 !important;
+}
+
+/* Avoid white lines between tiles in Opera & Chrome
+ * See: https://bugs.chromium.org/p/chromium/issues/detail?id=600120 */
+.leaflet-container img.leaflet-tile {
+  mix-blend-mode: normal;
+  width: 256px !important;
+  height: 256px !important;
+}

@@ -1,0 +1,14 @@
+{
+  "name": "Dev tools for WRI PWA",
+  "version": "1.0.0",
+  "author": "Dominique Cavailhez",
+  "type": "module",
+  "scripts": {
+    "lint": "npx eslint *.js mobile/*.js mobile/src/*.js",
+    "beautify": "js-beautify -s=2 *.js* mobile/*.[chj]* mobile/src/*.[chj]*"
+  },
+  "dependencies": {
+    "eslint": "latest",
+    "js-beautify": "latest"
+  }
+}
