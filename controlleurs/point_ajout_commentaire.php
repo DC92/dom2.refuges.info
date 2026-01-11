@@ -30,11 +30,12 @@ if (empty($point->erreur))
     $vue->correction=true;
   else
     $vue->correction=False;
- 
+
   // on vient de valider notre formulaire, faisons le nécessaire
   $vue->banni=False;
   $vue->erreur_captcha=False;
-  if (!empty($_REQUEST['action']))  {
+  if (!empty($_REQUEST['action']))
+  {
     $commentaire->texte=stripslashes($_REQUEST['texte']);
 
     // Si on est connecté, ces valeurs ne sont pas défini, on la passe alors à ''
@@ -56,7 +57,8 @@ if (empty($point->erreur))
         $commentaire->photo['originale']=$file_path;
 
       $commentaire->demande_correction=$_REQUEST['demande_correction'] ?? '';
-           // Et si on trouve un mot clé "censuré" on accepte le message mais on averti les modérateurs qu'il faut aller vérifier le commentaire
+
+      // Et si on trouve un mot clé "censuré" on accepte le message mais on averti les modérateurs qu'il faut aller vérifier le commentaire
       if (isset ($config_wri['censure']) && preg_match ('/'.$config_wri['censure'].'/i', retrait_accents ($commentaire->texte)))
         $commentaire->demande_correction=4;
 
@@ -78,15 +80,22 @@ if (empty($point->erreur))
         // On tente d'ajouter le commentaire, qui peut retourner une erreur au besoin (point supprimé, erreur technique, ...)
         $vue->messages=modification_ajout_commentaire($commentaire);
 
-      // Traces
+      // Hook ext/RefugesInfo/trace pour enregistrer la trace
       $mode = 'Ajout commentaire';
+      $data = [
+        'username' => $commentaire->auteur_commentaire,
+        'id_point' => $commentaire->id_point,
+        'id_commentaire' => $commentaire->id_commentaire,
+        'title' => $point->nom,
+        'text' => $commentaire->texte,
+        'uri' => $_SERVER['REQUEST_URI'],
+        'appel' => $mode,
+      ];
       $vars = [
         'mode',
-        'point',
-        'commentaire',
+        'data',
       ];
-      // Hook ext/RefugesInfo/trace/listener.php log_request_context
-      extract($phpbb_dispatcher->trigger_event('refugesinfo.trace.log_request_context', compact($vars)));
+      extract($phpbb_dispatcher->trigger_event('refugesinfo.ajout_commentaire', compact($vars)));
 
       // ça semble avoir marché, on vide juste son texte qu'il puisse ressaisir un commentaire
       if (empty($vue->messages->erreur))
@@ -97,7 +106,8 @@ if (empty($point->erreur))
       else
       {
         $vue->type = "page_simple";
-        $vue->contenu="Impossible d'ajouter ce commentaire car : ".$vue->messages->message;          return;
+        $vue->contenu="Impossible d'ajouter ce commentaire car : ".$vue->messages->message;
+		return;
       }
 
       // Nettoyage de la photo envoyée qu'elle fût ou non insérée correctement comme commentaire

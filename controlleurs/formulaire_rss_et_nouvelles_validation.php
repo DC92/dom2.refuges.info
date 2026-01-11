@@ -15,7 +15,8 @@ if (!empty($_REQUEST['types_de_nouvelles']) and !empty($_REQUEST['id_massif']) )
 {
   $types_de_nouvelles = implode(',',$_REQUEST['types_de_nouvelles']);
   $liste_id_massif = implode(',',$_REQUEST['id_massif']);
-   if (!empty($_REQUEST['choix']) and $_REQUEST['choix']=='Obtenir le lien vers le flux RSS')
+
+  if (!empty($_REQUEST['choix']) and $_REQUEST['choix']=='Obtenir le lien vers le flux RSS')
   {
     $schema = $_SERVER['HTTPS'] ? "https" : "http";
     $vue->url=$schema."://".$config_wri['nom_hote']."/api/contributions?format=rss&amp;format_texte=html&amp;type=$types_de_nouvelles&amp;massif=$liste_id_massif";

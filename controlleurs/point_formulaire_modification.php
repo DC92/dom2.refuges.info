@@ -32,7 +32,8 @@ if ( !empty($_REQUEST["id_point"]) )
   $point=infos_point($_REQUEST['id_point'],$meme_si_cache,True,$meme_si_modele);
 
   // Stop, le point n'existe pas (ou est caché et il ne faut pas dire que c'est le cas)
-  if (!empty($point->erreur))  {
+  if (!empty($point->erreur))
+  {
     $vue->http_status_code = 404;
     $vue->type = "page_simple";
     $vue->titre="Point inexistant";
@@ -56,7 +57,8 @@ if ( !empty($_REQUEST["id_point"]) )
       $bouton_suppr->valeur = "supprimer";
       $bouton_suppr->label = "Suppression de la fiche";
     }
-       //cosmétique
+
+    //cosmétique
     $icone="&amp;iconecenter=ne_sait_pas";
     $action="Modification";
     $vue->verbe="Modifier";
@@ -72,9 +74,9 @@ if ( !empty($_REQUEST["id_point"]) )
     return "";
   }
 }
-
 // 2) on veut faire une création, on va rempli les champs avec ceux du modèle
-elseif ( !empty($_REQUEST["id_point_type"])) {
+elseif ( !empty($_REQUEST["id_point_type"]))
+{
   $conditions = new stdClass;
   $conditions->ids_types_point=$_REQUEST["id_point_type"];
   $conditions->modele='uniquement';
@@ -90,19 +92,21 @@ elseif ( !empty($_REQUEST["id_point_type"])) {
   // on force les latitude à ce qui a été cliqué sur la carte (si existe, sinon vide)
   $point->longitude=6;
   $point->latitude=47;
+
   // on force l'id du point à vide histoire de ne pas modifier le modèle
   unset($point->id_point);
   // et pareil pour le modérateur actuel du point qui sera alors choisi directement car l'utilisateur est authentifié (ou pas, mais alors ça sera 0)
   unset($point->id_createur);
   // et on retire le flag "est un modèle" car on s'est servit du modèle, mais ce n'en est plus un
   unset($point->modele);
+
   // cosmétique
   $icone="&amp;iconecenter=".choix_icone($point);
   $action="Ajout";
   $vue->verbe="Ajouter";
   $vue->titre="Ajout d'un point dans refuges.info";
-}
 
+}
 // 3) On ne devrait pas arriver en direct sur ce formulaire ou il nous manque une information
 else
 {
@@ -130,7 +134,8 @@ $bouton_reset->type = "reset";
 $bouton_reset->valeur = "Recommencer";
 $bouton_reset->label = "Recommencer";
 
-// Gestion de l'ordre des boutons modifier/valider/supprimer$vue->champs->boutons->valider=$bouton_valider;
+// Gestion de l'ordre des boutons modifier/valider/supprimer
+$vue->champs->boutons->valider=$bouton_valider;
 $vue->champs->boutons->reset=$bouton_reset;
 
 if (!empty($bouton_suppr))

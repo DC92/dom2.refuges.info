@@ -25,7 +25,8 @@ else
  $vue->titre="Choisissez ce que vous souhaitez afficher pour votre page des nouvelles";
  $vue->titre_bouton="Obtenir un lien vers les nouvelles demandées";
 }
- $vue->massifs = new stdClass;
+
+$vue->massifs = new stdClass;
 
 // LES MASSIFS/ZONES ======================================
 // Creation d'une case à cocher pour chaque type massif

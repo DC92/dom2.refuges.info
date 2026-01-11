@@ -69,10 +69,12 @@ if (!empty($_GET['id_polygone_type']))
  * Mais je concède, que si c'est galère à maintenir (pour l'instant, je ne crois pas), se simplifier la vie est tout à fait entendable.
  */
 
-if (!empty($id_polygone)){
+if (!empty($id_polygone))
+{
   $polygone=infos_polygone ($id_polygone,False,True);
 
-  if (empty($polygone->erreur))  {
+  if (empty($polygone->erreur))
+  {
     $vue->quoi=isset($vue->contenu->type_polygone) ?
       $vue->contenu->type_polygone."s" :
       "cabanes, refuges et points d'eau";
