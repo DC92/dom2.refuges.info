@@ -27,6 +27,9 @@ switch ($cible) {
     case 'contributions':
         include($config_wri['chemin_controlleurs'].'api/contributions.php');
         break;
+    case 'fiches':
+        include($config_wri['chemin_controlleurs'].'api/fiches.php');
+        break;
     case 'polygones':
         include($config_wri['chemin_controlleurs'].'api/polygones.php');
         break;
