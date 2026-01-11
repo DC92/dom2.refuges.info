@@ -11,13 +11,16 @@
 		<button type="submit" title="Lancer la recherche" style="border:none">
 			🔍
 		</button>
-		<a href="/point_formulaire_recherche"
-			title="Recherche avancée">
-			🔭
-		</a>
+		<a href="/point_formulaire_recherche" title="Recherche avancée"🔭</a>
+		<a href="/mobile" title="Application mobile">📱</a>
 	</form>
 
 	<div class="menu-haut">
+		<div class="menu-recherche menu-bouton">
+			<a href="/mobile" title="Application mobile">📱</a>
+			<ul><li>Application mobile</li></ul>
+		</div>
+
 		<div class="menu-connexion menu-bouton">
 	<?php if (est_connecte() && $infos_identification->username) { ?>
       <span>👨</span>
@@ -341,7 +344,9 @@
 						</li>						
 					</ul>
 				</li>
-				<li style="order:5"><!-- Réserve un espace avant le sous-menu connexion --></li>
+				<li style="order:5">
+					<!-- Réserve un espace avant le sous-menu connexion -->
+        </li>
 			</ul>
 		</div>
 	</div>
