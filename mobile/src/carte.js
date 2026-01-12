@@ -72,15 +72,15 @@ function initCarte() {
     new GeoJsonAjaxCluster({
       url: serveurApi + '/api/bbox?&nb_points=all&detail=minimal',
       icon: {
-        url: feature => serveurApi + '/images/icones/' + feature.properties.type.icone + '.svg',
+        url: (feature) => serveurApi + '/images/icones/' + feature.properties.type.icone + '.svg',
         size: 24,
       },
       label: {
-        title: feature => feature.properties.nom,
+        title: (feature) => feature.properties.nom,
         permanent: true,
         direction: 'center',
       },
-      click: feature => {
+      click: (feature) => {
         // Affiche les donnés d'entête de la fiche qui sont disponibles dans l'API bbox
         appliqueDonnees('point', feature.properties);
 

@@ -14,7 +14,7 @@ function changePage() {
   document.body.className = '';
 
   // Execute la function d'initialisation de la page
-  const nomFonctionAffiche = 'affichePage' + document.body.id.replace(/^[a-z]/u, m => m.toUpperCase());
+  const nomFonctionAffiche = 'affichePage' + document.body.id.replace(/^[a-z]/u, (m) => m.toUpperCase());
   window[nomFonctionAffiche](ancre[1]);
 }
 
@@ -38,7 +38,7 @@ function affichePageNouvelles() {
     'nouvelles',
     '/api/contributions?format=json&format_texte=html&massif=352&nombre=10',
     null,
-    json => {
+    (json) => {
       // Calcule le lien pour afficher la page qui correspond
       for (const j in json)
         /* eslint-disable-next-line camelcase */
@@ -60,7 +60,7 @@ function affichePagePoint(pointId) {
     'point',
     '/api/point?format=geojson&format_texte=html&detail=complet&id=' + pointId,
     null,
-    json => {
+    (json) => {
       const properties = json.features[0].properties,
         coords = json.features[0].geometry.coordinates,
         infoComp = {};
@@ -91,7 +91,7 @@ function affichePagePoint(pointId) {
     'commentaires',
     '/api/commentaires?format=json&format_texte=html&id_point=' + pointId,
     null,
-    json => {
+    (json) => {
       prepareModeleGroupe('commentaires-groupe', Object.keys(json).length - 1); // -1 pour le copyright
       appliqueDonnees('commentaires-groupe', json);
     }

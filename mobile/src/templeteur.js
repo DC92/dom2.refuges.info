@@ -65,7 +65,7 @@ function prepareModeleGroupe(id, nb) {
 
   // Nettoie les éléments de données existants
   groupEl.querySelectorAll('[id^="' + id + '"]')
-    .forEach(el => appliqueDonnees(el.id, ''));
+    .forEach((el) => appliqueDonnees(el.id, ''));
 
   // Ajoute autant de modeles que nécéssaire
   while (groupEl.children.length < nb)

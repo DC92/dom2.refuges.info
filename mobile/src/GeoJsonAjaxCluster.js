@@ -7,18 +7,18 @@
  * options:
      url: '/api/bbox?&nb_points=all&detail=minimal',
      icon: {
-        url: feature => 'url calculated from feature',
+        url: (feature) => 'url calculated from feature',
         size: 16 || [16, 16], // Default 16
         anchor: [8, 8], // Default center
       },
      label: {
-        title: feature => 'text calculated from feature>',
+        title: (feature) => 'text calculated from feature>',
         permanent: <boolean>, // Permanent display | only on hover. Default false
         direction: '<right|left|top|bottom|center|auto>', // To the icon
         offset: Point(0, 0), // To the icon
         opacity: <0...1>;
       },
-     click: feature => <action>,
+     click: (feature) => <action>,
  *
  * Based on :
  *   https://leafletjs.com/
@@ -62,7 +62,7 @@ class GeoJsonAjaxCluster extends L.MarkerClusterGroup {
         // Click
         if (typeof options.click === 'function')
           layer.on({
-            click: evt => options.click(feature, evt),
+            click: (event) => options.click(feature, event),
           });
       },
     });
