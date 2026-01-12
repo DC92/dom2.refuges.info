@@ -68,12 +68,14 @@ class GeoJsonAjaxCluster extends L.MarkerClusterGroup {
     });
 
     // Load features from url
-    (async function() {
-      const response = await fetch(options.url),
-        json = await response.json();
-
-      poiLayer.addData(json);
-      this.addLayer(poiLayer);
-    }).bind(this)();
+    fetch(options.url)
+      .then((response) => response.json())
+      .then((json) => {
+        poiLayer.addData(json);
+        this.addLayer(poiLayer);
+      })
+      .catch((error) => {
+        console.error('Error: ' + error + ' ' + options.url);
+      });
   }
 }

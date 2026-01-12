@@ -1,12 +1,16 @@
 /* global serveurApi */
 
+const preLoadedTiles = JSON.parse(localStorage.preLoadedTiles || '{}'),
+  preLoadedPoints = JSON.parse(localStorage.preLoadedPoints || '{}');
+
 /* eslint-disable no-unused-vars */
 async function preload() {
+  console.log('preload');
+
   // this = map
   // Preload tiles of openhikingmap base layer
   /* eslint-disable no-invalid-this */
   const center = this.getCenter(),
-    preLoadedTiles = JSON.parse(localStorage.preLoadedTiles || '{}'),
     remnantTime = 30000; // Shelf life (unix milliseconds)
   let leftToFetch = 40;
 
@@ -25,21 +29,26 @@ async function preload() {
 
           if (expirationDate < Date.now() && leftToFetch-- > 0) {
             preLoadedTiles[tileRef] = Date.now();
-            await fetch(url);
+            await fetch(url); // Load the tile on the brother cache
           }
         }
     }
-  localStorage.preLoadedTiles = JSON.stringify(preLoadedTiles);
 
   // Preload points & commentaires
-  console.log('preload');
-  const url = serveurApi + '/api/bbox?bbox=5.5,45,5.6,45.1&nb_points=all&detail=complet',
-    response = await fetch(url),
-    json = await response.json();
+  const url = serveurApi + '/api/bbox?bbox=5.5,45,5.6,45.1&nb_points=all&detail=complet';
 
-  console.log(json);
-  /*
-    const preLoadedPoints = JSON.parse(localStorage.preLoadedPoints || '{}');
-    localStorage.preLoadedPoints = JSON.stringify(preLoadedPoints);
-  */
+  fetch(url)
+    .then((response) => response.json())
+    .then((json) => {
+      json.features.forEach((feature) => {
+        console.info(feature);
+      });
+    })
+    .catch((error) => {
+      console.error('Error: ' + error + ' ' + url);
+    });
+
+  // END
+  localStorage.preLoadedTiles = JSON.stringify(preLoadedTiles);
+  localStorage.preLoadedPoints = JSON.stringify(preLoadedPoints);
 }
