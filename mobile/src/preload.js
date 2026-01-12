@@ -1,9 +1,11 @@
+/* global serveurApi */
+
 /* eslint-disable no-unused-vars */
 async function preload() {
   // this = map
   // Preload tiles of openhikingmap base layer
   /* eslint-disable no-invalid-this */
-  const bounds = this.getCenter(),
+  const center = this.getCenter(),
     preLoadedTiles = JSON.parse(localStorage.preLoadedTiles || '{}'),
     remnantTime = 30000; // Shelf life (unix milliseconds)
   let leftToFetch = 40;
@@ -11,12 +13,12 @@ async function preload() {
   for (let ecart = 1; ecart < 6; ecart++)
     for (let zoom = 6; zoom < 16; zoom++) {
       /* eslint-disable no-invalid-this */
-      const coords = this.project([bounds.lat, bounds.lng], zoom),
-        dx = Math.round(coords.x / 256),
-        dy = Math.round(coords.y / 256);
+      const coordPX = this.project([center.lat, center.lng], zoom),
+        tileX = Math.round(coordPX.x / 256),
+        tileY = Math.round(coordPX.y / 256);
 
-      for (let x = dx - ecart; x < dx + ecart; x++)
-        for (let y = dy - ecart; y < dy + ecart; y++) {
+      for (let x = tileX - ecart; x < tileX + ecart; x++)
+        for (let y = tileY - ecart; y < tileY + ecart; y++) {
           const tileRef = zoom + '/' + x + '/' + y,
             expirationDate = (preLoadedTiles[tileRef] || 0) + remnantTime,
             url = 'https://tile.openmaps.fr/openhikingmap/' + tileRef + '.png';
@@ -26,10 +28,18 @@ async function preload() {
             await fetch(url);
           }
         }
-
-      localStorage.preLoadedTiles = JSON.stringify(preLoadedTiles);
     }
+  localStorage.preLoadedTiles = JSON.stringify(preLoadedTiles);
 
   // Preload points & commentaires
-  //TODO
+  console.log('preload');
+  const url = serveurApi + '/api/bbox?bbox=5.5,45,5.6,45.1&nb_points=all&detail=complet',
+    response = await fetch(url),
+    json = await response.json();
+
+  console.log(json);
+  /*
+    const preLoadedPoints = JSON.parse(localStorage.preLoadedPoints || '{}');
+    localStorage.preLoadedPoints = JSON.stringify(preLoadedPoints);
+  */
 }
