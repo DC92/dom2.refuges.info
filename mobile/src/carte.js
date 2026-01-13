@@ -1,5 +1,4 @@
-/* global L, GeoJsonAjaxCluster, serveurApi, appliqueDonnees, preload */
-//TODO remove serveurApi
+/* global L, GeoJsonAjaxCluster, appliqueDonnees, preload */
 
 //TODO BUG mauvais placement init de la fiche
 //TODO mémorisation position carte
@@ -70,9 +69,9 @@ function initCarte() {
 
     // WRI poi & clusters
     new GeoJsonAjaxCluster({
-      url: serveurApi + '/api/bbox?&nb_points=all&detail=minimal',
+      url: window.location.origin + '/api/bbox?&nb_points=all&detail=minimal',
       icon: {
-        url: (feature) => serveurApi + '/images/icones/' + feature.properties.type.icone + '.svg',
+        url: (feature) => window.location.origin + '/images/icones/' + feature.properties.type.icone + '.svg',
         size: 24,
       },
       label: {

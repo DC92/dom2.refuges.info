@@ -1,31 +1,27 @@
 /** Préchargements dans une zone autour de celle parcourue par la carte
  *
- * Les dalles OpenHikingMap sont simplement appelées sans que le résultat ne soit utilisé
- * Elles sont mémorisées par le cache de l'explorateur le temps et l'espace permis par celui-ci
- * Seuls sont mémorisées dans localStorage.preLoadedTiles les date d'expiration */
+ * Les dalles OpenHikingMap sont simplement appelées sans que le résultat ne soit utilisé,
+ * elles sont mémorisées par le cache de l'explorateur le temps et l'espace permis par celui-ci
+ * Seuls sont mémorisées dans localStorage.preLoadedTiles les date d'expiration,
+ * les informations nécéssaires pour afficher les icônes sur la carte
+ * sont chargées globalement par GeoJsonAjaxCluster à chaque modification d'un point. */
 const tilesRefreshTime = 30000, // Milliseconds
   minZoomPreloadedTiles = 6,
   maxZoomPreloadedTiles = 15,
   preloadedTilesAround = 5,
   maxTilesPerRequest = 40;
-/*
- * Les informations nécéssaires pour afficher les icônes sur la carte
- * sont chargées globalement par GeoJsonAjaxCluster à chaque modification d'un point
- *
- * Les informations nécéssaires à l'affichage d'un point et de ses commentaires
- * sont chargées par dalles dans localStorage.preLoadedPoints_12_34 */
+
+/* Les informations nécéssaires à l'affichage d'un point et de ses commentaires
+ * sont chargées par dalles dans localStorage.preLoadedPoints_x_y.
+ * Une fois chargés, ne sont rafraichis que les points ou commentaires récement modifiés.
+ * Les photos des points visualisés sont sont mémorisées par le cache de l'explorateur */
 const pointsTileSize = 50000; // Unités Mercator (1 mètre)
-/* 12 est la dalle x, 34 la dalle y
- * Une fois chargés, ne sont rafraichis que les points ou commentaires récement modifiés
- */
-
-/* global serveurApi */
-
-const preLoadedTiles = JSON.parse(localStorage.preLoadedTiles || '{}'),
-  preLoadedPoints = JSON.parse(localStorage.preLoadedPoints || '{}');
 
 /* eslint-disable no-unused-vars */
 async function preload(map, center) {
+  const preLoadedTiles = JSON.parse(localStorage.preLoadedTiles || '{}'),
+    preLoadedPoints = JSON.parse(localStorage.preLoadedPoints || '{}');
+
   console.log('preload');
 
   // Preload tiles of openhikingmap base layer
@@ -51,7 +47,7 @@ async function preload(map, center) {
     }
 
   // Preload points & commentaires
-  const url = serveurApi + '/api/bbox?bbox=5.5,45,5.6,45.1&nb_points=all&detail=complet';
+  const url = window.location.origin + '/api/bbox?bbox=5.5,45,5.6,45.1&nb_points=all&detail=complet';
 
   fetch(url)
     .then((response) => response.json())
