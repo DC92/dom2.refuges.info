@@ -15,7 +15,7 @@ const tilesRefreshTime = 30000, // Milliseconds
  * sont chargées par dalles dans localStorage.preLoadedPoints_x_y.
  * Une fois chargés, ne sont rafraichis que les points ou commentaires récement modifiés.
  * Les photos des points visualisés sont sont mémorisées par le cache de l'explorateur */
-const pointsTileSize = 0.1; // ° lon / lat
+const pointsTileSize = 0.5; // ° lon / lat
 
 /* eslint-disable no-unused-vars */
 function preload(map, position) {
@@ -50,21 +50,19 @@ function preload(map, position) {
     localStorage.preLoadedTiles = JSON.stringify(preLoadedTiles);
 
   // Preload points & commentaires
-  const url = window.location.origin + '/api/bbox?bbox=5.5,45,5.6,45.1&nb_points=all&detail=complet';
-  const preLoadedPoints = JSON.parse(localStorage.preLoadedPoints || '{}'),
-    pointTileRef = [
-      Math.round(position.lng / pointsTileSize),
-      Math.round(position.lat / pointsTileSize),
-    ];
-  let loadedPointsChanged = false;
+  const //preLoadedPoints = JSON.parse(localStorage.preLoadedPoints || '{}'),
+    tx = Math.round(position.lng / pointsTileSize),
+    ty = Math.round(position.lat / pointsTileSize),
+    bbox = [tx, ty, tx + 1, ty + 1].map(a => Math.round(a * pointsTileSize * 10) / 10),
+    url = window.location.origin + '/api/bbox?detail=complet&nb_points=all&bbox=' + bbox.join(',');
 
-  /*DCMM*/console.log(pointTileRef);
+  let loadedPointsChanged = false;
 
   fetch(url)
     .then((response) => response.json())
     .then((json) => {
       json.features.forEach((feature) => {
-        //console.info(feature);
+        console.info(feature);
         loadedPointsChanged = true;
       });
     })
@@ -72,5 +70,5 @@ function preload(map, position) {
       console.error('Error: ' + error + ' ' + url);
     });
 
-  if (loadedPointsChanged) localStorage.preLoadedPoints = JSON.stringify(preLoadedPoints);
+  //if (loadedPointsChanged) localStorage.preLoadedPoints = JSON.stringify(preLoadedPoints);
 }

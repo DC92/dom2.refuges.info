@@ -26,7 +26,7 @@ window.addEventListener('popstate', changePage); // L'ancre change ou navigation
  **************/
 /* eslint-disable-next-line no-unused-vars */
 function affichePageCarte() {
-  initCarte().setView([45, 5.5], 13);
+  initCarte().setView([45, 5.5], 13); // Puits des Ravières
 }
 
 /******************
