@@ -72,9 +72,16 @@ body:not([class*="attente"]) .attente {
 
 /* Page carte */
 #carte #map {
-  height: min(100vw, 900px, calc(100% - 36px));
+  height: min(900px, calc(100% - 36px));
   width: min(100%, 1200px);
   margin: auto;
+}
+
+/* DEBUG ONLY */
+@media screen and (max-width: 151px) {
+  #carte #map {
+    max-height: 100vw;
+  }
 }
 
 /* Page point */

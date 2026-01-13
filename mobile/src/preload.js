@@ -15,52 +15,62 @@ const tilesRefreshTime = 30000, // Milliseconds
  * sont chargées par dalles dans localStorage.preLoadedPoints_x_y.
  * Une fois chargés, ne sont rafraichis que les points ou commentaires récement modifiés.
  * Les photos des points visualisés sont sont mémorisées par le cache de l'explorateur */
-const pointsTileSize = 50000; // Unités Mercator (1 mètre)
+const pointsTileSize = 0.1; // ° lon / lat
 
 /* eslint-disable no-unused-vars */
-async function preload(map, center) {
-  const preLoadedTiles = JSON.parse(localStorage.preLoadedTiles || '{}'),
-    preLoadedPoints = JSON.parse(localStorage.preLoadedPoints || '{}');
-
+function preload(map, position) {
   console.log('preload');
 
-  // Preload tiles of openhikingmap base layer
-  let leftToFetch = maxTilesPerRequest;
+  // Preload OpenHikingMap tiles
+  const preLoadedTiles = JSON.parse(localStorage.preLoadedTiles || '{}');
+  let leftToFetch = maxTilesPerRequest,
+    loadedTilesChanged = false;
 
   for (let ecart = 1; ecart <= preloadedTilesAround; ecart++)
     for (let zoom = minZoomPreloadedTiles; zoom <= maxZoomPreloadedTiles; zoom++) {
-      const coordPX = map.project([center.lat, center.lng], zoom),
+      const coordPX = map.project([position.lat, position.lng], zoom),
         tileX = Math.round(coordPX.x / 256),
         tileY = Math.round(coordPX.y / 256);
 
       for (let x = tileX - ecart; x < tileX + ecart; x++)
         for (let y = tileY - ecart; y < tileY + ecart; y++) {
-          const tileRef = zoom + '/' + x + '/' + y,
-            expirationDate = (preLoadedTiles[tileRef] || 0) + tilesRefreshTime,
-            url = 'https://tile.openmaps.fr/openhikingmap/' + tileRef + '.png';
+          const baseTileRef = zoom + '/' + x + '/' + y,
+            expirationDate = (preLoadedTiles[baseTileRef] || 0) + tilesRefreshTime,
+            url = 'https://tile.openmaps.fr/openhikingmap/' + baseTileRef + '.png';
 
           if (expirationDate < Date.now() && leftToFetch-- > 0) {
-            preLoadedTiles[tileRef] = Date.now();
-            await fetch(url); // Load the tile on the brother cache
+            //console.log(baseTileRef);
+            preLoadedTiles[baseTileRef] = Date.now();
+            fetch(url); // Load the tile on the brother cache (wait for the answer)
+            loadedTilesChanged = true;
           }
         }
     }
+  if (loadedTilesChanged)
+    localStorage.preLoadedTiles = JSON.stringify(preLoadedTiles);
 
   // Preload points & commentaires
   const url = window.location.origin + '/api/bbox?bbox=5.5,45,5.6,45.1&nb_points=all&detail=complet';
+  const preLoadedPoints = JSON.parse(localStorage.preLoadedPoints || '{}'),
+    pointTileRef = [
+      Math.round(position.lng / pointsTileSize),
+      Math.round(position.lat / pointsTileSize),
+    ];
+  let loadedPointsChanged = false;
+
+  /*DCMM*/console.log(pointTileRef);
 
   fetch(url)
     .then((response) => response.json())
     .then((json) => {
       json.features.forEach((feature) => {
-        console.info(feature);
+        //console.info(feature);
+        loadedPointsChanged = true;
       });
     })
     .catch((error) => {
       console.error('Error: ' + error + ' ' + url);
     });
 
-  // END
-  localStorage.preLoadedTiles = JSON.stringify(preLoadedTiles);
-  localStorage.preLoadedPoints = JSON.stringify(preLoadedPoints);
+  if (loadedPointsChanged) localStorage.preLoadedPoints = JSON.stringify(preLoadedPoints);
 }
