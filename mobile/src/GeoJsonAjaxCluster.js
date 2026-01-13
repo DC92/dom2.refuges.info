@@ -67,7 +67,7 @@ class GeoJsonAjaxCluster extends L.MarkerClusterGroup {
       },
     });
 
-    // Load features from url
+    // Load features from url (asynchronously)
     fetch(options.url)
       .then((response) => response.json())
       .then((json) => {

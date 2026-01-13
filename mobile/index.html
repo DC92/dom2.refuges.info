@@ -7,7 +7,8 @@ Démonstrateur front-end pour refuges.info
 
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width,
+    initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
   <link href="src/favicon.svg" type="image/svg+xml" rel="icon" />
   <title>Refuges.info</title>
 
@@ -19,14 +20,14 @@ Démonstrateur front-end pour refuges.info
   </script>
 
   <!-- Leaflet -->
-  <link href="leaflet/leaflet.css" rel="stylesheet" />
   <script src="leaflet/leaflet.js"></script>
+  <link href="leaflet/leaflet.css" rel="stylesheet" />
 
   <!-- Controls -->
-  <link href="geocoder/Control.Geocoder.css" rel="stylesheet" />
   <script src="geocoder/Control.Geocoder.js"></script>
-  <link href="gps/leaflet-gps.min.css" rel="stylesheet">
+  <link href="geocoder/Control.Geocoder.css" rel="stylesheet" />
   <script src="gps/leaflet-gps.min.js"></script>
+  <link href="gps/leaflet-gps.min.css" rel="stylesheet">
   <script src="permalink/leaflet.permalink.min.js"></script>
 
   <!-- Base layers -->
@@ -34,16 +35,16 @@ Démonstrateur front-end pour refuges.info
   <link href="ign/GpPluginLeaflet.css" rel="stylesheet" />
 
   <!-- Vector layers -->
+  <script src="markercluster/leaflet.markercluster.js"></script>
   <link href="markercluster/MarkerCluster.css" rel="stylesheet" />
   <link href="markercluster/MarkerCluster.Default.css" rel="stylesheet" />
-  <script src="markercluster/leaflet.markercluster-src.js"></script>
 
   <!-- This package -->
+  <script src="src/GeoJsonAjaxCluster.js"></script>
+  <script src="src/carte.js"></script>
   <script src="src/templeteur.js"></script>
   <script src="src/preload.js"></script>
-  <script src="src/carte.js"></script>
   <script src="src/index.js"></script>
-  <script src="src/GeoJsonAjaxCluster.js"></script>
   <link href="src/index.css" rel="stylesheet">
 </head>
 

@@ -1,30 +1,46 @@
+/** Préchargements dans une zone autour de celle parcourue par la carte
+ *
+ * Les dalles OpenHikingMap sont simplement appelées sans que le résultat ne soit utilisé
+ * Elles sont mémorisées par le cache de l'explorateur le temps et l'espace permis par celui-ci
+ * Seuls sont mémorisées dans localStorage.preLoadedTiles les date d'expiration */
+const tilesRefreshTime = 30000, // Milliseconds
+  minZoomPreloadedTiles = 6,
+  maxZoomPreloadedTiles = 15,
+  preloadedTilesAround = 5,
+  maxTilesPerRequest = 40;
+/*
+ * Les informations nécéssaires pour afficher les icônes sur la carte
+ * sont chargées globalement par GeoJsonAjaxCluster à chaque modification d'un point
+ *
+ * Les informations nécéssaires à l'affichage d'un point et de ses commentaires
+ * sont chargées par dalles dans localStorage.preLoadedPoints_12_34 */
+const pointsTileSize = 50000; // Unités Mercator (1 mètre)
+/* 12 est la dalle x, 34 la dalle y
+ * Une fois chargés, ne sont rafraichis que les points ou commentaires récement modifiés
+ */
+
 /* global serveurApi */
 
 const preLoadedTiles = JSON.parse(localStorage.preLoadedTiles || '{}'),
   preLoadedPoints = JSON.parse(localStorage.preLoadedPoints || '{}');
 
 /* eslint-disable no-unused-vars */
-async function preload() {
+async function preload(map, center) {
   console.log('preload');
 
-  // this = map
   // Preload tiles of openhikingmap base layer
-  /* eslint-disable no-invalid-this */
-  const center = this.getCenter(),
-    remnantTime = 30000; // Shelf life (unix milliseconds)
-  let leftToFetch = 40;
+  let leftToFetch = maxTilesPerRequest;
 
-  for (let ecart = 1; ecart < 6; ecart++)
-    for (let zoom = 6; zoom < 16; zoom++) {
-      /* eslint-disable no-invalid-this */
-      const coordPX = this.project([center.lat, center.lng], zoom),
+  for (let ecart = 1; ecart <= preloadedTilesAround; ecart++)
+    for (let zoom = minZoomPreloadedTiles; zoom <= maxZoomPreloadedTiles; zoom++) {
+      const coordPX = map.project([center.lat, center.lng], zoom),
         tileX = Math.round(coordPX.x / 256),
         tileY = Math.round(coordPX.y / 256);
 
       for (let x = tileX - ecart; x < tileX + ecart; x++)
         for (let y = tileY - ecart; y < tileY + ecart; y++) {
           const tileRef = zoom + '/' + x + '/' + y,
-            expirationDate = (preLoadedTiles[tileRef] || 0) + remnantTime,
+            expirationDate = (preLoadedTiles[tileRef] || 0) + tilesRefreshTime,
             url = 'https://tile.openmaps.fr/openhikingmap/' + tileRef + '.png';
 
           if (expirationDate < Date.now() && leftToFetch-- > 0) {

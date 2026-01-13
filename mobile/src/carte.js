@@ -90,7 +90,8 @@ function initCarte() {
     }).addTo(map);
   }
 
-  map.on('moveend', preload);
+  // Prè-charge les dalles OpenHikingMap, points et commentaires autour de la zone visitée
+  map.on('moveend', () => preload(map, map.getCenter()));
 
   return map;
 }
