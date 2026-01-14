@@ -73,24 +73,23 @@ function preload(map, position) {
   //if (loadedPointsChanged) localStorage.preLoadedPoints = JSON.stringify(preLoadedPoints);
 }
 
-// Accès à la base de données
-// https://developer.mozilla.org/en-US/docs/Web/API/IDBObjectStore/add
+// Accès à la base de données indexedDB
+// https://developer.mozilla.org/en-US/docs/Web/API/IDBObjectStore/put
 console.log('indexedDB');
 
-//dbCreate('points', 'id_point');
-dbGet('points', 119);
-if (0)
-  dbAdd('points', {
-    'id_point': 139,
-    cabane: 'Walk dog',
-    minutes: 30,
-    day: 24,
-    month: 'December',
-    year: 2013,
-    notified: 'no',
-  });
+dbConnect('points', 'id_point');
+//dbGet('points', 299);
+dbPut('points', {
+  'id_point': 299,
+  cabane: 'Walk dog UPDATED 4TH',
+  minutes: 30,
+  day: 24,
+  month: 'December',
+  year: 2013,
+  notified: 'no',
+});
 
-function dbCreate(store, index) {
+function dbConnect(store, index) {
   // Open access to the database
   const DBOpenRequest = window.indexedDB.open('refuges.info', 1);
 
@@ -104,42 +103,42 @@ function dbCreate(store, index) {
     });
 
     objectStore.transaction.oncomplete = () => {
-      console.log('createObjectStore.Create.oncomplete');
+      console.log('ObjectStore.Create.oncomplete');
     };
   };
 }
 
-function dbAdd(store, object) {
+function dbPut(store, object) {
   // Open access to the database
   const DBOpenRequest = window.indexedDB.open('refuges.info', 1);
 
   DBOpenRequest.onsuccess = () => {
-    console.log('DBOpenRequest.Add.onsuccess');
+    console.log('DBOpenRequest.Put.onsuccess');
 
     // open a read/write db transaction, ready for adding the data
     const db = DBOpenRequest.result;
     const transaction = db.transaction([store], 'readwrite');
-    // create an object store on the transaction
+    // Open an object store on the transaction
     const objectStore = transaction.objectStore(store);
 
-    // Make a request to add our object to the object store
-    //TODO BUG n'écrase pas le précédent !
-    const objectStoreRequest = objectStore.add(object);
+    // Make a request to put our object in the object store
+    const objectStoreRequest = objectStore.put(object);
 
     objectStoreRequest.onsuccess = () => {
-      console.log('objectStoreRequest.Add.onsuccess');
+      console.log('objectStoreRequest.Put.onsuccess');
     };
 
     objectStoreRequest.onerror = () => {
-      console.error("Error.Add.objectStoreRequest", objectStoreRequest.error);
+      console.error("Error.Put.objectStoreRequest", objectStoreRequest.error);
     };
 
     transaction.onerror = () => {
-      console.error("Error.Add.transaction", transaction.error);
+      console.error("Error.Put.transaction", transaction.error);
     };
 
     transaction.oncomplete = () => {
-      console.log('transaction.Add.oncomplete');
+      console.log('transaction.Put.oncomplete');
+      dbGet('points', 299);
     };
   };
 }
@@ -154,7 +153,7 @@ function dbGet(store, key) {
     // open a read/write db transaction, ready for adding the data
     const db = DBOpenRequest.result;
     const transaction = db.transaction([store]);
-    // create an object store on the transaction
+    // Open an object store on the transaction
     const objectStore = transaction.objectStore(store);
 
     // Make a request to read our object to the object store
