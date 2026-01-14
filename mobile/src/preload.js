@@ -73,37 +73,15 @@ function preload(map, position) {
   //if (loadedPointsChanged) localStorage.preLoadedPoints = JSON.stringify(preLoadedPoints);
 }
 
+// Accès à la base de données
+// https://developer.mozilla.org/en-US/docs/Web/API/IDBObjectStore/add
 console.log('indexedDB');
 
-// Open access to the database
-const DBOpenRequest = window.indexedDB.open('refuges.info', 1);
-
-// Create the store 'points' the very first time
-DBOpenRequest.onupgradeneeded = (event) => {
-  console.log('DBOpenRequest.onupgradeneeded');
-
-  const db = event.target.result;
-  const objectStore = db.createObjectStore('points', {
-    keyPath: 'id_point',
-  });
-
-  objectStore.transaction.oncomplete = evt => {
-    console.log('oncomplete');
-  };
-};
-
-DBOpenRequest.onsuccess = () => {
-  console.log('DBOpenRequest.onsuccess');
-
-  // open a read/write db transaction, ready for adding the data
-  const db = DBOpenRequest.result;
-  const transaction = db.transaction(['points'], 'readwrite');
-  // create an object store on the transaction
-  const objectStore = transaction.objectStore('points');
-
-  // Make a request to add our object to the object store
-  const objectStoreRequest = objectStore.add({
-    'id_point': 19,
+//dbCreate('points', 'id_point');
+dbGet('points', 119);
+if (0)
+  dbAdd('points', {
+    'id_point': 139,
     cabane: 'Walk dog',
     minutes: 30,
     day: 24,
@@ -112,11 +90,83 @@ DBOpenRequest.onsuccess = () => {
     notified: 'no',
   });
 
-  transaction.oncomplete = () => {
-    console.log('transaction.oncomplete');
-  };
+function dbCreate(store, index) {
+  // Open access to the database
+  const DBOpenRequest = window.indexedDB.open('refuges.info', 1);
 
-  objectStoreRequest.onsuccess = () => {
-    console.log('objectStoreRequest.onsuccess');
+  // Create the store the very first time
+  DBOpenRequest.onupgradeneeded = (event) => {
+    console.log('DBOpenRequest.Create.onupgradeneeded');
+
+    const db = event.target.result;
+    const objectStore = db.createObjectStore(store, {
+      keyPath: index,
+    });
+
+    objectStore.transaction.oncomplete = () => {
+      console.log('createObjectStore.Create.oncomplete');
+    };
   };
-};
+}
+
+function dbAdd(store, object) {
+  // Open access to the database
+  const DBOpenRequest = window.indexedDB.open('refuges.info', 1);
+
+  DBOpenRequest.onsuccess = () => {
+    console.log('DBOpenRequest.Add.onsuccess');
+
+    // open a read/write db transaction, ready for adding the data
+    const db = DBOpenRequest.result;
+    const transaction = db.transaction([store], 'readwrite');
+    // create an object store on the transaction
+    const objectStore = transaction.objectStore(store);
+
+    // Make a request to add our object to the object store
+    //TODO BUG n'écrase pas le précédent !
+    const objectStoreRequest = objectStore.add(object);
+
+    objectStoreRequest.onsuccess = () => {
+      console.log('objectStoreRequest.Add.onsuccess');
+    };
+
+    objectStoreRequest.onerror = () => {
+      console.error("Error.Add.objectStoreRequest", objectStoreRequest.error);
+    };
+
+    transaction.onerror = () => {
+      console.error("Error.Add.transaction", transaction.error);
+    };
+
+    transaction.oncomplete = () => {
+      console.log('transaction.Add.oncomplete');
+    };
+  };
+}
+
+function dbGet(store, key) {
+  // Open access to the database
+  const DBOpenRequest = window.indexedDB.open('refuges.info', 1);
+
+  DBOpenRequest.onsuccess = () => {
+    console.log('DBOpenRequest.Get.onsuccess');
+
+    // open a read/write db transaction, ready for adding the data
+    const db = DBOpenRequest.result;
+    const transaction = db.transaction([store]);
+    // create an object store on the transaction
+    const objectStore = transaction.objectStore(store);
+
+    // Make a request to read our object to the object store
+    const objectStoreRequest = objectStore.get(key);
+
+    transaction.oncomplete = () => {
+      console.log('transaction.Get.oncomplete');
+    };
+
+    objectStoreRequest.onsuccess = (evt) => {
+      console.log('objectStoreRequest.Get.onsuccess');
+      console.log(evt.target.result);
+    };
+  };
+}
