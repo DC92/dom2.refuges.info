@@ -15,7 +15,7 @@ self.addEventListener('install', () => {
 // Fetch any ressource, cache first with cache refresh
 async function cacheFirstWithRefresh(request) {
   return (await caches.match(request)) ||
-  fetch(request)
+    fetch(request)
     .then(async (networkResponse) => {
       if (networkResponse.ok) {
         const cache = await caches.open(cacheName);
