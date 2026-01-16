@@ -1,4 +1,4 @@
-/* global L, GeoJsonAjaxCluster, appliqueDonnees, preload */
+/* global L, GeoJsonAjaxCluster, appliqueDonnees */
 
 //TODO BUG mauvais placement init de la fiche
 //TODO mémorisation position carte
@@ -8,8 +8,6 @@
 /*****************
  * Carte Leaflet *
  *****************/
-let map = null;
-
 const baseLayers = {
   OpenHikingMap: L.tileLayer('https://tile.openmaps.fr/openhikingmap/{z}/{x}/{y}.png', {
     maxZoom: 18,
@@ -45,52 +43,47 @@ const baseLayers = {
 };
 
 /* eslint-disable-next-line no-unused-vars */
-function initCarte() {
-  if (!map) {
-    map = L.map('map');
+function initCarte(containerElId) {
+  const map = L.map(containerElId);
 
-    // Layer switcher
-    Object.values(baseLayers)[0].addTo(map); // Default layer
-    L.control.layers(baseLayers).addTo(map);
+  // Layer switcher
+  Object.values(baseLayers)[0].addTo(map); // Default layer
+  L.control.layers(baseLayers).addTo(map);
 
-    L.control.scale({
-      imperial: false
-    }).addTo(map);
+  L.control.scale({
+    imperial: false
+  }).addTo(map);
 
-    new L.Control.Gps({
-      autoCenter: true,
-    }).addTo(map);
+  new L.Control.Gps({
+    autoCenter: true,
+  }).addTo(map);
 
-    new L.Control.Geocoder({
-      position: 'topleft',
-    }).addTo(map);
+  new L.Control.Geocoder({
+    position: 'topleft',
+  }).addTo(map);
 
-    //L.Permalink.setup(map); //TODO BUG Interférence permalink templateur
+  //L.Permalink.setup(map); //TODO BUG Interférence permalink templateur
 
-    // WRI poi & clusters
-    new GeoJsonAjaxCluster({
-      url: window.location.origin + '/api/bbox?&nb_points=all&detail=minimal',
-      icon: {
-        url: (feature) => window.location.origin + '/images/icones/' + feature.properties.type.icone + '.svg',
-        size: 24,
-      },
-      label: {
-        title: (feature) => feature.properties.nom,
-        permanent: true,
-        direction: 'center',
-      },
-      click: (feature) => {
-        // Affiche les donnés d'entête de la fiche qui sont disponibles dans l'API bbox
-        appliqueDonnees('point', feature.properties);
+  // WRI poi & clusters
+  new GeoJsonAjaxCluster({
+    url: window.location.origin + '/api/bbox?&nb_points=all&detail=minimal',
+    icon: {
+      url: (feature) => window.location.origin + '/images/icones/' + feature.properties.type.icone + '.svg',
+      size: 24,
+    },
+    label: {
+      title: (feature) => feature.properties.nom,
+      permanent: true,
+      direction: 'center',
+    },
+    click: (feature) => {
+      // Affiche les donnés d'entête de la fiche qui sont disponibles dans l'API bbox
+      appliqueDonnees('point', feature.properties);
 
-        // Affiche la page point
-        window.location.hash = 'point=' + feature.properties.id;
-      },
-    }).addTo(map);
-  }
-
-  // Prè-charge les dalles OpenHikingMap, points et commentaires autour de la zone visitée
-  map.on('moveend', () => preload(map, map.getCenter()));
+      // Affiche la page point
+      window.location.hash = 'point=' + feature.properties.id;
+    },
+  }).addTo(map);
 
   return map;
 }

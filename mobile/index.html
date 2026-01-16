@@ -14,6 +14,7 @@ Démonstrateur front-end pour refuges.info
 
   <link href="manifest.json" rel="manifest">
   <script>
+    //TODO else supprimer serviceWorker
     if (!window.location.search)
       navigator.serviceWorker.register("service-worker.js");
   </script>
@@ -45,8 +46,8 @@ Démonstrateur front-end pour refuges.info
   <script src="src/GeoJsonAjaxCluster.js"></script>
   <script src="src/carte.js"></script>
   <script src="src/templeteur.js"></script>
-  <script src="src/preload.js"></script>
-  <script src="src/index.js"></script>
+  <script src="src/preLoad.js"></script>
+  <script src="src/index.js" defer></script>
   <link href="src/index.css" rel="stylesheet">
 </head>
 

@@ -23,7 +23,7 @@ const pointsTileSize = 0.5; // ° lon / lat
  */
 
 /* eslint-disable no-unused-vars */
-function preload(map, position) {
+function preLoad(map, position) {
   // Preload OpenHikingMap tiles
   const preLoadedTiles = [];
   let leftToFetch = maxTilesPerRequest;

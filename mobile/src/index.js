@@ -1,7 +1,11 @@
-/* global requeteAPI, initCarte, prepareModeleGroupe, appliqueDonnees */
+/* global requeteAPI, initCarte, prepareModeleGroupe, appliqueDonnees, preLoad */
 //TODO renommer ce fichier wri
 
-const nomPages = ['carte', 'point', 'nouvelles'];
+const nomPages = ['carte', 'point', 'nouvelles'],
+  map = initCarte('map');
+
+// Prè-charge les dalles OpenHikingMap, points et commentaires autour de la zone visitée
+map.on('moveend', () => preLoad(map, map.getCenter()));
 
 // Initialisation de la page lorsque l'URL principale est appelée ou l'ancre change
 function changePage() {
@@ -26,7 +30,7 @@ window.addEventListener('popstate', changePage); // L'ancre change ou navigation
  **************/
 /* eslint-disable-next-line no-unused-vars */
 function affichePageCarte() {
-  initCarte().setView([45, 5.5], 10); // Puits des Ravières
+  map.setView([45, 5.5], 10); // Puits des Ravières
 }
 
 /******************
@@ -65,7 +69,7 @@ function affichePagePoint(pointId) {
         coords = json.features[0].geometry.coordinates,
         infoComp = {};
 
-      initCarte().setView([coords[1], coords[0]], 15);
+      map.setView([coords[1], coords[0]], 15);
 
       // Infos complémentaires
       // Filtre les infos non signifiantes
