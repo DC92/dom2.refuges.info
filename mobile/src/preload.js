@@ -6,14 +6,14 @@
 
 /* eslint-disable no-unused-vars */
 function preLoad(map, position) {
-  const preLoadedTiles = [];
+  const preLoadedEntries = [];
 
   // Get aready preloaded tiles dates
   /* global idbKeyval */
   idbKeyval.entries().then((entries) => {
     entries.forEach((entry) => {
-      if (entry[0].toString().includes('/'))
-        preLoadedTiles[entry[0]] = entry[1];
+      // if (entry[0].toString().includes('/'))
+      preLoadedEntries[entry[0]] = entry[1];
     });
 
 
@@ -24,34 +24,40 @@ function preLoad(map, position) {
      */
     //TODO : le faire ici
 
-    /* Les informations nécéssaires à l'affichage de la fiche d'un point et de ses commentaires
+
+    /******************************************************************************************
+     * Les informations nécéssaires à l'affichage de la fiche d'un point et de ses commentaires
      * sont chargées par dalles dans indexedDB avec la clé égale à la valeur de id_point
      * Une entrée indexedDB est créée, dont la clé est 0.5,43.5,1,44 et la valeur la date de mise en cache
      * Une fois chargés, ne sont rafraichis que les points ou commentaires récement modifiés.
      * Les photos des points visualisés sont sont mémorisées par le cache de l'explorateur
      */
-    const pointsTileSize = 0.5, // ° lon / lat
+    const pointsTileSize = 0.25, // ° lon / lat
       xy = Object.values(position).map(a => Math.round(a / pointsTileSize));
 
     for (let x = 0; x < 2; x++)
       for (let y = 0; y < 2; y++) {
-        const bbox = [xy[1] + y - 1, xy[0] + x - 1, xy[1] + y, xy[0] + x].map(a => a * pointsTileSize),
-          url = window.location.origin + '/api/bbox' +
-          '?detail=complet&nb_points=all&bbox=' + bbox.join(',');
+        const bbox = [xy[1] + y - 1, xy[0] + x - 1, xy[1] + y, xy[0] + x].map(a => a * pointsTileSize).join(','),
+          url = window.location.origin + '/api/bbox?detail=complet&nb_points=all&bbox=' + bbox,
+          idPoints = [];
 
-        //TODO fetch commentaires
-        fetch(url)
-          .then((response) => response.json())
-          .then((json) => {
-            json.features.forEach((feature) => {
-              idbKeyval.set(feature.id, feature); // Cache point data
+        if (!preLoadedEntries[bbox]) {
+          idbKeyval.set(bbox, Date.now()); // Mark cache date
+          fetch(url)
+            .then((response) => response.json())
+            .then((json) => {
+              json.features.forEach((feature) => {
+                idbKeyval.set(feature.id, feature.properties); // Cache point data
+                idPoints.push(feature.id);
+
+                //TODO fetch commentaires
+                console.log(idPoints);
+              });
+            }).catch((error) => { //TODO ??? errors pour tout ou rien
+              console.error('Error: ' + error + ' ' + url);
             });
-          })
-          .catch((error) => { //TODO ??? errors pour tout ou rien
-            console.error('Error: ' + error + ' ' + url);
-          });
+        }
       }
-
 
     /************************************************************************
      * Les dalles OpenHikingMap sont mémorisées par le cache de l'explorateur
@@ -77,11 +83,11 @@ function preLoad(map, position) {
         for (let x = baseTileXY[0] - ecart; x < baseTileXY[0] + ecart; x++)
           for (let y = baseTileXY[1] - ecart; y < baseTileXY[1] + ecart; y++) {
             const baseTileRef = zoom + '/' + x + '/' + y,
-              expirationDate = (preLoadedTiles[baseTileRef] || 0) + tilesRefreshTime,
+              cacheDate = (preLoadedEntries[baseTileRef] || 0) + tilesRefreshTime,
               url = 'https://tile.openmaps.fr/openhikingmap/' + baseTileRef + '.png';
 
-            if (expirationDate < Date.now() && leftToFetch-- > 0) {
-              idbKeyval.set(baseTileRef, Date.now()); // Mark expiration date
+            if (cacheDate < Date.now() && leftToFetch-- > 0) {
+              idbKeyval.set(baseTileRef, Date.now()); // Mark cache date
               fetch(url); // Load the tile on the brother cache (wait for the answer)
             }
           }
