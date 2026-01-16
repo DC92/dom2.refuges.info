@@ -1,5 +1,4 @@
 /* global requeteAPI, initCarte, prepareModeleGroupe, appliqueDonnees, preLoad */
-//TODO renommer ce fichier wri
 
 const nomPages = ['carte', 'point', 'nouvelles'],
   map = initCarte('map');
@@ -48,7 +47,7 @@ function affichePageNouvelles() {
         /* eslint-disable-next-line camelcase */
         json[j].lien_interne = '#point=' + json[j].id_point;
 
-      prepareModeleGroupe('nouvelles-groupe', Object.keys(json).length - 1); // -1 pour le copyright
+      prepareModeleGroupe('nouvelles-groupe', Object.keys(json).length - 1); // -1 pour la ligne copyright dans le json
       appliqueDonnees('nouvelles-groupe', json);
     }
   );

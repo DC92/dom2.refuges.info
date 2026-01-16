@@ -77,13 +77,6 @@ body:not([class*="attente"]) .attente {
   margin: auto;
 }
 
-/* DEBUG ONLY */
-@media screen and (max-width: 151px) {
-  #carte #map {
-    max-height: 100vw;
-  }
-}
-
 /* Page point */
 #point #map {
   width: 400px;
@@ -147,4 +140,11 @@ body:not([class*="attente"]) .attente {
   mix-blend-mode: normal;
   width: 256px !important;
   height: 256px !important;
+}
+
+/* DEBUG ONLY */
+@media screen and (max-width: 200px) {
+  #carte #map {
+    max-height: 100vw;
+  }
 }

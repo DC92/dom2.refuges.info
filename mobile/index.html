@@ -12,13 +12,6 @@ Démonstrateur front-end pour refuges.info
   <link href="src/favicon.svg" type="image/svg+xml" rel="icon" />
   <title>Refuges.info</title>
 
-  <link href="manifest.json" rel="manifest">
-  <script>
-    //TODO else supprimer serviceWorker
-    if (!window.location.search)
-      navigator.serviceWorker.register("service-worker.js");
-  </script>
-
   <!-- Leaflet -->
   <script src="leaflet/leaflet.js"></script>
   <link href="leaflet/leaflet.css" rel="stylesheet" />
@@ -47,8 +40,20 @@ Démonstrateur front-end pour refuges.info
   <script src="src/carte.js"></script>
   <script src="src/templeteur.js"></script>
   <script src="src/preLoad.js"></script>
-  <script src="src/index.js" defer></script>
-  <link href="src/index.css" rel="stylesheet">
+  <script src="src/wri.js" defer></script>
+  <link href="src/wri.css" rel="stylesheet">
+
+  <!-- Progressive Web Application -->
+  <link href="manifest.json" rel="manifest">
+  <script>
+    navigator.serviceWorker.register("service-worker.js")
+      .then((registration) => {
+        if (window.location.search) // Debug without PWA
+          registration.unregister().then(() => console.info("service-worker unregistered"));
+        else
+          console.info("service-worker registered");
+      });
+  </script>
 </head>
 
 <body id="carte"><!-- id = le nom de la page courante -->

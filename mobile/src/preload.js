@@ -65,6 +65,7 @@ function preLoad(map, position) {
         url = window.location.origin + '/api/bbox' +
         '?detail=complet&nb_points=all&bbox=' + bbox.join(',');
 
+      //TODO fetch commentaires
       fetch(url)
         .then((response) => response.json())
         .then((json) => {

@@ -7,20 +7,14 @@ const cacheName = 'refuges.info';
 console.log('Init PWA');
 
 // Fetch any ressource, cache first with cache refresh
-async function cacheFirstWithRefresh(request) {
-  const fetchResponsePromise =
-    fetch(request)
-    .then(async (networkResponse) => {
-      if (networkResponse.ok) {
-        const cache = await caches.open(cacheName);
-        cache.put(request, networkResponse.clone());
-      }
+self.addEventListener('fetch', (evt) => {
+  evt.respondWith((event) =>
+    caches.match(event.request) ||
+    fetch(event.request)
+    .then((networkResponse) => {
+      if (networkResponse.ok)
+        caches.open(cacheName).put(event.request, networkResponse.clone());
+
       return networkResponse;
-    });
-
-  return (await caches.match(request)) || (await fetchResponsePromise);
-}
-
-self.addEventListener('fetch', (event) => {
-  event.respondWith(cacheFirstWithRefresh(event.request));
+    }));
 });
