@@ -48,10 +48,11 @@ Démonstrateur front-end pour refuges.info
   <script>
     navigator.serviceWorker.register("service-worker.js")
       .then((registration) => {
+        console.info('Service worker registred');
         if (window.location.search) // Debug without PWA
           registration.unregister().then(() => console.info("service-worker unregistered"));
         else
-          console.info("service-worker registered");
+          console.info("service-worker registred");
       });
   </script>
 </head>

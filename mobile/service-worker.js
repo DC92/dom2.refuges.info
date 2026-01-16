@@ -4,17 +4,27 @@
 
 const cacheName = 'refuges.info';
 
-console.log('Init PWA');
+console.info('Service worker loaded');
+
+self.skipWaiting(); // Immediately activate the SW & trigger controllerchange
+
+self.addEventListener('install', () => {
+  console.info('Service worker installed');
+});
 
 // Fetch any ressource, cache first with cache refresh
-self.addEventListener('fetch', (evt) => {
-  evt.respondWith((event) =>
-    caches.match(event.request) ||
-    fetch(event.request)
-    .then((networkResponse) => {
-      if (networkResponse.ok)
-        caches.open(cacheName).put(event.request, networkResponse.clone());
-
+async function cacheFirstWithRefresh(request) {
+  return (await caches.match(request)) ||
+  fetch(request)
+    .then(async (networkResponse) => {
+      if (networkResponse.ok) {
+        const cache = await caches.open(cacheName);
+        cache.put(request, networkResponse.clone());
+      }
       return networkResponse;
-    }));
+    });
+}
+
+self.addEventListener('fetch', (event) => {
+  event.respondWith(cacheFirstWithRefresh(event.request));
 });
