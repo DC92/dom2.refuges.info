@@ -18,8 +18,7 @@
  * Une fois chargés, ne sont rafraichis que les points ou commentaires récement modifiés.
  * Les photos des points visualisés sont sont mémorisées par le cache de l'explorateur
  */
-//const pointsTileSize = 0.25; // ° lon / lat
-const pointsTileSize = 0.1; // ° lon / lat
+const pointsTileSize = 0.25; // ° lon / lat
 
 /************************************************************************
  * Les dalles OpenHikingMap sont mémorisées par le cache de l'explorateur
@@ -34,6 +33,46 @@ const tilesRefreshTime = 30000, // Milliseconds
   maxTilesPerRequest = 40;
 
 
+async function preLoadPoints(map, position, preLoadedEntries) {
+  const xy = Object.values(position).map((a) => Math.round(a / pointsTileSize));
+
+  for (let x = 0; x < 2; x++)
+    for (let y = 0; y < 2; y++) {
+      const bbox = [xy[1] + y - 1, xy[0] + x - 1, xy[1] + y, xy[0] + x]
+        .map((a) => a * pointsTileSize).join(','),
+        memPairs = []; // Paires à mémoriser;
+
+      // If the points in this bbox are not already stored in indexedDB
+      if (!preLoadedEntries[bbox]) {
+        // Get points data
+        await fetch(window.location.origin + '/api/bbox' +
+            '?detail=complet&nb_points=all&bbox=' + bbox)
+          .then(response => response.json())
+          .then(geoJson => geoJson.features.forEach(feature => {
+            feature.properties.commentaires = [];
+            memPairs[feature.id] = [feature.id, feature.properties];
+            //TODO filtrer les valeurs mémorisées
+          }));
+
+        // Get commentaires
+        if (memPairs.length) // If any point in this bbox
+          await fetch(window.location.origin + '/api/commentaires' +
+            '?format_texte=html&id_point=' + Object.keys(memPairs).join(','))
+          .then(response => response.json())
+          .then(json => Object.values(json).forEach(commentaire => {
+            if (typeof commentaire === 'object')
+              memPairs[commentaire.id_point][1]
+              .commentaires['C' + commentaire.id_commentaire] =
+              commentaire;
+          }));
+
+        // Add an entry to idbKeyval to mark this bbox as cached
+        memPairs.push([bbox, Date.now()]);
+        await idbKeyval.setMany(Object.values(memPairs));
+      }
+    }
+}
+
 /* eslint-disable no-unused-vars */
 function preLoad(map, position) {
   const preLoadedEntries = [];
@@ -46,54 +85,8 @@ function preLoad(map, position) {
       preLoadedEntries[entry[0]] = entry[1];
     });
 
-    //***********
-    // Mem points
-    const xy = Object.values(position).map((a) => Math.round(a / pointsTileSize));
+    preLoadPoints(map, position, preLoadedEntries);
 
-    for (let x = 0; x < 2; x++)
-      for (let y = 0; y < 2; y++) {
-        const bbox = [xy[1] + y - 1, xy[0] + x - 1, xy[1] + y, xy[0] + x]
-          .map((a) => a * pointsTileSize).join(','),
-          memPairs = []; // Paires à mémoriser
-
-        if (!preLoadedEntries[bbox]) { // If not mem in indexedDB
-
-          // Get points data
-          fetch(window.location.origin + '/api/bbox' +
-              '?detail=complet&nb_points=all&bbox=' + bbox)
-            .then((response) => response.json())
-            .then((geoJson) => {
-              if (geoJson.features.length) { // If any point in this area
-                geoJson.features.forEach((feature) => {
-                  feature.properties.commentaires = [];
-                  memPairs[feature.id] = ['P' + feature.id, feature.properties];
-                  //TODO filtrer les valeurs mémorisées
-                });
-
-                // Get commentaires
-                fetch(window.location.origin + '/api/commentaires' +
-                    '?format_texte=html&id_point=' + Object.keys(memPairs).join(','))
-                  .then((response) => response.json())
-                  .then((json) => {
-                    Object.values(json).forEach((commentaire) => {
-                      if (typeof commentaire === 'object')
-                        // Add commentaires to the point data
-                        //TODO filtrer les valeurs mémorisées
-                        if (typeof commentaire === 'object')
-                          memPairs[commentaire.id_point][1]
-                          .commentaires['C' + commentaire.id_commentaire] =
-                          commentaire;
-                    });
-
-                    // Add an entry to idbKeyval to mark this bbox as cached
-                    memPairs.push([bbox, Date.now()]);
-
-                    idbKeyval.setMany(Object.values(memPairs));
-                  });
-              }
-            });
-        }
-      }
 
     //************************
     // Mem OpenHikingMap tiles
@@ -113,7 +106,7 @@ function preLoad(map, position) {
               url = 'https://tile.openmaps.fr/openhikingmap/' + baseTileRef + '.png';
 
             if (cacheDate < Date.now() && leftToFetch-- > 0) {
-              //idbKeyval.set(baseTileRef, Date.now()); // Mark cache date
+              //DCMM       idbKeyval.set(baseTileRef, Date.now()); // Mark cache date
               fetch(url); // Load the tile on the brother cache (wait for the answer)
             }
           }
