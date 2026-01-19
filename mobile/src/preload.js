@@ -1,7 +1,5 @@
 /*********************************************************************
  * Préchargements dans une zone autour de celle parcourue par la carte
- * Accès à la base de données explorateur indexedDB
- * https://www.npmjs.com/package/idb-keyval
  */
 
 /********************************************************************
@@ -33,7 +31,30 @@ const tilesRefreshTime = 30000, // Milliseconds
   maxTilesPerRequest = 40;
 
 
-async function preLoadPoints(map, position, preLoadedEntries) {
+/* global idbKeyval */
+/* Accès à la base de données explorateur indexedDB
+ * https://www.npmjs.com/package/idb-keyval
+ */
+
+//TODO load 1 fiche (affichage point)
+//TODO preload nouveautés (depuis date / modifier l'API)
+
+/* eslint-disable no-unused-vars */
+async function preLoad(map, position) {
+  const preLoadedEntries = [];
+
+  // Dates de préchargement des dalles
+  await idbKeyval.entries().then(entries =>
+    entries.forEach(entry => {
+      if (typeof entry[1] !== 'object')
+        preLoadedEntries[entry[0]] = entry[1];
+    })
+  );
+
+  //*******************************************
+  // Memoriser les points autour de la position
+
+  // Coordonnées de la dalle de points à charger
   const xy = Object.values(position).map((a) => Math.round(a / pointsTileSize));
 
   for (let x = 0; x < 2; x++)
@@ -42,9 +63,11 @@ async function preLoadPoints(map, position, preLoadedEntries) {
         .map((a) => a * pointsTileSize).join(','),
         memPairs = []; // Paires à mémoriser;
 
-      // If the points in this bbox are not already stored in indexedDB
+      idbKeyval.set([bbox, Date.now()]); // Mark cache date
+
+      // Si les points de la bbox ne sont pas déjà stockés dans IndexedDB
       if (!preLoadedEntries[bbox]) {
-        // Get points data
+        // Données des points
         await fetch(window.location.origin + '/api/bbox' +
             '?detail=complet&nb_points=all&bbox=' + bbox)
           .then(response => response.json())
@@ -54,7 +77,7 @@ async function preLoadPoints(map, position, preLoadedEntries) {
             //TODO filtrer les valeurs mémorisées
           }));
 
-        // Get commentaires
+        // Données des commentaires
         if (memPairs.length) // If any point in this bbox
           await fetch(window.location.origin + '/api/commentaires' +
             '?format_texte=html&id_point=' + Object.keys(memPairs).join(','))
@@ -64,52 +87,36 @@ async function preLoadPoints(map, position, preLoadedEntries) {
               memPairs[commentaire.id_point][1]
               .commentaires['C' + commentaire.id_commentaire] =
               commentaire;
+            //TODO filtrer les valeurs mémorisées
           }));
 
-        // Add an entry to idbKeyval to mark this bbox as cached
-        memPairs.push([bbox, Date.now()]);
-        await idbKeyval.setMany(Object.values(memPairs));
+        // Enregistre les points
+        if (memPairs.length)
+          await idbKeyval.setMany(Object.values(memPairs));
       }
     }
-}
-
-/* eslint-disable no-unused-vars */
-function preLoad(map, position) {
-  const preLoadedEntries = [];
-
-  // Get aready preloaded tiles dates
-  /* global idbKeyval */
-  idbKeyval.entries().then((entries) => {
-    entries.forEach((entry) => {
-      //TODO REMOVE ??? if (entry[0].toString().includes('/'))
-      preLoadedEntries[entry[0]] = entry[1];
-    });
-
-    preLoadPoints(map, position, preLoadedEntries);
 
 
-    //************************
-    // Mem OpenHikingMap tiles
-    let leftToFetch = maxTilesPerRequest;
+  //*********************************************************
+  // Memoriser les dalles OpenHikingMap autour de la position
+  let leftToFetch = maxTilesPerRequest;
 
-    // Preload OpenHikingMap tiles
-    for (let ecart = 1; ecart <= preloadedTilesAround; ecart++)
-      for (let zoom = minZoomPreloadedTiles; zoom <= maxZoomPreloadedTiles; zoom++) {
-        const baseTileXY = Object.values(
-          map.project(Object.values(position), zoom)
-        ).map(a => Math.round(a / 256));
+  for (let ecart = 1; ecart <= preloadedTilesAround; ecart++)
+    for (let zoom = minZoomPreloadedTiles; zoom <= maxZoomPreloadedTiles; zoom++) {
+      const baseTileXY = Object.values(
+        map.project(Object.values(position), zoom)
+      ).map(a => Math.round(a / 256));
 
-        for (let x = baseTileXY[0] - ecart; x < baseTileXY[0] + ecart; x++)
-          for (let y = baseTileXY[1] - ecart; y < baseTileXY[1] + ecart; y++) {
-            const baseTileRef = zoom + '/' + x + '/' + y,
-              cacheDate = (preLoadedEntries[baseTileRef] || 0) + tilesRefreshTime,
-              url = 'https://tile.openmaps.fr/openhikingmap/' + baseTileRef + '.png';
+      for (let x = baseTileXY[0] - ecart; x < baseTileXY[0] + ecart; x++)
+        for (let y = baseTileXY[1] - ecart; y < baseTileXY[1] + ecart; y++) {
+          const baseTileRef = zoom + '/' + x + '/' + y,
+            cacheDate = (preLoadedEntries[baseTileRef] || 0) + tilesRefreshTime,
+            url = 'https://tile.openmaps.fr/openhikingmap/' + baseTileRef + '.png';
 
-            if (cacheDate < Date.now() && leftToFetch-- > 0) {
-              //DCMM       idbKeyval.set(baseTileRef, Date.now()); // Mark cache date
-              fetch(url); // Load the tile on the brother cache (wait for the answer)
-            }
+          if (cacheDate < Date.now() && leftToFetch-- > 0) {
+            idbKeyval.set(baseTileRef, Date.now()); // Mark cache date
+            await fetch(url); // Charger la dalle dans le cache de l'explorateur
           }
-      }
-  });
+        }
+    }
 }
