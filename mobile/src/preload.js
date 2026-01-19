@@ -16,7 +16,8 @@
  * Une fois chargés, ne sont rafraichis que les points ou commentaires récement modifiés.
  * Les photos des points visualisés sont sont mémorisées par le cache de l'explorateur
  */
-const pointsTileSize = 0.25; // ° lon / lat
+const pointsTileSize = 0.25, // ° lon / lat
+  infosCommentaire = ['texte_commentaire', 'auteur_commentaire', 'photo-reduite'];
 
 /************************************************************************
  * Les dalles OpenHikingMap sont mémorisées par le cache de l'explorateur
@@ -54,7 +55,7 @@ async function preLoad(map, position) {
   //*******************************************
   // Memoriser les points autour de la position
 
-  // Coordonnées de la dalle de points à charger
+  // Coordonnées de la dalle contenant la position
   const xy = Object.values(position).map((a) => Math.round(a / pointsTileSize));
 
   for (let x = 0; x < 2; x++)
@@ -72,9 +73,9 @@ async function preLoad(map, position) {
             '?detail=complet&nb_points=all&bbox=' + bbox)
           .then(response => response.json())
           .then(geoJson => geoJson.features.forEach(feature => {
+            //TODO filtrer les valeurs mémorisées
             feature.properties.commentaires = [];
             memPairs[feature.id] = [feature.id, feature.properties];
-            //TODO filtrer les valeurs mémorisées
           }));
 
         // Données des commentaires
@@ -86,8 +87,9 @@ async function preLoad(map, position) {
             if (typeof commentaire === 'object')
               memPairs[commentaire.id_point][1]
               .commentaires['C' + commentaire.id_commentaire] =
-              commentaire;
-            //TODO filtrer les valeurs mémorisées
+              Object.fromEntries(Object.entries(commentaire)
+                .filter(pair => infosCommentaire.includes(pair[0]))
+              );
           }));
 
         // Enregistre les points
