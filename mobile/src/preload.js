@@ -16,8 +16,7 @@
  * Une fois chargés, ne sont rafraichis que les points ou commentaires récement modifiés.
  * Les photos des points visualisés sont sont mémorisées par le cache de l'explorateur
  */
-const pointsTileSize = 0.25, // ° lon / lat
-  infosCommentaire = ['texte_commentaire', 'auteur_commentaire', 'photo-reduite'];
+const pointsTileSize = 0.25; // ° lon / lat
 
 /************************************************************************
  * Les dalles OpenHikingMap sont mémorisées par le cache de l'explorateur
@@ -39,6 +38,13 @@ const tilesRefreshTime = 30000, // Milliseconds
 
 //TODO load 1 fiche (affichage point)
 //TODO preload nouveautés (depuis date / modifier l'API)
+
+function purge(objet) {
+  for (const k in objet)
+    if (!objet[k])
+      delete objet[k];
+  return objet;
+}
 
 /* eslint-disable no-unused-vars */
 async function preLoad(map, position) {
@@ -87,9 +93,11 @@ async function preLoad(map, position) {
             if (typeof commentaire === 'object')
               memPairs[commentaire.id_point][1]
               .commentaires['C' + commentaire.id_commentaire] =
-              Object.fromEntries(Object.entries(commentaire)
-                .filter(pair => infosCommentaire.includes(pair[0]))
-              );
+              purge({
+                texte: commentaire.texte_commentaire,
+                auteur: commentaire.auteur_commentaire,
+                photo: Boolean(commentaire['photo-reduite']),
+              });
           }));
 
         // Enregistre les points
