@@ -66,9 +66,9 @@ function initCarte(containerElId) {
 
   // WRI poi & clusters
   new GeoJsonAjaxCluster({
-    url: window.location.origin + '/api/bbox?&nb_points=all&detail=minimal',
+    url: serveurAPI + '/api/bbox?&nb_points=all&detail=minimal',
     icon: {
-      url: (feature) => window.location.origin + '/images/icones/' + feature.properties.type.icone + '.svg',
+      url: (feature) => serveurAPI + '/images/icones/' + feature.properties.type.icone + '.svg',
       size: 24,
     },
     label: {

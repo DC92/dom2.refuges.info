@@ -75,7 +75,7 @@ async function preLoad(map, position) {
       // Si les points de la bbox ne sont pas déjà stockés dans IndexedDB
       if (!preLoadedEntries[bbox]) {
         // Données des points
-        await fetch(window.location.origin + '/api/bbox' +
+        await fetch(serveurAPI + '/api/bbox' +
             '?detail=complet&nb_points=all&bbox=' + bbox)
           .then(response => response.json())
           .then(geoJson => geoJson.features.forEach(feature => {
@@ -103,7 +103,7 @@ async function preLoad(map, position) {
 
         // Données des commentaires
         if (memPairs.length) // If any point in this bbox
-          await fetch(window.location.origin + '/api/commentaires' +
+          await fetch(serveurAPI + '/api/commentaires' +
             '?format_texte=html&id_point=' + Object.keys(memPairs).join(','))
           .then(response => response.json())
           .then(json => Object.values(json).forEach(commentaire => {
