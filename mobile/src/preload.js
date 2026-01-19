@@ -79,9 +79,26 @@ async function preLoad(map, position) {
             '?detail=complet&nb_points=all&bbox=' + bbox)
           .then(response => response.json())
           .then(geoJson => geoJson.features.forEach(feature => {
-            //TODO filtrer les valeurs mémorisées
-            feature.properties.commentaires = [];
-            memPairs[feature.id] = [feature.id, feature.properties];
+            const properties = purge({
+              id: feature.properties.id,
+              nom: feature.properties.nom,
+              type: feature.properties.type.valeur,
+              altitude: feature.properties.coord.alt,
+              longitude: feature.properties.coord.long,
+              latitude: feature.properties.coord.lat,
+              Proprietaire: feature.properties.proprio.valeur,
+              acces: feature.properties.acces.valeur,
+              remarque: feature.properties.remarque.valeur,
+              description: feature.properties.description,
+              places: feature.properties.places.valeur,
+              etat: feature.properties.etat.valeur || feature.properties.etat.id,
+              site: feature.properties.info_comp.site_officiel.valeur,
+              manqueUnMur: feature.properties.info_comp.manque_un_mur.valeur,
+              cheminee: feature.properties.info_comp.cheminee.valeur,
+              poele: feature.properties.info_comp.poele.valeur,
+            });
+            properties.commentaires = [];
+            memPairs[feature.id] = [feature.id, properties];
           }));
 
         // Données des commentaires
