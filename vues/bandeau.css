@@ -54,6 +54,7 @@
   }
 
   .recherche-haut a {
+    padding-right: 2px;
     font-size: 18px;
   }
 
@@ -91,7 +92,7 @@
   .bandeau_info {
     border: 1px solid red;
     border-radius: 5px;
-    margin: 2px;
+    margin: 0 0.5%;
     padding: 0 2px 2px 2px;
   }
 
