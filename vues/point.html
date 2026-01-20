@@ -112,13 +112,10 @@
       <dt>Remarques:</dt>
       <dd><?=$vue->remark?></dd>
 <!--================================= INFORMATIONS COMPLÉMENTAIRES ================================-->
-      <?php if (count($vue->infos_complementaires)) { ?>
+      <?php if (count($vue->informations_complementaires)) { ?>
       <dt style='clear: left;'>Informations complémentaires:</dt>
-        <?php foreach ($vue->infos_complementaires as $champ => $val) {?>
-          <dd><?=$champ?>: <b><?=$val['valeur']?></b> <?php
-            if (isset($val['lien'])) 
-            {?><a href="<?=$val['lien']?>"><?=$val['texte_lien']?></a><?php } 
-          ?></dd>
+        <?php foreach ($vue->informations_complementaires as $champ => $val) {?>
+          <dd><?=$champ?>: <b><?=$val?></b></dd>
         <?php }
       }?>
 <!--===================================== POINTS À PROXIMITÉ ======================================-->
