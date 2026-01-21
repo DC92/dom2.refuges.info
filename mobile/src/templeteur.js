@@ -1,4 +1,4 @@
-/* global XMLHttpRequest */
+/* global XMLHttpRequest, serveurAPI */
 
 /******************
  * Appel de l'API *

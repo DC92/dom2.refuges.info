@@ -1,4 +1,4 @@
-/* global L, GeoJsonAjaxCluster, appliqueDonnees */
+/* global L, GeoJsonAjaxCluster, appliqueDonnees, serveurAPI */
 
 //TODO BUG mauvais placement init de la fiche
 //TODO mémorisation position carte

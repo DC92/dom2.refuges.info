@@ -1,4 +1,4 @@
-/* global requeteAPI, initCarte, prepareModeleGroupe, appliqueDonnees, preLoad */
+/* global requeteAPI, initCarte, prepareModeleGroupe, appliqueDonnees, preLoad, preLoadPoints */
 
 const nomPages = ['carte', 'point', 'nouvelles'],
   map = initCarte('map');
@@ -59,9 +59,16 @@ function affichePageNouvelles() {
 /* eslint-disable-next-line no-unused-vars */
 function affichePagePoint(pointId) {
   // Charge les données du points
+
+  const ppp = preLoadPoints('point?id=104');
+
+  /*DCMM*/
+  console.log(ppp);
+
+  /*
   requeteAPI(
     'point',
-    '/api/point?format=geojson&format_texte=html&detail=complet&id=' + pointId,
+   '/api/point?format=geojson&format_texte=html&detail=complet&id=' + pointId,
     null,
     (json) => {
       const properties = json.features[0].properties,
@@ -83,7 +90,7 @@ function affichePagePoint(pointId) {
 
       // Infos de la fiche
       //BEST enlever titre de la rubrique quand elle est vide
-      /* eslint-disable-next-line camelcase */
+      /* eslint-disable-next-line camelcase * /
       properties.lien_externe = '/point/' + properties.id;
       appliqueDonnees('point', properties);
     }
@@ -99,4 +106,5 @@ function affichePagePoint(pointId) {
       appliqueDonnees('commentaires-groupe', json);
     }
   );
+  */
 }
