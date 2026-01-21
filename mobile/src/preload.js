@@ -121,8 +121,8 @@ async function preLoad(map, position) {
       idbKeyval.set([bbox, Date.now()]); // Mark cache date
 
       // Si les points de la bbox ne sont pas déjà stockés dans IndexedDB
-      if (!preLoadedEntries[bbox]); //DCMM
-      await preLoadPoints('bbox?bbox=' + bbox);
+      if (!preLoadedEntries[bbox])
+        await preLoadPoints('bbox?bbox=' + bbox);
     }
 
 

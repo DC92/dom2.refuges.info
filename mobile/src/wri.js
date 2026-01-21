@@ -1,4 +1,4 @@
-/* global requeteAPI, initCarte, prepareModeleGroupe, appliqueDonnees, preLoad, preLoadPoints */
+/* global requeteAPI, initCarte, prepareModeleGroupe, appliqueDonnees, preLoad, preLoadPoints, idbKeyval */
 
 const nomPages = ['carte', 'point', 'nouvelles'],
   map = initCarte('map');
@@ -57,18 +57,24 @@ function affichePageNouvelles() {
  * Page point *
  **************/
 /* eslint-disable-next-line no-unused-vars */
-function affichePagePoint(pointId) {
+async function affichePagePoint(idPoint) {
   // Charge les données du points
+  // Si le point est préchargé
+  let properties = await idbKeyval.get(parseInt(idPoint, 10));
 
-  const ppp = preLoadPoints('point?id=104');
+  if (!properties) {
+    // Essaye de le charger
+    const plp = await preLoadPoints('point?id=' + idPoint);
 
-  /*DCMM*/
-  console.log(ppp);
+    if (plp)
+      properties = plp[idPoint][1];
+  }
 
+  /*DCMM*/console.log(properties);
   /*
   requeteAPI(
     'point',
-   '/api/point?format=geojson&format_texte=html&detail=complet&id=' + pointId,
+   '/api/point?format=geojson&format_texte=html&detail=complet&id=' + idPoint,
     null,
     (json) => {
       const properties = json.features[0].properties,
@@ -99,7 +105,7 @@ function affichePagePoint(pointId) {
   // Charge les données des commentaires
   requeteAPI(
     'commentaires',
-    '/api/commentaires?format=json&format_texte=html&id_point=' + pointId,
+    '/api/commentaires?format=json&format_texte=html&id_point=' + idPoint,
     null,
     (json) => {
       prepareModeleGroupe('commentaires-groupe', Object.keys(json).length - 1); // -1 pour le copyright
