@@ -58,30 +58,18 @@ function affichePageNouvelles() {
  **************/
 /* eslint-disable-next-line no-unused-vars */
 async function affichePagePoint(idPoint) {
-  // Charge les données du points
-  // Si le point est préchargé
-  let properties = await idbKeyval.get(parseInt(idPoint, 10));
+  const properties =
+    await idbKeyval.get(parseInt(idPoint, 10)) || // Si le point est préchargé
+    await preLoadPoints('point?id=' + idPoint); // Essaye de le charger
 
-  if (!properties) {
-    // Essaye de le charger
-    const plp = await preLoadPoints('point?id=' + idPoint);
+  map.setView([properties.coord.lat, properties.coord.long], 15);
 
-    if (plp)
-      properties = plp[idPoint][1];
-  }
+  //*DCMM*/console.log(properties);
 
-  /*DCMM*/console.log(properties);
   /*
-  requeteAPI(
-    'point',
-   '/api/point?format=geojson&format_texte=html&detail=complet&id=' + idPoint,
-    null,
-    (json) => {
       const properties = json.features[0].properties,
         coords = json.features[0].geometry.coordinates,
         infoComp = {};
-
-      map.setView([coords[1], coords[0]], 15);
 
       // Infos complémentaires
       // Filtre les infos non signifiantes

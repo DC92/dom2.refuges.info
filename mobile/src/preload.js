@@ -52,22 +52,21 @@ async function preLoadPoints(selection) { // bbox?bbox=5,44,6,45 | point?id=1234
   await fetch(serveurAPI + '/api/' + selection + '&detail=complet&nb_points=all')
     .then(response => response.json())
     .then(geoJson => geoJson.features.forEach(feature => {
-      const properties = purge({
-        id: feature.properties.id,
-        nom: feature.properties.nom,
-        type: feature.properties.type.valeur,
-        altitude: feature.properties.coord.alt,
-        longitude: feature.properties.coord.long,
-        latitude: feature.properties.coord.lat,
-        Proprietaire: feature.properties.proprio.valeur,
-        acces: feature.properties.acces.valeur,
-        remarque: feature.properties.remarque.valeur,
-        description: feature.properties.description,
-        places: feature.properties.places.valeur,
-        etat: feature.properties.etat.valeur || feature.properties.etat.id,
-        'info_comp': feature.properties.info_comp,
+      const properties = {
+        commentaires: [], // Initialise la propriété
+      };
+
+      Object.entries(feature.properties).forEach(p => {
+        if ('id,nom,coord,info_comp'.includes(p[0])) {
+          properties[p[0]] = p[1];
+          delete properties[p[0]].precision;
+        }
+        if ('type,proprio,acces,remarque,description,places,etat'.includes(p[0])) {
+          const v = p[1].valeur;
+          if (v) properties[p[0]] = v;
+        }
       });
-      properties.commentaires = [];
+
       memPairs[feature.id] = [feature.id, properties];
     }));
 
@@ -91,7 +90,8 @@ async function preLoadPoints(selection) { // bbox?bbox=5,44,6,45 | point?id=1234
   if (memPairs.length)
     await idbKeyval.setMany(Object.values(memPairs));
 
-  return memPairs;
+  if (memPairs.length)
+    return Object.values(memPairs)[0][1];
 }
 
 /* eslint-disable no-unused-vars */
