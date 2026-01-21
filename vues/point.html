@@ -113,9 +113,11 @@
       <dd><?=$vue->remark?></dd>
 <!--================================= INFORMATIONS COMPLÉMENTAIRES ================================-->
       <?php if (count($vue->info_comp)) { ?>
-      <dt style='clear: left;'>Informations complémentaires:</dt>
-        <?php foreach ($vue->info_comp as $champ => $val) {?>
-          <dd><?=$champ?>: <b><?=$val?></b></dd>
+        <dt style='clear: left;'>Informations complémentaires:</dt>
+        <?php foreach ($vue->info_comp as $champ => $val) { ?>
+          <dd><?=$champ?>: <b>
+            <?=strncmp($val,'http',4) ? $val : '<a href="'.$val.'">'.$vue->nom_debut_majuscule.'</a>'?>
+          </b></dd>
         <?php }
       }?>
 <!--===================================== POINTS À PROXIMITÉ ======================================-->
