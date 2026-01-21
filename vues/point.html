@@ -112,9 +112,9 @@
       <dt>Remarques:</dt>
       <dd><?=$vue->remark?></dd>
 <!--================================= INFORMATIONS COMPLÉMENTAIRES ================================-->
-      <?php if (count($vue->informations_complementaires)) { ?>
+      <?php if (count($vue->info_comp)) { ?>
       <dt style='clear: left;'>Informations complémentaires:</dt>
-        <?php foreach ($vue->informations_complementaires as $champ => $val) {?>
+        <?php foreach ($vue->info_comp as $champ => $val) {?>
           <dd><?=$champ?>: <b><?=$val?></b></dd>
         <?php }
       }?>

@@ -118,9 +118,8 @@ else // le point est valide
   // ça directement de la base, mais bon... usine à gaz non ? un avis ? -- sly
   $champs=array_merge($config_wri['champs_entier_ou_sait_pas_points'],$config_wri['champs_trinaires_points'],array('site_officiel'));
 
-  // Dom 01/2026 : transféré dans le modèle point
-  //$vue->infos_complementaires = array ();
-  $vue->informations_complementaires = $point->informations_complementaires;
+  // Dom 01/2026 : transféré dans modeles/point.php
+  $vue->info_comp = $point->info_comp;
 
   /*********** Préparation des infos des commentaires ***/
   $vue->commentaires=array();

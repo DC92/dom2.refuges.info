@@ -390,9 +390,10 @@ function infos_points($conditions)
         $point_final->polygones[]=$polygone;
       }
 
-      // Dom 01/2026 : récupéré du contrôleur point et simplifié pour pouvoir être utilisé dans l'API
+      // Dom 01/2026 : simplifié et transféré depuis controlleurs/point.php pour pouvoir être utilisé dans l'API
+      // Formatage des informations complèmentaires
       $champs=array_merge($config_wri['champs_entier_ou_sait_pas_points'],$config_wri['champs_trinaires_points'],array('site_officiel'));
-      $point_final->informations_complementaires = array ();
+      $point_final->info_comp = array ();
       foreach ($champs as $champ)
       {
         $champ_equivalent = "equivalent_$champ";
@@ -403,7 +404,7 @@ function infos_points($conditions)
           {
             case 'site_officiel':
               if ($point->$champ!="")
-                $val = '<a href="'.$point->$champ.'">'.protege(mb_ucfirst($point->nom)).'</a>';
+                $val=  $point->$champ;
               break;
 
             case 'places_matelas' : case 'places' :
@@ -424,7 +425,7 @@ function infos_points($conditions)
           }
 
           if (isset($val))
-            $point_final->informations_complementaires[$point->$champ_equivalent]=$val;
+            $point_final->info_comp[$point->$champ_equivalent]=$val;
         }
         unset($val);
       }
