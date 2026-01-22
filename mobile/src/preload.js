@@ -32,7 +32,6 @@ const pointsTileSize = 0.25; // ° lon / lat
  */
 //TODO : le faire ici
 
-
 /* global idbKeyval, serveurAPI */
 
 //TODO load 1 fiche (affichage point)
@@ -45,53 +44,52 @@ function purge(objet) {
   return objet;
 }
 
-async function preLoadPoints(selection) { // bbox?bbox=5,44,6,45 | point?id=1234
-  const memPairs = [];
+async function preLoadPoints(url) {
+  const pointsProps = [];
 
   // Données des points
-  await fetch(serveurAPI + '/api/' + selection + '&detail=complet&nb_points=all')
+  await fetch(url)
     .then(response => response.json())
     .then(geoJson => geoJson.features.forEach(feature => {
-      const properties = {
+      // Extrait les propriétés intéressantes du point
+      pointsProps[feature.id] = {
         commentaires: [], // Initialise la propriété
       };
-
       Object.entries(feature.properties).forEach(p => {
         if ('id,nom,coord,info_comp'.includes(p[0])) {
-          properties[p[0]] = p[1];
-          delete properties[p[0]].precision;
+          pointsProps[feature.id][p[0]] = p[1];
+          delete pointsProps[feature.id][p[0]].precision;
         }
         if ('type,proprio,acces,remarque,description,places,etat'.includes(p[0])) {
           const v = p[1].valeur;
-          if (v) properties[p[0]] = v;
+          if (v) pointsProps[feature.id][p[0]] = v;
         }
       });
-
-      memPairs[feature.id] = [feature.id, properties];
     }));
 
   // Données des commentaires
-  if (memPairs.length) // If any point in this bbox
+  if (pointsProps.length) // If any point in this bbox
     await fetch(serveurAPI + '/api/commentaires' +
-      '?format_texte=html&id_point=' + Object.keys(memPairs).join(','))
+      '?format_texte=html&id_point=' + Object.keys(pointsProps).join(','))
     .then(response => response.json())
     .then(json => Object.values(json).forEach(commentaire => {
       if (typeof commentaire === 'object')
-        memPairs[commentaire.id_point][1]
+        pointsProps[commentaire.id_point]
         .commentaires['C' + commentaire.id_commentaire] =
-        purge({
+        purge({ //TODO simplifier
           texte: commentaire.texte_commentaire,
           auteur: commentaire.auteur_commentaire,
           photo: Boolean(commentaire['photo-reduite']),
         });
     }));
 
-  // Enregistre les points
-  if (memPairs.length)
-    await idbKeyval.setMany(Object.values(memPairs));
+  if (pointsProps.length) {
+    // Enregistre les propriétés du point
+    await idbKeyval.setMany(pointsProps.map((v, k) => [k, v]));
 
-  if (memPairs.length)
-    return Object.values(memPairs)[0][1];
+    // Retourne les propriétés du premier point
+    return Object.values(pointsProps)[0];
+  }
 }
 
 /* eslint-disable no-unused-vars */
@@ -110,7 +108,7 @@ async function preLoad(map, position) {
   // Memoriser les points autour de la position
 
   // Coordonnées de la dalle contenant la position
-  const xy = Object.values(position).map((a) => Math.round(a / pointsTileSize));
+  const xy = Object.values(position).map(a => Math.round(a / pointsTileSize));
 
   for (let x = 0; x < 2; x++)
     for (let y = 0; y < 2; y++) {
@@ -122,7 +120,7 @@ async function preLoad(map, position) {
 
       // Si les points de la bbox ne sont pas déjà stockés dans IndexedDB
       if (!preLoadedEntries[bbox])
-        await preLoadPoints('bbox?bbox=' + bbox);
+        await preLoadPoints(serveurAPI + '/api/bbox?detail=complet&nb_points=all&bbox=' + bbox);
     }
 
 

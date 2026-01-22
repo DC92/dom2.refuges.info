@@ -1,4 +1,4 @@
-/* global requeteAPI, initCarte, prepareModeleGroupe, appliqueDonnees, preLoad, preLoadPoints, idbKeyval */
+/* global requeteAPI, initCarte, prepareModeleGroupe, appliqueDonnees, preLoad, preLoadPoints, idbKeyval, serveurAPI */
 
 const nomPages = ['carte', 'point', 'nouvelles'],
   map = initCarte('map');
@@ -60,14 +60,14 @@ function affichePageNouvelles() {
 async function affichePagePoint(idPoint) {
   const properties =
     await idbKeyval.get(parseInt(idPoint, 10)) || // Si le point est préchargé
-    await preLoadPoints('point?id=' + idPoint); // Essaye de le charger
+    await preLoadPoints(serveurAPI + '/api/point?detail=complet&nb_points=all&id=' + idPoint); // Essaye de le charger
 
-  map.setView([properties.coord.lat, properties.coord.long], 15);
-
-  //*DCMM*/console.log(properties);
+  console.log(properties); ////
 
   /*
-      const properties = json.features[0].properties,
+  map.setView([properties.coord.lat, properties.coord.long], 15);
+
+       const properties = json.features[0].properties,
         coords = json.features[0].geometry.coordinates,
         infoComp = {};
 
