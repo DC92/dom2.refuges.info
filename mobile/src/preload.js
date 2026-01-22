@@ -37,51 +37,49 @@ const pointsTileSize = 0.25; // ° lon / lat
 //TODO load 1 fiche (affichage point)
 //TODO preload nouveautés (depuis date / modifier l'API)
 
-function purge(objet) {
-  for (const k in objet)
-    if (!objet[k])
-      delete objet[k];
-  return objet;
-}
-
 async function preLoadPoints(url) {
   const pointsProps = [];
 
   // Données des points
   await fetch(url)
     .then(response => response.json())
-    .then(geoJson => geoJson.features.forEach(feature => {
-      // Extrait les propriétés intéressantes du point
-      pointsProps[feature.id] = {
-        commentaires: [], // Initialise la propriété
-      };
-      Object.entries(feature.properties).forEach(p => {
-        if ('id,nom,coord,info_comp'.includes(p[0])) {
-          pointsProps[feature.id][p[0]] = p[1];
-          delete pointsProps[feature.id][p[0]].precision;
-        }
-        if ('type,proprio,acces,remarque,description,places,etat'.includes(p[0])) {
-          const v = p[1].valeur;
-          if (v) pointsProps[feature.id][p[0]] = v;
-        }
-      });
-    }));
+    .then(geoJson =>
+      geoJson.features.forEach(feature => {
+        // Extrait les propriétés intéressantes du point
+        pointsProps[feature.id] = {
+          commentaires: [], // Initialise la propriété
+        };
+
+        Object.entries(feature.properties).forEach(p => {
+          if ('id,nom,coord,info_comp'.includes(p[0])) {
+            pointsProps[feature.id][p[0]] = p[1];
+            delete pointsProps[feature.id][p[0]].precision;
+          }
+
+          if ('type,proprio,acces,remarque,description,places,etat'.includes(p[0])) {
+            const v = p[1].valeur;
+            if (v)
+              pointsProps[feature.id][p[0]] = v;
+          }
+        });
+      })
+    );
 
   // Données des commentaires
   if (pointsProps.length) // If any point in this bbox
-    await fetch(serveurAPI + '/api/commentaires' +
-      '?format_texte=html&id_point=' + Object.keys(pointsProps).join(','))
-    .then(response => response.json())
-    .then(json => Object.values(json).forEach(commentaire => {
-      if (typeof commentaire === 'object')
-        pointsProps[commentaire.id_point]
-        .commentaires['C' + commentaire.id_commentaire] =
-        purge({ //TODO simplifier
-          texte: commentaire.texte_commentaire,
-          auteur: commentaire.auteur_commentaire,
-          photo: Boolean(commentaire['photo-reduite']),
-        });
-    }));
+    await fetch(
+      serveurAPI + '/api/commentaires?format_texte=html&id_point=' + Object.keys(pointsProps).join(',')
+    ).then(response => response.json())
+    .then(json => {
+      Object.values(json).forEach(j => {
+        const c = [];
+        if (j.texte_commentaire) c.texte = j.texte_commentaire;
+        if (j.auteur_commentaire) c.auteur = j.auteur_commentaire;
+        if (j['photo-reduite']) c.photo = true;
+        if (Object.keys(c).length)
+          pointsProps[j.id_point].commentaires['C' + j.id_commentaire] = c;
+      })
+    });
 
   if (pointsProps.length) {
     // Enregistre les propriétés du point
