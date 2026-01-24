@@ -48,16 +48,18 @@ async function preLoadPoints(url) {
         // Extrait les propriétés intéressantes du point
         pointsProps[feature.id] = {
           fiche: {
-            'Auprès de qui se renseigner ?': feature.properties.proprio,
-            'Accès': feature.properties.acces,
-            'Remarques': feature.properties.remarque,
-            'Informations complémentaires': feature.properties.info_comp,
+            [feature.properties.proprio.nom]: feature.properties.proprio.valeur,
+            [feature.properties.acces.nom]: feature.properties.acces.valeur,
+            [feature.properties.remarque.nom]: feature.properties.remarque.valeur,
+            'Informations complémentaires': Object.values(feature.properties.info_comp)
+              .map(v => '<div>' + v.nom + ': <b>' + v.valeur + '</b></div>')
+              .join(''),
           },
           commentaires: [], // Initialise le tableau
         };
 
         Object.entries(feature.properties).forEach(p => {
-          if ('id,nom,coord,info_comp'.includes(p[0])) {
+          if ('id,nom,coord,infos_complementaires'.includes(p[0])) {
             pointsProps[feature.id][p[0]] = p[1];
             delete pointsProps[feature.id][p[0]].precision;
           }
@@ -124,7 +126,7 @@ async function preLoad(map, position) {
 
       // Si les points de la bbox ne sont pas déjà stockés dans IndexedDB
       if (!preLoadedEntries[bbox])
-        await preLoadPoints(serveurAPI + '/api/bbox?detail=complet&nb_points=all&bbox=' + bbox);
+      ; //DCMM      await preLoadPoints(serveurAPI + '/api/bbox?detail=complet&nb_points=all&bbox=' + bbox);
     }
 
 

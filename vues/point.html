@@ -114,10 +114,8 @@
 <!--================================= INFORMATIONS COMPLÉMENTAIRES ================================-->
       <?php if (count($vue->infos_complementaires)) { ?>
       <dt style='clear: left;'>Informations complémentaires:</dt>
-        <?php foreach ($vue->infos_complementaires as $champ => $val) {?>
-          <dd><?=$champ?>: <b>
-            <?=strncmp($val,'http',4) ? $val : '<a href="'.$val.'">'.$vue->nom_debut_majuscule.'</a>'?>
-          </b></dd>
+        <?php foreach ($vue->infos_complementaires as $val) { ?>
+          <dd><?=$val['nom']?>: <b><?=$val['valeur']?></b></dd>
         <?php }
       }?>
 <!--===================================== POINTS À PROXIMITÉ ======================================-->

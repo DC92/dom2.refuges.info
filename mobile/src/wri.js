@@ -60,7 +60,7 @@ function affichePageNouvelles() {
 async function affichePagePoint(idPoint) {
   const properties =
     //DCMM await idbKeyval.get(parseInt(idPoint, 10)) || // Si le point est préchargé
-    await preLoadPoints(serveurAPI + '/api/point?detail=complet&nb_points=all&id=' + idPoint); // Essaye de le charger
+    await preLoadPoints(serveurAPI + '/api/point?detail=complet&id=' + idPoint); // Essaye de le charger
   map.setView([properties.coord.lat, properties.coord.long], 15);
 
   function af(ooo) {
@@ -88,11 +88,11 @@ async function affichePagePoint(idPoint) {
 
       // Infos complémentaires
       // Filtre les infos non signifiantes
-      properties.info_comp.places = properties.places;
+      properties.infos_complementaires.places = properties.places;
       let ii = 0;
-      for (const ic in properties.info_comp)
-        if (!'§ 0 Sans'.includes(properties.info_comp[ic].valeur || '§'))
-          infoComp[ii++] = properties.info_comp[ic];
+      for (const ic in properties.infos_complementaires)
+        if (!'§ 0 Sans'.includes(properties.infos_complementaires[ic].valeur || '§'))
+          infoComp[ii++] = properties.infos_complementaires[ic];
 
       prepareModeleGroupe('point-infos-groupe', Object.keys(infoComp).length);
       appliqueDonnees('point-infos-groupe', infoComp);
