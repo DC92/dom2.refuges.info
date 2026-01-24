@@ -392,8 +392,9 @@ function infos_points($conditions)
 
       // Dom 01/2026 : simplifié et transféré depuis controlleurs/point.php pour pouvoir être utilisé dans l'API
       // Formatage des informations complèmentaires
-      $champs=array_merge($config_wri['champs_entier_ou_sait_pas_points'],$config_wri['champs_trinaires_points'],array('site_officiel'));
-      $point_final->info_comp = array ();
+      $champs=array_merge($config_wri['champs_entier_ou_sait_pas_points'],$config_wri['champs_trinaires_points'],['site_officiel']);
+      $point_final->infos_complementaires = [];
+
       foreach ($champs as $champ)
       {
         $champ_equivalent = "equivalent_$champ";
@@ -404,28 +405,32 @@ function infos_points($conditions)
           {
             case 'site_officiel':
               if ($point->$champ!="")
-                $val=  $point->$champ;
+                $val=[
+                  'valeur'=> '<a href="'.$point->$champ.'">'.protege(mb_ucfirst($point->nom)).'</a>', 
+                  'url' => $point->$champ,
+                ];
               break;
 
             case 'places_matelas' : case 'places' :
               if($point->$champ === NULL )
-                $val='<strong>Inconnu</strong>';
+                $val=['valeur'=> '<strong>Inconnu</strong>'];
               else
-                $val=$point->$champ;
+                $val=['valeur'=> $point->$champ, 'nb'=> $point->$champ];
               break;
 
             default: // Pour tous les boolééns restant
               if($point->$champ === TRUE)
-                $val = 'Oui';
+                $val = ['valeur'=> 'Oui'];
               if($point->$champ === FALSE)
-                $val = 'Non';
+                $val = ['valeur'=> 'Non'];
               if($point->$champ === NULL)
-                $val = '<strong>Inconnu</strong>';
+                $val = ['valeur'=> '<strong>Inconnu</strong>'];
               break;
           }
+          $val['nom']= $point->$champ_equivalent;
 
           if (isset($val))
-            $point_final->info_comp[$point->$champ_equivalent]=$val;
+            $point_final->infos_complementaires[$champ]=$val;
         }
         unset($val);
       }

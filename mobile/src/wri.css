@@ -64,24 +64,30 @@ body:not([class*="attente"]) .attente {
   font-size: 1.3em;
 }
 
-@media screen and (max-width: 499px) {
-  .bandeau span {
-    display: none;
-  }
-}
-
 /* Page carte */
 #carte #map {
   height: min(900px, calc(100% - 36px));
-  width: min(100%, 1200px);
+  width: min(1200px, 100%);
   margin: auto;
 }
 
 /* Page point */
 #point #map {
-  width: 400px;
-  height: 300px;
+  height: 360px;
+  width: min(480px, calc(100% - 20px));
   margin: 10px;
+}
+
+@media screen and (max-width: 499px) {
+  .bandeau span {
+    display: none;
+  }
+
+  #point #map {
+    height: 75vw;
+    width: 100%;
+    margin: 0;
+  }
 }
 
 .point {

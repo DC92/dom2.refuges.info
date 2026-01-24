@@ -1,4 +1,4 @@
-/* global requeteAPI, initCarte, prepareModeleGroupe, appliqueDonnees, preLoad, preLoadPoints, idbKeyval, serveurAPI */
+/* global requeteAPI, initCarte, prepareModeleGroupe, appliqueDonnees, preLoad, preLoadPoints, serveurAPI, idbKeyval */
 
 const nomPages = ['carte', 'point', 'nouvelles'],
   map = initCarte('map');
@@ -59,13 +59,28 @@ function affichePageNouvelles() {
 /* eslint-disable-next-line no-unused-vars */
 async function affichePagePoint(idPoint) {
   const properties =
-    await idbKeyval.get(parseInt(idPoint, 10)) || // Si le point est préchargé
+    //DCMM await idbKeyval.get(parseInt(idPoint, 10)) || // Si le point est préchargé
     await preLoadPoints(serveurAPI + '/api/point?detail=complet&nb_points=all&id=' + idPoint); // Essaye de le charger
+  map.setView([properties.coord.lat, properties.coord.long], 15);
 
-  console.log(properties); ////
+  function af(ooo) {
+    const r = document.createElement('div');
+
+    if (typeof ooo === 'string')
+      r.appendChild(document.createTextNode(ooo));
+    else {
+      //TODO ...
+    }
+
+    return r;
+  }
+
+  const infoEl = document.getElementById('infos-point');
+  infoEl.appendChild(af('123 456 789'));
 
   /*
-  map.setView([properties.coord.lat, properties.coord.long], 15);
+
+//infoEl.insertAdjacentHTML('beforeend', '<div')
 
        const properties = json.features[0].properties,
         coords = json.features[0].geometry.coordinates,

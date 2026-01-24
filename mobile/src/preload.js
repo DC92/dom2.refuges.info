@@ -47,7 +47,13 @@ async function preLoadPoints(url) {
       geoJson.features.forEach(feature => {
         // Extrait les propriétés intéressantes du point
         pointsProps[feature.id] = {
-          commentaires: [], // Initialise la propriété
+          fiche: {
+            'Auprès de qui se renseigner ?': feature.properties.proprio,
+            'Accès': feature.properties.acces,
+            'Remarques': feature.properties.remarque,
+            'Informations complémentaires': feature.properties.info_comp,
+          },
+          commentaires: [], // Initialise le tableau
         };
 
         Object.entries(feature.properties).forEach(p => {

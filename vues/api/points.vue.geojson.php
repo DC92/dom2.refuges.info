@@ -27,7 +27,7 @@ headers_cache_api(isset ($_GET['v']) ? 3600*24*7 : 60);
   {
      "type": "Feature",
      "id": <?=$point->id?>,
-     "properties": <?=json_encode($point)?>,
+     "properties": <?=html_entity_decode(json_encode($point, JSON_PRETTY_PRINT))?>,
      "geometry": <?=$points_geojson[$point->id]['geojson']?>
 
   }<?php } ?>

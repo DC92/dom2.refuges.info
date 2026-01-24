@@ -119,7 +119,7 @@ else // le point est valide
   $champs=array_merge($config_wri['champs_entier_ou_sait_pas_points'],$config_wri['champs_trinaires_points'],array('site_officiel'));
 
   // Dom 01/2026 : transféré dans modeles/point.php
-  $vue->info_comp = $point->info_comp;
+  $vue->infos_complementaires = $point->infos_complementaires;
 
   /*********** Préparation des infos des commentaires ***/
   $vue->commentaires=array();
