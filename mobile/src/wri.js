@@ -59,6 +59,7 @@ function affichePageNouvelles() {
 /* eslint-disable-next-line no-unused-vars */
 async function affichePagePoint(idPoint) {
   const infoEl = document.getElementById('infos-point'),
+    commentEl = document.getElementById('commentaires'),
     properties =
     //DCMM await idbKeyval.get(parseInt(idPoint, 10)) || // Si le point est préchargé
     await preLoadPoints(serveurAPI + '/api/point?detail=complet&format_texte=html&id=' + idPoint); // Essaye de le charger
@@ -70,40 +71,20 @@ async function affichePagePoint(idPoint) {
     infoEl.insertAdjacentHTML('beforeend', '<dl>' + e[1] + '</dl>');
   });
 
-  /* const properties = json.features[0].properties,
-        coords = json.features[0].geometry.coordinates,
-        infoComp = {};
+  Object.values(properties.commentaires).forEach(c => {
 
-      // Infos complémentaires
-      // Filtre les infos non signifiantes
-      properties.infos_complementaires.places = properties.places;
-      let ii = 0;
-      for (const ic in properties.infos_complementaires)
-        if (!'§ 0 Sans'.includes(properties.infos_complementaires[ic].valeur || '§'))
-          infoComp[ii++] = properties.infos_complementaires[ic];
+    commentEl.insertAdjacentHTML('beforeend',
+      '<div>' +
+      '<span>' + (c.auteur || 'Inconnu') + ' - ' + (c.date || '') + '</span>' +
+      (c.texte ? '<p>' +
+        (c.photo ? '<img src="' + (serveurAPI + c.photo) + '"></img>' : '') +
+        c.texte + '</p>' : '') +
+      '</div>'
+    );
 
-      prepareModeleGroupe('point-infos-groupe', Object.keys(infoComp).length);
-      appliqueDonnees('point-infos-groupe', infoComp);
-
-      // Infos de la fiche
-      //BEST enlever titre de la rubrique quand elle est vide
-      /* eslint-disable-next-line camelcase * /
-      properties.lien_externe = '/point/' + properties.id;
-      appliqueDonnees('point', properties);
-    }
-  );
-  */
-
-  /*
-  // Charge les données des commentaires
-  requeteAPI(
-    'commentaires',
-    '/api/commentaires?format=json&format_texte=html&id_point=' + idPoint,
-    null,
-    (json) => {
-      prepareModeleGroupe('commentaires-groupe', Object.keys(json).length - 1); // -1 pour le copyright
-      appliqueDonnees('commentaires-groupe', json);
-    }
-  );
-  */
+    /*
+     commentEl.insertAdjacentHTML('beforeend', '<dt>' +(c.auteur||'Inconnu') + ' ' +(c.date||'') + '</dt>');
+    commentEl.insertAdjacentHTML('beforeend', '<dl>' +c.texte + '</dl>');
+    */
+  });
 }

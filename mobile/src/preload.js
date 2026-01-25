@@ -84,7 +84,8 @@ async function preLoadPoints(url) {
         const c = [];
         if (j.texte_commentaire) c.texte = j.texte_commentaire;
         if (j.auteur_commentaire) c.auteur = j.auteur_commentaire;
-        if (j['photo-reduite']) c.photo = true;
+        if (j.date_commentaire) c.date = j.date_commentaire.substr(0, 16);
+        if (j['photo-reduite']) c.photo = j['photo-reduite'];
         if (Object.keys(c).length)
           pointsProps[j.id_point].commentaires['C' + j.id_commentaire] = c;
       })

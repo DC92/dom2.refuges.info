@@ -87,6 +87,37 @@ body:not([class*="attente"]) .attente {
   margin: 0 0 10px 10px;
 }
 
+#commentaires div {
+  margin: 20px 0;
+  border: 1px solid white;
+  padding: 5px;
+}
+
+#commentaires span {
+  position: relative;
+  top: -15px;
+  background: var(--couleur_fond);
+  padding: 0 5px;
+  z-index: 10;
+}
+
+#commentaires p {
+  position: relative;
+  top: -8px;
+  overflow: hidden;
+}
+
+#commentaires img {
+  float: right;
+  max-width: 50vw;
+  margin: 0 0 0 5px;
+}
+
+#commentaires div:nth-child(odd) img {
+  float: left;
+  margin: 0 5px 0 0;
+}
+
 @media screen and (max-width: 499px) {
   .bandeau span {
     display: none;
