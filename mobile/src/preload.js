@@ -37,6 +37,7 @@ const pointsTileSize = 0.25; // ° lon / lat
 //TODO load 1 fiche (affichage point)
 //TODO preload nouveautés (depuis date / modifier l'API)
 
+/* eslint-disable-next-line no-unused-vars */
 async function preLoadPoints(url) {
   const pointsProps = [];
 
@@ -52,7 +53,7 @@ async function preLoadPoints(url) {
             [feature.properties.acces.nom]: feature.properties.acces.valeur,
             [feature.properties.remarque.nom]: feature.properties.remarque.valeur,
             'Informations complémentaires': Object.values(feature.properties.info_comp)
-              .map(v => '<div>' + v.nom + ': <b>' + v.valeur + '</b></div>')
+              .map(v => '<p><span>' + v.nom + ': </span><span>' + v.valeur + '</span></p>')
               .join(''),
           },
           commentaires: [], // Initialise le tableau

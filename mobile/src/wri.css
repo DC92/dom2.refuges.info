@@ -78,6 +78,15 @@ body:not([class*="attente"]) .attente {
   margin: 10px;
 }
 
+#infos-point dt,
+#infos-point span:last-child {
+  font-weight: bold;
+}
+
+#infos-point dl {
+  margin: 0 0 10px 10px;
+}
+
 @media screen and (max-width: 499px) {
   .bandeau span {
     display: none;

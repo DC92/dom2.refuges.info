@@ -58,31 +58,19 @@ function affichePageNouvelles() {
  **************/
 /* eslint-disable-next-line no-unused-vars */
 async function affichePagePoint(idPoint) {
-  const properties =
+  const infoEl = document.getElementById('infos-point'),
+    properties =
     //DCMM await idbKeyval.get(parseInt(idPoint, 10)) || // Si le point est préchargé
     await preLoadPoints(serveurAPI + '/api/point?detail=complet&id=' + idPoint); // Essaye de le charger
+
   map.setView([properties.coord.lat, properties.coord.long], 15);
 
-  function af(ooo) {
-    const r = document.createElement('div');
+  Object.entries(properties.fiche).forEach(e => {
+    infoEl.insertAdjacentHTML('beforeend', '<dt>' + e[0] + ':</dt>');
+    infoEl.insertAdjacentHTML('beforeend', '<dl>' + e[1] + '</dl>');
+  });
 
-    if (typeof ooo === 'string')
-      r.appendChild(document.createTextNode(ooo));
-    else {
-      //TODO ...
-    }
-
-    return r;
-  }
-
-  const infoEl = document.getElementById('infos-point');
-  infoEl.appendChild(af('123 456 789'));
-
-  /*
-
-//infoEl.insertAdjacentHTML('beforeend', '<div')
-
-       const properties = json.features[0].properties,
+  /* const properties = json.features[0].properties,
         coords = json.features[0].geometry.coordinates,
         infoComp = {};
 
@@ -104,7 +92,9 @@ async function affichePagePoint(idPoint) {
       appliqueDonnees('point', properties);
     }
   );
+  */
 
+  /*
   // Charge les données des commentaires
   requeteAPI(
     'commentaires',
