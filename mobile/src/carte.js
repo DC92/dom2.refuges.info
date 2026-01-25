@@ -1,8 +1,6 @@
 /* global L, GeoJsonAjaxCluster, appliqueDonnees, serveurAPI */
 
-//TODO BUG mauvais placement init de la fiche
 //TODO mémorisation position carte
-//TODO mémorisation info fiches WRI autour de la position
 //TODO Fonctions ctrl clic suivant demande faite à wri github
 
 /*****************
@@ -15,7 +13,6 @@ const baseLayers = {
       '<a href="https://openmaps.fr/donate">❤️ Donation</a>|' +
       '<a href="http://www.openstreetmap.org/copyright">© OpenStreetMap</a>|' +
       '<a target="_blank" href="https://wiki.openstreetmap.org/wiki/OpenHikingMap#Map_Legend">Légende</a>',
-    //TODO Aspirateur dalles spirales
   }),
   OpenStreetMap: L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,

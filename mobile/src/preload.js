@@ -34,10 +34,8 @@ const pointsTileSize = 0.25; // ° lon / lat
 
 /* global idbKeyval, serveurAPI */
 
-//TODO load 1 fiche (affichage point)
 //TODO preload nouveautés (depuis date / modifier l'API)
 
-/* eslint-disable-next-line no-unused-vars */
 async function preLoadPoints(url) {
   const pointsProps = [];
 
@@ -128,7 +126,9 @@ async function preLoad(map, position) {
 
       // Si les points de la bbox ne sont pas déjà stockés dans IndexedDB
       if (!preLoadedEntries[bbox])
-      ; //DCMM      await preLoadPoints(serveurAPI + '/api/bbox?detail=complet&format_texte=html&nb_points=all&bbox=' + bbox);
+        await preLoadPoints(
+          serveurAPI + '/api/bbox?detail=complet&format_texte=html&nb_points=all&bbox=' + bbox
+        );
     }
 
 

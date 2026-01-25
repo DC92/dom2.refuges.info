@@ -61,10 +61,12 @@ async function affichePagePoint(idPoint) {
   const infoEl = document.getElementById('infos-point'),
     commentEl = document.getElementById('commentaires'),
     properties =
-    //DCMM await idbKeyval.get(parseInt(idPoint, 10)) || // Si le point est préchargé
+    await idbKeyval.get(parseInt(idPoint, 10)) || // Si le point est préchargé
     await preLoadPoints(serveurAPI + '/api/point?detail=complet&format_texte=html&id=' + idPoint); // Essaye de le charger
 
   map.setView([properties.coord.lat, properties.coord.long], 15);
+  //TODO charger à partir de la couche bbox points globale.
+  //TODO autres paramètres de page
 
   Object.entries(properties.fiche).forEach(e => {
     infoEl.insertAdjacentHTML('beforeend', '<dt>' + e[0] + ':</dt>');
@@ -81,10 +83,5 @@ async function affichePagePoint(idPoint) {
         c.texte + '</p>' : '') +
       '</div>'
     );
-
-    /*
-     commentEl.insertAdjacentHTML('beforeend', '<dt>' +(c.auteur||'Inconnu') + ' ' +(c.date||'') + '</dt>');
-    commentEl.insertAdjacentHTML('beforeend', '<dl>' +c.texte + '</dl>');
-    */
   });
 }
