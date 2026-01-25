@@ -61,7 +61,7 @@ async function affichePagePoint(idPoint) {
   const infoEl = document.getElementById('infos-point'),
     properties =
     //DCMM await idbKeyval.get(parseInt(idPoint, 10)) || // Si le point est préchargé
-    await preLoadPoints(serveurAPI + '/api/point?detail=complet&id=' + idPoint); // Essaye de le charger
+    await preLoadPoints(serveurAPI + '/api/point?detail=complet&format_texte=html&id=' + idPoint); // Essaye de le charger
 
   map.setView([properties.coord.lat, properties.coord.long], 15);
 

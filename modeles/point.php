@@ -406,7 +406,7 @@ function infos_points($conditions)
             case 'site_officiel':
               if ($point->$champ!="")
                 $val=[
-                  'valeur'=> '<a href="'.$point->$champ.'">'.protege(mb_ucfirst($point->nom)).'</a>', 
+                  'valeur'=> '[url='.$point->$champ.']'.protege(mb_ucfirst($point->nom)).'[/url]', 
                   'url' => $point->$champ,
                 ];
               break;

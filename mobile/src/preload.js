@@ -127,7 +127,7 @@ async function preLoad(map, position) {
 
       // Si les points de la bbox ne sont pas déjà stockés dans IndexedDB
       if (!preLoadedEntries[bbox])
-      ; //DCMM      await preLoadPoints(serveurAPI + '/api/bbox?detail=complet&nb_points=all&bbox=' + bbox);
+      ; //DCMM      await preLoadPoints(serveurAPI + '/api/bbox?detail=complet&format_texte=html&nb_points=all&bbox=' + bbox);
     }
 
 
