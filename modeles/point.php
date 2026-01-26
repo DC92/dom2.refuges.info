@@ -401,36 +401,35 @@ function infos_points($conditions)
         // Si ce champs est vide, c'est que cet élément ne s'applique pas à ce type de point (exemple: une cheminée pour une grotte)
         if ($point->$champ_equivalent!="")
         {
+          $val = [
+            'nom' => $point->$champ_equivalent,
+          ];  
           switch ($champ)
           {
             case 'site_officiel':
-              if ($point->$champ!="")
-                $val=[
-                  'valeur'=> '[url='.$point->$champ.']'.protege(mb_ucfirst($point->nom)).'[/url]', 
-                  'url' => $point->$champ,
-                ];
-              break;
+              if ($point->$champ!="") {
+                $val['url'] = $point->$champ;
+                $val['valeur'] = '[url='.$point->$champ.']'.protege(mb_ucfirst($point->nom)).'[/url]';
+              } break;
 
             case 'places_matelas' : case 'places' :
               if($point->$champ === NULL )
-                $val=['valeur'=> '<strong>Inconnu</strong>'];
+                $val['valeur'] = '<strong>Inconnu</strong>';
               else
-                $val=['valeur'=> $point->$champ, 'nb'=> $point->$champ];
+                $val['valeur'] = $val['nb'] = $point->$champ;
               break;
 
             default: // Pour tous les boolééns restant
               if($point->$champ === TRUE)
-                $val = ['valeur'=> 'Oui'];
+                $val['valeur'] = 'Oui';
               if($point->$champ === FALSE)
-                $val = ['valeur'=> 'Non'];
+                $val['valeur'] = 'Non';
               if($point->$champ === NULL)
-                $val = ['valeur'=> '<strong>Inconnu</strong>'];
+                $val['valeur'] = '<strong>Inconnu</strong>';
               break;
           }
-          $val['nom']= $point->$champ_equivalent;
 
-          if (isset($val))
-            $point_final->infos_complementaires[$champ]=$val;
+          $point_final->infos_complementaires[$champ]=$val;
         }
         unset($val);
       }
