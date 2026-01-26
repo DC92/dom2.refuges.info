@@ -1,0 +1,71 @@
+{
+  "type": "FeatureCollection",
+  "generator": "Refuges.info API",
+  "copyright": "The data included in this document is from www.refuges.info. The data is made available under CC By-Sa 2.0",
+  "timestamp": "2026-01-26T08:20:20+01:00",
+  "size": "1",
+  "features": 
+  [ 
+  {
+     "type": "Feature",
+     "id": 1179,
+     "properties": {
+    "id": "1179",
+    "nom": "Fontaine de Carrette",
+    "type": {
+        "id": "23",
+        "valeur": "point d&#039;eau",
+        "icone": "pointdeau_x"
+    },
+    "sym": "Crossing",
+    "lien": "<a href=\"https:\/\/dom2.refuges.info\/point\/1179\/point-d-eau\/Fontaine-de-Carrette\/\">https:\/\/dom2.refuges.info\/point\/1179\/point-d-eau\/Fontaine-de-Carrette\/<\/a>",
+    "coord": {
+        "alt": "1410",
+        "long": "5.50639",
+        "lat": "44.9817",
+        "precision": {
+            "nom": "Coordonn\u00e9es prises sur le terrain",
+            "type": "1"
+        }
+    },
+    "places": {
+        "nom": "",
+        "valeur": "0"
+    },
+    "etat": {
+        "valeur": "Tari d\u00e9finitivement",
+        "id": "fermeture"
+    },
+    "date": {
+        "derniere_modif": "2020-07-24 21:00:24.587547+02",
+        "creation": "2006-04-05 00:00:00+02"
+    },
+    "remarque": {
+        "nom": "Remarque",
+        "valeur": "<span style=\"color: red\">La fontaine est temporaire, aucune garantie d&#039;y trouver de l&#039;eau<\/span>, elle \u00e9tait d\u00e9j\u00e0 tarie d\u00e9but juillet. Emportez de l&#039;eau quand vous allez \u00e0 Carrette !<br>\r\n<br>\r\nQue chaque randonneur qui l&#039;a vue donne sa date de passage et l&#039;\u00e9tat de la source, cela permet \u00e0 ceux qui veulent y aller de pr\u00e9voir leur chance d&#039;y trouver de l&#039;eau."
+    },
+    "acces": {
+        "nom": "Acc\u00e8s",
+        "valeur": "Oui, la fontaine existe, je l&#039;ai vu !<br>\r\nA partir de la <a href=\"https:\/\/dom2.refuges.info\/point\/104\/cabane-non-gardee\/Cabane-de-Carrette\/\">Cabane de Carrette<\/a>, suivre le GR 91 vers le sud pendant 300m, puis prendre une petite sente obliquant vers la droite sur un lapiaz pendant 60m. La fontaine coule d&#039;une pierre du lapiaz dans un creux \u00e0 gauche de la sente, qui continue sur une dizaine de m\u00e8tres.<br>\r\nLa fontaine est tr\u00e8s difficile \u00e0 trouver, j&#039;ai mis plus d&#039;une heure, GPS en main."
+    },
+    "proprio": {
+        "nom": "",
+        "valeur": ""
+    },
+    "createur": {
+        "id": "0",
+        "nom": ""
+    },
+    "article": {
+        "demonstratif": "ce",
+        "defini": "le",
+        "partitif": "d&#039;un"
+    },
+    "info_comp": [],
+    "description": {
+        "valeur": "<span style=\"color: red\">La fontaine est temporaire, aucune garantie d&#039;y trouver de l&#039;eau<\/span>, elle \u00e9tait d\u00e9j\u00e0 tarie d\u00e9but juillet. Emportez de l&#039;eau quand vous allez \u00e0 Carrette !<br>\r\n<br>\r\nQue chaque randonneur qui l&#039;a vue donne sa date de passage et l&#039;\u00e9tat de la source, cela permet \u00e0 ceux qui veulent y aller de pr\u00e9voir leur chance d&#039;y trouver de l&#039;eau.<br>\nOui, la fontaine existe, je l&#039;ai vu !<br>\r\nA partir de la <a href=\"https:\/\/dom2.refuges.info\/point\/104\/cabane-non-gardee\/Cabane-de-Carrette\/\">Cabane de Carrette<\/a>, suivre le GR 91 vers le sud pendant 300m, puis prendre une petite sente obliquant vers la droite sur un lapiaz pendant 60m. La fontaine coule d&#039;une pierre du lapiaz dans un creux \u00e0 gauche de la sente, qui continue sur une dizaine de m\u00e8tres.<br>\r\nLa fontaine est tr\u00e8s difficile \u00e0 trouver, j&#039;ai mis plus d&#039;une heure, GPS en main.<br>\n<br>\n"
+    }
+},
+     "geometry": {"type":"Point","coordinates":[5.50639,44.9817]}
+  }  ]
+}

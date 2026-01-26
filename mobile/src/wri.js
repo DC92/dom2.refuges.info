@@ -1,4 +1,5 @@
-/* global requeteAPI, initCarte, prepareModeleGroupe, appliqueDonnees, preLoad, preLoadPoints, serveurAPI, idbKeyval */
+/* global requeteAPI, initCarte, prepareModeleGroupe, appliqueDonnees */
+/* global  preLoad, preLoadPoints, serveurAPI, idbKeyval, debugPWA */
 
 const nomPages = ['carte', 'point', 'nouvelles'],
   map = initCarte('map');
@@ -37,6 +38,7 @@ function affichePageCarte() {
  ******************/
 /* eslint-disable-next-line no-unused-vars */
 function affichePageNouvelles() {
+  //TODO BUG ne précharge pas les nouvelles
   requeteAPI(
     'nouvelles',
     '/api/contributions?format=json&format_texte=html&massif=352&nombre=10',
@@ -60,11 +62,13 @@ function affichePageNouvelles() {
 async function affichePagePoint(idPoint) {
   const infoEl = document.getElementById('infos-point'),
     commentEl = document.getElementById('commentaires'),
-    properties =
+    properties = debugPWA ?
+    await preLoadPoints(serveurAPI + '/api/point?detail=complet&format_texte=html&id=' + idPoint) :
     await idbKeyval.get(parseInt(idPoint, 10)) || // Si le point est préchargé
     await preLoadPoints(serveurAPI + '/api/point?detail=complet&format_texte=html&id=' + idPoint); // Essaye de le charger
 
   map.setView([properties.coord.lat, properties.coord.long], 15);
+  //TODO BUG positionnement carte au chargement de la fiche
   //TODO charger à partir de la couche bbox points globale.
   //TODO autres paramètres de page
 

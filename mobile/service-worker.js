@@ -11,6 +11,7 @@ self.skipWaiting(); // Immediately activate the SW & trigger controllerchange
 self.addEventListener('install', () => {
   console.info('Service worker installed');
 });
+//TODO service-worker.php avec derniere date de modif d'un fichier /mobile
 
 // Fetch any ressource, cache first with cache refresh
 async function cacheFirstWithRefresh(request) {

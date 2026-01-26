@@ -1,3 +1,5 @@
+/* global idbKeyval, serveurAPI, debugPWA */
+
 /*********************************************************************
  * Préchargements dans une zone autour de celle parcourue par la carte
  * Les données sont stockées dans la base de données explorateur indexedDB
@@ -31,8 +33,6 @@ const pointsTileSize = 0.25; // ° lon / lat
  * quand un point a été modifié sur la carte.
  */
 //TODO : le faire ici
-
-/* global idbKeyval, serveurAPI */
 
 //TODO preload nouveautés (depuis date / modifier l'API)
 
@@ -125,15 +125,16 @@ async function preLoad(map, position) {
       idbKeyval.set([bbox, Date.now()]); // Mark cache date
 
       // Si les points de la bbox ne sont pas déjà stockés dans IndexedDB
-      if (!preLoadedEntries[bbox])
-        await preLoadPoints(
-          serveurAPI + '/api/bbox?detail=complet&format_texte=html&nb_points=all&bbox=' + bbox
+      if (!preLoadedEntries[bbox] && !debugPWA)
+        await preLoadPoints(serveurAPI +
+          '/api/bbox?detail=complet&format_texte=html&nb_points=all&bbox=' + bbox
         );
     }
 
 
   //*********************************************************
   // Memoriser les dalles OpenHikingMap autour de la position
+  //TODO BUG ne charge pas toutes les dalles au début
   let leftToFetch = maxTilesPerRequest;
 
   for (let ecart = 1; ecart <= preloadedTilesAround; ecart++)
