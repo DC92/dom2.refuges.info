@@ -1,111 +1,111 @@
 {
-	"type": "FeatureCollection",
-	"generator": "Refuges.info API",
-	"copyright": "The data included in this document is from www.refuges.info. The data is made available under CC By-Sa 2.0",
-	"timestamp": "2026-01-26T08:35:13+01:00",
-	"size": "1",
-	"features": [{
-		"type": "Feature",
-		"id": 104,
-		"properties": {
-			"id": "104",
-			"nom": "Cabane de Carrette",
-			"type": {
-				"id": "7",
-				"valeur": "cabane non gard\u00e9e",
-				"icone": "cabane_feu"
-			},
-			"sym": "Fishing Hot Spot Facility",
-			"lien": "<a href=\"https:\/\/www.refuges.info\/point\/104\/cabane-non-gardee\/cabane-de-Carrette\/\">https:\/\/www.refuges.info\/point\/104\/cabane-non-gardee\/cabane-de-Carrette\/<\/a>",
-			"coord": {
-				"alt": "1355",
-				"long": "5.50669",
-				"lat": "44.98445",
-				"precision": {
-					"nom": "Coordonn\u00e9es point\u00e9es sur photos a\u00e9riennes",
-					"type": "7"
-				}
-			},
-			"places": {
-				"nom": "Places pr\u00e9vues pour dormir",
-				"valeur": "5"
-			},
-			"etat": {
-				"valeur": "",
-				"id": "ouverture"
-			},
-			"date": {
-				"derniere_modif": "2022-04-06 16:18:57.431796+02",
-				"creation": "2003-03-27 00:00:00+01"
-			},
-			"remarque": {
-				"nom": "Remarque",
-				"valeur": "Refaite en 1997<br>\r\nLa cabane est dans une clairi\u00e8re, mais il n&#039;y a pas beaucoup de vue pour autant (c&#039;est plat)<br>\r\nPr\u00e9sence d&#039;une source temporaire : la <a href=\"https:\/\/www.refuges.info\/point\/1179\/point-d-eau\/fontaine-de-Carrette\/\">fontaine de Carrette<\/a> qui est le dernier point d&#039;eau avant le sud des hauts plateau. <br>\r\nBalai, une pelle de chantier.<br>\r\n(Attention, infos 2022 : scies cass\u00e9es)<br>\r\nAssez spacieuse, une grande table et deux bancs solidaires. Le nombre de place pour dormir est celui que peut contenir le bas-flanc. <br>\r\nMurs \u00e9pais et double toit en lambris, la porte est faite de deux battants qui ferment bien. <br>\r\nLes fen\u00eatres ne s&#039;ouvrent pas. Tout comme le battant sup\u00e9rieur de la porte, elles sont faite en plexiglass. Ceux de la fen\u00eatre du bas et du battant du haut de porte sont jaunis par la fum\u00e9e et la pi\u00e8ce est sombre lorsque la porte est ferm\u00e9e.<br>\r\nCouchage \u00e0 l&#039;\u00e9tage, sur un plancher sur\u00e9lev\u00e9. Escalier sans main courante. Pas de garde-corps autour de l&#039;ouverture qui donne sur l&#039;escalier : Attention \u00e0 ne pas y tomber la nuit si l&#039;on doit se lever, d&#039;autant que le haut de l&#039;escalier qui est raide arrive sur la sous-pente.<br>\r\nPropre et en bon \u00e9tat dans l&#039;ensemble.<br>\r\nElle est assez fr\u00e9quent\u00e9e durant la journ\u00e9e de par sa proximit\u00e9 avec la station de Corren\u00e7on.<br>\r\nLe bois mort n&#039;est pas difficile \u00e0 trouver si l&#039;on va \u00e0 l&#039;or\u00e9e de la clairi\u00e8re. Prenez-y vous t\u00f4t car le bois n&#039;est pas fourni. Il serait dommage de d\u00e9-forester l&#039;alentour pour du bois de chauffage lorsque la neige ne recouvre pas tout."
-			},
-			"acces": {
-				"nom": "Acc\u00e8s",
-				"valeur": "1h30 du foyer de ski de fond de correncon, au nord, en suivant le GR.<br>\r\nIl faut suivre le marquage &quot;45e Parrall\u00e8le&quot; entre les pistes de ski de fond (tirer plein sud), puis a partir du monument dudit 45e, suivre Porte Barnier.<br>\r\n<br>\r\nEnviron 1 J de marche depuis Pr\u00e9 Peyret, tout au sud, ou 3-4h de la jasse du Play, au milieu des plateaux ...<br>\r\n<br>\r\nDepuis l&#039;Auberge de Roybon : passer par le pas de l&#039;\u00e2ne puis \u00e0 droite en direction des coinchettes. Monter au collet de la coinchette, passer la grotte et la Source Garnier puis \u00e0 la porte Barnier, prendre le GR 91 en direction de la prairie de Carette. La cabane se trouve sur la gauche, face \u00e0 la prairie.<br>\r\n<br>\r\n<b> Acc\u00e8s en transport en commun :<\/b><br>\r\nBus au d\u00e9part de la gare SNCF de Grenoble<br>\r\nLigne : 5100 + VIL07 arr\u00eat HAUTS PLATEAUX (changement \u00e0 Villard de Lans)<br>\r\nCompagnie : Transi\u00e8re. Horaires sur <a href=\"http:\/\/www.transisere.fr\/\">http:\/\/www.transisere.fr\/<\/a>"
-			},
-			"proprio": {
-				"nom": "Aupr\u00e8s de qui se renseigner \/ accessibilit\u00e9",
-				"valeur": "G\u00e9r\u00e9e par le Parc Naturel R\u00e9gional du Vercors"
-			},
-			"createur": {
-				"id": "5",
-				"nom": "yip"
-			},
-			"article": {
-				"demonstratif": "cette",
-				"defini": "la",
-				"partitif": "d&#039;une"
-			},
-			"info_comp": {
-				"site_officiel": {
-					"nom": "Site Internet",
-					"url": "",
-					"valeur": ""
-				},
-				"manque_un_mur": {
-					"nom": "Manque un mur",
-					"valeur": "0"
-				},
-				"cheminee": {
-					"nom": "Chemin\u00e9e",
-					"valeur": "0"
-				},
-				"poele": {
-					"nom": "Po\u00eale",
-					"valeur": "1"
-				},
-				"couvertures": {
-					"nom": "Couvertures",
-					"valeur": "0"
-				},
-				"places_matelas": {
-					"nom": "Places sur Matelas",
-					"nb": "0",
-					"valeur": "Sans"
-				},
-				"latrines": {
-					"nom": "Latrines",
-					"valeur": "0"
-				},
-				"bois": {
-					"nom": "For\u00eat \u00e0 moins de 100m",
-					"valeur": "1"
-				},
-				"eau": {
-					"nom": "Eau \u00e0 moins de 100m",
-					"valeur": "0"
-				}
-			},
-			"description": {
-				"valeur": "Places pr\u00e9vues pour dormir: 5<br>\nRefaite en 1997<br>\r\nLa cabane est dans une clairi\u00e8re, mais il n&#039;y a pas beaucoup de vue pour autant (c&#039;est plat)<br>\r\nPr\u00e9sence d&#039;une source temporaire : la <a href=\"https:\/\/www.refuges.info\/point\/1179\/point-d-eau\/fontaine-de-Carrette\/\">fontaine de Carrette<\/a> qui est le dernier point d&#039;eau avant le sud des hauts plateau. <br>\r\nBalai, une pelle de chantier.<br>\r\n(Attention, infos 2022 : scies cass\u00e9es)<br>\r\nAssez spacieuse, une grande table et deux bancs solidaires. Le nombre de place pour dormir est celui que peut contenir le bas-flanc. <br>\r\nMurs \u00e9pais et double toit en lambris, la porte est faite de deux battants qui ferment bien. <br>\r\nLes fen\u00eatres ne s&#039;ouvrent pas. Tout comme le battant sup\u00e9rieur de la porte, elles sont faite en plexiglass. Ceux de la fen\u00eatre du bas et du battant du haut de porte sont jaunis par la fum\u00e9e et la pi\u00e8ce est sombre lorsque la porte est ferm\u00e9e.<br>\r\nCouchage \u00e0 l&#039;\u00e9tage, sur un plancher sur\u00e9lev\u00e9. Escalier sans main courante. Pas de garde-corps autour de l&#039;ouverture qui donne sur l&#039;escalier : Attention \u00e0 ne pas y tomber la nuit si l&#039;on doit se lever, d&#039;autant que le haut de l&#039;escalier qui est raide arrive sur la sous-pente.<br>\r\nPropre et en bon \u00e9tat dans l&#039;ensemble.<br>\r\nElle est assez fr\u00e9quent\u00e9e durant la journ\u00e9e de par sa proximit\u00e9 avec la station de Corren\u00e7on.<br>\r\nLe bois mort n&#039;est pas difficile \u00e0 trouver si l&#039;on va \u00e0 l&#039;or\u00e9e de la clairi\u00e8re. Prenez-y vous t\u00f4t car le bois n&#039;est pas fourni. Il serait dommage de d\u00e9-forester l&#039;alentour pour du bois de chauffage lorsque la neige ne recouvre pas tout.<br>\n1h30 du foyer de ski de fond de correncon, au nord, en suivant le GR.<br>\r\nIl faut suivre le marquage &quot;45e Parrall\u00e8le&quot; entre les pistes de ski de fond (tirer plein sud), puis a partir du monument dudit 45e, suivre Porte Barnier.<br>\r\n<br>\r\nEnviron 1 J de marche depuis Pr\u00e9 Peyret, tout au sud, ou 3-4h de la jasse du Play, au milieu des plateaux ...<br>\r\n<br>\r\nDepuis l&#039;Auberge de Roybon : passer par le pas de l&#039;\u00e2ne puis \u00e0 droite en direction des coinchettes. Monter au collet de la coinchette, passer la grotte et la Source Garnier puis \u00e0 la porte Barnier, prendre le GR 91 en direction de la prairie de Carette. La cabane se trouve sur la gauche, face \u00e0 la prairie.<br>\r\n<br>\r\n<b> Acc\u00e8s en transport en commun :<\/b><br>\r\nBus au d\u00e9part de la gare SNCF de Grenoble<br>\r\nLigne : 5100 + VIL07 arr\u00eat HAUTS PLATEAUX (changement \u00e0 Villard de Lans)<br>\r\nCompagnie : Transi\u00e8re. Horaires sur <a href=\"http:\/\/www.transisere.fr\/\">http:\/\/www.transisere.fr\/<\/a><br>\nG\u00e9r\u00e9e par le Parc Naturel R\u00e9gional du Vercors<br>\n"
-			}
-		},
-		"geometry": {
-			"type": "Point",
-			"coordinates": [5.50669, 44.98445]
-		}
-	}]
+  "type": "FeatureCollection",
+  "generator": "Refuges.info API",
+  "copyright": "The data included in this document is from www.refuges.info. The data is made available under CC By-Sa 2.0",
+  "timestamp": "2026-01-26T08:39:46+01:00",
+  "size": "1",
+  "features": [{
+    "type": "Feature",
+    "id": 104,
+    "properties": {
+      "id": "104",
+      "nom": "Cabane de Carrette",
+      "type": {
+        "id": "7",
+        "valeur": "cabane non gard\u00e9e",
+        "icone": "cabane_feu"
+      },
+      "sym": "Fishing Hot Spot Facility",
+      "lien": "<a href=\"https:\/\/www.refuges.info\/point\/104\/cabane-non-gardee\/cabane-de-Carrette\/\">https:\/\/www.refuges.info\/point\/104\/cabane-non-gardee\/cabane-de-Carrette\/<\/a>",
+      "coord": {
+        "alt": "1355",
+        "long": "5.50669",
+        "lat": "44.98445",
+        "precision": {
+          "nom": "Coordonn\u00e9es point\u00e9es sur photos a\u00e9riennes",
+          "type": "7"
+        }
+      },
+      "places": {
+        "nom": "Places pr\u00e9vues pour dormir",
+        "valeur": "5"
+      },
+      "etat": {
+        "valeur": "",
+        "id": "ouverture"
+      },
+      "date": {
+        "derniere_modif": "2022-04-06 16:18:57.431796+02",
+        "creation": "2003-03-27 00:00:00+01"
+      },
+      "remarque": {
+        "nom": "Remarque",
+        "valeur": "Refaite en 1997<br>\r\nLa cabane est dans une clairi\u00e8re, mais il n&#039;y a pas beaucoup de vue pour autant (c&#039;est plat)<br>\r\nPr\u00e9sence d&#039;une source temporaire : la <a href=\"https:\/\/www.refuges.info\/point\/1179\/point-d-eau\/fontaine-de-Carrette\/\">fontaine de Carrette<\/a> qui est le dernier point d&#039;eau avant le sud des hauts plateau. <br>\r\nBalai, une pelle de chantier.<br>\r\n(Attention, infos 2022 : scies cass\u00e9es)<br>\r\nAssez spacieuse, une grande table et deux bancs solidaires. Le nombre de place pour dormir est celui que peut contenir le bas-flanc. <br>\r\nMurs \u00e9pais et double toit en lambris, la porte est faite de deux battants qui ferment bien. <br>\r\nLes fen\u00eatres ne s&#039;ouvrent pas. Tout comme le battant sup\u00e9rieur de la porte, elles sont faite en plexiglass. Ceux de la fen\u00eatre du bas et du battant du haut de porte sont jaunis par la fum\u00e9e et la pi\u00e8ce est sombre lorsque la porte est ferm\u00e9e.<br>\r\nCouchage \u00e0 l&#039;\u00e9tage, sur un plancher sur\u00e9lev\u00e9. Escalier sans main courante. Pas de garde-corps autour de l&#039;ouverture qui donne sur l&#039;escalier : Attention \u00e0 ne pas y tomber la nuit si l&#039;on doit se lever, d&#039;autant que le haut de l&#039;escalier qui est raide arrive sur la sous-pente.<br>\r\nPropre et en bon \u00e9tat dans l&#039;ensemble.<br>\r\nElle est assez fr\u00e9quent\u00e9e durant la journ\u00e9e de par sa proximit\u00e9 avec la station de Corren\u00e7on.<br>\r\nLe bois mort n&#039;est pas difficile \u00e0 trouver si l&#039;on va \u00e0 l&#039;or\u00e9e de la clairi\u00e8re. Prenez-y vous t\u00f4t car le bois n&#039;est pas fourni. Il serait dommage de d\u00e9-forester l&#039;alentour pour du bois de chauffage lorsque la neige ne recouvre pas tout."
+      },
+      "acces": {
+        "nom": "Acc\u00e8s",
+        "valeur": "1h30 du foyer de ski de fond de correncon, au nord, en suivant le GR.<br>\r\nIl faut suivre le marquage &quot;45e Parrall\u00e8le&quot; entre les pistes de ski de fond (tirer plein sud), puis a partir du monument dudit 45e, suivre Porte Barnier.<br>\r\n<br>\r\nEnviron 1 J de marche depuis Pr\u00e9 Peyret, tout au sud, ou 3-4h de la jasse du Play, au milieu des plateaux ...<br>\r\n<br>\r\nDepuis l&#039;Auberge de Roybon : passer par le pas de l&#039;\u00e2ne puis \u00e0 droite en direction des coinchettes. Monter au collet de la coinchette, passer la grotte et la Source Garnier puis \u00e0 la porte Barnier, prendre le GR 91 en direction de la prairie de Carette. La cabane se trouve sur la gauche, face \u00e0 la prairie.<br>\r\n<br>\r\n<b> Acc\u00e8s en transport en commun :<\/b><br>\r\nBus au d\u00e9part de la gare SNCF de Grenoble<br>\r\nLigne : 5100 + VIL07 arr\u00eat HAUTS PLATEAUX (changement \u00e0 Villard de Lans)<br>\r\nCompagnie : Transi\u00e8re. Horaires sur <a href=\"http:\/\/www.transisere.fr\/\">http:\/\/www.transisere.fr\/<\/a>"
+      },
+      "proprio": {
+        "nom": "Aupr\u00e8s de qui se renseigner \/ accessibilit\u00e9",
+        "valeur": "G\u00e9r\u00e9e par le Parc Naturel R\u00e9gional du Vercors"
+      },
+      "createur": {
+        "id": "5",
+        "nom": "yip"
+      },
+      "article": {
+        "demonstratif": "cette",
+        "defini": "la",
+        "partitif": "d&#039;une"
+      },
+      "info_comp": {
+        "site_officiel": {
+          "nom": "Site Internet",
+          "url": "",
+          "valeur": ""
+        },
+        "manque_un_mur": {
+          "nom": "Manque un mur",
+          "valeur": "0"
+        },
+        "cheminee": {
+          "nom": "Chemin\u00e9e",
+          "valeur": "0"
+        },
+        "poele": {
+          "nom": "Po\u00eale",
+          "valeur": "1"
+        },
+        "couvertures": {
+          "nom": "Couvertures",
+          "valeur": "0"
+        },
+        "places_matelas": {
+          "nom": "Places sur Matelas",
+          "nb": "0",
+          "valeur": "Sans"
+        },
+        "latrines": {
+          "nom": "Latrines",
+          "valeur": "0"
+        },
+        "bois": {
+          "nom": "For\u00eat \u00e0 moins de 100m",
+          "valeur": "1"
+        },
+        "eau": {
+          "nom": "Eau \u00e0 moins de 100m",
+          "valeur": "0"
+        }
+      },
+      "description": {
+        "valeur": "Places pr\u00e9vues pour dormir: 5<br>\nRefaite en 1997<br>\r\nLa cabane est dans une clairi\u00e8re, mais il n&#039;y a pas beaucoup de vue pour autant (c&#039;est plat)<br>\r\nPr\u00e9sence d&#039;une source temporaire : la <a href=\"https:\/\/www.refuges.info\/point\/1179\/point-d-eau\/fontaine-de-Carrette\/\">fontaine de Carrette<\/a> qui est le dernier point d&#039;eau avant le sud des hauts plateau. <br>\r\nBalai, une pelle de chantier.<br>\r\n(Attention, infos 2022 : scies cass\u00e9es)<br>\r\nAssez spacieuse, une grande table et deux bancs solidaires. Le nombre de place pour dormir est celui que peut contenir le bas-flanc. <br>\r\nMurs \u00e9pais et double toit en lambris, la porte est faite de deux battants qui ferment bien. <br>\r\nLes fen\u00eatres ne s&#039;ouvrent pas. Tout comme le battant sup\u00e9rieur de la porte, elles sont faite en plexiglass. Ceux de la fen\u00eatre du bas et du battant du haut de porte sont jaunis par la fum\u00e9e et la pi\u00e8ce est sombre lorsque la porte est ferm\u00e9e.<br>\r\nCouchage \u00e0 l&#039;\u00e9tage, sur un plancher sur\u00e9lev\u00e9. Escalier sans main courante. Pas de garde-corps autour de l&#039;ouverture qui donne sur l&#039;escalier : Attention \u00e0 ne pas y tomber la nuit si l&#039;on doit se lever, d&#039;autant que le haut de l&#039;escalier qui est raide arrive sur la sous-pente.<br>\r\nPropre et en bon \u00e9tat dans l&#039;ensemble.<br>\r\nElle est assez fr\u00e9quent\u00e9e durant la journ\u00e9e de par sa proximit\u00e9 avec la station de Corren\u00e7on.<br>\r\nLe bois mort n&#039;est pas difficile \u00e0 trouver si l&#039;on va \u00e0 l&#039;or\u00e9e de la clairi\u00e8re. Prenez-y vous t\u00f4t car le bois n&#039;est pas fourni. Il serait dommage de d\u00e9-forester l&#039;alentour pour du bois de chauffage lorsque la neige ne recouvre pas tout.<br>\n1h30 du foyer de ski de fond de correncon, au nord, en suivant le GR.<br>\r\nIl faut suivre le marquage &quot;45e Parrall\u00e8le&quot; entre les pistes de ski de fond (tirer plein sud), puis a partir du monument dudit 45e, suivre Porte Barnier.<br>\r\n<br>\r\nEnviron 1 J de marche depuis Pr\u00e9 Peyret, tout au sud, ou 3-4h de la jasse du Play, au milieu des plateaux ...<br>\r\n<br>\r\nDepuis l&#039;Auberge de Roybon : passer par le pas de l&#039;\u00e2ne puis \u00e0 droite en direction des coinchettes. Monter au collet de la coinchette, passer la grotte et la Source Garnier puis \u00e0 la porte Barnier, prendre le GR 91 en direction de la prairie de Carette. La cabane se trouve sur la gauche, face \u00e0 la prairie.<br>\r\n<br>\r\n<b> Acc\u00e8s en transport en commun :<\/b><br>\r\nBus au d\u00e9part de la gare SNCF de Grenoble<br>\r\nLigne : 5100 + VIL07 arr\u00eat HAUTS PLATEAUX (changement \u00e0 Villard de Lans)<br>\r\nCompagnie : Transi\u00e8re. Horaires sur <a href=\"http:\/\/www.transisere.fr\/\">http:\/\/www.transisere.fr\/<\/a><br>\nG\u00e9r\u00e9e par le Parc Naturel R\u00e9gional du Vercors<br>\n"
+      }
+    },
+    "geometry": {
+      "type": "Point",
+      "coordinates": [5.50669, 44.98445]
+    }
+  }]
 }
