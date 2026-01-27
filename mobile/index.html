@@ -51,19 +51,18 @@ Démonstrateur front-end pour refuges.info
       debugPWA = true;
 
     if (!window.location.search) // Debug without PWA
-      navigator.serviceWorker.register("service-worker.js")
-      .then((registration) => console.info("Service worker registred"));
+      navigator.serviceWorker.register('service-worker.js')
+      .then((registration) => console.info('Service worker registred'));
 
-    // Demande à l'utilisateur de recharger la PWA lorsqu'une nouvelle version est chargée.
-    if (debugPWA)
-      navigator.serviceWorker.addEventListener('controllerchange', () => {
-        alert('Reload ?');
+    // Demande à l'utilisateur de recharger la PWA lorsqu'une nouvelle version est chargée
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (confirm('Nouvelle version disponible.\nRecharger ?'))
         location.reload();
-      });
+    });
   </script>
 </head>
 
-<body id="carte"><!-- id = le nom de la page courante -->
+<body id="carte"><!-- id = sera assigné avec le nom de la page courante -->
   <div class="bandeau">
     <h2><a href="/" title="Retour au site web">Refuges.info</a></h2>
     <a href="#" title="Cartes géographiques te points d'intérêt">🌍<span>Cartes</span></a>

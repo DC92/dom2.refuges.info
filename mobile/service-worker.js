@@ -30,7 +30,7 @@ self.addEventListener('fetch', interceptedFetch => {
   interceptedFetch.respondWith(
     // Créer le cache si nécéssaire
     caches.open(cacheName).then(cache =>
-      // Cherche l'url dans le cache ?
+      // Cherche l'url dans le cache
       cache.match(interceptedFetch.request).then(responseCache =>
         // On l'a trouvé dans le cache
         responseCache ||

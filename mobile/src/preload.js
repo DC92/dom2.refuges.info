@@ -1,4 +1,8 @@
-/* global idbKeyval, serveurAPI, debugPWA */
+/* global idbKeyval, serveurAPI */
+
+//TODO preload ALL icones points
+//TODO preload nouveautés (depuis date / modifier l'API)
+//TODO flag précharger
 
 /*********************************************************************
  * Préchargements dans une zone autour de celle parcourue par la carte
@@ -16,7 +20,7 @@ const tilesRefreshTime = 3600 * 1000, // Milliseconds
   minZoomPreloadedTiles = 6,
   maxZoomPreloadedTiles = 15,
   preloadedTilesAround = 5,
-  maxTilesPerRequest = 40;
+  maxTilesPerRequest = 50;
 
 /******************************************************************************************
  * Les informations nécéssaires à l'affichage de la fiche d'un point et de ses commentaires
@@ -25,7 +29,7 @@ const tilesRefreshTime = 3600 * 1000, // Milliseconds
  * Les photos des points visualisés sont sont mémorisées par le cache de l'explorateur
  * Une entrée indexedDB est créée, dont la clé est 0.5,43.5,1,44 et la valeur la date de mise en cache
  */
-const pointsTileSize = 0.25; // ° lon / lat
+const pointsTileSize = 0.5; // ° lon / lat
 
 /********************************************************************
  * Les informations nécéssaires à l'affichage des icônes sur la carte
@@ -33,9 +37,6 @@ const pointsTileSize = 0.25; // ° lon / lat
  * quand un point a été modifié sur la carte.
  */
 //TODO : le faire ici
-
-//TODO preload ALL icones points
-//TODO preload nouveautés (depuis date / modifier l'API)
 
 async function preLoadPoints(url) {
   const pointsProps = [];
@@ -119,23 +120,23 @@ async function preLoad(map, position) {
 
   for (let x = 0; x < 2; x++)
     for (let y = 0; y < 2; y++) {
-      const bbox = [xy[1] + y - 1, xy[0] + x - 1, xy[1] + y, xy[0] + x]
-        .map((a) => a * pointsTileSize).join(','),
-        memPairs = []; // Paires à mémoriser;
-
-      idbKeyval.set([bbox, Date.now()]); // Mark cache date
+      const bboxString = [xy[1] + y - 1, xy[0] + x - 1, xy[1] + y, xy[0] + x]
+        .map((a) => a * pointsTileSize)
+        .join(',');
 
       // Si les points de la bbox ne sont pas déjà stockés dans IndexedDB
-      if (!preLoadedEntries[bbox] && !debugPWA)
+      if (!preLoadedEntries[bboxString])
         await preLoadPoints(serveurAPI +
-          '/api/bbox?detail=complet&format_texte=html&nb_points=all&bbox=' + bbox
+          '/api/bbox?detail=complet&format_texte=html&nb_points=all&bbox=' + bboxString
         );
+
+      idbKeyval.set(bboxString, Date.now()); // Mark cache date
     }
 
 
-  //*********************************************************
-  // Memoriser les dalles OpenHikingMap autour de la position
-  //TODO BUG ne charge pas toutes les dalles au début
+  //**********************************************************
+  // Précharger les dalles OpenHikingMap autour de la position
+
   let leftToFetch = maxTilesPerRequest;
 
   for (let ecart = 1; ecart <= preloadedTilesAround; ecart++)
