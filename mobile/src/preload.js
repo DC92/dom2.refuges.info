@@ -34,7 +34,7 @@ const pointsTileSize = 0.25; // ° lon / lat
  */
 //TODO : le faire ici
 
-//TODO preload icones points
+//TODO preload ALL icones points
 //TODO preload nouveautés (depuis date / modifier l'API)
 
 async function preLoadPoints(url) {
