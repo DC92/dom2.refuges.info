@@ -1,6 +1,13 @@
 /* global requeteAPI, initCarte, prepareModeleGroupe, appliqueDonnees */
 /* global  preLoad, preLoadPoints, serveurAPI, idbKeyval, debugPWA */
 
+// Ask user to reload the PWA when a new version is loaded
+if (debugPWA)
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    alert('Reload ?');
+    location.reload();
+  });
+
 const nomPages = ['carte', 'point', 'nouvelles'],
   map = initCarte('map');
 

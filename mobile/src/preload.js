@@ -12,7 +12,7 @@
  * elles sont simplement appelées par preload sans que le résultat ne soit utilisé.
  * Une entrée indexedDB est créée, dont la clé est z/x/y et la valeur la date de mise en cache
  */
-const tilesRefreshTime = 30000, // Milliseconds
+const tilesRefreshTime = 3600 * 1000, // Milliseconds
   minZoomPreloadedTiles = 6,
   maxZoomPreloadedTiles = 15,
   preloadedTilesAround = 5,
@@ -34,6 +34,7 @@ const pointsTileSize = 0.25; // ° lon / lat
  */
 //TODO : le faire ici
 
+//TODO preload icones points
 //TODO preload nouveautés (depuis date / modifier l'API)
 
 async function preLoadPoints(url) {
