@@ -28,6 +28,7 @@ $req->format = $_REQUEST['format'] ?? '';
 $req->detail = $_REQUEST['detail'] ?? '';
 $req->format_texte = $_REQUEST['format_texte'] ?? '';
 $req->nb_points = $_REQUEST['nb_points'] ?? '';
+$req->depuis = $_REQUEST['depuis'] ?? '';
 $req->cluster = $_REQUEST['cluster'] ?? '';
 $req->type_points = $_REQUEST['type_points'] ?? '';
 
@@ -142,6 +143,9 @@ if(is_numeric($req->cluster)) {
 }
 if($req->type_points != "all") {
   $params->ids_types_point = str_replace($val->type_points, $val->type_points_id, $req->type_points);
+}
+if($req->depuis != "") {
+  $params->depuis = $req->depuis;
 }
 
 $points_bruts = new stdClass();

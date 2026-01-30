@@ -72,6 +72,7 @@ $conditions->avec_points_caches=True : Par défaut, False : les points cachés n
 $conditions->uniquement_points_cachés=True : ne retourner que les points cachés (utiles pour les modérateurs par exemple)
 
 $conditions->limite : nombre maximum d'enregistrement à aller chercher, par défaut sans limite
+$conditions->depuis : fiches (point & commentaire) modifiés depuis la date epoch
 $conditions->ordre (champ sur lequel on ordonne clause SQL : ORDER BY, sans le "ORDER BY" example 'date_derniere_modification DESC')
 
 $conditions->geometrie : Ne renvoi que les points se trouvant dans cette géométrie (qui doit être de type (MULTI-)POLY au format WKB
@@ -295,6 +296,9 @@ function infos_points($conditions)
     else
       return erreur("On nous a demandé les points avec '$conditions->conditions_utilisation' ce qui est inexistant ou signe d'un bug");
 
+  if (!empty($conditions->depuis))
+    $conditions_sql.="\n\tAND points.date_modification_fiche > to_timestamp($conditions->depuis)";
+
   // CLUSTERISATION AU NIVEAU DU SERVEUR
   if (!empty($conditions->cluster))
     if ( $conditions->cluster &&
@@ -428,8 +432,8 @@ function infos_points($conditions)
                 $val['valeur'] = '<strong>Inconnu</strong>';
               break;
           }
-
-          $point_final->infos_complementaires[$champ]=$val;
+          if(count($val) > 1)
+            $point_final->infos_complementaires[$champ]=$val;
         }
         unset($val);
       }
@@ -644,6 +648,7 @@ function modification_ajout_point($point,$id_utilisateur_qui_modifie=0)
 
   // On met à jour la date de dernière modification. PGSQL peut le faire, avec un trigger..
   $champs_sql['date_derniere_modification'] = 'NOW()';
+  $champs_sql['date_modification_fiche'] = 'NOW()';
 
   /********* On ne peut plus créer de cabane autour d'une cabane cachée *************/
   if (in_array($point->id_point_type,array($config_wri['id_cabane_non_gardee'],$config_wri['id_batiment_en_montagne'])))

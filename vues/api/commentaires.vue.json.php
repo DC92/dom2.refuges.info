@@ -7,4 +7,4 @@ headers_cors_par_default();
 headers_cache_api();
 
 $commentaires['copyright'] = $config_wri['copyright_API'];
-echo json_encode($commentaires, JSON_PRETTY_PRINT);
+echo json_encode($commentaires);
