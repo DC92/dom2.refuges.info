@@ -247,6 +247,7 @@ foreach ($points_bruts as $i=>$point) {
 
       // Dom 01/2026 : simplification à partir des infos données par le modèle point
       $points->$i->info_comp = $point->infos_complementaires;
+      $points->$i->commentaires = $point->commentaires;
 
       /*
       sly 09/12/2019 : Construction d'un grand texte contenant ce qui me semble le plus pertinent concernant un point,
