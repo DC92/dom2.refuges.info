@@ -16,6 +16,7 @@ require_once ("commentaire.php");
 require_once ("polygone.php");
 require_once ("historique.php");
 require_once ("mise_en_forme_texte.php");
+require_once ("identification.php");
 require_once ("gestion_erreur.php");
 
 
@@ -436,6 +437,49 @@ function infos_points($conditions)
             $point_final->infos_complementaires[$champ]=$val;
         }
         unset($val);
+      }
+
+      // Dom 01/2026 : transféré depuis controlleurs/point.php pour pouvoir être utilisé dans l'API
+      // Préparation des infos des commentaires
+      $conditions_commentaires = new stdClass();
+      $conditions_commentaires->ids_points = $point->id_point;
+      $tous_commentaires = infos_commentaires ($conditions_commentaires);
+
+      $point->commentaires=array();
+      $point->commentaires_avec_photo=array();
+
+      foreach ($tous_commentaires AS $commentaire)
+      {
+        $commentaire->texte_affichage=bbcode2html($commentaire->texte,FALSE,FALSE);
+        $commentaire->auteur_commentaire_affichage=htmlentities($commentaire->auteur_commentaire);
+        $commentaire->date_commentaire_format_francais= date_format_francais($commentaire->ts_unix_commentaire);
+
+        // Préparation des données et affichage d'un commentaire de la fiche d'un point
+        // ici le lien pour modérer ce commentaire si on est modérateur ou auteur du commentaire
+        if (est_autorise($commentaire->id_createur_commentaire))
+        {
+          $commentaire->lien_commentaire='/gestion/moderation?id_point_retour='.$commentaire->id_point.'&amp;id_commentaire='.$commentaire->id_commentaire;
+          $commentaire->texte_lien_commentaire = 'Modifier';
+        }
+        else
+        {
+          // l'internaute, en cliquant ici va nous donner ce qu'il pense de ce commentaire
+          $commentaire->lien_commentaire = "/avis_internaute_commentaire/$commentaire->id_commentaire/";
+          $commentaire->texte_lien_commentaire = 'Info périmée ?';
+        }
+
+        // Si, selon la base une photo existe, on va l'afficher
+        if ($commentaire->photo_existe)
+        {
+          if (isset($commentaire->date_photo))
+            $commentaire->date_photo_format_francais=strftime ("%d/%m/%Y", $commentaire->ts_unix_photo);
+          else
+            $commentaire->date_photo_format_francais = '';
+          // On garde une copie des commentaires avec photos pour nous fournir la liste des petite vignettes
+          $point->commentaires_avec_photo[]=$commentaire;
+        }
+
+        $point->commentaires[]=$commentaire;
       }
 
       //  phpBB intègre un nom d'utilisateur dans sa base après avoir passé un htmlentities pour les users connectés, je réalise l'opération inverse
