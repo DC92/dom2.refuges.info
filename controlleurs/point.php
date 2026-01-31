@@ -19,7 +19,7 @@ if (est_moderateur())
 else
   $meme_si_cache=$meme_si_modele=False;
 
-$point=infos_point($id_point,$meme_si_cache,True,$meme_si_modele,True);
+$point=infos_point($id_point,$meme_si_cache,True,$meme_si_modele);
 
 
 
@@ -60,6 +60,7 @@ else // le point est valide
     $vue->forum_point = infos_point_forum ($point);
 
   $vue->lienforum=$config_wri['forum_refuge']."?t=".$point->topic_id;
+
   $vue->annonce_fermeture = texte_non_ouverte ($point);
 
   /*********** Création de la liste des points à proximité si les coordonnées ne sont pas "cachée" et de l'affichage de la carte ***/
@@ -105,9 +106,22 @@ else // le point est valide
     if ($polygone->id_polygone_type==$config_wri['id_zone_reglementee'])
       $vue->polygone_avec_information=$polygone;
 
-  // Dom 01/2026 : transférés dans modeles/point.php
-  $vue->infos_complementaires=$point->infos_complementaires??[];
-  $vue->commentaires=$point->commentaires??[];
-  $vue->commentaires_avec_photo=$point->commentaires_avec_photo??[];
+  /*********** Préparation des infos complémentaires (c'est à dire les attributs du bas de la fiche) ***/
+  // Construction du tableau qui sera lu, ligne par ligne par la vue pour être affiché
+  // On pourrait détailler en html chaque propriété entourée par un if (propriété = valide), mais ça fait beaucoup de redondance, alors ainsi, je factorise au détriment d'un peu de lisibilité
+
+  // Dom 01/2026 : transféré dans modeles/point.php
+  $vue->infos_complementaires = $point->infos_complementaires;
+
+  /*********** Formatage des infos des commentaires ***/
+  // Dom 01/2026 : Transféré dans /modele/commentaire.php
+  $conditions_commentaires = new stdClass();
+  $conditions_commentaires->ids_points = $id_point;
+  $vue->commentaires = infos_commentaires ($conditions_commentaires);
+
+  $vue->commentaires_avec_photo=[];
+  foreach ($vue->commentaires AS $commentaire)
+    if ($commentaire->photo_existe)
+      $vue->commentaires_avec_photo[] = $commentaire;
 }
 

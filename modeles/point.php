@@ -16,7 +16,6 @@ require_once ("commentaire.php");
 require_once ("polygone.php");
 require_once ("historique.php");
 require_once ("mise_en_forme_texte.php");
-require_once ("identification.php");
 require_once ("gestion_erreur.php");
 
 
@@ -395,97 +394,124 @@ function infos_points($conditions)
         $point_final->polygones[]=$polygone;
       }
 
-      // Dom 01/2026 : simplifié et transféré depuis controlleurs/point.php pour pouvoir être utilisé dans l'API
-      // Formatage des informations complèmentaires
-      if (!empty($conditions->avec_informations_complementaires))
+      // Dom 01/2026 : factorisation de controlleurs//point.php & controlleurs/api/point.php
+      // Formatage des propriétés d'un point
+      $point_final->properties = new stdClass();
+
+      $point_final->properties->id = $point->id_point;
+      $point_final->properties->nom = mb_ucfirst($point->nom);
+
+      $point_final->properties->type = [
+        'id' => $point->id_point_type,
+        'id' => $point->id_point_type,
+        'icone' => choix_icone($point),
+        'valeur' => $point->nom_type,
+      ];
+
+      // Symbole Garmin
+      switch ($point->conditions_utilisation)
       {
-        $champs=array_merge($config_wri['champs_entier_ou_sait_pas_points'],$config_wri['champs_trinaires_points'],['site_officiel']);
-        $point_final->infos_complementaires = [];
-
-        foreach ($champs as $champ)
-        {
-          $champ_equivalent = "equivalent_$champ";
-          // Si ce champs est vide, c'est que cet élément ne s'applique pas à ce type de point (exemple: une cheminée pour une grotte)
-          if ($point->$champ_equivalent!="")
-          {
-            $val = [
-              'nom' => $point->$champ_equivalent,
-            ];  
-            switch ($champ)
-            {
-              case 'site_officiel':
-                if ($point->$champ!="") {
-                  $val['url'] = $point->$champ;
-                  $val['valeur'] = '[url='.$point->$champ.']'.protege(mb_ucfirst($point->nom)).'[/url]';
-                } break;
-
-              case 'places_matelas' : case 'places' :
-                if($point->$champ === NULL )
-                  $val['valeur'] = '<strong>Inconnu</strong>';
-                else
-                  $val['valeur'] = $val['nb'] = $point->$champ;
-                break;
-
-              default: // Pour tous les boolééns restant
-                if($point->$champ === TRUE)
-                  $val['valeur'] = 'Oui';
-                if($point->$champ === FALSE)
-                  $val['valeur'] = 'Non';
-                if($point->$champ === NULL)
-                  $val['valeur'] = '<strong>Inconnu</strong>';
-                break;
-            }
-            if(count($val) > 1)
-              $point_final->infos_complementaires[$champ]=$val;
-          }
-          unset($val);
-        }
+        case 'fermeture':
+        case 'detruit':
+          $point_final->properties->sym = "Crossing";
+          break;
+        case 'cle_a_recuperer': // TODO : trouver un symbole
+        default:
+          $point_final->properties->sym = $point->symbole;
       }
 
-      // Dom 01/2026 : transféré depuis controlleurs/point.php pour pouvoir être utilisé dans l'API
-      // Préparation des infos des commentaires
-      if (!empty($conditions->avec_commentaire))
+      $point_final->properties->coord = [
+        'long' => $point->longitude,
+        'lat' => $point->latitude,
+        'alt' => $point->altitude,
+        'precision' => [
+          'nom' => $point->nom_precision_gps,
+          'type' => $point->id_type_precision_gps,
+        ],
+      ];
+
+      $point_final->properties->createur['id'] = $point->id_createur;
+
+      // info sur le modérateur actuel de la fiche (authentifié ou non)
+      if ($point->id_createur==0) // non authentifié
+          $point_final->properties->createur['nom']=$point->nom_createur;
+      else
       {
-        $conditions_commentaires = new stdClass();
-        $conditions_commentaires->ids_points = $point->id_point;
-        $tous_commentaires = infos_commentaires ($conditions_commentaires);
+        $utilisateur=infos_utilisateur($point->id_createur);
+        if (!empty($utilisateur->erreur)) // Aïe, le point référence un utilisateur qui n'existe plus
+          $point_final->properties->createur['nom'] = "Utilisateur supprimé";
+        else
+          $point_final->properties->createur['nom'] = infos_utilisateur($point->id_createur)->username;
+      }
 
-        $point->commentaires=array();
-        $point->commentaires_avec_photo=array();
+      $point_final->properties->date = [
+        'creation' => $point->date_creation,
+        'derniere_modif' => $point->date_derniere_modification,
+      ];
+      $point_final->properties->article = [
+        'demonstratif' => $point->article_demonstratif,
+        'defini' => $point->article_defini,
+        'partitif' => $point->article_partitif_point_type,
+      ];
+      $point_final->properties->etat = [
+        'id' => $point->conditions_utilisation,
+        'valeur' => texte_non_ouverte($point),
+      ];
+      $point_final->properties->proprio = [
+        'nom' => $point->equivalent_proprio,
+        'valeur' => $point->proprio,
+      ];
+      $point_final->properties->remarque = [
+        'nom' => 'Remarque',
+        'valeur' => $point->remark,
+      ];
+      $point_final->properties->acces = [
+        'nom' => 'Accès',
+        'valeur' => $point->acces,
+      ];
 
-        foreach ($tous_commentaires AS $commentaire)
+      // Dom 01/2026 : simplifié et transféré depuis controlleurs/point.php pour pouvoir être utilisé dans l'API
+      // Formatage des informations complèmentaires
+      $champs=array_merge($config_wri['champs_entier_ou_sait_pas_points'],$config_wri['champs_trinaires_points'],['site_officiel']);
+      $point_final->infos_complementaires = [];
+
+      foreach ($champs as $champ)
+      {
+        $champ_equivalent = "equivalent_$champ";
+        // Si ce champs est vide, c'est que cet élément ne s'applique pas à ce type de point (exemple: une cheminée pour une grotte)
+        if ($point->$champ_equivalent!="")
         {
-          $commentaire->texte_affichage=bbcode2html($commentaire->texte,FALSE,FALSE);
-          $commentaire->auteur_commentaire_affichage=htmlentities($commentaire->auteur_commentaire);
-          $commentaire->date_commentaire_format_francais= date_format_francais($commentaire->ts_unix_commentaire);
-
-          // Préparation des données et affichage d'un commentaire de la fiche d'un point
-          // ici le lien pour modérer ce commentaire si on est modérateur ou auteur du commentaire
-          if (est_autorise($commentaire->id_createur_commentaire))
+          $val = [
+            'nom' => $point->$champ_equivalent,
+          ];  
+          switch ($champ)
           {
-            $commentaire->lien_commentaire='/gestion/moderation?id_point_retour='.$commentaire->id_point.'&amp;id_commentaire='.$commentaire->id_commentaire;
-            $commentaire->texte_lien_commentaire = 'Modifier';
-          }
-          else
-          {
-            // l'internaute, en cliquant ici va nous donner ce qu'il pense de ce commentaire
-            $commentaire->lien_commentaire = "/avis_internaute_commentaire/$commentaire->id_commentaire/";
-            $commentaire->texte_lien_commentaire = 'Info périmée ?';
-          }
+            case 'site_officiel':
+              if ($point->$champ!="") {
+                $val['url'] = $point->$champ;
+                $val['valeur'] = '[url='.$point->$champ.']'.protege(mb_ucfirst($point->nom)).'[/url]';
+              } break;
 
-          // Si, selon la base une photo existe, on va l'afficher
-          if ($commentaire->photo_existe)
-          {
-            if (isset($commentaire->date_photo))
-              $commentaire->date_photo_format_francais=strftime ("%d/%m/%Y", $commentaire->ts_unix_photo);
-            else
-              $commentaire->date_photo_format_francais = '';
-            // On garde une copie des commentaires avec photos pour nous fournir la liste des petite vignettes
-            $point->commentaires_avec_photo[]=$commentaire;
-          }
+            case 'places_matelas' : case 'places' :
+              if($point->$champ === NULL )
+                $val['valeur'] = '<strong>Inconnu</strong>';
+              else
+                $val['valeur'] = $val['nb'] = $point->$champ;
+              break;
 
-          $point->commentaires[]=$commentaire;
+            default: // Pour tous les boolééns restant
+              if($point->$champ === TRUE)
+                $val['valeur'] = 'Oui';
+              if($point->$champ === FALSE)
+                $val['valeur'] = 'Non';
+              if($point->$champ === NULL)
+                $val['valeur'] = '<strong>Inconnu</strong>';
+              break;
+          }
+          if(count($val) > 1)
+            $point_final->infos_complementaires[$champ]=$val;
         }
+        unset($val);
       }
 
       //  phpBB intègre un nom d'utilisateur dans sa base après avoir passé un htmlentities pour les users connectés, je réalise l'opération inverse
@@ -532,7 +558,7 @@ FIXME: je pense que presque rien ne justifie l'existence de cette fonction qui f
 FIXME: 2022 Et en plus, j'arrête pas d'ajouter des paramètres, on va finir par passer un tableau d'options ! ce que je voulais éviter en faisant la fonction précédente
 
 *****************************************************/
-function infos_point($id_point,$meme_si_cache=False,$avec_polygones=True,$meme_si_modele=False,$avec_details=False)
+function infos_point($id_point,$meme_si_cache=False,$avec_polygones=True, $meme_si_modele=False)
 {
   // inutile de faire tout deux fois, j'utilise la fonction plus haut pour n'en récupérer qu'un
   global $config_wri,$pdo;
@@ -548,11 +574,6 @@ function infos_point($id_point,$meme_si_cache=False,$avec_polygones=True,$meme_s
 
   if ($meme_si_cache)
     $conditions->avec_points_caches=True;
-
-  if ($avec_details) {
-    $conditions->avec_informations_complementaires = True;
-    $conditions->avec_commentaire = True;
-  }
 
   // récupération des infos du point
   $points=infos_points($conditions);

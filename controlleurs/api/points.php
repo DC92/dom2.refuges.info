@@ -9,6 +9,7 @@
 include_once("point.php");
 include_once("mise_en_forme_texte.php");
 include_once("utilisateur.php");
+include_once("identification.php");
 include_once("entetes_http.php");
 
 // FIXME: Il doit moyen de faire mieux, mais préparer l'export en mettant tout dans un énorme tableau n'est en fait pas la meilleure idée,
@@ -29,6 +30,7 @@ $req->detail = $_REQUEST['detail'] ?? '';
 $req->format_texte = $_REQUEST['format_texte'] ?? '';
 $req->nb_points = $_REQUEST['nb_points'] ?? '';
 $req->depuis = $_REQUEST['depuis'] ?? '';
+$req->commentaire = $_REQUEST['commentaire'] ?? '';
 $req->cluster = $_REQUEST['cluster'] ?? '';
 $req->type_points = $_REQUEST['type_points'] ?? '';
 
@@ -147,10 +149,6 @@ if($req->type_points != "all") {
 if($req->depuis != "") {
   $params->depuis = $req->depuis;
 }
-if($req->detail == "complet") {
-  $params->avec_informations_complementaires = true;
-  $params->avec_commentaire = true;
-}
 
 $points_bruts = new stdClass();
 $points = new stdClass();
@@ -164,9 +162,6 @@ selon qu'elle est csv, gpx, etc.ça consome plus de RAM bien sûr et plus de CPU
 Seule exception à ça, le cas du format "geojson" :
 Car c'est celui utilisé par la carte et que le fichier est généré par un json_encode($point) qui deviendrait trop gros pour les usages en mobilité et débit pourri.
 */
-// FIXME sly 05/12/2019 : ça me rend fou cette recopie intégrale propriété par propriété. ça oblige à venir maintenir ça !
-// $points[]=$point; n'aurait il pas suffit ? et en plus le nom des propriété changent de peu et je passe mon temps à ne plus m'en rappeler !
-// certes ça fait un joli array final multi-niveau et un joli json_encode($point), mais franchement, le jeu en vaut-il la chandelle ?
 
 foreach ($points_bruts as $i=>$point) {
   if(isset ($point->nb_points)) // cas des clusters
@@ -184,33 +179,9 @@ foreach ($points_bruts as $i=>$point) {
     if($point->id_type_precision_gps == $config_wri['id_coordonees_gps_fausses'])
       break;
 
-    $points->$i = new stdClass();
-    $points->$i->id = $point->id_point;
-    $points->$i->nom = mb_ucfirst($point->nom);
-    $points->$i->type['id'] = $point->id_point_type;
+    // DOM 04/01/26 Transfert du formatage de propriétés d'un point dans /modele/point.php
+    $points->$i = $point->properties;
 
-    // DOM 04/01/26 ajout du paramètre detail=minimal pour la carte des points
-    if ($req->format!="geojson" or $req->detail!="minimal")
-    {
-      switch ($point->conditions_utilisation)
-      {
-        case 'fermeture':
-        case 'detruit':
-          $points->$i->sym = "Crossing";
-          break;
-        case 'cle_a_recuperer': // TODO : trouver un symbole
-        default:
-          $points->$i->sym = $point->symbole;
-      }
-
-      $points->$i->lien = lien_point($point);
-      $points->$i->coord['alt'] = $point->altitude;
-      $points->$i->type['valeur'] = $point->nom_type;
-      $points->$i->places['nom'] = $point->equivalent_places;
-      $points->$i->places['valeur'] = $point->places;
-      $points->$i->etat['valeur'] = texte_non_ouverte($point);
-    }
-    $points->$i->type['icone'] = choix_icone($point);
     $points_geojson[$point->id_point]['geojson'] = $point->geojson;
     // FIXME: comme l'array $points est converti en intégralité en xml ou json, je planque dans une autre variable ce que je veux séparément
 
@@ -218,40 +189,16 @@ foreach ($points_bruts as $i=>$point) {
     // sauf si on appel explicitement le mode complet avec &detail=complet
     if ($req->format!="geojson" or $req->detail=="complet")
     {
-      $points->$i->coord['long'] = $point->longitude;
-      $points->$i->coord['lat'] = $point->latitude;
-      $points->$i->etat['id'] = $point->conditions_utilisation;
-      $points->$i->date['derniere_modif'] = $point->date_derniere_modification;
-      $points->$i->coord['precision']['nom'] = $point->nom_precision_gps;
-      $points->$i->coord['precision']['type'] = $point->id_type_precision_gps;
-      $points->$i->remarque['nom'] = 'Remarque';
-      $points->$i->remarque['valeur'] = $point->remark;
-      $points->$i->acces['nom'] = 'Accès';
-      $points->$i->acces['valeur'] = $point->acces;
-      $points->$i->proprio['nom'] = $point->equivalent_proprio;
-      $points->$i->proprio['valeur'] = $point->proprio;
-      $points->$i->createur['id'] = $point->id_createur;
-
-      // info sur le modérateur actuel de la fiche (authentifié ou non)
-      if ($point->id_createur==0) // non authentifié
-          $points->$i->createur['nom']=$point->nom_createur;
-      else
-      {
-        $utilisateur=infos_utilisateur($point->id_createur);
-        if (!empty($utilisateur->erreur)) // Aïe, le point référence un utilisateur qui n'existe plus
-          $points->$i->createur['nom'] = "Utilisateur supprimé";
-        else
-          $points->$i->createur['nom'] = infos_utilisateur($point->id_createur)->username;
-      }
-
-      $points->$i->date['creation'] = $point->date_creation;
-      $points->$i->article['demonstratif'] = $point->article_demonstratif;
-      $points->$i->article['defini'] = $point->article_defini;
-      $points->$i->article['partitif'] = $point->article_partitif_point_type;
-
       // Dom 01/2026 : simplification à partir des infos données par le modèle point
       $points->$i->info_comp = $point->infos_complementaires;
-      $points->$i->commentaires = $point->commentaires;
+
+      // Dom 01/2026 : ajout des commentaires si demandés
+      if(!empty($req->commentaire))
+      {
+        $conditions_commentaires = new stdClass();
+        $conditions_commentaires->ids_points = $point->id_point;
+        $points->$i->commentaires = infos_commentaires ($conditions_commentaires);
+      }
 
       /*
       sly 09/12/2019 : Construction d'un grand texte contenant ce qui me semble le plus pertinent concernant un point,
