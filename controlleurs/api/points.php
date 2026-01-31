@@ -147,6 +147,10 @@ if($req->type_points != "all") {
 if($req->depuis != "") {
   $params->depuis = $req->depuis;
 }
+if($req->detail == "complet") {
+  $params->avec_informations_complementaires = true;
+  $params->avec_commentaire = true;
+}
 
 $points_bruts = new stdClass();
 $points = new stdClass();

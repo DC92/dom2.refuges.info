@@ -397,89 +397,95 @@ function infos_points($conditions)
 
       // Dom 01/2026 : simplifié et transféré depuis controlleurs/point.php pour pouvoir être utilisé dans l'API
       // Formatage des informations complèmentaires
-      $champs=array_merge($config_wri['champs_entier_ou_sait_pas_points'],$config_wri['champs_trinaires_points'],['site_officiel']);
-      $point_final->infos_complementaires = [];
-
-      foreach ($champs as $champ)
+      if (!empty($conditions->avec_informations_complementaires))
       {
-        $champ_equivalent = "equivalent_$champ";
-        // Si ce champs est vide, c'est que cet élément ne s'applique pas à ce type de point (exemple: une cheminée pour une grotte)
-        if ($point->$champ_equivalent!="")
+        $champs=array_merge($config_wri['champs_entier_ou_sait_pas_points'],$config_wri['champs_trinaires_points'],['site_officiel']);
+        $point_final->infos_complementaires = [];
+
+        foreach ($champs as $champ)
         {
-          $val = [
-            'nom' => $point->$champ_equivalent,
-          ];  
-          switch ($champ)
+          $champ_equivalent = "equivalent_$champ";
+          // Si ce champs est vide, c'est que cet élément ne s'applique pas à ce type de point (exemple: une cheminée pour une grotte)
+          if ($point->$champ_equivalent!="")
           {
-            case 'site_officiel':
-              if ($point->$champ!="") {
-                $val['url'] = $point->$champ;
-                $val['valeur'] = '[url='.$point->$champ.']'.protege(mb_ucfirst($point->nom)).'[/url]';
-              } break;
+            $val = [
+              'nom' => $point->$champ_equivalent,
+            ];  
+            switch ($champ)
+            {
+              case 'site_officiel':
+                if ($point->$champ!="") {
+                  $val['url'] = $point->$champ;
+                  $val['valeur'] = '[url='.$point->$champ.']'.protege(mb_ucfirst($point->nom)).'[/url]';
+                } break;
 
-            case 'places_matelas' : case 'places' :
-              if($point->$champ === NULL )
-                $val['valeur'] = '<strong>Inconnu</strong>';
-              else
-                $val['valeur'] = $val['nb'] = $point->$champ;
-              break;
+              case 'places_matelas' : case 'places' :
+                if($point->$champ === NULL )
+                  $val['valeur'] = '<strong>Inconnu</strong>';
+                else
+                  $val['valeur'] = $val['nb'] = $point->$champ;
+                break;
 
-            default: // Pour tous les boolééns restant
-              if($point->$champ === TRUE)
-                $val['valeur'] = 'Oui';
-              if($point->$champ === FALSE)
-                $val['valeur'] = 'Non';
-              if($point->$champ === NULL)
-                $val['valeur'] = '<strong>Inconnu</strong>';
-              break;
+              default: // Pour tous les boolééns restant
+                if($point->$champ === TRUE)
+                  $val['valeur'] = 'Oui';
+                if($point->$champ === FALSE)
+                  $val['valeur'] = 'Non';
+                if($point->$champ === NULL)
+                  $val['valeur'] = '<strong>Inconnu</strong>';
+                break;
+            }
+            if(count($val) > 1)
+              $point_final->infos_complementaires[$champ]=$val;
           }
-          if(count($val) > 1)
-            $point_final->infos_complementaires[$champ]=$val;
+          unset($val);
         }
-        unset($val);
       }
 
       // Dom 01/2026 : transféré depuis controlleurs/point.php pour pouvoir être utilisé dans l'API
       // Préparation des infos des commentaires
-      $conditions_commentaires = new stdClass();
-      $conditions_commentaires->ids_points = $point->id_point;
-      $tous_commentaires = infos_commentaires ($conditions_commentaires);
-
-      $point->commentaires=array();
-      $point->commentaires_avec_photo=array();
-
-      foreach ($tous_commentaires AS $commentaire)
+      if (!empty($conditions->avec_commentaire))
       {
-        $commentaire->texte_affichage=bbcode2html($commentaire->texte,FALSE,FALSE);
-        $commentaire->auteur_commentaire_affichage=htmlentities($commentaire->auteur_commentaire);
-        $commentaire->date_commentaire_format_francais= date_format_francais($commentaire->ts_unix_commentaire);
+        $conditions_commentaires = new stdClass();
+        $conditions_commentaires->ids_points = $point->id_point;
+        $tous_commentaires = infos_commentaires ($conditions_commentaires);
 
-        // Préparation des données et affichage d'un commentaire de la fiche d'un point
-        // ici le lien pour modérer ce commentaire si on est modérateur ou auteur du commentaire
-        if (est_autorise($commentaire->id_createur_commentaire))
-        {
-          $commentaire->lien_commentaire='/gestion/moderation?id_point_retour='.$commentaire->id_point.'&amp;id_commentaire='.$commentaire->id_commentaire;
-          $commentaire->texte_lien_commentaire = 'Modifier';
-        }
-        else
-        {
-          // l'internaute, en cliquant ici va nous donner ce qu'il pense de ce commentaire
-          $commentaire->lien_commentaire = "/avis_internaute_commentaire/$commentaire->id_commentaire/";
-          $commentaire->texte_lien_commentaire = 'Info périmée ?';
-        }
+        $point->commentaires=array();
+        $point->commentaires_avec_photo=array();
 
-        // Si, selon la base une photo existe, on va l'afficher
-        if ($commentaire->photo_existe)
+        foreach ($tous_commentaires AS $commentaire)
         {
-          if (isset($commentaire->date_photo))
-            $commentaire->date_photo_format_francais=strftime ("%d/%m/%Y", $commentaire->ts_unix_photo);
+          $commentaire->texte_affichage=bbcode2html($commentaire->texte,FALSE,FALSE);
+          $commentaire->auteur_commentaire_affichage=htmlentities($commentaire->auteur_commentaire);
+          $commentaire->date_commentaire_format_francais= date_format_francais($commentaire->ts_unix_commentaire);
+
+          // Préparation des données et affichage d'un commentaire de la fiche d'un point
+          // ici le lien pour modérer ce commentaire si on est modérateur ou auteur du commentaire
+          if (est_autorise($commentaire->id_createur_commentaire))
+          {
+            $commentaire->lien_commentaire='/gestion/moderation?id_point_retour='.$commentaire->id_point.'&amp;id_commentaire='.$commentaire->id_commentaire;
+            $commentaire->texte_lien_commentaire = 'Modifier';
+          }
           else
-            $commentaire->date_photo_format_francais = '';
-          // On garde une copie des commentaires avec photos pour nous fournir la liste des petite vignettes
-          $point->commentaires_avec_photo[]=$commentaire;
-        }
+          {
+            // l'internaute, en cliquant ici va nous donner ce qu'il pense de ce commentaire
+            $commentaire->lien_commentaire = "/avis_internaute_commentaire/$commentaire->id_commentaire/";
+            $commentaire->texte_lien_commentaire = 'Info périmée ?';
+          }
 
-        $point->commentaires[]=$commentaire;
+          // Si, selon la base une photo existe, on va l'afficher
+          if ($commentaire->photo_existe)
+          {
+            if (isset($commentaire->date_photo))
+              $commentaire->date_photo_format_francais=strftime ("%d/%m/%Y", $commentaire->ts_unix_photo);
+            else
+              $commentaire->date_photo_format_francais = '';
+            // On garde une copie des commentaires avec photos pour nous fournir la liste des petite vignettes
+            $point->commentaires_avec_photo[]=$commentaire;
+          }
+
+          $point->commentaires[]=$commentaire;
+        }
       }
 
       //  phpBB intègre un nom d'utilisateur dans sa base après avoir passé un htmlentities pour les users connectés, je réalise l'opération inverse
@@ -526,7 +532,7 @@ FIXME: je pense que presque rien ne justifie l'existence de cette fonction qui f
 FIXME: 2022 Et en plus, j'arrête pas d'ajouter des paramètres, on va finir par passer un tableau d'options ! ce que je voulais éviter en faisant la fonction précédente
 
 *****************************************************/
-function infos_point($id_point,$meme_si_cache=False,$avec_polygones=True, $meme_si_modele=False)
+function infos_point($id_point,$meme_si_cache=False,$avec_polygones=True,$meme_si_modele=False,$avec_details=False)
 {
   // inutile de faire tout deux fois, j'utilise la fonction plus haut pour n'en récupérer qu'un
   global $config_wri,$pdo;
@@ -542,6 +548,11 @@ function infos_point($id_point,$meme_si_cache=False,$avec_polygones=True, $meme_
 
   if ($meme_si_cache)
     $conditions->avec_points_caches=True;
+
+  if ($avec_details) {
+    $conditions->avec_informations_complementaires = True;
+    $conditions->avec_commentaire = True;
+  }
 
   // récupération des infos du point
   $points=infos_points($conditions);

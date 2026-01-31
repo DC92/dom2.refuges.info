@@ -19,7 +19,7 @@ if (est_moderateur())
 else
   $meme_si_cache=$meme_si_modele=False;
 
-$point=infos_point($id_point,$meme_si_cache,True,$meme_si_modele);
+$point=infos_point($id_point,$meme_si_cache,True,$meme_si_modele,True);
 
 
 
@@ -106,8 +106,8 @@ else // le point est valide
       $vue->polygone_avec_information=$polygone;
 
   // Dom 01/2026 : transférés dans modeles/point.php
-  $vue->infos_complementaires=$point->infos_complementaires;
-  $vue->commentaires=$point->commentaires;
-  $vue->commentaires_avec_photo=$point->commentaires_avec_photo;
+  $vue->infos_complementaires=$point->infos_complementaires??[];
+  $vue->commentaires=$point->commentaires??[];
+  $vue->commentaires_avec_photo=$point->commentaires_avec_photo??[];
 }
 
