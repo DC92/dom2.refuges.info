@@ -201,7 +201,7 @@ function infos_commentaires ($conditions)
     $commentaire->auteur_commentaire_affichage=htmlentities($commentaire->auteur_commentaire);
     $commentaire->date_commentaire_format_francais= date_format_francais($commentaire->ts_unix_commentaire);
 
-    // Préparation des données et affichage d'un commentaire de la fiche d'un point
+    // Formatage des données et affichage d'un commentaire de la fiche d'un point
     // ici le lien pour modérer ce commentaire si on est modérateur ou auteur du commentaire
     if (est_autorise($commentaire->id_createur_commentaire))
     {

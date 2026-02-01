@@ -26,11 +26,10 @@ $req->bbox = $_REQUEST['bbox'] ?? '';
 $req->massif = $_REQUEST['massif'] ?? '';
 $req->id = $_REQUEST['id'] ?? '';
 $req->format = $_REQUEST['format'] ?? '';
-$req->detail = $_REQUEST['detail'] ?? '';
+$req->detail = $_REQUEST['detail'] ?? 'simple';
 $req->format_texte = $_REQUEST['format_texte'] ?? '';
 $req->nb_points = $_REQUEST['nb_points'] ?? '';
 $req->depuis = $_REQUEST['depuis'] ?? '';
-$req->commentaire = $_REQUEST['commentaire'] ?? '';
 $req->cluster = $_REQUEST['cluster'] ?? '';
 $req->type_points = $_REQUEST['type_points'] ?? '';
 
@@ -179,44 +178,84 @@ foreach ($points_bruts as $i=>$point) {
     if($point->id_type_precision_gps == $config_wri['id_coordonees_gps_fausses'])
       break;
 
-    // DOM 04/01/26 Transfert du formatage de propriétés d'un point dans /modele/point.php
-    $points->$i = $point->properties;
-
     $points_geojson[$point->id_point]['geojson'] = $point->geojson;
     // FIXME: comme l'array $points est converti en intégralité en xml ou json, je planque dans une autre variable ce que je veux séparément
 
-    // En geojson, utilisé par la carte, on a pas besoin de tout ça, autant simplifier pour réduire le temps de chargement,
-    // sauf si on appel explicitement le mode complet avec &detail=complet
-    if ($req->format!="geojson" or $req->detail=="complet")
+    /*
+    sly 09/12/2019 : Construction d'un grand texte contenant ce qui me semble le plus pertinent concernant un point,
+    afin de l'inclure dans la description des gpx et du kml
+    */
+    $description="";
+
+    if ($point->equivalent_places!="" and !empty($point->places))
+      $description=$point->equivalent_places. ": ".$point->places."\n";
+
+    if ($point->equivalent_places_matelas!="" and !empty($point->places_matelas))
+      $description.=$point->equivalent_places_matelas.": ".$point->places_matelas."\n";
+
+    $description.=$point->remark."\n";
+    $description.=$point->acces."\n";
+    $description.=$point->proprio."\n";
+    $point->properties->description['valeur']=$description;
+
+    // Dom 01/2026 : ajout des commentaires si demandés
+    if(!empty($req->detail=='avec_commentaires'))
     {
-      // Dom 01/2026 : simplification à partir des infos données par le modèle point
-      $points->$i->info_comp = $point->infos_complementaires;
-
-      // Dom 01/2026 : ajout des commentaires si demandés
-      if(!empty($req->commentaire))
-      {
-        $conditions_commentaires = new stdClass();
-        $conditions_commentaires->ids_points = $point->id_point;
-        $points->$i->commentaires = infos_commentaires ($conditions_commentaires);
-      }
-
-      /*
-      sly 09/12/2019 : Construction d'un grand texte contenant ce qui me semble le plus pertinent concernant un point,
-      afin de l'inclure dans la description des gpx et du kml
-      */
-      $description="";
-
-      if ($point->equivalent_places!="" and !empty($point->places))
-        $description=$point->equivalent_places. ": ".$point->places."\n";
-
-      if ($point->equivalent_places_matelas!="" and !empty($point->places_matelas))
-        $description.=$point->equivalent_places_matelas.": ".$point->places_matelas."\n";
-
-      $description.=$point->remark."\n";
-      $description.=$point->acces."\n";
-      $description.=$point->proprio."\n";
-      $points->$i->description['valeur']=$description;
+      $conditions_commentaires = new stdClass();
+      $conditions_commentaires->ids_points = $point->id_point;
+      $point->properties->commentaires = infos_commentaires ($conditions_commentaires);
     }
+
+//TODO affichage lien sur page point
+//TODO modification date points quand suppression transfert, ... commentaire
+//TODO voir impact sur les autres formats API
+    /****************************** FILTRE DES DETAILS ******************************/
+    $filtre = ['minimal' => [
+      'id' => true,
+      'nom' => true,
+      'type' => ['id' => true, 'icone' => true],
+    ]];
+
+    $filtre['simple'] = [
+      'type' => true,
+      'coord' => ['alt' => true],
+      'places' => true, //TODO dont work
+      'lien' => true, //TODO dont work
+      'etat' => true,
+    ] + $filtre['minimal'];
+
+    $filtre['complet'] = [
+      'coord' => true,
+      'date' => true,
+      'remarque' => true,
+      'access' => true,
+      'proprio' => true,
+      'createur' => true,
+      'article' => true,
+      'info_comp' => true,
+      'description' => true,
+    ] + $filtre['simple'];
+
+    $filtre['avec_commentaires'] = [
+      'commentaires' => true,
+    ] + $filtre['complet'];
+
+    function filtre_recursif($properties, $filtre) {
+      if(is_scalar($properties) || is_bool($filtre))
+        return $properties;
+
+      $ps = (array)$properties;
+      $pi = new stdClass();
+      foreach ($filtre as $k => $v)
+        if(!empty($ps[$k]) &&
+        (!isset($ps[$k]['valeur']) || !empty($ps[$k]['valeur']))) // Elimine les propriétés->valeur = ""
+          $pi->$k = filtre_recursif($ps[$k], $v);
+
+      return $pi;
+    }
+
+    $points->$i = filtre_recursif($point->properties, $filtre[$req->detail]);
+    //DCMM $points->$i = $point->properties;
 
     /****************************** FORMATAGE DU TEXTE ******************************/
     // On transforme le texte dans la correcte syntaxe

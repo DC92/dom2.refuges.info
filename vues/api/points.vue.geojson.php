@@ -6,7 +6,7 @@ header("Content-disposition: filename=$filename.json");
 header("Content-Type: application/json; UTF-8"); // rajout du charset
 header("Content-Transfer-Encoding: binary");
 headers_cors_par_default();
-headers_cache_api(isset ($_GET['v']) ? 3600*24*7 : 60);
+headers_cache_api();
 ?>
 {
   "type": "FeatureCollection",
