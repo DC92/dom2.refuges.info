@@ -107,11 +107,9 @@ else // le point est valide
       $vue->polygone_avec_information=$polygone;
 
   /*********** Préparation des infos complémentaires (c'est à dire les attributs du bas de la fiche) ***/
-  // Construction du tableau qui sera lu, ligne par ligne par la vue pour être affiché
-  // On pourrait détailler en html chaque propriété entourée par un if (propriété = valide), mais ça fait beaucoup de redondance, alors ainsi, je factorise au détriment d'un peu de lisibilité
-
   // Dom 01/2026 : transféré dans modeles/point.php
   $vue->infos_complementaires = $point->infos_complementaires;
+  array_walk_recursive($vue->infos_complementaires, 'updatebbcode2html'); // Pour compatibilité avec l'API
 
   /*********** Formatage des infos des commentaires ***/
   // Dom 01/2026 : Transféré dans /modele/commentaire.php

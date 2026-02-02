@@ -209,7 +209,6 @@ foreach ($points_bruts as $i=>$point) {
       $point->properties->commentaires = infos_commentaires ($conditions_commentaires);
     }
 
-//TODO affichage lien sur page point
 //TODO modification date points quand suppression transfert, ... commentaire
 //TODO voir impact sur les autres formats API
     /****************************** FILTRE DES DETAILS ******************************/
