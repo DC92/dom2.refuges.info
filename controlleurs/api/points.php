@@ -241,8 +241,8 @@ foreach ($points_bruts as $i=>$point) {
     $filtre['avec_commentaires'] = [
       'places' => false, // Déplacé dans info_comp
       'lien' => false, // Idem
-      //TODO BUG 'coord' => ['long' => true, 'lat' => true, 'alt' => true], // On enllève précision
-      //TODO BUG 'commentaires' => true,
+      'coord' => ['long' => true, 'lat' => true, 'alt' => true], // On enllève précision
+      'commentaires' => true,
     ] + $filtre['complet'];
 
     function filtre_recursif($properties, $filtre) {
@@ -253,7 +253,7 @@ foreach ($points_bruts as $i=>$point) {
       $pi = new stdClass();
       foreach ($filtre as $k => $v)
         if(!empty($ps[$k]) && $v!==false &&
-        (!isset($ps[$k]['valeur']) || !empty($ps[$k]['valeur']))) // Elimine les propriétés->valeur = ""
+          (!isset($ps[$k]['valeur']) || !empty($ps[$k]['valeur']))) // Elimine les properties->valeur = ""
           $pi->$k = filtre_recursif($ps[$k], $v);
 
       return $pi;
