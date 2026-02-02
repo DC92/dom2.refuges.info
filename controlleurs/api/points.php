@@ -206,7 +206,18 @@ foreach ($points_bruts as $i=>$point) {
     {
       $conditions_commentaires = new stdClass();
       $conditions_commentaires->ids_points = $point->id_point;
-      $point->properties->commentaires = infos_commentaires ($conditions_commentaires);
+
+      $point->properties->commentaires = [];
+      foreach (infos_commentaires($conditions_commentaires) AS $c) 
+        $point->properties->commentaires[] = [
+          'id' => $c->id_commentaire,
+          'auteur_commentaire' => $c->auteur_commentaire,
+          'texte' => $c->texte_affichage,
+          'date' => $c->date_commentaire_format_francais,
+        ] + (empty($c->photo_existe) ? [] : [
+          'photo' => true,
+          'date_photo' => $c->date_photo,
+        ]);
     }
 
 //TODO modification date points quand suppression transfert, ... commentaire
