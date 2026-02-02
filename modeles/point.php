@@ -431,6 +431,7 @@ function infos_points($conditions)
       ];
 
       $point_final->properties->createur['id'] = $point->id_createur;
+      $point_final->properties->lien = $point->site_officiel;
 
       // info sur le modérateur actuel de la fiche (authentifié ou non)
       if ($point->id_createur==0) // non authentifié
@@ -460,6 +461,10 @@ function infos_points($conditions)
       $point_final->properties->proprio = [
         'nom' => $point->equivalent_proprio,
         'valeur' => $point->proprio,
+      ];
+      $point_final->properties->places = [
+        'nom' => $point->equivalent_places,
+        'valeur' => $point->places,
       ];
       $point_final->properties->remarque = [
         'nom' => 'Remarque',

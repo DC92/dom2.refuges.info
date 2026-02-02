@@ -198,6 +198,9 @@ foreach ($points_bruts as $i=>$point) {
     $description.=$point->proprio."\n";
     $point->properties->description['valeur']=$description;
 
+    // Dom 01/2026 : transfert du formattage dans le /modele/point.php
+    $point->properties->info_comp = $point->infos_complementaires;
+
     // Dom 01/2026 : ajout des commentaires si demandés
     if(!empty($req->detail=='avec_commentaires'))
     {
@@ -217,15 +220,15 @@ foreach ($points_bruts as $i=>$point) {
     ]];
 
     $filtre['simple'] = [
-      'type' => true,
-      'coord' => ['alt' => true],
-      'places' => true, //TODO dont work
-      'lien' => true, //TODO dont work
+      'type' => true, // On écrase le précédent
       'etat' => true,
+      'places' => true,
+      'lien' => true,
+      'coord' => ['alt' => true],
     ] + $filtre['minimal'];
 
     $filtre['complet'] = [
-      'coord' => true,
+      'coord' => true, // On écrase le précédent
       'date' => true,
       'remarque' => true,
       'access' => true,
@@ -237,7 +240,10 @@ foreach ($points_bruts as $i=>$point) {
     ] + $filtre['simple'];
 
     $filtre['avec_commentaires'] = [
-      'commentaires' => true,
+      'places' => false, // Déplacé dans info_comp
+      'lien' => false, // Idem
+      //TODO BUG 'coord' => ['long' => true, 'lat' => true, 'alt' => true], // On enllève précision
+      //TODO BUG 'commentaires' => true,
     ] + $filtre['complet'];
 
     function filtre_recursif($properties, $filtre) {
@@ -247,7 +253,7 @@ foreach ($points_bruts as $i=>$point) {
       $ps = (array)$properties;
       $pi = new stdClass();
       foreach ($filtre as $k => $v)
-        if(!empty($ps[$k]) &&
+        if(!empty($ps[$k]) && $v!==false &&
         (!isset($ps[$k]['valeur']) || !empty($ps[$k]['valeur']))) // Elimine les propriétés->valeur = ""
           $pi->$k = filtre_recursif($ps[$k], $v);
 
@@ -255,7 +261,6 @@ foreach ($points_bruts as $i=>$point) {
     }
 
     $points->$i = filtre_recursif($point->properties, $filtre[$req->detail]);
-    //DCMM $points->$i = $point->properties;
 
     /****************************** FORMATAGE DU TEXTE ******************************/
     // On transforme le texte dans la correcte syntaxe
