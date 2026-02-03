@@ -211,6 +211,8 @@ foreach ($points_bruts as $i=>$point) {
 
 //TODO modification date points quand suppression transfert, ... commentaire
 //TODO voir impact sur les autres formats API
+//TODO vérification du parametre avec_commentaires
+//TODO ajouter detail=avec_commentaires et depuis à la doc API
     /****************************** FILTRE DES DETAILS ******************************/
     // On paramètre, pour chaque niveau de détail
     // les champs qu'on veut voir figurer dans la réponse de l'API
