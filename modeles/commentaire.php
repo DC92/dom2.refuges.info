@@ -176,17 +176,18 @@ function infos_commentaires ($conditions)
           $chemin_photo=$config_wri['rep_photos_points'].$nom_fichier_photo;
           if (is_file($chemin_photo))
           {
-            $commentaire->photo[$taille]=$chemin_photo;
+            $commentaire->date_photo_format_francais[$taille]=$chemin_photo;
             // Le filemtime a pour but, après une modification sur la photo, d'éviter que les caches navigateurs ne s'activent
             $commentaire->lien_photo[$taille]=$config_wri['rep_web_photos_points'].$nom_fichier_photo."?".filemtime($chemin_photo);
+            $commentaire->lien_photo_reduite=$config_wri['rep_web_photos_points'].$nom_fichier_photo;
             break; // pas besoin de tester toute les extensions, on en a trouvé une
           }
         }
 
       // Ce cas peut exister quand on a plus/pas gardé la photo originale (historique) alors elle sera la même que la réduite
-      if (!isset($commentaire->photo['originale']) and !empty($commentaire->photo['reduite']))
+      if (!isset($commentaire->date_photo_format_francais['originale']) and !empty($commentaire->date_photo_format_francais['reduite']))
       {
-        $commentaire->photo['originale']=$commentaire->photo['reduite'];
+        $commentaire->date_photo_format_francais['originale']=$commentaire->date_photo_format_francais['reduite'];
         $commentaire->lien_photo['originale']=$commentaire->lien_photo['reduite'];
       }
     }
@@ -220,8 +221,6 @@ function infos_commentaires ($conditions)
     {
       if (isset($commentaire->date_photo))
         $commentaire->date_photo_format_francais=strftime ("%d/%m/%Y", $commentaire->ts_unix_photo);
-      else
-        $commentaire->date_photo_format_francais = '';
     }
 
     $commentaires [] = $commentaire;
@@ -253,7 +252,7 @@ Cette fonction peut sembler bourrine, mais c'est assez pratique à utiliser :
 On lui passe un objet "commentaire" et soit elle le créer s'il ne dispose pas d'id_commentaire
 soit elle le met à jour avec les infos qu'on lui a fourni
 
-* Lui passer un $commentaire->photo['originale']="/chemin/de/la/photo.jpeg" et elle s'occupera de créer
+* Lui passer un $commentaire->date_photo_format_francais['originale']="/chemin/de/la/photo.jpeg" et elle s'occupera de créer
 les versions réduite de la photo et même de remplacer la photo si celle-ci est différente d'avant
 (La photo source n'est pas effacée, à vous de le faire si elle est issue d'un téléchargement)
 
@@ -286,12 +285,12 @@ function modification_ajout_commentaire($commentaire)
     return erreur("Le commentaire ne peut être ajouté car : ".$point->message ?? '',"Id du point: \"$commentaire->id_point\"");
   // Test de validité, un commentaire ne peut être modifié ou ajouté que si son texte existe ou a une photo
   // On dirait que le commentaire dispose bien d'une photo
-  if (!empty($commentaire->photo['originale']))
+  if (!empty($commentaire->date_photo_format_francais['originale']))
   {
-    if (!is_file($commentaire->photo['originale']??''))
+    if (!is_file($commentaire->date_photo_format_francais['originale']??''))
       return erreur("La photo proposée ne semble pas exister ou ne nous est pas parvenue");
 
-    $format_photo=exif_imagetype($commentaire->photo['originale']);
+    $format_photo=exif_imagetype($commentaire->date_photo_format_francais['originale']);
     // Test pour voir si le fichier envoyé est bien un format de photo dans la liste que nous acceptons
     if (!in_array($format_photo,$config_wri['format_photo_autorisees'] ))
       return erreur("Le fichier proposé ne semble pas contenir une image au format ".$config_wri['texte_des_formats_photo_autorisee'].", vous pouvez revenir en arrière et retirer la photo, la vérifier ou en fournir une autre.");
@@ -299,7 +298,7 @@ function modification_ajout_commentaire($commentaire)
     //bien, on a une image pour ce commentaire
     $photo_valide=True;
   }
-  else if (isset($commentaire->photo['reduite']))
+  else if (isset($commentaire->date_photo_format_francais['reduite']))
     // On a pas (ou plus) la photo originale, mais on a quand même la réduite
     $commentaire->photo_existe=1; // normalement, vu que l'objet n'a pas de chemin pour la photo, ça devrait déjà être 0, mais si quelqu'un veut le forcer à 1 : non
   else
@@ -315,8 +314,8 @@ function modification_ajout_commentaire($commentaire)
     if (!empty($commentaire_avant_modification->erreur))
       return erreur("Une modification d'un commentaire inexistant a été demandée : ".$commentaire_avant_modification->message);
 
-    if (!empty($commentaire->photo['originale']))
-      $ajout_photo=empty($commentaire->photo['originale']);
+    if (!empty($commentaire->date_photo_format_francais['originale']))
+      $ajout_photo=empty($commentaire->date_photo_format_francais['originale']);
     else
       $ajout_photo=False;
     $mode="modification";
@@ -332,7 +331,7 @@ function modification_ajout_commentaire($commentaire)
   if ($traitement_photo)
   {
     $commentaire->photo_existe=1;
-    $exif_data = @exif_read_data ($commentaire->photo['originale']??'');
+    $exif_data = @exif_read_data ($commentaire->date_photo_format_francais['originale']??'');
     // la date ne semble pas exister dans les données Exif de la photo, on met ''
     $date_photo = $exif_data ['DateTimeOriginal'] ?? '';
 
@@ -405,12 +404,12 @@ function modification_ajout_commentaire($commentaire)
     $photo_originale=$config_wri['rep_photos_points'] . $commentaire->id_commentaire . "-originale.".$choix_extension_fichier;
     $vignette_photo = $config_wri['rep_photos_points'] . $commentaire->id_commentaire . "-vignette.jpeg";
     $image_reduite=$config_wri['rep_photos_points'] . $commentaire->id_commentaire . "-reduite.jpeg";
-    $taille = getimagesize($commentaire->photo['originale']);
+    $taille = getimagesize($commentaire->date_photo_format_francais['originale']);
 
     //On garde bien la photo d'origine, sans modification (à part la renommer), comme ça, si un jour on veut changer de format, relire les exifs, etc.
-    if (!empty($commentaire->photo['originale'])) {
-      copy($commentaire->photo['originale'],$photo_originale);
-      copy($commentaire->photo['originale'],$image_reduite);
+    if (!empty($commentaire->date_photo_format_francais['originale'])) {
+      copy($commentaire->date_photo_format_francais['originale'],$photo_originale);
+      copy($commentaire->date_photo_format_francais['originale'],$image_reduite);
     }
 
     if ( ($taille[0]>$config_wri['largeur_max_photo']) OR ($taille[1]>$config_wri['hauteur_max_photo']))
@@ -474,13 +473,13 @@ du commentaire, ça l'est.
 function suppression_photos($commentaire,$force=False)
 {
   global $config_wri;
-  if (isset($commentaire->photo) or !empty($commentaire->photo_existe))
+  if (isset($commentaire->date_photo_format_francais) or !empty($commentaire->photo_existe))
   {
     $commentaire->photo_existe=0;
-    if (isset($commentaire->photo))
+    if (isset($commentaire->date_photo_format_francais))
     {
-      $photos_a_supprimer=$commentaire->photo;
-      unset($commentaire->photo);
+      $photos_a_supprimer=$commentaire->date_photo_format_francais;
+      unset($commentaire->date_photo_format_francais);
     }
     if (!$force)
     {
@@ -542,10 +541,10 @@ function transfert_forum($commentaire)
     $commentaire->texte.="\n[img]".$config_wri['rep_web_forum_photos'].$commentaire->id_commentaire.".jpeg[/img]";
 
     // et on copie les photos, on va garder: la version original et la version en taille réduite (ça peut servir si on veut finalement refaire venir le commentaire sur le site et avoir la photo en haute résolution)
-    if (isset($commentaire->photo['reduite']))
-      copy($commentaire->photo['reduite'],$config_wri['rep_forum_photos'].$commentaire->id_commentaire.".jpeg");
-    if (isset($commentaire->photo['originale']))
-      copy($commentaire->photo['originale'],$config_wri['rep_forum_photos'].$commentaire->id_commentaire."-originale.jpeg");
+    if (isset($commentaire->date_photo_format_francais['reduite']))
+      copy($commentaire->date_photo_format_francais['reduite'],$config_wri['rep_forum_photos'].$commentaire->id_commentaire.".jpeg");
+    if (isset($commentaire->date_photo_format_francais['originale']))
+      copy($commentaire->date_photo_format_francais['originale'],$config_wri['rep_forum_photos'].$commentaire->id_commentaire."-originale.jpeg");
   }
 
   if (!empty($commentaire->id_createur_commentaire)) // L'utilisateur qui a posté ce commentaire était connecté

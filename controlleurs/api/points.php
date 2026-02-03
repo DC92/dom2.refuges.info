@@ -206,23 +206,16 @@ foreach ($points_bruts as $i=>$point) {
     {
       $conditions_commentaires = new stdClass();
       $conditions_commentaires->ids_points = $point->id_point;
-
-      $point->properties->commentaires = [];
-      foreach (infos_commentaires($conditions_commentaires) AS $c) 
-        $point->properties->commentaires[] = [
-          'id' => $c->id_commentaire,
-          'auteur_commentaire' => $c->auteur_commentaire,
-          'texte' => $c->texte_affichage,
-          'date' => $c->date_commentaire_format_francais,
-        ] + (empty($c->photo_existe) ? [] : [
-          'photo' => true,
-          'date_photo' => $c->date_photo,
-        ]);
+      $point->properties->commentaires = infos_commentaires($conditions_commentaires);
     }
 
 //TODO modification date points quand suppression transfert, ... commentaire
 //TODO voir impact sur les autres formats API
     /****************************** FILTRE DES DETAILS ******************************/
+    // On paramètre, pour chaque niveau de détail
+    // les champs qu'on veut voir figurer dans la réponse de l'API
+    // si besoin en renommant ce champ
+
     $filtre = ['minimal' => [
       'id' => true,
       'nom' => true,
@@ -253,21 +246,43 @@ foreach ($points_bruts as $i=>$point) {
       'places' => false, // Déplacé dans info_comp
       'lien' => false, // Idem
       'coord' => ['long' => true, 'lat' => true, 'alt' => true], // On enllève précision
-      'commentaires' => true,
+      'commentaires' => [
+        '*' => [ // On prend tous les commentaires du tableau
+          'id_commentaire' => 'id',
+          'id_point' => true,
+          'texte_affichage' => 'texte',
+          'auteur_commentaire' => 'auteur',
+          'date_commentaire' => 'date',
+          'lien_photo_reduite' => 'photo',
+          'date_photo' => true,
+        ],
+      ],
     ] + $filtre['complet'];
 
+    // Petite fonction réalisant le filtre suivant les paramètres
     function filtre_recursif($properties, $filtre) {
       if(is_scalar($properties) || is_bool($filtre))
         return $properties;
 
-      $ps = (array)$properties;
-      $pi = new stdClass();
-      foreach ($filtre as $k => $v)
-        if(!empty($ps[$k]) && $v!==false &&
-          (!isset($ps[$k]['valeur']) || !empty($ps[$k]['valeur']))) // Elimine les properties->valeur = ""
-          $pi->$k = filtre_recursif($ps[$k], $v);
-
-      return $pi;
+      $props = (array)$properties; // On transforme toutes les entrées en array car elle sont parfois object
+      $obj = new stdClass();
+      foreach ($filtre as $cle => $valeur)
+        // Cas des tableaux : on prend tout le contenu de ce niveau
+        if($cle=='*') {
+          $tablo=[];
+          foreach($properties AS $p)
+            $tablo[]= filtre_recursif($p, $valeur);
+          return $tablo;
+        }
+        // Cas normal
+        elseif(!empty($props[$cle]) && $valeur!==false &&
+          (!isset($props[$cle]['valeur']) || !empty($props[$cle]['valeur']))) { // Elimine les properties->valeur = ""
+            if(is_string($valeur)) // Renommage de la variable
+              $obj->$valeur = filtre_recursif($props[$cle], $valeur);
+            else
+              $obj->$cle = filtre_recursif($props[$cle], $valeur);
+          }
+      return $obj;
     }
 
     $points->$i = filtre_recursif($point->properties, $filtre[$req->detail]);
