@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" creator="Export gpx standard de refuges.info" version="1.1">
+<metadata>
+	<name>Points de refuges.info</name>
+	<desc>The data included in this document is from www.refuges.info. The data is made available under CC By-Sa 2.0</desc>
+	<author>
+		<name>Contributeurs refuges.info</name>
+	</author>
+	<copyright author="Contributeurs refuges.info">
+		<time>2026-02-04T21:45:20</time>
+		<license>http://creativecommons.org/licenses/by-sa/2.0/deed.fr</license>
+	</copyright>
+	<link href="https://dom2.refuges.info" />
+</metadata>
+
+<wpt lat="45.32489" lon="5.73966">
+  <ele>1274</ele>
+  <name>La Charmette (ex-Maison Forestière) (Fermée)</name>
+    <type>cabane non gardée</type>
+    <desc>Le chalet de la Charmette est fermé jusqu&#039;à nouvel ordre.
+Une association veut organiser le &quot;sauvetage&quot; et la réouverture de cet édifice.
+D 105 par St Egrève / Proveysieux jusqu&#039;au col de la Charmette (*P*). Accès en 5 minutes à gauche (O) de la croix.
+
+</desc>
+    <src>Coordonnées pointées sur photos aériennes</src>
+    <link href="http://dom2.refuges.info/point/314/cabane-non-gardee/La-Charmette-ex-Maison-Forestiere/" />
+</wpt>
+</gpx>
