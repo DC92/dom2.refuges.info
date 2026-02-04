@@ -261,33 +261,10 @@ foreach ($points_bruts as $i=>$point) {
       ],
     ] + $filtre['complet'];
 
-    // Petite fonction réalisant le filtre suivant les paramètres
-    function filtre_recursif($properties, $filtre) {
-      if(is_scalar($properties) || is_bool($filtre))
-        return $properties;
-
-      $props = (array)$properties; // On transforme toutes les entrées en array car elle sont parfois object
-      $obj = new stdClass();
-      foreach ($filtre as $cle => $valeur)
-        // Cas des tableaux : on prend tout le contenu de ce niveau
-        if($cle=='*') {
-          $tablo=[];
-          foreach($properties AS $p)
-            $tablo[]= filtre_recursif($p, $valeur);
-          return $tablo;
-        }
-        // Cas normal
-        elseif(!empty($props[$cle]) && $valeur!==false &&
-          (!isset($props[$cle]['valeur']) || !empty($props[$cle]['valeur']))) { // Elimine les properties->valeur = ""
-            if(is_string($valeur)) // Renommage de la variable
-              $obj->$valeur = filtre_recursif($props[$cle], $valeur);
-            else
-              $obj->$cle = filtre_recursif($props[$cle], $valeur);
-          }
-      return $obj;
-    }
-
-    $points->$i = filtre_recursif($point->properties, $filtre[$req->detail]);
+    if($req->format == 'geojson')
+      $points->$i = filtre_recursif($point->properties, $filtre[$req->detail]);
+    else
+      $points->$i = $point->properties;
 
     /****************************** FORMATAGE DU TEXTE ******************************/
     // On transforme le texte dans la correcte syntaxe
