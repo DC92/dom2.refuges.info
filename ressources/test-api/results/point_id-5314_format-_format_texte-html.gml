@@ -9,7 +9,7 @@
     <point_wri>
         <nom>Refugi Baserca</nom>
         <type>cabane non gardée</type>
-        <icone>cabane_manqueunmur_a48_eau</icone>
+        <icone>cabane_manqueunmur_eau_cle</icone>
         <url><a href="http://dom2.refuges.info/point/5314/cabane-non-gardee/Refugi-Baserca/">http://dom2.refuges.info/point/5314/cabane-non-gardee/Refugi-Baserca/</a></url>
         <altitude>1450</altitude>
         <gml:Point>

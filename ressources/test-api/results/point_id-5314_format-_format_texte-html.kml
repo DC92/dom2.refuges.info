@@ -3,11 +3,11 @@
   <name>points.kml</name>
   <description>The data included in this document is from www.refuges.info. The data is made available under CC By-Sa 2.0</description>
 <!-- Liste des styles  (en gros, les icones possibles) -->
-  <Style id='cabane_manqueunmur_a48_eau'>
+  <Style id='cabane_manqueunmur_eau_cle'>
     <IconStyle>
     <hotSpot x='0.5' y='0.5' xunits='fraction' yunits='fraction' />
       <Icon>
-        <href>https://dom2.refuges.info/images/icones/cabane_manqueunmur_a48_eau.png</href>
+        <href>https://dom2.refuges.info/images/icones/cabane_manqueunmur_eau_cle.png</href>
       </Icon>
     </IconStyle>
   </Style>
@@ -22,7 +22,9 @@
       <description>
         <![CDATA[ <em>cabane non gardée</em> 
               <br>
-              <p>Cabane en bordure de l&amp;#039;étang de Baserca.&lt;br&gt;<br>
+              <p>Places prévues pour dormir: 10&lt;br&gt;<br>
+Places sur Matelas: 2&lt;br&gt;<br>
+Cabane en bordure de l&amp;#039;étang de Baserca.&lt;br&gt;<br>
 En très grande partie détruite, mais il est possible de s&amp;#039;abriter sous un bout de toit en cas d&amp;#039;orage.&lt;br&gt;<br>
 &lt;br&gt;<br>
 L&amp;#039;auvent est tombé.&lt;br&gt;<br>
@@ -41,7 +43,7 @@ OT de Vielha ?&lt;br&gt;<br>
         <tilt>40</tilt>
         <heading>50</heading>
       </LookAt>
-        <styleUrl>#cabane_manqueunmur_a48_eau</styleUrl>
+        <styleUrl>#cabane_manqueunmur_eau_cle</styleUrl>
       <Point>
         <coordinates>0.76305,42.59774,0</coordinates>
       </Point>
