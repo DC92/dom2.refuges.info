@@ -15,7 +15,7 @@ $apis = [
   'point?id=5314&format=geojson&format_texte=bbcode',
   'point?id=5314&format=geojson&format_texte=texte',
   'point?id=5314&format=geojson&format_texte=markdown',
-  'point?depuis=1770249600,nb_points=all',
+  'point?depuis=1770249600&nb_points=all',
 ];
 
 $formats = ['geojson','kml','gml','gpx','csv','xml','rss'];
@@ -39,7 +39,9 @@ $keys = [
 foreach ($apis AS $api) {
   preg_match_all('/'.implode('|',$formats).'/', $api, $match);
   $ext = $match[0][0] ?? 'json';
-  $url = 'http://dom2.refuges.info/api/'.$api.'&nb_points=1';
+  if (!str_contains($api, 'nb_points'))
+    $api.='&nb_points=1';
+  $url = 'http://dom2.refuges.info/api/'.$api;
   $nf = str_replace('-.', '.', str_replace(
     ['?','&','=',',',$ext.'.'],
     ['_','_','-','_','.'],

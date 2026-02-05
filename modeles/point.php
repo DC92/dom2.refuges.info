@@ -906,6 +906,25 @@ function suppression_point($point,$id_utilisateur_qui_supprime=0)
 }
 
 /*******************************************************
+Cette fonction change la date_modification_fiche créées, modifiées ou dont un commentaire à évolué
+
+*******************************************************/
+function touch_fiches($commentaire, $commentaire_avant_modification=null)
+{
+  global $pdo;
+
+  if (empty($commentaire_avant_modification) || $commentaire->id_point == $commentaire_avant_modification->id_point)
+    $condition = "= $commentaire->id_point";
+  else
+    $condition = "IN ($commentaire->id_point, $commentaire_avant_modification->id_point)";
+
+  $query_modif_fiche = "UPDATE points SET date_modification_fiche=NOW() WHERE id_point $condition";
+  
+  if (!$pdo->exec($query_modif_fiche))
+    return erreur("Problème qui n'aurait pas dû arriver, le traitement du point a foiré","La requête était : $query_modif_fiche");
+}
+
+/*******************************************************
 Cette fonction retourne le nom de l'icone (sans le chemin ni l'extention)
 de l'icone à utiliser sur une carte de refuges.info
 

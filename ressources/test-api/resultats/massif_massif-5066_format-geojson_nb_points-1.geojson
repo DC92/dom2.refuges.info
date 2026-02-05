@@ -2,7 +2,7 @@
     "type": "FeatureCollection",
     "generator": "Refuges.info API",
     "copyright": "The data included in this document is from www.refuges.info. The data is made available under CC By-Sa 2.0",
-    "timestamp": "2026-02-05T20:43:00+01:00",
+    "timestamp": "2026-02-05T21:29:34+01:00",
     "size": "1",
     "features": [
         {
@@ -13,7 +13,20 @@
                 "nom": "Refugi Baserca",
                 "type": {
                     "id": 7,
+                    "valeur": "cabane non gard\u00e9e",
                     "icone": "cabane_manqueunmur_eau_cle"
+                },
+                "sym": "Fishing Hot Spot Facility",
+                "lien": "http:\/\/dom2.refuges.info\/point\/5314\/cabane-non-gardee\/Refugi-Baserca\/",
+                "coord": {
+                    "alt": 1450
+                },
+                "places": {
+                    "nom": "Places pr\u00e9vues pour dormir",
+                    "valeur": 10
+                },
+                "etat": {
+                    "valeur": "Cl\u00e9s \u00e0 r\u00e9cup\u00e9rer"
                 }
             },
             "geometry": {

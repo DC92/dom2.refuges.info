@@ -386,7 +386,7 @@ function modification_ajout_commentaire($commentaire)
   else
     $retour->message="Le commentaire a été modifié";
 
-  touch_fiches($point, $commentaire_avant_modification);
+  touch_fiches($point, $commentaire_avant_modification??null);
 
   // C'est juste "cosmétique" : si on détecte que le numéro du point a changé, on signale qu'un transfert a eu lieu.
   if ($mode == "modification" and $un_transfert_a_eu_lieu)
