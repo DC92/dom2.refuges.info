@@ -17,7 +17,7 @@ $apis = [
   'point?id=5314&format=geojson&format_texte=markdown',
 ];
 
-$formats = ['json','kml','gml','gpx','csv','xml','rss'];
+$formats = ['geojson','kml','gml','gpx','csv','xml','rss'];
 foreach ($formats AS $for)
   $apis[] = "point?id=5314&format=$for&format_texte=html";
 
@@ -45,7 +45,7 @@ foreach ($apis AS $api) {
     "results/$api.$ext"
   ));
 
-  $f = file_get_contents($url);
+  $f = $fc = file_get_contents($url);
 
   if(str_contains($url, 'json'))
     $f = json_encode(json_decode($f),JSON_PRETTY_PRINT);
@@ -54,9 +54,11 @@ foreach ($apis AS $api) {
     $f = str_replace("><", ">\n<", $f);
 
   if(!$f || $f == 'null')
+    $f = $fc;
+  if(!$f || $f == 'null')
     $f = $url;
 
   file_put_contents($nf, $f);
 
-  echo $nf.' ==> '.$url.PHP_EOL;
+  echo "<a href=\"$url\">$nf<br>";
 }

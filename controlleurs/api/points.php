@@ -224,42 +224,40 @@ foreach ($points_bruts as $i=>$point) {
       'type' => ['id' => true, 'icone' => true],
     ]];
 
-    $filtre['simple'] = [
+    $filtre['simple'] = array_merge($filtre['minimal'], [
       'type' => true, // On écrase le précédent
-      'etat' => true,
-      'places' => true,
       'lien' => true,
       'coord' => ['alt' => true],
-    ] + $filtre['minimal'];
+      'places' => true,
+      'etat' => ['valeur' => true],
+    ]);
 
-    $filtre['complet'] = [
+    $filtre['complet'] = array_merge($filtre['simple'], [
       'coord' => true, // On écrase le précédent
+      'etat' => true, // On écrase le précédent
       'date' => true,
       'remarque' => true,
-      'access' => true,
+      'acces' => true,
       'proprio' => true,
       'createur' => true,
-      'article' => true,
       'info_comp' => true,
       'description' => true,
-    ] + $filtre['simple'];
+    ]);
 
-    $filtre['avec_commentaires'] = [
+    $filtre['avec_commentaires'] = array_merge($filtre['complet'], [
       'places' => false, // Déplacé dans info_comp
-      'lien' => false, // Idem
-      'coord' => ['long' => true, 'lat' => true, 'alt' => true], // On enllève précision
-      'commentaires' => [
-        '*' => [ // On prend tous les commentaires du tableau
-          'id_commentaire' => 'id',
-          'id_point' => true,
-          'texte_affichage' => 'texte',
-          'auteur_commentaire' => 'auteur',
-          'date_commentaire' => 'date',
-          'lien_photo_reduite' => 'photo',
-          'date_photo' => true,
-        ],
-      ],
-    ] + $filtre['complet'];
+      'coord' => ['long' => true, 'lat' => true, 'alt' => true], // On enlève précision
+      'date' => ['derniere_modif' => true],
+      'commentaires' => ['*' => [ // Tout l'array commentaires
+        'id_commentaire' => 'id',
+        'id_point' => true,
+        'texte_affichage' => 'texte',
+        'auteur_commentaire' => 'auteur',
+        'date_commentaire' => 'date',
+        'lien_photo_reduite' => 'photo',
+        'date_photo' => true,
+      ]],
+    ]);
 
     if($req->format == 'geojson')
       $points->$i = filtre_recursif($point->properties, $filtre[$req->detail]);

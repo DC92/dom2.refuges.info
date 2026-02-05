@@ -9,6 +9,7 @@ require_once ('bdd.php');
 require_once ('point.php');
 require_once ('mise_en_forme_texte.php');
 require_once ('utilisateur.php');
+require_once ('identification.php');
 
 
 /**********************************************************************************************

@@ -421,9 +421,9 @@ function infos_points($conditions)
       }
 
       $point_final->properties->coord = [
+        'alt' => $point->altitude,
         'long' => $point->longitude,
         'lat' => $point->latitude,
-        'alt' => $point->altitude,
         'precision' => [
           'nom' => $point->nom_precision_gps,
           'type' => $point->id_type_precision_gps,
@@ -431,6 +431,7 @@ function infos_points($conditions)
       ];
 
       $point_final->properties->createur['id'] = $point->id_createur;
+      $point_final->properties->lien = lien_point($point);
       $point_final->properties->lien_site = $point->site_officiel;
 
       // info sur le modérateur actuel de la fiche (authentifié ou non)
@@ -455,8 +456,9 @@ function infos_points($conditions)
         'partitif' => $point->article_partitif_point_type,
       ];
       $point_final->properties->etat = [
-        'id' => $point->conditions_utilisation,
+        'nom' => 'Etat', //TODO : générer automatiquement ?
         'valeur' => texte_non_ouverte($point),
+        'id' => $point->conditions_utilisation,
       ];
       $point_final->properties->proprio = [
         'nom' => $point->equivalent_proprio,
