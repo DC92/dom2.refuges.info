@@ -11,7 +11,7 @@ headers_cache_api();
 {
   "type": "FeatureCollection",
   "generator": "Refuges.info API",
-<?php echo isset($config_wri['debug']) ? '"request": "'.$_SERVER['REQUEST_URI'].'' : '';
+<?php echo !isset($config_wri['debug']) ? '' : '"request": "'.$_SERVER['REQUEST_URI'].'",'.PHP_EOL;
 ?>"copyright": "<?=$config_wri['copyright_API']?>",
   "timestamp": "<?=date(DATE_ATOM)?>",
   "size": "<?=count((array)$points)?>",

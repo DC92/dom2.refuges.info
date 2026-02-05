@@ -404,8 +404,8 @@ function infos_points($conditions)
       $point_final->properties->type = [
         'id' => $point->id_point_type,
         'id' => $point->id_point_type,
-        'icone' => choix_icone($point),
         'valeur' => $point->nom_type,
+        'icone' => choix_icone($point),
       ];
 
       // Symbole Garmin
@@ -431,7 +431,7 @@ function infos_points($conditions)
       ];
 
       $point_final->properties->createur['id'] = $point->id_createur;
-      $point_final->properties->lien = $point->site_officiel;
+      $point_final->properties->lien_site = $point->site_officiel;
 
       // info sur le modérateur actuel de la fiche (authentifié ou non)
       if ($point->id_createur==0) // non authentifié
