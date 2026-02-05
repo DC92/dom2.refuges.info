@@ -1,0 +1,15 @@
+{
+  "type": "FeatureCollection",
+  "generator": "Refuges.info API",
+  "copyright": "The data included in this document is from www.refuges.info. The data is made available under CC By-Sa 2.0",
+  "timestamp": "2026-02-05T20:42:59+01:00",
+  "size": "1",
+  "features": 
+  [ 
+  {
+     "type": "Feature",
+     "id": 6726,
+     "properties": {"id":6726,"nom":"Bivacco Angelo Valmaggia","type":{"id":7,"valeur":"cabane non gard\u00e9e","icone":"cabane_eau"},"sym":"Fishing Hot Spot Facility","lien":"http:\/\/dom2.refuges.info\/point\/6726\/cabane-non-gardee\/Bivacco-Angelo-Valmaggia\/","coord":{"alt":2335},"places":{"nom":"Places pr\u00e9vues pour dormir","valeur":12},"etat":{"valeur":""}},
+     "geometry": {"type":"Point","coordinates":[6.95113,44.43907]}
+  }  ]
+}

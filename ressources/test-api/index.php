@@ -4,8 +4,8 @@ https://dom2.refuges.info/nav/5066/massif/Lleida-Lerida/
 https://dom2.refuges.info/api/bbox?nb_points=all&bbox=0.75,42.55,0.8,42.6
 */
 
-if(!is_dir('results'))
-    mkdir('results');
+if(!is_dir('resultats'))
+    mkdir('resultats');
 
 $apis = [
   'bbox?bbox=0.75,42.5,0.8,42.6&format=gpx',
@@ -15,6 +15,7 @@ $apis = [
   'point?id=5314&format=geojson&format_texte=bbcode',
   'point?id=5314&format=geojson&format_texte=texte',
   'point?id=5314&format=geojson&format_texte=markdown',
+  'point?depuis=1770249600,nb_points=all',
 ];
 
 $formats = ['geojson','kml','gml','gpx','csv','xml','rss'];
@@ -37,12 +38,12 @@ $keys = [
 
 foreach ($apis AS $api) {
   preg_match_all('/'.implode('|',$formats).'/', $api, $match);
-  $ext = $match[0][0];
+  $ext = $match[0][0] ?? 'json';
   $url = 'http://dom2.refuges.info/api/'.$api.'&nb_points=1';
   $nf = str_replace('-.', '.', str_replace(
     ['?','&','=',',',$ext.'.'],
     ['_','_','-','_','.'],
-    "results/$api.$ext"
+    "resultats/$api.$ext"
   ));
 
   $f = $fc = file_get_contents($url);
