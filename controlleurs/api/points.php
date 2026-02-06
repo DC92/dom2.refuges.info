@@ -28,7 +28,7 @@ $req->id = $_REQUEST['id'] ?? '';
 $req->format = $_REQUEST['format'] ?? '';
 $req->detail = $_REQUEST['detail'] ?? 'simple';
 $req->format_texte = $_REQUEST['format_texte'] ?? '';
-$req->nb_points = $_REQUEST['nb_points'] ?? '';
+$req->nb_points = $_REQUEST['nb_points'] ?? 121;
 $req->depuis = $_REQUEST['depuis'] ?? 0;
 $req->cluster = $_REQUEST['cluster'] ?? '';
 $req->type_points = $_REQUEST['type_points'] ?? '';
@@ -47,33 +47,11 @@ $val->type_points_id = array(7, 10, 9, 29, 23, 3, 28);
 if(!array_key_exists($req->format,$config_wri['api_format_points']))
   $req->format = "geojson";
 
-if(!in_array($req->format_texte,$val->format_texte)) {
-  switch ($req->page) {
-    case 'bbox':
-    case 'massif':
-    case 'point':
-      $req->format_texte = "bbcode";
-      break;
-    default:
-      $req->format_texte = "texte";
-      break;
-    }
-}
+if(!in_array($req->format_texte,$val->format_texte))
+  $req->format_texte = "bbcode";
 
-if(!is_numeric($req->nb_points) && $req->nb_points!="all") {
-  switch ($req->page) {
-    case 'bbox':
-    case 'massif':
-      $req->nb_points = $config_wri['defaut_max_nombre_point'];
-      break;
-    case 'point':
-      $req->nb_points = 1;
-      break;
-    default:
-      $req->nb_points = "all";
-      break;
-  }
-}
+if(!is_numeric($req->nb_points) && $req->nb_points!="all")
+  $req->nb_points = $config_wri['defaut_max_nombre_point'];
 
 // On vérifie que les types de points sont ok, sinon on met all comme valeur
 if($req->page!="point") {
@@ -119,22 +97,10 @@ if($req->bbox != "world") { // Si on a world, on ne passe pas de paramètre à p
 }
 unset($ouest,$sud,$est,$nord);
 
-switch ($req->page) {
-  case 'bbox':
-    $params->pas_les_points_caches=1;
-    $params->ordre="point_type.importance DESC";
-    break;
-  case 'massif':
-    $params->ids_polygones = $req->massif;
-    $params->pas_les_points_caches=1;
-    $params->ordre="point_type.importance DESC";
-    break;
-  case 'point':
-    $params->ids_points = intval($req->id);
-    break;
-  default:
-    break;
-}
+$params->ids_points = $req->id;
+$params->ids_polygones = $req->massif;
+$params->pas_les_points_caches=1;
+$params->ordre="point_type.importance DESC, points.date_modification_fiche DESC";
 
 if($req->nb_points != "all") {
   $params->limite = $req->nb_points;
