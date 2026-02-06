@@ -2,8 +2,8 @@
   "type": "FeatureCollection",
   "generator": "Refuges.info API",
   "copyright": "The data included in this document is from www.refuges.info. The data is made available under CC By-Sa 2.0",
-  "timestamp": "2026-02-05T21:29:36+01:00",
-  "size": "1049",
+  "timestamp": "2026-02-06T17:50:11+01:00",
+  "size": "1048",
   "features": 
   [ 
   {
@@ -3719,12 +3719,6 @@
      "id": 3913,
      "properties": {"id":3913,"nom":"G\u00eete d'\u00e9tape l'Escolan","type":{"id":9,"valeur":"g\u00eete d'\u00e9tape","icone":"cabane_green_eau"},"sym":"Residence","lien":"http:\/\/dom2.refuges.info\/point\/3913\/gite-d-etape\/Gite-d-etape-l-Escolan\/","coord":{"alt":750},"places":{"nom":"Capacit\u00e9 d'accueil","valeur":20},"etat":{"valeur":""}},
      "geometry": {"type":"Point","coordinates":[1.26931,42.78276]}
-  }, 
-  {
-     "type": "Feature",
-     "id": 1179,
-     "properties": {"id":1179,"nom":"Fontaine de Carrette","type":{"id":23,"valeur":"point d'eau","icone":"pointdeau_x"},"sym":"Crossing","lien":"http:\/\/dom2.refuges.info\/point\/1179\/point-d-eau\/Fontaine-de-Carrette\/","coord":{"alt":1410},"places":{"nom":"","valeur":0},"etat":{"valeur":"Tari d\u00e9finitivement"}},
-     "geometry": {"type":"Point","coordinates":[5.50639,44.9817]}
   }, 
   {
      "type": "Feature",

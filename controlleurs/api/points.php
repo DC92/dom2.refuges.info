@@ -242,6 +242,8 @@ foreach ($points_bruts as $i=>$point) {
     ]);
 
     $filtre['avec_commentaires'] = array_merge($filtre['complet'], [
+      'type' => ['valeur' => 'type'], // On écrase le précédent
+      'etat' => ['valeur' => 'etat'], // On écrase le précédent
       'places' => false, // Déplacé dans info_comp
       'coord' => ['long' => true, 'lat' => true, 'alt' => true], // On enlève précision
       'date' => ['derniere_modif' => true],

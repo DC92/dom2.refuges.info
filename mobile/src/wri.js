@@ -1,11 +1,11 @@
 /* global requeteAPI, initCarte, prepareModeleGroupe, appliqueDonnees */
-/* global  preLoad, preLoadPoints, serveurAPI, idbKeyval, debugPWA */
+/* global  preLoadTiles, preLoadPoints, serveurAPI, idbKeyval, debugPWA */
 
 const nomPages = ['carte', 'point', 'nouvelles'],
   map = initCarte('map');
 
 // Prè-charge les dalles OpenHikingMap, points et commentaires autour de la zone visitée
-map.on('moveend', () => preLoad(map, map.getCenter()));
+map.on('moveend', () => preLoadTiles(map, map.getCenter()));
 
 // Initialisation de la page lorsque l'URL principale est appelée ou l'ancre change
 function changePage() {
@@ -60,21 +60,43 @@ function affichePageNouvelles() {
  **************/
 /* eslint-disable-next-line no-unused-vars */
 async function affichePagePoint(idPoint) {
-  const infoEl = document.getElementById('infos-point'),
-    commentEl = document.getElementById('commentaires'),
+  const //infoEl = document.getElementById('infos-point'),
+    //commentEl = document.getElementById('commentaires'),
+    url = serveurAPI + '/api/point?detail=avec_commentaires&format_texte=html&id=' + idPoint,
     properties = debugPWA ?
-    await preLoadPoints(serveurAPI + '/api/point?detail=complet&format_texte=html&id=' + idPoint) :
+    await preLoadPoints(url) :
     await idbKeyval.get(parseInt(idPoint, 10)) || // Si le point est préchargé
-    await preLoadPoints(serveurAPI + '/api/point?detail=complet&format_texte=html&id=' + idPoint); // Essaye de le charger
+    await preLoadPoints(url); // Essaye de le charger
 
   map.setView([properties.coord.lat, properties.coord.long], 15);
   //TODO BUG positionnement carte au chargement de la fiche
   //TODO charger à partir de la couche bbox points globale.
   //TODO autres paramètres de page
 
+  Object.entries({
+      ...properties,
+      ...properties.coord,
+      ...properties.type,
+      ...properties.etat
+    })
+    .forEach(e => {
+      const el = document.getElementById('point-' + e[0]);
+
+      switch (typeof e[1]) {
+        case 'string':
+        case 'integer':
+          if (el)
+            el.innerHTML = e[1];
+          break;
+        case 'object':
+          console.log(e); /*DCMM*/
+      }
+    });
+
+  /*
   Object.entries(properties.fiche).forEach(e => {
-    infoEl.insertAdjacentHTML('beforeend', '<dt>' + e[0] + ':</dt>');
-    infoEl.insertAdjacentHTML('beforeend', '<dl>' + e[1] + '</dl>');
+//    infoEl.insertAdjacentHTML('beforeend', '<dt>' + e[0] + ':</dt>');
+  //  infoEl.insertAdjacentHTML('beforeend', '<dl>' + e[1] + '</dl>');
   });
 
   Object.values(properties.commentaires).forEach(c => {
@@ -88,4 +110,5 @@ async function affichePagePoint(idPoint) {
       '</div>'
     );
   });
+  */
 }

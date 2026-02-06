@@ -15,7 +15,7 @@ $apis = [
   'point?id=5314&format=geojson&format_texte=bbcode',
   'point?id=5314&format=geojson&format_texte=texte',
   'point?id=5314&format=geojson&format_texte=markdown',
-  'point?depuis=1770249600&nb_points=all',
+  'point?depuis=1770249600&details=&nb_points=all',
   'commentaires?id_point=5314&format_texte=html',
 ];
 

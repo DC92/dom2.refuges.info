@@ -46,50 +46,9 @@ async function preLoadPoints(url) {
     .then(response => response.json())
     .then(geoJson =>
       geoJson.features.forEach(feature => {
-        // Extrait les propriétés intéressantes du point
-        pointsProps[feature.id] = {
-          fiche: {
-            [feature.properties.proprio.nom]: feature.properties.proprio.valeur,
-            [feature.properties.acces.nom]: feature.properties.acces.valeur,
-            [feature.properties.remarque.nom]: feature.properties.remarque.valeur,
-            'Informations complémentaires': Object.values(feature.properties.info_comp)
-              .map(v => '<p><span>' + v.nom + ': </span><span>' + v.valeur + '</span></p>')
-              .join(''),
-          },
-          commentaires: [], // Initialise le tableau
-        };
-
-        Object.entries(feature.properties).forEach(p => {
-          if ('id,nom,coord,infos_complementaires'.includes(p[0])) {
-            pointsProps[feature.id][p[0]] = p[1];
-            delete pointsProps[feature.id][p[0]].precision;
-          }
-
-          if ('type,proprio,acces,remarque,description,places,etat'.includes(p[0])) {
-            const v = p[1].valeur;
-            if (v)
-              pointsProps[feature.id][p[0]] = v;
-          }
-        });
+        pointsProps[feature.id] = feature.properties;
       })
     );
-
-  // Données des commentaires
-  if (pointsProps.length) // If any point in this bbox
-    await fetch(
-      serveurAPI + '/api/commentaires?format_texte=html&id_point=' + Object.keys(pointsProps).join(',')
-    ).then(response => response.json())
-    .then(json => {
-      Object.values(json).forEach(j => {
-        const c = [];
-        if (j.texte_commentaire) c.texte = j.texte_commentaire;
-        if (j.auteur_commentaire) c.auteur = j.auteur_commentaire;
-        if (j.date_commentaire) c.date = j.date_commentaire.substr(0, 16);
-        if (j['photo-reduite']) c.photo = j['photo-reduite'];
-        if (Object.keys(c).length)
-          pointsProps[j.id_point].commentaires['C' + j.id_commentaire] = c;
-      })
-    });
 
   if (pointsProps.length) {
     // Enregistre les propriétés du point
@@ -101,7 +60,7 @@ async function preLoadPoints(url) {
 }
 
 /* eslint-disable no-unused-vars */
-async function preLoad(map, position) {
+async function preLoadTiles(map, position) {
   const preLoadedEntries = [];
 
   // Dates de préchargement des dalles

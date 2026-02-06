@@ -223,7 +223,7 @@ function infos_commentaires ($conditions)
     if ($commentaire->photo_existe)
     {
       if (isset($commentaire->date_photo))
-        $commentaire->photo=strftime ("%d/%m/%Y", $commentaire->ts_unix_photo);
+        $commentaire->date_photo_format_francais=strftime ("%d/%m/%Y", $commentaire->ts_unix_photo);
     }
 
     $commentaires [] = $commentaire;
