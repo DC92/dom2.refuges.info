@@ -79,24 +79,28 @@ async function affichePagePoint(idPoint) {
       ...properties.type,
       ...properties.etat
     })
-    .forEach(e => {
-      const el = document.getElementById('point-' + e[0]);
+    .forEach(entry => {
+      const el = document.getElementById('point-' + entry[0]);
 
-      switch (typeof e[1]) {
+      switch (typeof entry[1]) {
         case 'string':
         case 'integer':
           if (el)
-            el.innerHTML = e[1];
+            el.innerHTML = entry[1];
           break;
         case 'object':
-          console.log(e); /*DCMM*/
+          entry.forEach(subEntry => {
+            if (subEntry.valeur)
+              console.log(subEntry); /*DCMM*/
+            //  console.log(!!subEntry.valeur); /*DCMM*/
+          });
       }
     });
 
   /*
-  Object.entries(properties.fiche).forEach(e => {
-//    infoEl.insertAdjacentHTML('beforeend', '<dt>' + e[0] + ':</dt>');
-  //  infoEl.insertAdjacentHTML('beforeend', '<dl>' + e[1] + '</dl>');
+  Object.entries(properties.fiche).forEach(entry => {
+//    infoEl.insertAdjacentHTML('beforeend', '<dt>' + entry[0] + ':</dt>');
+  //  infoEl.insertAdjacentHTML('beforeend', '<dl>' + entry[1] + '</dl>');
   });
 
   Object.values(properties.commentaires).forEach(c => {

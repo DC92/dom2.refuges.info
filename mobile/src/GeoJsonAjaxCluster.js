@@ -5,7 +5,7 @@
      on click or touch action
  *
  * options:
-     url: '/api/bbox?&nb_points=all&detail=minimal',
+     url: '/api/point?&nb_points=all&detail=minimal',
      icon: {
         url: (feature) => 'url calculated from feature',
         size: 16 || [16, 16], // Default 16
@@ -25,7 +25,6 @@
  *   https://github.com/Leaflet/Leaflet.markercluster
      (c) 2026, Dominique Cavailhez
  */
-//TODO bbox strategy
 //TODO select point type
 //TODO other vector layers
 //TODO separate nearby points

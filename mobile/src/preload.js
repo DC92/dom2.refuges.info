@@ -1,6 +1,5 @@
 /* global idbKeyval, serveurAPI */
 
-//TODO preload ALL icones points
 //TODO preload nouveautés (depuis date / modifier l'API)
 //TODO flag précharger
 
@@ -39,6 +38,7 @@ const pointsTileSize = 0.5; // ° lon / lat
 //TODO : le faire ici
 
 async function preLoadPoints(url) {
+  //TODO BUG lenteur de l'API
   const pointsProps = [];
 
   // Données des points
@@ -86,7 +86,7 @@ async function preLoadTiles(map, position) {
       // Si les points de la bbox ne sont pas déjà stockés dans IndexedDB
       if (!preLoadedEntries[bboxString])
         await preLoadPoints(serveurAPI +
-          '/api/bbox?detail=complet&format_texte=html&nb_points=all&bbox=' + bboxString
+          '/api/point?detail=complet&format_texte=html&nb_points=all&bbox=' + bboxString
         );
 
       idbKeyval.set(bboxString, Date.now()); // Mark cache date

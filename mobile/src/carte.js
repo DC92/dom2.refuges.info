@@ -1,7 +1,7 @@
 /* global L, GeoJsonAjaxCluster, appliqueDonnees, serveurAPI */
 
 //TODO mémorisation position carte
-//TODO Fonctions ctrl clic suivant demande faite à wri github
+//TODO Fonctions ctrl clic + Apple suivant demande faite à wri github
 
 /*****************
  * Carte Leaflet *
@@ -63,7 +63,10 @@ function initCarte(containerElId) {
 
   // WRI poi & clusters
   new GeoJsonAjaxCluster({
-    url: serveurAPI + '/api/bbox?&nb_points=all&detail=minimal',
+    url: serveurAPI + '/api/point?&nb_points=all&detail=minimal',
+    //TODO stratégie depuis
+    //TODO charger dans le cache
+    //TODO preload ALL icones points
     icon: {
       url: (feature) => serveurAPI + '/images/icones/' + feature.properties.type.icone + '.svg',
       size: 24,

@@ -46,9 +46,9 @@ Démonstrateur front-end pour refuges.info
   <!-- Progressive Web Application -->
   <link href="manifest.json" rel="manifest">
   <script>
-    //const serveurAPI = 'https://dom2.refuges.info';
-    const serveurAPI = window.location.origin,
-      debugPWA = true;
+    //const serveurAPI = window.location.origin,
+    const serveurAPI = 'https://dom2.refuges.info',
+    debugPWA = true;
 
     if (!window.location.search) // Debug without PWA
       navigator.serviceWorker.register('service-worker.js')

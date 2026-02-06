@@ -233,9 +233,9 @@ foreach ($points_bruts as $i=>$point) {
       'coord' => true, // On écrase le précédent
       'etat' => true, // On écrase le précédent
       'date' => true,
-      'remarque' => true,
-      'acces' => true,
       'proprio' => true,
+      'acces' => true,
+      'remarque' => true,
       'createur' => true,
       'info_comp' => true,
       'description' => true,
@@ -244,9 +244,10 @@ foreach ($points_bruts as $i=>$point) {
     $filtre['avec_commentaires'] = array_merge($filtre['complet'], [
       'type' => ['valeur' => 'type'], // On écrase le précédent
       'etat' => ['valeur' => 'etat'], // On écrase le précédent
-      'places' => false, // Déplacé dans info_comp
       'coord' => ['long' => true, 'lat' => true, 'alt' => true], // On enlève précision
-      'date' => ['derniere_modif' => true],
+      'date' => ['creation' => true], // On enlève derniere_modif
+      'places' => false, // Déplacé dans info_comp
+      'description' => false, // Doublon avec info_comp
       'commentaires' => ['*' => [ // Tout l'array commentaires
         'id_commentaire' => 'id',
         'id_point' => true,
