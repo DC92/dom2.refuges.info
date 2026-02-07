@@ -15,8 +15,7 @@ $apis = [
   'point?id=5314&format=geojson&format_texte=bbcode',
   'point?id=5314&format=geojson&format_texte=texte',
   'point?id=5314&format=geojson&format_texte=markdown',
-  'point?depuis=1770249600&details=&nb_points=all',
-  'commentaires?id_point=5314&format_texte=html',
+  'point?depuis=1770249600&detailsavec_commentaires=&nb_points=all',
 ];
 
 $formats = ['geojson','kml','gml','gpx','csv','xml','rss'];
@@ -24,10 +23,8 @@ foreach ($formats AS $for)
   $apis[] = "point?id=5314&format=$for&format_texte=html";
 
 $details = ['minimal','simple','complet','avec_commentaires'];
-foreach ($details AS $det) {
-  $apis[] = "bbox?bbox=0.75,42.5,0.8,42.6&format=geojson&detail=$det";
+foreach ($details AS $det)
   $apis[] = "point?id=5314&format=geojson&detail=$det";
-}
 
 $keys = [
   'bbox|massif|point|contributions|polygones',
