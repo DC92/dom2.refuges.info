@@ -182,13 +182,14 @@ foreach ($points_bruts as $i=>$point) {
     // si besoin en renommant ce champ
 
     $filtre = ['minimal' => [
-      'id' => true,
+      'id' => false, // Déjà dans features
       'nom' => true,
-      'type' => ['id' => true, 'icone' => true],
+      'type' => ['icone' => true],
     ]];
 
     $filtre['simple'] = array_merge($filtre['minimal'], [
-      'type' => true, // On écrase le précédent
+      'id' => true, // On écrase le précédent
+      'type' => true,
       'lien' => true,
       'coord' => ['alt' => true],
       'places' => true,
@@ -210,8 +211,10 @@ foreach ($points_bruts as $i=>$point) {
     $filtre['avec_commentaires'] = array_merge($filtre['complet'], [
       'type' => ['valeur' => 'type'], // On écrase le précédent
       'etat' => ['valeur' => 'etat'], // On écrase le précédent
-      'coord' => ['long' => true, 'lat' => true, 'alt' => true], // On enlève précision
       'date' => ['creation' => true], // On enlève derniere_modif
+      'id' => false, // Déjà dans les features
+      'coord' => false, // Déjà dans geometry->coordinates
+      'alt' => false, // Déjà dans geometry->coordinates
       'places' => false, // Déplacé dans info_comp
       'description' => false, // Doublon avec info_comp
       'commentaires' => ['*' => [ // Tout l'array commentaires

@@ -1,116 +1,116 @@
 {
-    "type": "FeatureCollection",
-    "generator": "Refuges.info API",
-    "copyright": "The data included in this document is from www.refuges.info. The data is made available under CC By-Sa 2.0",
-    "timestamp": "2026-02-07T10:27:19+01:00",
-    "size": "1",
-    "features": [
-        {
-            "type": "Feature",
-            "id": 5314,
-            "properties": {
-                "id": 5314,
-                "nom": "Refugi Baserca",
-                "type": {
-                    "id": 7,
-                    "valeur": "cabane non gard\u00e9e",
-                    "icone": "cabane_manqueunmur_eau_cle"
-                },
-                "sym": "Fishing Hot Spot Facility",
-                "lien": "http:\/\/dom2.refuges.info\/point\/5314\/cabane-non-gardee\/Refugi-Baserca\/",
-                "coord": {
-                    "alt": 1450,
-                    "long": 0.76305,
-                    "lat": 42.59774,
-                    "precision": {
-                        "nom": "Coordonn\u00e9es point\u00e9es sur photos a\u00e9riennes",
-                        "type": 7
-                    }
-                },
-                "places": {
-                    "nom": "Places pr\u00e9vues pour dormir",
-                    "valeur": 10
-                },
-                "etat": {
-                    "valeur": "Cl\u00e9s \u00e0 r\u00e9cup\u00e9rer",
-                    "id": "cle_a_recuperer"
-                },
-                "date": {
-                    "derniere_modif": "2026-02-05 08:28:49.880084+01",
-                    "creation": "2015-10-06 17:58:21+02"
-                },
-                "remarque": {
-                    "nom": "Remarque",
-                    "valeur": "Cabane en bordure de l'\u00e9tang de Baserca.\r\nEn tr\u00e8s grande partie d\u00e9truite, mais il est possible de s'abriter sous un bout de toit en cas d'orage.\r\n\r\nL'auvent est tomb\u00e9.\r\nL'int\u00e9rieur de la cabane est en sale \u00e9tat, mais il doit \u00eatre possible d'y dormir (si l'on a pas peur de voir le toit tomber lui aussi)."
-                },
-                "acces": {
-                    "nom": "Acc\u00e8s",
-                    "valeur": "Un parking le long de la N230, extr\u00e9mit\u00e9 Nord du lac, est accol\u00e9 \u00e0 la cabane."
-                },
-                "proprio": {
-                    "nom": "Propri\u00e9taire \/ accessibilit\u00e9",
-                    "valeur": "OT de Vielha ?"
-                },
-                "createur": {
-                    "id": 1557,
-                    "nom": "leosw"
-                },
-                "article": {
-                    "demonstratif": "cette",
-                    "defini": "la",
-                    "partitif": "d'une"
-                },
-                "info_comp": {
-                    "site_officiel": {
-                        "nom": "Site Internet",
-                        "url": "https:\/\/chemineur.fr\/viewtopic.php?t=3219",
-                        "valeur": "https:\/\/chemineur.fr\/viewtopic.php?t=3219"
-                    },
-                    "manque_un_mur": {
-                        "nom": "Manque un mur",
-                        "valeur": "1"
-                    },
-                    "cheminee": {
-                        "nom": "Chemin\u00e9e",
-                        "valeur": "0"
-                    },
-                    "poele": {
-                        "nom": "Po\u00eale",
-                        "valeur": "0"
-                    },
-                    "couvertures": {
-                        "nom": "Couvertures",
-                        "valeur": null
-                    },
-                    "places_matelas": {
-                        "nom": "Places sur Matelas",
-                        "nb": 2,
-                        "valeur": 2
-                    },
-                    "latrines": {
-                        "nom": "Latrines",
-                        "valeur": "0"
-                    },
-                    "bois": {
-                        "nom": "Bois \u00e0 proximit\u00e9",
-                        "valeur": "1"
-                    },
-                    "eau": {
-                        "nom": "Eau \u00e0 proximit\u00e9",
-                        "valeur": "1"
-                    }
-                },
-                "description": {
-                    "valeur": "Places pr\u00e9vues pour dormir: 10\nPlaces sur Matelas: 2\nCabane en bordure de l'\u00e9tang de Baserca.\r\nEn tr\u00e8s grande partie d\u00e9truite, mais il est possible de s'abriter sous un bout de toit en cas d'orage.\r\n\r\nL'auvent est tomb\u00e9.\r\nL'int\u00e9rieur de la cabane est en sale \u00e9tat, mais il doit \u00eatre possible d'y dormir (si l'on a pas peur de voir le toit tomber lui aussi).\nUn parking le long de la N230, extr\u00e9mit\u00e9 Nord du lac, est accol\u00e9 \u00e0 la cabane.\nOT de Vielha ?\n"
-                }
-            },
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
-                    0.76305,
-                    42.59774
-                ]
-            }
-        }
+ "type": "FeatureCollection",
+ "generator": "Refuges.info API",
+ "copyright": "The data included in this document is from www.refuges.info. The data is made available under CC By-Sa 2.0",
+ "timestamp": "2026-02-07T21:15:09+01:00",
+ "size": "1",
+ "features": [
+  {
+   "type": "Feature",
+   "id": 5314,
+   "properties": {
+    "id": 5314,
+    "nom": "Refugi Baserca",
+    "type": {
+     "id": 7,
+     "valeur": "cabane non gard\u00e9e",
+     "icone": "cabane_manqueunmur_eau_cle"
+    },
+    "sym": "Fishing Hot Spot Facility",
+    "lien": "http:\/\/dom2.refuges.info\/point\/5314\/cabane-non-gardee\/Refugi-Baserca\/",
+    "coord": {
+     "alt": 1450,
+     "long": 0.76305,
+     "lat": 42.59774,
+     "precision": {
+      "nom": "Coordonn\u00e9es point\u00e9es sur photos a\u00e9riennes",
+      "type": 7
+     }
+    },
+    "places": {
+     "nom": "Places pr\u00e9vues pour dormir",
+     "valeur": 10
+    },
+    "etat": {
+     "valeur": "Cl\u00e9s \u00e0 r\u00e9cup\u00e9rer",
+     "id": "cle_a_recuperer"
+    },
+    "date": {
+     "derniere_modif": "2026-02-05 08:28:49.880084+01",
+     "creation": "2015-10-06 17:58:21+02"
+    },
+    "remarque": {
+     "nom": "Remarque",
+     "valeur": "Cabane en bordure de l'\u00e9tang de Baserca.\r\nEn tr\u00e8s grande partie d\u00e9truite, mais il est possible de s'abriter sous un bout de toit en cas d'orage.\r\n\r\nL'auvent est tomb\u00e9.\r\nL'int\u00e9rieur de la cabane est en sale \u00e9tat, mais il doit \u00eatre possible d'y dormir (si l'on a pas peur de voir le toit tomber lui aussi)."
+    },
+    "acces": {
+     "nom": "Acc\u00e8s",
+     "valeur": "Un parking le long de la N230, extr\u00e9mit\u00e9 Nord du lac, est accol\u00e9 \u00e0 la cabane."
+    },
+    "proprio": {
+     "nom": "Propri\u00e9taire \/ accessibilit\u00e9",
+     "valeur": "OT de Vielha ?"
+    },
+    "createur": {
+     "id": 1557,
+     "nom": "leosw"
+    },
+    "article": {
+     "demonstratif": "cette",
+     "defini": "la",
+     "partitif": "d'une"
+    },
+    "info_comp": {
+     "site_officiel": {
+      "nom": "Site Internet",
+      "url": "https:\/\/chemineur.fr\/viewtopic.php?t=3219",
+      "valeur": "https:\/\/chemineur.fr\/viewtopic.php?t=3219"
+     },
+     "manque_un_mur": {
+      "nom": "Manque un mur",
+      "valeur": "1"
+     },
+     "cheminee": {
+      "nom": "Chemin\u00e9e",
+      "valeur": "0"
+     },
+     "poele": {
+      "nom": "Po\u00eale",
+      "valeur": "0"
+     },
+     "couvertures": {
+      "nom": "Couvertures",
+      "valeur": null
+     },
+     "places_matelas": {
+      "nom": "Places sur Matelas",
+      "nb": 2,
+      "valeur": 2
+     },
+     "latrines": {
+      "nom": "Latrines",
+      "valeur": "0"
+     },
+     "bois": {
+      "nom": "Bois \u00e0 proximit\u00e9",
+      "valeur": "1"
+     },
+     "eau": {
+      "nom": "Eau \u00e0 proximit\u00e9",
+      "valeur": "1"
+     }
+    },
+    "description": {
+     "valeur": "Places pr\u00e9vues pour dormir: 10\nPlaces sur Matelas: 2\nCabane en bordure de l'\u00e9tang de Baserca.\r\nEn tr\u00e8s grande partie d\u00e9truite, mais il est possible de s'abriter sous un bout de toit en cas d'orage.\r\n\r\nL'auvent est tomb\u00e9.\r\nL'int\u00e9rieur de la cabane est en sale \u00e9tat, mais il doit \u00eatre possible d'y dormir (si l'on a pas peur de voir le toit tomber lui aussi).\nUn parking le long de la N230, extr\u00e9mit\u00e9 Nord du lac, est accol\u00e9 \u00e0 la cabane.\nOT de Vielha ?\n"
+    }
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     0.76305,
+     42.59774
     ]
+   }
+  }
+ ]
 }

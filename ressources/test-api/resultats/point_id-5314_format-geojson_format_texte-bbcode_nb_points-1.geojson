@@ -1,41 +1,41 @@
 {
-    "type": "FeatureCollection",
-    "generator": "Refuges.info API",
-    "copyright": "The data included in this document is from www.refuges.info. The data is made available under CC By-Sa 2.0",
-    "timestamp": "2026-02-07T10:27:17+01:00",
-    "size": "1",
-    "features": [
-        {
-            "type": "Feature",
-            "id": 5314,
-            "properties": {
-                "id": 5314,
-                "nom": "Refugi Baserca",
-                "type": {
-                    "id": 7,
-                    "valeur": "cabane non gard\u00e9e",
-                    "icone": "cabane_manqueunmur_eau_cle"
-                },
-                "sym": "Fishing Hot Spot Facility",
-                "lien": "http:\/\/dom2.refuges.info\/point\/5314\/cabane-non-gardee\/Refugi-Baserca\/",
-                "coord": {
-                    "alt": 1450
-                },
-                "places": {
-                    "nom": "Places pr\u00e9vues pour dormir",
-                    "valeur": 10
-                },
-                "etat": {
-                    "valeur": "Cl\u00e9s \u00e0 r\u00e9cup\u00e9rer"
-                }
-            },
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
-                    0.76305,
-                    42.59774
-                ]
-            }
-        }
+ "type": "FeatureCollection",
+ "generator": "Refuges.info API",
+ "copyright": "The data included in this document is from www.refuges.info. The data is made available under CC By-Sa 2.0",
+ "timestamp": "2026-02-07T21:15:06+01:00",
+ "size": "1",
+ "features": [
+  {
+   "type": "Feature",
+   "id": 5314,
+   "properties": {
+    "id": 5314,
+    "nom": "Refugi Baserca",
+    "type": {
+     "id": 7,
+     "valeur": "cabane non gard\u00e9e",
+     "icone": "cabane_manqueunmur_eau_cle"
+    },
+    "sym": "Fishing Hot Spot Facility",
+    "lien": "http:\/\/dom2.refuges.info\/point\/5314\/cabane-non-gardee\/Refugi-Baserca\/",
+    "coord": {
+     "alt": 1450
+    },
+    "places": {
+     "nom": "Places pr\u00e9vues pour dormir",
+     "valeur": 10
+    },
+    "etat": {
+     "valeur": "Cl\u00e9s \u00e0 r\u00e9cup\u00e9rer"
+    }
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     0.76305,
+     42.59774
     ]
+   }
+  }
+ ]
 }

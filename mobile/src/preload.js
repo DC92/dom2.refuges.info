@@ -19,7 +19,7 @@ const tilesRefreshTime = 3600 * 1000, // Milliseconds
   minZoomPreloadedTiles = 6,
   maxZoomPreloadedTiles = 15,
   preloadedTilesAround = 5,
-  maxTilesPerRequest = 50;
+  maxTilesPerRequest = 30;
 
 /******************************************************************************************
  * Les informations nécéssaires à l'affichage de la fiche d'un point et de ses commentaires

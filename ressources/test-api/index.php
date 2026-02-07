@@ -48,18 +48,27 @@ foreach ($apis AS $api) {
 
   $f = $fc = file_get_contents($url);
 
-  if(str_contains($url, 'json'))
-    $f = json_encode(json_decode($f),JSON_PRETTY_PRINT);
-
   if(str_contains($url, 'xml'))
     $f = str_replace("><", ">\n<", $f);
 
-  if(!$f || $f == 'null')
-    $f = $fc;
+  if(str_contains($url, 'json')) {
+    $d = json_decode($f);
+    ksort_recursive($d);
+    $f = json_encode($d, JSON_PRETTY_PRINT);
+    $f = str_replace('    ', ' ', $f);
+  }
+
   if(!$f || $f == 'null')
     $f = $url;
 
   file_put_contents($nf, $f);
 
   echo "<a href=\"$url\">$nf<br>";
+}
+
+function ksort_recursive(&$array) {
+  if (is_array($array)) {
+    ksort($array);
+    array_walk($array, 'ksort_recursive');
+  }
 }

@@ -7,30 +7,33 @@ header("Content-Type: application/json; UTF-8"); // rajout du charset
 header("Content-Transfer-Encoding: binary");
 headers_cors_par_default();
 headers_cache_api();
-?>
-{
-  "type": "FeatureCollection",
-  "generator": "Refuges.info API",
-<?php echo !isset($config_wri['debug']) ? '' : '"request": "'.$_SERVER['REQUEST_URI'].'",'.PHP_EOL;
-?>"copyright": "<?=$config_wri['copyright_API']?>",
-  "timestamp": "<?=date(DATE_ATOM)?>",
-  "size": "<?=count((array)$points)?>",
-  "features": 
-  [<?php 
-  $i="premier";
-  foreach ($points as $j => $point)
-    if ($points_geojson[$point->id]['geojson']) // Pour éviter un point sans position (qui ne devrait pas arriver !)
-    {
-      if ( $i!='premier' )
-        print(",");
-      $i="plus_premier";
-  ?> 
-  {
-     "type": "Feature",
-     "id": <?=$point->id?>,
-     "properties": <?=json_encode($point, isset($config_wri['debug']) ? JSON_PRETTY_PRINT : null)?>,
-     "geometry": <?=$points_geojson[$point->id]['geojson']?>
 
-  }<?php } ?>
-  ]
+$o = [
+  "type" => "FeatureCollection",
+  "generator" => "Refuges.info API",
+  "copyright" => $config_wri["copyright_API"],
+  "timestamp" => date(DATE_ATOM),
+  "size" => count((array)$points),
+  "features" => [],
+];
+
+if (isset($config_wri["debug"]))
+  $o["request"] = $_SERVER["REQUEST_URI"];
+
+foreach ($points as $id => $p)
+  $o["features"][] =  [
+    "type" => "Feature",
+    "id" => $id,
+    "geometry" => $points_geojson[$id]["geojson"],
+    "properties" => $p,
+  ];
+
+function ksort_recursive(&$array)
+{
+    if (is_array($array)) {
+        ksort($array);
+        array_walk($array, "ksort_recursive");
+    }
 }
+ksort_recursive($o);
+echo json_encode($o, isset($config_wri["debug"]) ? JSON_PRETTY_PRINT : null);
