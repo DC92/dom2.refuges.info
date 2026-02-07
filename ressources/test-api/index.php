@@ -51,7 +51,7 @@ foreach ($apis AS $api) {
   if(str_contains($url, 'xml'))
     $f = str_replace("><", ">\n<", $f);
 
-  if(str_contains($url, 'json')) {
+  if(str_contains($ext, 'json')) {
     $d = json_decode($f);
     ksort_recursive($d);
     $f = json_encode($d, JSON_PRETTY_PRINT);
