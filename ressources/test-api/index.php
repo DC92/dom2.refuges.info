@@ -4,8 +4,8 @@ https://dom2.refuges.info/nav/5066/massif/Lleida-Lerida/
 https://dom2.refuges.info/api/bbox?nb_points=all&bbox=0.75,42.55,0.8,42.6
 */
 
-if(!is_dir('resultats'))
-    mkdir('resultats');
+if(!is_dir('non-reg'))
+    mkdir('non-reg');
 
 $apis = [
   'bbox?bbox=0.75,42.5,0.8,42.6&format=gpx',
@@ -15,14 +15,13 @@ $apis = [
   'point?id=5314&format=geojson&format_texte=bbcode',
   'point?id=5314&format=geojson&format_texte=texte',
   'point?id=5314&format=geojson&format_texte=markdown',
-  'point?depuis=1770249600&detailsavec_commentaires=&nb_points=all',
 ];
 
 $formats = ['geojson','kml','gml','gpx','csv','xml','rss'];
 foreach ($formats AS $for)
   $apis[] = "point?id=5314&format=$for&format_texte=html";
 
-$details = ['minimal','simple','complet','avec_commentaires'];
+$details = ['simple','complet'];
 foreach ($details AS $det)
   $apis[] = "point?id=5314&format=geojson&detail=$det";
 
@@ -43,8 +42,10 @@ foreach ($apis AS $api) {
   $nf = str_replace('-.', '.', str_replace(
     ['?','&','=',',',$ext.'.'],
     ['_','_','-','_','.'],
-    "resultats/$api.$ext"
+    "non-reg/$api.$ext"
   ));
+
+  echo "<br><a href=\"$url\">$nf";
 
   $f = $fc = file_get_contents($url);
 
@@ -52,6 +53,7 @@ foreach ($apis AS $api) {
     $f = str_replace("><", ">\n<", $f);
 
   if(str_contains($ext, 'json')) {
+    echo ' (TRI)';
     $d = json_decode($f);
     ksort_recursive($d);
     $f = json_encode($d, JSON_PRETTY_PRINT);
@@ -59,11 +61,9 @@ foreach ($apis AS $api) {
   }
 
   if(!$f || $f == 'null')
-    $f = $url;
+    $f = $fc;
 
-  file_put_contents($nf, $f);
-
-  echo "<a href=\"$url\">$nf<br>";
+  file_put_contents($nf, "$url\n$f");
 }
 
 function ksort_recursive(&$array) {

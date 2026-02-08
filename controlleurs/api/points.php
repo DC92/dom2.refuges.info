@@ -47,8 +47,11 @@ $val->type_points_id = array(7, 10, 9, 29, 23, 3, 28);
 if(!array_key_exists($req->format,$config_wri['api_format_points']))
   $req->format = "geojson";
 
+if(!array_key_exists($req->detail,$config_wri['api_format_detail']))
+  $req->detail = "simple";
+
 if(!in_array($req->format_texte,$val->format_texte))
-  $req->format_texte = "bbcode";
+  $req->format_texte = "html";
 
 if(!is_numeric($req->nb_points) && $req->nb_points!="all")
   $req->nb_points = $config_wri['defaut_max_nombre_point'];
