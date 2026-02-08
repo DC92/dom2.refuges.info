@@ -26,10 +26,10 @@ $req->bbox = $_REQUEST['bbox'] ?? '';
 $req->massif = $_REQUEST['massif'] ?? '';
 $req->id = $_REQUEST['id'] ?? '';
 $req->format = $_REQUEST['format'] ?? '';
-$req->detail = $_REQUEST['detail'] ?? 'simple';
+$req->detail = $_REQUEST['detail'] ?? '';
 $req->format_texte = $_REQUEST['format_texte'] ?? '';
-$req->nb_points = $_REQUEST['nb_points'] ?? 121;
-$req->depuis = $_REQUEST['depuis'] ?? 0;
+$req->nb_points = $_REQUEST['nb_points'] ?? '';
+$req->depuis = $_REQUEST['depuis'] ?? '';
 $req->cluster = $_REQUEST['cluster'] ?? '';
 $req->type_points = $_REQUEST['type_points'] ?? '';
 
@@ -47,14 +47,43 @@ $val->type_points_id = array(7, 10, 9, 29, 23, 3, 28);
 if(!array_key_exists($req->format,$config_wri['api_format_points']))
   $req->format = "geojson";
 
+if(!in_array($req->format_texte,$val->format_texte)) {
+  switch ($req->page) {
+    case 'bbox':
+    case 'massif':
+    case 'point':
+      $req->format_texte = "bbcode";
+      break;
+    case 'points':
+      $req->format_texte = "html";
+      break;
+    default:
+      $req->format_texte = "texte";
+      break;
+    }
+}
+
+if(!is_numeric($req->nb_points) && $req->nb_points!="all") {
+  switch ($req->page) {
+    case 'bbox':
+    case 'massif':
+      $req->nb_points = $config_wri['defaut_max_nombre_point'];
+      break;
+    case 'point':
+      $req->nb_points = 1;
+      break;
+    case 'points':
+    default:
+      $req->nb_points = "all";
+      break;
+  }
+}
+
 if(!array_key_exists($req->detail,$config_wri['api_format_detail']))
   $req->detail = "simple";
 
-if(!in_array($req->format_texte,$val->format_texte))
-  $req->format_texte = "html";
-
-if(!is_numeric($req->nb_points) && $req->nb_points!="all")
-  $req->nb_points = $config_wri['defaut_max_nombre_point'];
+if(!is_numeric($req->depuis) || $req->depuis < 0 || $req->depuis > time())
+  $req->depuis = '';
 
 // On vérifie que les types de points sont ok, sinon on met all comme valeur
 if($req->page!="point") {
@@ -100,10 +129,27 @@ if($req->bbox != "world") { // Si on a world, on ne passe pas de paramètre à p
 }
 unset($ouest,$sud,$est,$nord);
 
-$params->ids_points = $req->id;
-$params->ids_polygones = $req->massif;
-$params->pas_les_points_caches=1;
-$params->ordre="point_type.importance DESC, points.date_modification_fiche DESC";
+switch ($req->page) {
+  case 'points':
+    $params->ids_points = $req->id;
+    $params->pas_les_points_caches=1;
+    $params->ordre="point_type.importance DESC, points.date_modification_fiche DESC";
+    break;
+  case 'bbox':
+    $params->pas_les_points_caches=1;
+    $params->ordre="point_type.importance DESC";
+    break;
+  case 'massif':
+    $params->ids_polygones = $req->massif;
+    $params->pas_les_points_caches=1;
+    $params->ordre="point_type.importance DESC";
+    break;
+  case 'point':
+    $params->ids_points = intval($req->id);
+    break;
+  default:
+    break;
+}
 
 if($req->nb_points != "all") {
   $params->limite = $req->nb_points;
@@ -113,9 +159,6 @@ if(is_numeric($req->cluster)) {
 }
 if($req->type_points != "all") {
   $params->ids_types_point = str_replace($val->type_points, $val->type_points_id, $req->type_points);
-}
-if($req->depuis != "") {
-  $params->depuis = $req->depuis;
 }
 
 $points_bruts = new stdClass();
@@ -150,25 +193,25 @@ foreach ($points_bruts as $i=>$point) {
     $points_geojson[$point->id_point]['geojson'] = $point->geojson;
     // FIXME: comme l'array $points est converti en intégralité en xml ou json, je planque dans une autre variable ce que je veux séparément
 
-    /*
-    sly 09/12/2019 : Construction d'un grand texte contenant ce qui me semble le plus pertinent concernant un point,
-    afin de l'inclure dans la description des gpx et du kml
-    */
-    $description="";
-
-    if ($point->equivalent_places!="" and !empty($point->places))
-      $description=$point->equivalent_places. ": ".$point->places."\n";
-
-    if ($point->equivalent_places_matelas!="" and !empty($point->places_matelas))
-      $description.=$point->equivalent_places_matelas.": ".$point->places_matelas."\n";
-
-    $description.=$point->remark."\n";
-    $description.=$point->acces."\n";
-    $description.=$point->proprio."\n";
-    $point->properties->description['valeur']=$description;
-
     // Dom 01/2026 : transfert du formattage dans le /modele/point.php
     $point->properties->info_comp = $point->infos_complementaires;
+
+      /*
+      sly 09/12/2019 : Construction d'un grand texte contenant ce qui me semble le plus pertinent concernant un point,
+      afin de l'inclure dans la description des gpx et du kml
+      */
+      $description="";
+
+      if ($point->equivalent_places!="" and !empty($point->places))
+        $description=$point->equivalent_places. ": ".$point->places."\n";
+
+      if ($point->equivalent_places_matelas!="" and !empty($point->places_matelas))
+        $description.=$point->equivalent_places_matelas.": ".$point->places_matelas."\n";
+
+      $description.=$point->remark."\n";
+      $description.=$point->acces."\n";
+      $description.=$point->proprio."\n";
+      $point->properties->description['valeur']=$description;
 
     // Dom 01/2026 : ajout des commentaires si demandés
     if(!empty($req->detail=='avec_commentaires'))
@@ -178,8 +221,7 @@ foreach ($points_bruts as $i=>$point) {
       $point->properties->commentaires = infos_commentaires($conditions_commentaires);
     }
 
-//TODO modification date points quand suppression transfert, ... commentaire
-    /****************************** FILTRE DES DETAILS ******************************/
+    // Dom 01/2026 : filtre des détails
     // On paramètre, pour chaque niveau de détail
     // les champs qu'on veut voir figurer dans la réponse de l'API
     // si besoin en renommant ce champ

@@ -215,6 +215,14 @@ $config_wri['api_format_points'] = Array
 'json' => "JSON",
 'geojson' => "GeoJSON"
 );
+
+$config_wri['api_format_detail'] = Array 
+(
+'minimal' => "minimal",
+'simple' => "simple",
+'complet' => "complet",
+'avec_commentaires' => "avec_commentaires",
+);
     
 /******** Nom du fichier contenant les points exportés **********/
 $config_wri['nom_fichier_export']="refuge-info";

@@ -20,7 +20,7 @@
                 l'ensemble des utilisateur du service.
             </p>
             <p>
-                L'<b>API Refuges</b> permet de recevoir dans de nombreux formats une liste de points, des informations détaillées sur un point
+                L'<b>API Refuges</b> permet de recevoir dans de nombreux formats une liste de points, des informations détaillées sur des points
                 ou encore les résultats de requêtes spéciales telles que la recherche de nouvelles contributions.
                 L'API est disponible en <b>lecture seule</b> uniquement, et aucune autentification ou clé d'API n'est requise.
             </p>
@@ -38,10 +38,10 @@
         <section id="sommaire">
             <h1>Sommaire de l'API</h1>
             <ul>
-                <li><a href="#/api/point"><span class="methode">GET</span> <span class="url">/api/point</span></a> &mdash; <span class="description">Export d'une liste de points</span></li>
+                <li><a href="#/api/points"><span class="methode">GET</span> <span class="url">/api/points</span></a> &mdash; <span class="description">Export d'une liste de points</span></li>
                 <li><a href="#/api/contributions"><span class="methode">GET</span> <span class="url">/api/contributions</span></a> &mdash; <span class="description">Export de la liste des dernières contributions</span></li>
                 <li><a href="#/api/polygones"><span class="methode">GET</span> <span class="url">/api/polygones</span></a> &mdash; <span class="description">Export des polygones de la base (massifs, parcs...)</span></li>
-                <p>Les /api/bbox & /api/massif sont des alias de /api/points et sont dépréciées.</p>
+                <p>Les /api/bbox & /api/massif & /api/point sont des alias de /api/points et sont dépréciées.</p>
             </ul>
         </section>
         
@@ -57,9 +57,9 @@
         </section>
 
         <section>
-            <h1 id="/api/point">Export d'une liste de points</h1>
+            <h1 id="/api/points">Export d'une liste de points</h1>
             <p>
-                La requête <a href="#/api/point"><span class="methode">GET</span><span class="url">/api/point</span></a> permet de retourner les informations détaillées d'un point
+                La requête <a href="#/api/points"><span class="methode">GET</span><span class="url">/api/points</span></a> permet de retourner les informations détaillées de points
                 de la base de donnée à partir de son <b>ID</b>. Les paramètres sont définis
                 dans le tableau suivant, et vous trouverez au dessous des exemples de structuration des réponses.
                 <table>
@@ -78,7 +78,9 @@
                     </tr>
                     <tr>
                         <td>bbox</td>
-                        <td><span class="opt">Optionnel</span> Ajoute une contrainte de zone au point à rechercher. Le point ne sera retourné que s'il est inclu dans la bbox. Il est possible de sélectionner la planète entière via la valeur <span class="url">world</span>.</td>
+                        <td><span class="opt">Optionnel</span> Ajoute une contrainte de zone aux points à rechercher.
+                        Le point ne sera retourné que s'il est inclu dans la bbox.
+                        Il est possible de sélectionner la planète entière via la valeur <span class="url">world</span>.</td>
                         <td><span class="url">world</span></td>
                         <td><span class="url">-13.00,44.05,17.00,49.79</span>, <span class="url">world</span>...</td>
                     </tr>
@@ -91,7 +93,7 @@
                     <tr>
                         <td>nb_points</td>
                         <td><span class="opt">Optionnel</span> Nombre de points à exporter (le choix est fait par un algorithme interne avec prioritées élevées pour les abris et cabanes, et faibles pour refuges, ...). <span class="url">all</span> retournera tous les points de la zone, mais à utiliser avec précautions (lecture illisible et charge serveur importante).</td>
-                        <td><span class="url">121</span></td>
+                        <td><span class="url">250</span></td>
                         <td><span class="url">1500</span>,<span class="url">all</span>...</td>
                     </tr>
                     <tr><td></td></tr>
@@ -126,7 +128,7 @@
             </p>
             <p>
                 Voici un exemple de requête : 
-                <a class="url" href="../point?id=583&format=xml&format_texte=html">api/point?id=583&format=xml&format_texte=html</a>
+                <a class="url" href="../points?id=583&format=xml&format_texte=html">api/points?id=583&format=xml&format_texte=html</a>
             </p>
         </section>
 
