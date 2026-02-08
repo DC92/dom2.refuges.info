@@ -1,3 +1,5 @@
+http://dom2.refuges.info/api/point?id=5314&format=gml&detail=simple&format_texte=html&nb_points=1
+Les données ont été triées par clés
 <?xml version="1.0" encoding="UTF-8" ?><wfs:FeatureCollection
   xmlns:wfs="http://www.opengis.net/wfs"
   xmlns:gml="http://www.opengis.net/gml"

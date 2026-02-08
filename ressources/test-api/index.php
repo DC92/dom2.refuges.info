@@ -8,22 +8,22 @@ if(!is_dir('non-reg'))
     mkdir('non-reg');
 
 $apis = [
-  'bbox?bbox=0.75,42.5,0.8,42.6&format=gpx',
-  'massif?massif=5066&format=geojson',
+  'bbox?bbox=0.75,42.5,0.8,42.6&format=geojson&detail=simple&format_texte=bbcode',
+  'massif?massif=5066&format=geojson&detail=simple&format_texte=bbcode',
   'contributions?massif=5066&format=rss',
   'polygones?massif=5066&format=gml',
-  'point?id=5314&format=geojson&format_texte=bbcode',
-  'point?id=5314&format=geojson&format_texte=texte',
-  'point?id=5314&format=geojson&format_texte=markdown',
+  'point?id=5314&format=geojson&detail=complet&format_texte=html',
 ];
 
 $formats = ['geojson','kml','gml','gpx','csv','xml','rss'];
 foreach ($formats AS $for)
-  $apis[] = "point?id=5314&format=$for&format_texte=html";
+  $apis[] = "point?id=5314&format=$for&detail=simple&format_texte=html";
 
 $details = ['simple','complet'];
-foreach ($details AS $det)
-  $apis[] = "point?id=5314&format=geojson&detail=$det";
+
+$format_texte = ['bbcode','texte','markdown'];
+foreach ($format_texte AS $dt)
+  $apis[] = "point?id=5314&format=geojson&detail=simple&format_texte=$dt";
 
 $keys = [
   'bbox|massif|point|contributions|polygones',
@@ -57,18 +57,18 @@ foreach ($apis AS $api) {
     $d = json_decode($f);
     ksort_recursive($d);
     $f = json_encode($d, JSON_PRETTY_PRINT);
-    $f = str_replace('    ', ' ', $f);
+    $f = str_replace('    ', '  ', $f);
   }
 
-  if(!$f || $f == 'null')
-    $f = $fc;
-
-  file_put_contents($nf, "$url\n$f");
+  file_put_contents($nf, "$url\nLes données ont été triées par clés\n$f");
 }
 
-function ksort_recursive(&$array) {
-  if (is_array($array)) {
-    ksort($array);
-    array_walk($array, 'ksort_recursive');
+function ksort_recursive(&$struct) {
+  if (is_object($struct))
+    $struct=(array)$struct;
+
+  if (is_array($struct)) {
+    ksort($struct);
+    array_walk($struct, 'ksort_recursive');
   }
 }

@@ -1,3 +1,5 @@
+http://dom2.refuges.info/api/polygones?massif=5066&format=gml&nb_points=1
+Les données ont été triées par clés
 <?xml version="1.0" encoding="utf-8"?>
 <wfs:FeatureCollection
 	xmlns:wfs="http://www.opengis.net/wfs"
