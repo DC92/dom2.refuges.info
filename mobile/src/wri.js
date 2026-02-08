@@ -62,7 +62,7 @@ function affichePageNouvelles() {
 async function affichePagePoint(idPoint) {
   const //infoEl = document.getElementById('infos-point'),
     //commentEl = document.getElementById('commentaires'),
-    url = serveurAPI + '/api/point?detail=avec_commentaires&format_texte=html&id=' + idPoint,
+    url = serveurAPI + '/api/points?detail=avec_commentaires&format_texte=html&id=' + idPoint,
     properties = debugPWA ?
     await preLoadPoints(url) :
     await idbKeyval.get(parseInt(idPoint, 10)) || // Si le point est préchargé

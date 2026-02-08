@@ -53,12 +53,6 @@ Démonstrateur front-end pour refuges.info
     if (!window.location.search) // Debug without PWA
       navigator.serviceWorker.register('service-worker.js')
       .then((registration) => console.info('Service worker registred'));
-
-    // Demande à l'utilisateur de recharger la PWA lorsqu'une nouvelle version est chargée
-    navigator.serviceWorker.addEventListener('controllerchange', () => {
-      if (confirm('Nouvelle version disponible.\nRecharger ?'))
-        location.reload();
-    });
   </script>
 </head>
 

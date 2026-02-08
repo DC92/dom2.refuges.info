@@ -214,7 +214,7 @@ foreach ($points_bruts as $i=>$point) {
       $point->properties->description['valeur']=$description;
 
     // Dom 01/2026 : ajout des commentaires si demandés
-    if(!empty($req->detail=='avec_commentaires'))
+    if($req->detail!=='avec_commentaires')
     {
       $conditions_commentaires = new stdClass();
       $conditions_commentaires->ids_points = $point->id_point;
