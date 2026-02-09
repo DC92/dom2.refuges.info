@@ -182,10 +182,11 @@ if ($req->detail == 'icones') {
   while ($point = $res->fetch())
   {
     $points_bruts[$point->id_point] = $point;
-    $points_bruts[$point->id_point]->properties = new stdClass();
-    $points_bruts[$point->id_point]->properties->type = ['icone' => choix_icone($point)];
-    $points_bruts[$point->id_point]->properties->nom = $point->nom;
     $points_bruts[$point->id_point]->geojson = $point->geojson;
+    $points_bruts[$point->id_point]->properties = [
+      'type' => ['icone' => choix_icone($point)],
+      'nom' => $point->nom,
+    ];
   }
 }
 else
