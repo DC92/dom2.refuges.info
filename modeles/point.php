@@ -396,12 +396,12 @@ function infos_points($conditions)
 
       // Dom 01/2026 : factorisation de controlleurs//point.php & controlleurs/api/point.php
       // Formatage des propriétés d'un point
-      $point_final->properties = new stdClass();
+      $properties = new stdClass();
 
-      $point_final->properties->id = $point->id_point;
-      $point_final->properties->nom = mb_ucfirst($point->nom);
+      $properties->id = $point->id_point;
+      $properties->nom = mb_ucfirst($point->nom);
 
-      $point_final->properties->type = [
+      $properties->type = [
         'id' => $point->id_point_type,
         'id' => $point->id_point_type,
         'valeur' => $point->nom_type,
@@ -413,17 +413,17 @@ function infos_points($conditions)
       {
         case 'fermeture':
         case 'detruit':
-          $point_final->properties->type['sym'] = "Crossing";
+          $properties->type['sym'] = "Crossing";
           break;
         case 'cle_a_recuperer': // TODO : trouver un symbole
         default:
-          $point_final->properties->type['sym'] = $point->symbole;
+          $properties->type['sym'] = $point->symbole;
       }
 
       // Ajoute l'altitude dans le triplet de coordonnées geojson
       $point_final->geojson = str_replace("]}", ",$point->altitude]}", $point->geojson);
 
-      $point_final->properties->coord = [
+      $properties->coord = [
         'alt' => $point->altitude,
         'long' => $point->longitude,
         'lat' => $point->latitude,
@@ -433,52 +433,53 @@ function infos_points($conditions)
         ],
       ];
 
-      $point_final->properties->createur['id'] = $point->id_createur;
-      $point_final->properties->lien = lien_point($point);
-      $point_final->properties->lien_site = $point->site_officiel;
+      $properties->createur['id'] = $point->id_createur;
+      $properties->lien = lien_point($point);
+      $properties->lien_site = $point->site_officiel;
 
       // info sur le modérateur actuel de la fiche (authentifié ou non)
       if ($point->id_createur==0) // non authentifié
-          $point_final->properties->createur['nom']=$point->nom_createur;
+          $properties->createur['nom']=$point->nom_createur;
       else
       {
         $utilisateur=infos_utilisateur($point->id_createur);
         if (!empty($utilisateur->erreur)) // Aïe, le point référence un utilisateur qui n'existe plus
-          $point_final->properties->createur['nom'] = "Utilisateur supprimé";
+          $properties->createur['nom'] = "Utilisateur supprimé";
         else
-          $point_final->properties->createur['nom'] = infos_utilisateur($point->id_createur)->username;
+          $properties->createur['nom'] = infos_utilisateur($point->id_createur)->username;
       }
 
-      $point_final->properties->date = [
+      $properties->date = [
         'creation' => $point->date_creation,
         'derniere_modif' => $point->date_derniere_modification,
       ];
-      $point_final->properties->article = [
+      $properties->article = [
         'demonstratif' => $point->article_demonstratif,
         'defini' => $point->article_defini,
         'partitif' => $point->article_partitif_point_type,
       ];
-      $point_final->properties->etat = [
+      $properties->etat = [
         'nom' => 'Etat', //TODO : générer automatiquement ?
         'valeur' => texte_non_ouverte($point),
         'id' => $point->conditions_utilisation,
       ];
-      $point_final->properties->proprio = [
+      $properties->proprio = [
         'nom' => $point->equivalent_proprio,
         'valeur' => $point->proprio,
       ];
-      $point_final->properties->places = [
+      $properties->places = [
         'nom' => $point->equivalent_places,
         'valeur' => $point->places,
       ];
-      $point_final->properties->remarque = [
+      $properties->remarque = [
         'nom' => 'Remarque',
         'valeur' => $point->remark,
       ];
-      $point_final->properties->acces = [
+      $properties->acces = [
         'nom' => 'Accès',
         'valeur' => $point->acces,
       ];
+      $point_final->properties = $properties; // Pour optimiser le temps du calcul
 
       // Dom 01/2026 : simplifié et transféré depuis controlleurs/point.php pour pouvoir être utilisé dans l'API
       // Formatage des informations complèmentaires
@@ -924,7 +925,7 @@ function touch_fiches($commentaire, $commentaire_avant_modification=null)
   $query_modif_fiche = "UPDATE points SET date_modification_fiche=NOW() WHERE id_point $condition";
   
   if (!$pdo->exec($query_modif_fiche))
-    return erreur("Problème qui n'aurait pas dû arriver, le traitement du point a foiré","La requête était : $query_modif_fiche");
+    return erreur("Erreur sur la requête SQL", $query_modif_fiche);
 }
 
 /*******************************************************

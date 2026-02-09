@@ -5,7 +5,7 @@
      on click or touch action
  *
  * options:
-     url: '/api/point?&nb_points=all&detail=minimal',
+     url: '/api/point?&nb_points=all&detail=icones',
      icon: {
         url: (feature) => 'url calculated from feature',
         size: 16 || [16, 16], // Default 16

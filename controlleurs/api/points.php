@@ -57,6 +57,9 @@ if(!in_array($req->format_texte,$val->format_texte)) {
     case 'points':
       $req->format_texte = "html";
       break;
+    case 'contributions':
+      $req->format_texte = "rss";
+      break;
     default:
       $req->format_texte = "texte";
       break;
@@ -164,7 +167,30 @@ if($req->type_points != "all") {
 $points_bruts = new stdClass();
 $points = new stdClass();
 
-$points_bruts = infos_points($params);
+// Requette simplifiée pour performance
+if ($req->detail == 'icones') {
+  $query_fiche = "
+    SELECT id_point,nom,nom_type,id_point_type,altitude,
+      manque_un_mur,places,cheminee,poele,eau_a_proximite,conditions_utilisation,
+      ST_AsGeoJSON(geom,5) AS geojson
+    FROM points
+      LEFT JOIN point_type USING(id_point_type)";
+  $res = $pdo->query($query_fiche);
+  if (!$res) return erreur("Erreur sur la requête SQL", $query_fiche);
+
+  $points_bruts = [];
+  while ($point = $res->fetch())
+  {
+    $points_bruts[$point->id_point] = $point;
+    $points_bruts[$point->id_point]->properties = new stdClass();
+    $points_bruts[$point->id_point]->properties->type = ['icone' => choix_icone($point)];
+    $points_bruts[$point->id_point]->properties->nom = $point->nom;
+    $points_bruts[$point->id_point]->geojson = str_replace("]}", ",$point->altitude]}", $point->geojson);
+  }
+}
+else
+  $points_bruts = infos_points($params);
+/*DCMM*/var_dump($points_bruts);
 
 /****************************** INFOS GÉNÉRALES ******************************/
 /*
@@ -187,34 +213,40 @@ foreach ($points_bruts as $i=>$point) {
   else
   {
     // les cabanes cachées ne sont pas exportées. Les coordonnées étant volontairement stockées fausses, les sortir ne fera que créer de la confusion
-    if($point->id_type_precision_gps == $config_wri['id_coordonees_gps_fausses'])
+    if(($point->id_type_precision_gps??'') == $config_wri['id_coordonees_gps_fausses'])
       break;
 
     $points_geojson[$point->id_point]['geojson'] = $point->geojson;
     // FIXME: comme l'array $points est converti en intégralité en xml ou json, je planque dans une autre variable ce que je veux séparément
 
     // Dom 01/2026 : transfert du formattage dans le /modele/point.php
-    $point->properties->info_comp = $point->infos_complementaires;
+    if (!empty($point->infos_complementaires))
+      $point->properties->info_comp = $point->infos_complementaires;
 
+    // En geojson, utilisé par la carte, on a pas besoin de tout ça, autant simplifier pour réduire le temps de chargement,
+    // sauf si on appel explicitement le mode complet avec &detail=complet
+    if ($req->format!="geojson" or $req->detail=="complet")
+    {
       /*
       sly 09/12/2019 : Construction d'un grand texte contenant ce qui me semble le plus pertinent concernant un point,
       afin de l'inclure dans la description des gpx et du kml
       */
       $description="";
 
-      if ($point->equivalent_places!="" and !empty($point->places))
+      if (!empty($point->equivalent_places) and !empty($point->places))
         $description=$point->equivalent_places. ": ".$point->places."\n";
 
-      if ($point->equivalent_places_matelas!="" and !empty($point->places_matelas))
+      if (!empty($point->equivalent_places_matelas) and !empty($point->places_matelas))
         $description.=$point->equivalent_places_matelas.": ".$point->places_matelas."\n";
 
       $description.=$point->remark."\n";
       $description.=$point->acces."\n";
       $description.=$point->proprio."\n";
       $point->properties->description['valeur']=$description;
+    }
 
     // Dom 01/2026 : ajout des commentaires si demandés
-    if($req->detail!=='avec_commentaires')
+    if($req->detail == 'avec_commentaires')
     {
       $conditions_commentaires = new stdClass();
       $conditions_commentaires->ids_points = $point->id_point;
@@ -226,13 +258,13 @@ foreach ($points_bruts as $i=>$point) {
     // les champs qu'on veut voir figurer dans la réponse de l'API
     // si besoin en renommant ce champ
 
-    $filtre = ['minimal' => [
+    $filtre = ['icones' => [
       'id' => false, // Déjà dans features
       'nom' => true,
       'type' => ['icone' => true],
     ]];
 
-    $filtre['simple'] = array_merge($filtre['minimal'], [
+    $filtre['simple'] = array_merge($filtre['icones'], [
       'id' => true, // On écrase le précédent
       'type' => true,
       'lien' => true,

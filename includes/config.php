@@ -218,7 +218,7 @@ $config_wri['api_format_points'] = Array
 
 $config_wri['api_format_detail'] = Array 
 (
-'minimal' => "minimal",
+'icones' => "icones",
 'simple' => "simple",
 'complet' => "complet",
 'avec_commentaires' => "avec_commentaires",
