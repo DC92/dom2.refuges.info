@@ -167,7 +167,7 @@ if($req->type_points != "all") {
 $points_bruts = new stdClass();
 $points = new stdClass();
 
-// Requette simplifiée pour performance
+// Requête simplifiée pour performance
 if ($req->detail == 'icones') {
   $query_fiche = "
     SELECT id_point,nom,nom_type,id_point_type,altitude,
@@ -185,12 +185,11 @@ if ($req->detail == 'icones') {
     $points_bruts[$point->id_point]->properties = new stdClass();
     $points_bruts[$point->id_point]->properties->type = ['icone' => choix_icone($point)];
     $points_bruts[$point->id_point]->properties->nom = $point->nom;
-    $points_bruts[$point->id_point]->geojson = str_replace("]}", ",$point->altitude]}", $point->geojson);
+    $points_bruts[$point->id_point]->geojson = $point->geojson;
   }
 }
 else
   $points_bruts = infos_points($params);
-/*DCMM*/var_dump($points_bruts);
 
 /****************************** INFOS GÉNÉRALES ******************************/
 /*

@@ -1,4 +1,4 @@
-http://dom2.refuges.info/api/massif?massif=5066&format=geojson&detail=simple&format_texte=bbcode&nb_points=1
+http://dom2.refuges.info/api/point?id=5314&format=rss&nb_points=1
 Les données ont été triées par clés
 {
   "copyright": "The data included in this document is from www.refuges.info. The data is made available under CC By-Sa 2.0",
@@ -38,6 +38,6 @@ Les données ont été triées par clés
   ],
   "generator": "Refuges.info API",
   "size": "1",
-  "timestamp": "2026-02-08T10:25:47+01:00",
+  "timestamp": "2026-02-09T21:25:05+01:00",
   "type": "FeatureCollection"
 }

@@ -1,4 +1,4 @@
-http://dom2.refuges.info/api/point?id=5314&format=kml&detail=simple&format_texte=html&nb_points=1
+http://dom2.refuges.info/api/point?id=5314&format=kml&nb_points=1
 Les données ont été triées par clés
 <?xml version="1.0" encoding="utf-8"?><kml xmlns="http://earth.google.com/kml/2.1">
   <Document>
@@ -24,18 +24,18 @@ Les données ont été triées par clés
       <description>
         <![CDATA[ <em>cabane non gardée</em> 
               <br>
-              <p>Places prévues pour dormir: 10&lt;br&gt;<br>
-Places sur Matelas: 2&lt;br&gt;<br>
-Cabane en bordure de l&amp;#039;étang de Baserca.&lt;br&gt;<br>
-En très grande partie détruite, mais il est possible de s&amp;#039;abriter sous un bout de toit en cas d&amp;#039;orage.&lt;br&gt;<br>
-&lt;br&gt;<br>
-L&amp;#039;auvent est tombé.&lt;br&gt;<br>
-L&amp;#039;intérieur de la cabane est en sale état, mais il doit être possible d&amp;#039;y dormir (si l&amp;#039;on a pas peur de voir le toit tomber lui aussi).&lt;br&gt;<br>
-Un parking le long de la N230, extrémité Nord du lac, est accolé à la cabane.&lt;br&gt;<br>
-OT de Vielha ?&lt;br&gt;<br>
+              <p>Places prévues pour dormir: 10<br>
+Places sur Matelas: 2<br>
+Cabane en bordure de l&#039;étang de Baserca.<br>
+En très grande partie détruite, mais il est possible de s&#039;abriter sous un bout de toit en cas d&#039;orage.<br>
+<br>
+L&#039;auvent est tombé.<br>
+L&#039;intérieur de la cabane est en sale état, mais il doit être possible d&#039;y dormir (si l&#039;on a pas peur de voir le toit tomber lui aussi).<br>
+Un parking le long de la N230, extrémité Nord du lac, est accolé à la cabane.<br>
+OT de Vielha ?<br>
 </p>
               <br>
-            <center><a href='<a href="http://dom2.refuges.info/point/5314/cabane-non-gardee/Refugi-Baserca/">http://dom2.refuges.info/point/5314/cabane-non-gardee/Refugi-Baserca/</a>'>Détails</a></center>
+            <center><a href='http://dom2.refuges.info/point/5314/cabane-non-gardee/Refugi-Baserca/'>Détails</a></center>
         ]]>
       </description>
       <LookAt>
@@ -51,7 +51,7 @@ OT de Vielha ?&lt;br&gt;<br>
       </Point>
       <ExtendedData>
           <Data name="url">
-          <value><a href="http://dom2.refuges.info/point/5314/cabane-non-gardee/Refugi-Baserca/">http://dom2.refuges.info/point/5314/cabane-non-gardee/Refugi-Baserca/</a></value>
+          <value>http://dom2.refuges.info/point/5314/cabane-non-gardee/Refugi-Baserca/</value>
           </Data>
       </ExtendedData>
   </Placemark>

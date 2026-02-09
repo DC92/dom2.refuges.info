@@ -1,4 +1,4 @@
-http://dom2.refuges.info/api/point?id=5314&format=geojson&detail=simple&format_texte=markdown&nb_points=1
+http://dom2.refuges.info/api/massif?massif=5066&type_points=7,10,9,29,23,3,28&nb_points=all&cluster=0.1&bbox=0.75,42.5,0.8,42.6&nb_points=1
 Les données ont été triées par clés
 {
   "copyright": "The data included in this document is from www.refuges.info. The data is made available under CC By-Sa 2.0",
@@ -14,22 +14,22 @@ Les données ont été triées par clés
       "id": 5314,
       "properties": {
         "coord": {
-          "alt": "1450"
+          "alt": 1450
         },
         "etat": {
           "valeur": "Cl\u00e9s \u00e0 r\u00e9cup\u00e9rer"
         },
-        "id": "5314",
+        "id": 5314,
         "lien": "http:\/\/dom2.refuges.info\/point\/5314\/cabane-non-gardee\/Refugi-Baserca\/",
         "nom": "Refugi Baserca",
         "places": {
           "nom": "Places pr\u00e9vues pour dormir",
-          "valeur": "10"
+          "valeur": 10
         },
         "sym": "Fishing Hot Spot Facility",
         "type": {
           "icone": "cabane_manqueunmur_eau_cle",
-          "id": "7",
+          "id": 7,
           "valeur": "cabane non gard\u00e9e"
         }
       },
@@ -38,6 +38,6 @@ Les données ont été triées par clés
   ],
   "generator": "Refuges.info API",
   "size": "1",
-  "timestamp": "2026-02-08T10:25:49+01:00",
+  "timestamp": "2026-02-09T21:25:03+01:00",
   "type": "FeatureCollection"
 }

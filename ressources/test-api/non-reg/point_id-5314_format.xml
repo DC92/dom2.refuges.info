@@ -1,4 +1,4 @@
-http://dom2.refuges.info/api/point?id=5314&format=xml&detail=simple&format_texte=html&nb_points=1
+http://dom2.refuges.info/api/point?id=5314&format=xml&nb_points=1
 Les données ont été triées par clés
 <?xml version="1.0" encoding="UTF-8" ?>
 <nodes>
@@ -11,7 +11,7 @@ Les données ont été triées par clés
 <icone>cabane_manqueunmur_eau_cle</icone>
 </type>
 <sym>Fishing Hot Spot Facility</sym>
-<lien>&lt;a href=&quot;http://dom2.refuges.info/point/5314/cabane-non-gardee/Refugi-Baserca/&quot;&gt;http://dom2.refuges.info/point/5314/cabane-non-gardee/Refugi-Baserca/&lt;/a&gt;</lien>
+<lien>http://dom2.refuges.info/point/5314/cabane-non-gardee/Refugi-Baserca/</lien>
 <coord>
 <alt>1450</alt>
 <long>0.76305</long>
@@ -35,11 +35,11 @@ Les données ont été triées par clés
 </date>
 <remarque>
 <nom>Remarque</nom>
-<valeur>Cabane en bordure de l&amp;#039;étang de Baserca.&lt;br&gt;
-En très grande partie détruite, mais il est possible de s&amp;#039;abriter sous un bout de toit en cas d&amp;#039;orage.&lt;br&gt;
-&lt;br&gt;
-L&amp;#039;auvent est tombé.&lt;br&gt;
-L&amp;#039;intérieur de la cabane est en sale état, mais il doit être possible d&amp;#039;y dormir (si l&amp;#039;on a pas peur de voir le toit tomber lui aussi).</valeur>
+<valeur>Cabane en bordure de l&#039;étang de Baserca.
+En très grande partie détruite, mais il est possible de s&#039;abriter sous un bout de toit en cas d&#039;orage.
+
+L&#039;auvent est tombé.
+L&#039;intérieur de la cabane est en sale état, mais il doit être possible d&#039;y dormir (si l&#039;on a pas peur de voir le toit tomber lui aussi).</valeur>
 </remarque>
 <acces>
 <nom>Accès</nom>
@@ -56,13 +56,13 @@ L&amp;#039;intérieur de la cabane est en sale état, mais il doit être possibl
 <article>
 <demonstratif>cette</demonstratif>
 <defini>la</defini>
-<partitif>d&amp;#039;une</partitif>
+<partitif>d&#039;une</partitif>
 </article>
 <info_comp>
 <site_officiel>
 <nom>Site Internet</nom>
 <url>https://chemineur.fr/viewtopic.php?t=3219</url>
-<valeur>&lt;a href=&quot;https://chemineur.fr/viewtopic.php?t=3219&quot;&gt;https://chemineur.fr/viewtopic.php?t=3219&lt;/a&gt;</valeur>
+<valeur>https://chemineur.fr/viewtopic.php?t=3219</valeur>
 </site_officiel>
 <manque_un_mur>
 <nom>Manque un mur</nom>
@@ -103,15 +103,15 @@ L&amp;#039;intérieur de la cabane est en sale état, mais il doit être possibl
 </eau>
 </info_comp>
 <description>
-<valeur>Places prévues pour dormir: 10&lt;br&gt;
-Places sur Matelas: 2&lt;br&gt;
-Cabane en bordure de l&amp;#039;étang de Baserca.&lt;br&gt;
-En très grande partie détruite, mais il est possible de s&amp;#039;abriter sous un bout de toit en cas d&amp;#039;orage.&lt;br&gt;
-&lt;br&gt;
-L&amp;#039;auvent est tombé.&lt;br&gt;
-L&amp;#039;intérieur de la cabane est en sale état, mais il doit être possible d&amp;#039;y dormir (si l&amp;#039;on a pas peur de voir le toit tomber lui aussi).&lt;br&gt;
-Un parking le long de la N230, extrémité Nord du lac, est accolé à la cabane.&lt;br&gt;
-OT de Vielha ?&lt;br&gt;
+<valeur>Places prévues pour dormir: 10
+Places sur Matelas: 2
+Cabane en bordure de l&#039;étang de Baserca.
+En très grande partie détruite, mais il est possible de s&#039;abriter sous un bout de toit en cas d&#039;orage.
+
+L&#039;auvent est tombé.
+L&#039;intérieur de la cabane est en sale état, mais il doit être possible d&#039;y dormir (si l&#039;on a pas peur de voir le toit tomber lui aussi).
+Un parking le long de la N230, extrémité Nord du lac, est accolé à la cabane.
+OT de Vielha ?
 </valeur>
 </description>
 </node>
