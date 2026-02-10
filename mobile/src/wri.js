@@ -5,6 +5,7 @@ const nomPages = ['carte', 'point', 'nouvelles'],
   map = initCarte('map');
 
 // Prè-charge les dalles OpenHikingMap, points et commentaires autour de la zone visitée
+//TODO essayer points proches
 map.on('moveend', () => preLoadTiles(map, map.getCenter()));
 
 // Initialisation de la page lorsque l'URL principale est appelée ou l'ancre change

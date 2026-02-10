@@ -1,4 +1,4 @@
-/* global L, GeoJsonAjaxCluster, appliqueDonnees, serveurAPI */
+/* global L, GeoJsonAjaxCluster, appliqueDonnees, serveurAPI, idbKeyval */
 
 //TODO mémorisation position carte
 //TODO Fonctions ctrl clic + Apple suivant demande faite à wri github
@@ -62,12 +62,7 @@ function initCarte(containerElId) {
   //L.Permalink.setup(map); //TODO BUG Interférence permalink templateur
 
   // WRI poi & clusters
-  new GeoJsonAjaxCluster({
-    url: serveurAPI + '/api/points?detail=icones',
-    //TODO stratégie depuis
-    //TODO charger dans le cache
-    //TODO preload ALL icones points
-    //TODO essayer points proches
+  const pointsLayer = new GeoJsonAjaxCluster({
     icon: {
       url: (feature) => serveurAPI + '/images/icones/' + feature.properties.type.icone + '.svg',
       size: 24,
@@ -85,6 +80,21 @@ function initCarte(containerElId) {
       window.location.hash = 'point=' + feature.properties.id;
     },
   }).addTo(map);
+
+  // Display the memorised data is available
+  idbKeyval.get('points')
+    .then((json) => pointsLayer.display(json));
+
+  // Reload new version of the data
+  //TODO Appeler ?depuis avant
+  fetch(serveurAPI + '/api/points?detail=icones')
+    .then((response) => response.json()).then((json) => {
+      if (json) {
+        //TODO preload ALL icones points
+        pointsLayer.display(json);
+        idbKeyval.set('points', json);
+      }
+    });
 
   return map;
 }

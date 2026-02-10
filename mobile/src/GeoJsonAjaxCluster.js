@@ -29,14 +29,12 @@
 //TODO other vector layers
 //TODO separate nearby points
 
-/* global L, idbKeyval */
+/* global L */
 
 /* eslint-disable no-unused-vars */
 class GeoJsonAjaxCluster extends L.MarkerClusterGroup {
   constructor(options) {
     super();
-
-    this.url = options.url;
 
     options.icon.size ||= 16;
     if (typeof options.icon.size === 'number')
@@ -67,30 +65,12 @@ class GeoJsonAjaxCluster extends L.MarkerClusterGroup {
           });
       },
     });
-
-    // Display the memorised data is available
-    idbKeyval.get('points')
-      .then((json) => this.display(json));
-
-    // Reload new version of the data
-    this.refresh();
-  }
-
-  refresh() {
-    //TODO Appeler ?depuis avant
-    fetch(this.url)
-      .then((response) => response.json()).then((json) => {
-        if (json) {
-          this.display(json);
-          idbKeyval.set('points', json);
-        }
-      });
   }
 
   display(json) {
+    this.removeLayer(this.poiLayer);
+    this.poiLayer.clearLayers();
     if (json) {
-      this.removeLayer(this.poiLayer);
-      this.poiLayer.clearLayers();
       this.poiLayer.addData(json);
       this.addLayer(this.poiLayer);
     }

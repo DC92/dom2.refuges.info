@@ -180,7 +180,7 @@ if ($req->detail == 'icones' &&
       manque_un_mur,places,cheminee,poele,eau_a_proximite,conditions_utilisation,
       ST_AsGeoJSON(geom,5) AS geojson
     FROM points
-      LEFT JOIN point_type USING(id_point_type)
+      JOIN point_type USING(id_point_type)
     WHERE cache = FALSE";
   $res = $pdo->query($query_fiche);
   if (!$res) return erreur("Erreur sur la requête SQL", $query_fiche);
