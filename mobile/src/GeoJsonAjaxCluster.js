@@ -29,19 +29,21 @@
 //TODO other vector layers
 //TODO separate nearby points
 
-/* global L */
+/* global L, idbKeyval */
 
 /* eslint-disable no-unused-vars */
 class GeoJsonAjaxCluster extends L.MarkerClusterGroup {
   constructor(options) {
     super();
 
+    this.url = options.url;
+
     options.icon.size ||= 16;
     if (typeof options.icon.size === 'number')
       options.icon.iconSize = [options.icon.size, options.icon.size];
     options.icon.iconAnchor ||= [options.icon.iconSize[0] / 2, options.icon.iconSize[1] / 2];
 
-    const poiLayer = L.geoJson(null, {
+    this.poiLayer = L.geoJson(null, {
       pointToLayer: (feature, latlng) =>
         L.marker(latlng, {
           icon: L.icon({
@@ -66,15 +68,31 @@ class GeoJsonAjaxCluster extends L.MarkerClusterGroup {
       },
     });
 
-    // Load features from url (asynchronously)
-    fetch(options.url)
-      .then((response) => response.json())
-      .then((json) => {
-        poiLayer.addData(json);
-        this.addLayer(poiLayer);
-      })
-      .catch((error) => {
-        console.error('Error: ' + error + ' ' + options.url);
+    // Display the memorised data is available
+    idbKeyval.get('points')
+      .then((json) => this.display(json));
+
+    // Reload new version of the data
+    this.refresh();
+  }
+
+  refresh() {
+    //TODO Appeler ?depuis avant
+    fetch(this.url)
+      .then((response) => response.json()).then((json) => {
+        if (json) {
+          this.display(json);
+          idbKeyval.set('points', json);
+        }
       });
+  }
+
+  display(json) {
+    if (json) {
+      this.removeLayer(this.poiLayer);
+      this.poiLayer.clearLayers();
+      this.poiLayer.addData(json);
+      this.addLayer(this.poiLayer);
+    }
   }
 }

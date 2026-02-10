@@ -63,7 +63,7 @@ function initCarte(containerElId) {
 
   // WRI poi & clusters
   new GeoJsonAjaxCluster({
-    url: serveurAPI + '/api/points?&nb_points=all&detail=icones',
+    url: serveurAPI + '/api/points?detail=icones',
     //TODO stratégie depuis
     //TODO charger dans le cache
     //TODO preload ALL icones points

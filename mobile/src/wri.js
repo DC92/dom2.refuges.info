@@ -60,8 +60,9 @@ function affichePageNouvelles() {
  **************/
 /* eslint-disable-next-line no-unused-vars */
 async function affichePagePoint(idPoint) {
-  const //infoEl = document.getElementById('infos-point'),
-    //commentEl = document.getElementById('commentaires'),
+  /*DCMM
+  const //DCMM infoEl = document.getElementById('infos-point'),
+    //DCMM commentEl = document.getElementById('commentaires'),
     url = serveurAPI + '/api/points?detail=avec_commentaires&format_texte=html&id=' + idPoint,
     properties = debugPWA ?
     await preLoadPoints(url) :
@@ -91,11 +92,12 @@ async function affichePagePoint(idPoint) {
         case 'object':
           entry.forEach(subEntry => {
             if (subEntry.valeur)
-              console.log(subEntry); /*DCMM*/
-            //  console.log(!!subEntry.valeur); /*DCMM*/
+              console.log(subEntry); //DCMM
+            //  console.log(!!subEntry.valeur); //DCMM
           });
       }
     });
+  */
 
   /*
   Object.entries(properties.fiche).forEach(entry => {
