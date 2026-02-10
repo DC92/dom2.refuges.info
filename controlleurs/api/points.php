@@ -168,13 +168,20 @@ $points_bruts = new stdClass();
 $points = new stdClass();
 
 // Requête simplifiée pour performance
-if ($req->detail == 'icones') {
+if ($req->detail == 'icones' &&
+  $req->id == '' &&
+  $req->bbox == 'world' &&
+  $req->massif == '' &&
+  $req->depuis == '' &&
+  $req->nb_points == 'all')
+{
   $query_fiche = "
     SELECT id_point,nom,nom_type,id_point_type,altitude,
       manque_un_mur,places,cheminee,poele,eau_a_proximite,conditions_utilisation,
       ST_AsGeoJSON(geom,5) AS geojson
     FROM points
-      LEFT JOIN point_type USING(id_point_type)";
+      LEFT JOIN point_type USING(id_point_type)
+    WHERE cache = FALSE";
   $res = $pdo->query($query_fiche);
   if (!$res) return erreur("Erreur sur la requête SQL", $query_fiche);
 
