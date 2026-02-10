@@ -328,7 +328,7 @@ function infos_points($conditions)
         $raw->id_point = intval($raw->cluster_lon + ($raw->cluster_lat + 1000) * 2000);
 
         // Et on l'enregistre dans la liste des points
-        $points[] = $raw;
+        $points[$raw->id_point] = $raw;
       }
       elseif ( $raw->nb_points == 1 ) // S'il n'y a qu'un point dans le carré
       {
