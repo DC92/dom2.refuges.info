@@ -26,8 +26,7 @@ window.addEventListener('popstate', changePage); // L'ancre change ou navigation
  * Page carte *
  **************/
 /* eslint-disable-next-line no-unused-vars */
-function affichePageCarte() {
-}
+function affichePageCarte() {}
 
 /******************
  * Page nouvelles *

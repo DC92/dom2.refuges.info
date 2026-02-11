@@ -63,6 +63,8 @@ function initCarte(containerElId) {
 
   // WRI poi & clusters
   const pointsLayer = new GeoJsonAjaxCluster({
+    idbId: 'points',
+    url: serveurAPI + '/api/points?detail=icones',
     icon: {
       url: (feature) => serveurAPI + '/images/icones/' + feature.properties.type.icone + '.svg',
       size: 24,
@@ -85,21 +87,30 @@ function initCarte(containerElId) {
   idbKeyval.get('permalink')
     .then((permalink) => {
       const position = permalink || defaultPermalink;
+
       map.setView(position, position[2]);
     });
 
   // Display the memorised data if available
-  idbKeyval.get('points')
-    .then((json) => pointsLayer.display(json));
-
   // Reload new version of the data
   //TODO Appeler ?depuis avant
-  fetch(serveurAPI + '/api/points?detail=icones')
-    .then((response) => response.json()).then((json) => {
+  //TODO preload ALL icones points
+  idbKeyval.get('points')
+    .then((json) => {
       if (json) {
-        //TODO preload ALL icones points
         pointsLayer.display(json);
-        idbKeyval.set('points', json);
+        loadPoints(pointsLayer);
+      } else {
+        const bounds = map.getBounds(),
+          bbox = [
+            Math.floor(bounds._southWest.lng * 10) / 10,
+            Math.floor(bounds._southWest.lat * 10) / 10,
+            Math.ceil(bounds._northEast.lng * 10) / 10,
+            Math.ceil(bounds._northEast.lat * 10) / 10,
+          ].join(',');
+
+        loadPoints(pointsLayer, '&bbox=' + bbox)
+          .then(() => loadPoints(pointsLayer));
       }
     });
 
@@ -107,10 +118,24 @@ function initCarte(containerElId) {
     const pos = map.getCenter();
 
     idbKeyval.set('permalink', [pos.lat, pos.lng, map.getZoom()]);
-    preLoadTiles(map, pos);
+
     // Prè-charge les dalles OpenHikingMap, points et commentaires autour de la zone visitée
+    preLoadTiles(map, pos);
     //TODO essayer points proches
   });
 
   return map;
+}
+
+function loadPoints(pointsLayer, urlParams) {
+  return new Promise((thenCallBack) => {
+    fetch(serveurAPI + '/api/points?detail=icones' + (urlParams || ''))
+      .then((response) => response.json()).then((json) => {
+        if (json) {
+          pointsLayer.display(json);
+          idbKeyval.set('points', json);
+        }
+        thenCallBack();
+      });
+  });
 }

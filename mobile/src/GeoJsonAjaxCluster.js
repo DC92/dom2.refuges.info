@@ -67,12 +67,24 @@ class GeoJsonAjaxCluster extends L.MarkerClusterGroup {
     });
   }
 
-  display(json) {
+  loadPoints(urlParams) {
+    return new Promise((thenCallBack) => {
+      fetch(this.options.url + (urlParams || ''))
+        .then((response) => response.json())
+        .then((geoJson) => {
+          if (geoJson) {
+            this.display(geoJson);
+            idbKeyval.set(this.options.idbId, geoJson);
+          }
+          thenCallBack();
+        });
+    });
+  }
+
+  display(geoJson) {
     this.removeLayer(this.poiLayer);
     this.poiLayer.clearLayers();
-    if (json) {
-      this.poiLayer.addData(json);
-      this.addLayer(this.poiLayer);
-    }
+    this.poiLayer.addData(geoJson);
+    this.addLayer(this.poiLayer);
   }
 }
