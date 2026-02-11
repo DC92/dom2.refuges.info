@@ -83,8 +83,12 @@ $conditions->centre_du_cercle : la géométrie d'un point au format WKB (en 2025
 
 $conditions->avec_liste_polygones=True : l'objet retourné dispose d'une propriété polygones, un array de tous les polygones auquels le point appartient.
 
+$conditions->avec_infos_creation=True : Rend les informations liées au créateur, date de création et modification.
 $conditions->id_createur : Dont le modérateur actuel de fiche et l'utilisation d'id id_createur
 $conditions->topic_id : Dont le topic du forum est celui-ci (permet d'avoir un lien retour du forum du point vers la fiche)
+
+$conditions->avec_infos_fiche=True : Rend les informations liées à la fiche (proprio, accés, remarques, état, ...)
+$conditions->avec_infos_complementaires=True : Rend les informations complémentaires
 
 Cette fonction contrôle du mieux qu'elle peut les paramètres qu'elle reçoit, certains viennent directement d'une URL !
 Elle retourne un texte d'erreur avec $objet->erreur=True et $objet->message="un texte", sinon. (Oui, je sais, les exceptions c'est fait pour ça)
@@ -433,96 +437,103 @@ function infos_points($conditions)
         ],
       ];
 
-      $properties->createur['id'] = $point->id_createur;
-      $properties->lien = lien_point($point);
-      $properties->lien_site = $point->site_officiel;
+      if (!empty($conditions->avec_infos_creation)) {
+        $properties->createur['id'] = $point->id_createur;
+        $properties->lien = lien_point($point);
+        $properties->lien_site = $point->site_officiel;
 
-      // info sur le modérateur actuel de la fiche (authentifié ou non)
-      if ($point->id_createur==0) // non authentifié
-          $properties->createur['nom']=$point->nom_createur;
-      else
-      {
-        $utilisateur=infos_utilisateur($point->id_createur);
-        if (!empty($utilisateur->erreur)) // Aïe, le point référence un utilisateur qui n'existe plus
-          $properties->createur['nom'] = "Utilisateur supprimé";
+        // info sur le modérateur actuel de la fiche (authentifié ou non)
+        if ($point->id_createur==0) // non authentifié
+            $properties->createur['nom']=$point->nom_createur;
         else
-          $properties->createur['nom'] = infos_utilisateur($point->id_createur)->username;
-      }
+        {
+          $utilisateur=infos_utilisateur($point->id_createur);
+          if (!empty($utilisateur->erreur)) // Aïe, le point référence un utilisateur qui n'existe plus
+            $properties->createur['nom'] = "Utilisateur supprimé";
+          else
+            $properties->createur['nom'] = infos_utilisateur($point->id_createur)->username;
+        }
 
-      $properties->date = [
-        'creation' => $point->date_creation,
-        'derniere_modif' => $point->date_derniere_modification,
-      ];
+        $properties->date = [
+          'creation' => $point->date_creation,
+          'derniere_modif' => $point->date_derniere_modification,
+        ];
+      }
       $properties->article = [
         'demonstratif' => $point->article_demonstratif,
         'defini' => $point->article_defini,
         'partitif' => $point->article_partitif_point_type,
       ];
-      $properties->etat = [
-        'nom' => 'Etat', //TODO : générer automatiquement ?
-        'valeur' => texte_non_ouverte($point),
-        'id' => $point->conditions_utilisation,
-      ];
-      $properties->proprio = [
-        'nom' => $point->equivalent_proprio,
-        'valeur' => $point->proprio,
-      ];
-      $properties->places = [
-        'nom' => $point->equivalent_places,
-        'valeur' => $point->places,
-      ];
-      $properties->remarque = [
-        'nom' => 'Remarque',
-        'valeur' => $point->remark,
-      ];
-      $properties->acces = [
-        'nom' => 'Accès',
-        'valeur' => $point->acces,
-      ];
+
+      if (!empty($conditions->avec_infos_fiche)) {
+        $properties->etat = [
+          'nom' => 'Etat', //TODO : générer automatiquement ?
+          'valeur' => texte_non_ouverte($point),
+          'id' => $point->conditions_utilisation,
+        ];
+        $properties->proprio = [
+          'nom' => $point->equivalent_proprio,
+          'valeur' => $point->proprio,
+        ];
+        $properties->places = [
+          'nom' => $point->equivalent_places,
+          'valeur' => $point->places,
+        ];
+        $properties->remarque = [
+          'nom' => 'Remarque',
+          'valeur' => $point->remark,
+        ];
+        $properties->acces = [
+          'nom' => 'Accès',
+          'valeur' => $point->acces,
+        ];
+      }
       $point_final->properties = $properties; // Pour optimiser le temps du calcul
 
       // Dom 01/2026 : simplifié et transféré depuis controlleurs/point.php pour pouvoir être utilisé dans l'API
       // Formatage des informations complèmentaires
-      $champs=array_merge($config_wri['champs_entier_ou_sait_pas_points'],$config_wri['champs_trinaires_points'],['site_officiel']);
-      $point_final->infos_complementaires = [];
+      if (!empty($conditions->avec_infos_complementaires)) {
+        $champs=array_merge($config_wri['champs_entier_ou_sait_pas_points'],$config_wri['champs_trinaires_points'],['site_officiel']);
+        $point_final->infos_complementaires = [];
 
-      foreach ($champs as $champ)
-      {
-        $champ_equivalent = "equivalent_$champ";
-        // Si ce champs est vide, c'est que cet élément ne s'applique pas à ce type de point (exemple: une cheminée pour une grotte)
-        if ($point->$champ_equivalent!="")
+        foreach ($champs as $champ)
         {
-          $val = [
-            'nom' => $point->$champ_equivalent,
-          ];  
-          switch ($champ)
+          $champ_equivalent = "equivalent_$champ";
+          // Si ce champs est vide, c'est que cet élément ne s'applique pas à ce type de point (exemple: une cheminée pour une grotte)
+          if ($point->$champ_equivalent!="")
           {
-            case 'site_officiel':
-              if ($point->$champ!="") {
-                $val['url'] = $point->$champ;
-                $val['valeur'] = '[url='.$point->$champ.']'.protege(mb_ucfirst($point->nom)).'[/url]';
-              } break;
+            $val = [
+              'nom' => $point->$champ_equivalent,
+            ];  
+            switch ($champ)
+            {
+              case 'site_officiel':
+                if ($point->$champ!="") {
+                  $val['url'] = $point->$champ;
+                  $val['valeur'] = '[url='.$point->$champ.']'.protege(mb_ucfirst($point->nom)).'[/url]';
+                } break;
 
-            case 'places_matelas' : case 'places' :
-              if($point->$champ === NULL )
-                $val['valeur'] = '<strong>Inconnu</strong>';
-              else
-                $val['valeur'] = $val['nb'] = $point->$champ;
-              break;
+              case 'places_matelas' : case 'places' :
+                if($point->$champ === NULL )
+                  $val['valeur'] = '<strong>Inconnu</strong>';
+                else
+                  $val['valeur'] = $val['nb'] = $point->$champ;
+                break;
 
-            default: // Pour tous les boolééns restant
-              if($point->$champ === TRUE)
-                $val['valeur'] = 'Oui';
-              if($point->$champ === FALSE)
-                $val['valeur'] = 'Non';
-              if($point->$champ === NULL)
-                $val['valeur'] = '<strong>Inconnu</strong>';
-              break;
+              default: // Pour tous les boolééns restant
+                if($point->$champ === TRUE)
+                  $val['valeur'] = 'Oui';
+                if($point->$champ === FALSE)
+                  $val['valeur'] = 'Non';
+                if($point->$champ === NULL)
+                  $val['valeur'] = '<strong>Inconnu</strong>';
+                break;
+            }
+            if(count($val) > 1)
+              $point_final->infos_complementaires[$champ]=$val;
           }
-          if(count($val) > 1)
-            $point_final->infos_complementaires[$champ]=$val;
+          unset($val);
         }
-        unset($val);
       }
 
       //  phpBB intègre un nom d'utilisateur dans sa base après avoir passé un htmlentities pour les users connectés, je réalise l'opération inverse

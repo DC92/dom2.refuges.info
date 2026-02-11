@@ -168,7 +168,7 @@ $points_bruts = new stdClass();
 $points = new stdClass();
 
 // Requête simplifiée pour performance
-if ($req->detail == 'icones' &&
+/*if ($req->detail == 'icones' &&
   $req->id == '' &&
   $req->bbox == 'world' &&
   $req->massif == '' &&
@@ -196,7 +196,7 @@ if ($req->detail == 'icones' &&
     ];
   }
 }
-else
+else*/
   $points_bruts = infos_points($params);
 
 /****************************** INFOS GÉNÉRALES ******************************/
@@ -266,14 +266,14 @@ foreach ($points_bruts as $i=>$point) {
     // si besoin en renommant ce champ
 
     $filtre = ['icones' => [
-      'id' => false, // Déjà dans features
+      //DCMM ??????? 'id' => false, // Déjà dans features
       'nom' => true,
       'type' => ['icone' => true],
     ]];
 
     $filtre['simple'] = array_merge($filtre['icones'], [
       'id' => true, // On écrase le précédent
-      'type' => true,
+      'type' => true, // On écrase le précédent
       'lien' => true,
       'coord' => ['alt' => true],
       'places' => true,
