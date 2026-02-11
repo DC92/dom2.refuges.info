@@ -1,4 +1,4 @@
-/* global L, GeoJsonAjaxCluster, appliqueDonnees, serveurAPI, idbKeyval */
+/* global L, GeoJsonAjaxCluster, appliqueDonnees, preLoadTiles, serveurAPI, defaultPermalink, idbKeyval */
 
 //TODO mémorisation position carte
 //TODO Fonctions ctrl clic + Apple suivant demande faite à wri github
@@ -81,7 +81,14 @@ function initCarte(containerElId) {
     },
   }).addTo(map);
 
-  // Display the memorised data is available
+  // Recover last position
+  idbKeyval.get('permalink')
+    .then((permalink) => {
+      const position = permalink || defaultPermalink;
+      map.setView(position, position[2]);
+    });
+
+  // Display the memorised data if available
   idbKeyval.get('points')
     .then((json) => pointsLayer.display(json));
 
@@ -95,6 +102,15 @@ function initCarte(containerElId) {
         idbKeyval.set('points', json);
       }
     });
+
+  map.on('moveend', () => {
+    const pos = map.getCenter();
+
+    idbKeyval.set('permalink', [pos.lat, pos.lng, map.getZoom()]);
+    preLoadTiles(map, pos);
+    // Prè-charge les dalles OpenHikingMap, points et commentaires autour de la zone visitée
+    //TODO essayer points proches
+  });
 
   return map;
 }

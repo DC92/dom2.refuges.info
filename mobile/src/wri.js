@@ -4,10 +4,6 @@
 const nomPages = ['carte', 'point', 'nouvelles'],
   map = initCarte('map');
 
-// Prè-charge les dalles OpenHikingMap, points et commentaires autour de la zone visitée
-//TODO essayer points proches
-map.on('moveend', () => preLoadTiles(map, map.getCenter()));
-
 // Initialisation de la page lorsque l'URL principale est appelée ou l'ancre change
 function changePage() {
   const ancre = window.location.hash.replace('#', '').split('=');
@@ -31,7 +27,6 @@ window.addEventListener('popstate', changePage); // L'ancre change ou navigation
  **************/
 /* eslint-disable-next-line no-unused-vars */
 function affichePageCarte() {
-  map.setView([45, 5.5], 10); // Puits des Ravières
 }
 
 /******************
