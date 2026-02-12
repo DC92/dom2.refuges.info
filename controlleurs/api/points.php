@@ -164,6 +164,9 @@ if($req->type_points != "all") {
   $params->ids_types_point = str_replace($val->type_points, $val->type_points_id, $req->type_points);
 }
 
+$params->avec_infos_fiche = true;
+$params->avec_infos_complementaires = true;
+
 $points_bruts = new stdClass();
 $points = new stdClass();
 
@@ -236,7 +239,6 @@ foreach ($points_bruts as $i=>$point) {
     // si besoin en renommant ce champ
 
     $filtre = ['icones' => [
-      //DCMM ??????? 'id' => false, // Déjà dans features
       'nom' => true,
       'type' => ['icone' => true],
     ]];

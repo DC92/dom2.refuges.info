@@ -407,7 +407,6 @@ function infos_points($conditions)
 
       $properties->type = [
         'id' => $point->id_point_type,
-        'id' => $point->id_point_type,
         'valeur' => $point->nom_type,
         'icone' => choix_icone($point),
       ];
@@ -437,10 +436,11 @@ function infos_points($conditions)
         ],
       ];
 
-      if (!empty($conditions->avec_infos_creation)) {
+      $properties->lien = lien_point($point);
+      $properties->lien_site = $point->site_officiel;
+
+      if (!empty($conditions->avec_infos_creation)) { // Conditionel car couteux en temps
         $properties->createur['id'] = $point->id_createur;
-        $properties->lien = lien_point($point);
-        $properties->lien_site = $point->site_officiel;
 
         // info sur le modérateur actuel de la fiche (authentifié ou non)
         if ($point->id_createur==0) // non authentifié
@@ -459,6 +459,7 @@ function infos_points($conditions)
           'derniere_modif' => $point->date_derniere_modification,
         ];
       }
+
       $properties->article = [
         'demonstratif' => $point->article_demonstratif,
         'defini' => $point->article_defini,
@@ -596,6 +597,8 @@ function infos_point($id_point,$meme_si_cache=False,$avec_polygones=True, $meme_
 
   if ($meme_si_cache)
     $conditions->avec_points_caches=True;
+
+  $conditions->avec_infos_complementaires=True;
 
   // récupération des infos du point
   $points=infos_points($conditions);
