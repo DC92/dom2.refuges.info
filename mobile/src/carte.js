@@ -1,8 +1,5 @@
 /* global L, GeoJsonAjaxCluster, appliqueDonnees, preLoadTiles, serveurAPI, defaultPermalink, idbKeyval */
 
-//TODO mémorisation position carte
-//TODO Fonctions ctrl clic + Apple suivant demande faite à wri github
-
 /*****************
  * Carte Leaflet *
  *****************/
@@ -63,7 +60,7 @@ function initCarte(containerElId) {
 
   // WRI poi & clusters
   const pointsLayer = new GeoJsonAjaxCluster({
-    idbId: 'points',
+    //idbId: 'points',
     url: serveurAPI + '/api/points?detail=icones',
     icon: {
       url: (feature) => serveurAPI + '/images/icones/' + feature.properties.type.icone + '.svg',
@@ -91,28 +88,8 @@ function initCarte(containerElId) {
       map.setView(position, position[2]);
     });
 
-  // Display the memorised data if available
-  // Reload new version of the data
   //TODO Appeler ?depuis avant
   //TODO preload ALL icones points
-  idbKeyval.get('points')
-    .then((json) => {
-      if (json) {
-        pointsLayer.display(json);
-        loadPoints(pointsLayer);
-      } else {
-        const bounds = map.getBounds(),
-          bbox = [
-            Math.floor(bounds._southWest.lng * 10) / 10,
-            Math.floor(bounds._southWest.lat * 10) / 10,
-            Math.ceil(bounds._northEast.lng * 10) / 10,
-            Math.ceil(bounds._northEast.lat * 10) / 10,
-          ].join(',');
-
-        loadPoints(pointsLayer, '&bbox=' + bbox)
-          .then(() => loadPoints(pointsLayer));
-      }
-    });
 
   map.on('moveend', () => {
     const pos = map.getCenter();
@@ -125,17 +102,4 @@ function initCarte(containerElId) {
   });
 
   return map;
-}
-
-function loadPoints(pointsLayer, urlParams) {
-  return new Promise((thenCallBack) => {
-    fetch(serveurAPI + '/api/points?detail=icones' + (urlParams || ''))
-      .then((response) => response.json()).then((json) => {
-        if (json) {
-          pointsLayer.display(json);
-          idbKeyval.set('points', json);
-        }
-        thenCallBack();
-      });
-  });
 }

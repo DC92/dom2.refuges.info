@@ -25,16 +25,18 @@
  *   https://github.com/Leaflet/Leaflet.markercluster
      (c) 2026, Dominique Cavailhez
  */
-//TODO select point type
-//TODO other vector layers
-//TODO separate nearby points
+//BEST select point type
+//BEST other vector layers
+//TODO TEST separate nearby points
 
-/* global L */
+/* global L, idbKeyval */
 
 /* eslint-disable no-unused-vars */
 class GeoJsonAjaxCluster extends L.MarkerClusterGroup {
   constructor(options) {
     super();
+
+    this.url = options.url;
 
     options.icon.size ||= 16;
     if (typeof options.icon.size === 'number')
@@ -62,23 +64,30 @@ class GeoJsonAjaxCluster extends L.MarkerClusterGroup {
         if (typeof options.click === 'function')
           layer.on({
             click: (event) => options.click(feature, event),
+            //BEST Fonctions ctrl clic + Apple suivant demande faite à wri github
           });
       },
     });
+
+    //TODO BUG Internal error opening backing store for indexedDB.open
+    // Try once to display from indexedDB
+    idbKeyval.get(this.url).then((geoJsonDB) => {
+      if (geoJsonDB)
+        this.display(geoJsonDB);
+    });
+
+    // Anyway, reload from url & store the result
+    this.reload();
   }
 
-  loadPoints(urlParams) {
-    return new Promise((thenCallBack) => {
-      fetch(this.options.url + (urlParams || ''))
-        .then((response) => response.json())
-        .then((geoJson) => {
-          if (geoJson) {
-            this.display(geoJson);
-            idbKeyval.set(this.options.idbId, geoJson);
-          }
-          thenCallBack();
-        });
-    });
+  reload() {
+    fetch(this.url).then((response) => response.json())
+      .then((geoJsonUrl) => {
+        if (geoJsonUrl) {
+          this.display(geoJsonUrl);
+          idbKeyval.set(this.url, geoJsonUrl);
+        };
+      });
   }
 
   display(geoJson) {

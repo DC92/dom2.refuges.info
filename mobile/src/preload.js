@@ -38,7 +38,6 @@ const pointsTileSize = 0.5; // ° lon / lat
 //TODO : le faire ici
 
 async function preLoadPoints(url) {
-  //TODO BUG lenteur de l'API
   const pointsProps = [];
 
   // Données des points
