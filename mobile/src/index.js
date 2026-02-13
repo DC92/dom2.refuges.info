@@ -41,41 +41,42 @@ const baseLayers = {
  * Couches vectorielles *
  ************************/
 // Icônes
-const clustersLayer = new L.MarkerClusterGroup(),
-  pointsLayer = L.geoJson(null, {
-    // Icônes
-    pointToLayer: (feature, latlng) =>
-      L.marker(latlng, {
-        icon: L.icon({
-          iconUrl: serveurAPI + '/images/icones/' + feature.properties.type.icone + '.svg',
-          size: 24,
-        }),
+const pointsLayer = L.geoJson(null, {
+  // Icônes
+  pointToLayer: (feature, latlng) =>
+    L.marker(latlng, {
+      icon: L.icon({
+        iconUrl: serveurAPI + '/images/icones/' + feature.properties.type.icone + '.svg',
+        size: 24,
       }),
+    }),
 
-    onEachFeature: (feature, layer) => {
-      // Etiquettes
-      layer.bindTooltip(
-        feature.properties.nom, {
-          permanent: true,
-          direction: 'center',
-        }
-      ).openTooltip();
+  onEachFeature: (feature, layer) => {
+    // Etiquettes
+    layer.bindTooltip(
+      feature.properties.nom, {
+        permanent: true,
+        direction: 'center',
+      }
+    ).openTooltip();
 
-      // Click
-      layer.on({
-        click: () => {
-          //BEST Fonctions ctrl clic + Apple suivant demande faite à wri github
-          // Affiche les donnés d'entête de la fiche qui sont disponibles dans l'API bbox
-          appliqueDonnees('point', feature.properties);
+    // Click
+    layer.on({
+      click: () => {
+        //BEST Fonctions ctrl clic + Apple suivant demande faite à wri github
+        // Affiche les donnés d'entête de la fiche qui sont disponibles dans l'API bbox
+        appliqueDonnees('point', feature.properties);
 
-          // Affiche la page point
-          window.location.hash = 'point=' + feature.properties.id;
-        },
-      });
-    },
-  });
+        // Affiche la page point
+        window.location.hash = 'point=' + feature.properties.id;
+      },
+    });
+  },
+});
 
-// Affichage d'un texte geoJson
+// Affichage des clusters et des points
+const clustersLayer = new L.MarkerClusterGroup();
+
 function affichePoints(geoJson) {
   if (geoJson) {
     clustersLayer.removeLayer(pointsLayer);
