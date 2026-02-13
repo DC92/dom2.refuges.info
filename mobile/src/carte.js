@@ -1,4 +1,4 @@
-/* global L, GeoJsonAjaxCluster, appliqueDonnees, preLoadTiles, serveurAPI, defaultPermalink */
+/* global L, appliqueDonnees, preLoadTiles, serveurAPI, defaultPermalink */
 
 /*******************************
  * Gestion de la carte Leaflet *
@@ -40,85 +40,107 @@ const baseLayers = {
   //TODO https://github.com/plepe/overpass-frontend/blob/master/example-bbox.js
 };
 
+/************************
+ * Couches vectorielles *
+ ************************/
+// Icônes
+const clustersLayer = new L.MarkerClusterGroup(),
+  pointsLayer = L.geoJson(null, {
+    // Icônes
+    pointToLayer: (feature, latlng) =>
+      L.marker(latlng, {
+        icon: L.icon({
+          iconUrl: serveurAPI + '/images/icones/' + feature.properties.type.icone + '.svg',
+          size: 24,
+        }),
+      }),
+
+    onEachFeature: (feature, layer) => {
+      // Etiquettes
+      layer.bindTooltip(
+        feature.properties.nom, {
+          permanent: true,
+          direction: 'center',
+        }
+      ).openTooltip();
+
+      // Click
+      layer.on({
+        click: () => {
+          //BEST Fonctions ctrl clic + Apple suivant demande faite à wri github
+          // Affiche les donnés d'entête de la fiche qui sont disponibles dans l'API bbox
+          appliqueDonnees('point', feature.properties);
+
+          // Affiche la page point
+          window.location.hash = 'point=' + feature.properties.id;
+        },
+      });
+    },
+  });
+
+// Affichage d'un texte geoJson
+function affichePoints(geoJson) {
+  if (geoJson) {
+    clustersLayer.removeLayer(pointsLayer);
+    pointsLayer.clearLayers();
+    pointsLayer.addData(JSON.parse(geoJson));
+    clustersLayer.addLayer(pointsLayer);
+  }
+}
+
 /******************************
  * Initialisation de la carte *
  ******************************/
 /* eslint-disable-next-line no-unused-vars */
-function initCarte(containerElId) {
-  const map = L.map(containerElId),
-    hash = location.hash.replace('#', '').split(','),
-    permalink = hash.length === 3 ? hash :
-    (localStorage.getItem('permalink') || defaultPermalink).split(',');
+const map = L.map('map'),
+  hash = location.hash.replace('#', '').split(','),
+  permalink = hash.length === 3 ? hash :
+  (localStorage.getItem('permalink') || defaultPermalink).split(',');
 
-  // Récupére la dernière position
-  map.setView(permalink, permalink[2]);
+// Récupére la dernière position
+map.setView(permalink, permalink[2]);
 
-  // Layer switcher
-  Object.values(baseLayers)[0].addTo(map); // Default layer
-  L.control.layers(baseLayers).addTo(map);
+// Layer switcher
+Object.values(baseLayers)[0].addTo(map); // Default layer
+L.control.layers(baseLayers).addTo(map);
 
-  L.control.scale({
-    imperial: false
-  }).addTo(map);
+L.control.scale({
+  imperial: false
+}).addTo(map);
 
-  new L.Control.Gps({
-    autoCenter: true,
-  }).addTo(map);
+new L.Control.Gps({
+  autoCenter: true,
+}).addTo(map);
 
-  new L.Control.Geocoder({
-    position: 'topleft',
-  }).addTo(map);
+new L.Control.Geocoder({
+  position: 'topleft',
+}).addTo(map);
 
-  // Icônes refuges.info
-  const pointsLayer = new GeoJsonAjaxCluster({
-    icon: {
-      url: (feature) => serveurAPI + '/images/icones/' + feature.properties.type.icone + '.svg',
-      size: 24,
-    },
-    label: {
-      title: (feature) => feature.properties.nom,
-      permanent: true,
-      direction: 'center',
-    },
-    click: (feature) => {
-      // Affiche les donnés d'entête de la fiche qui sont disponibles dans l'API bbox
-      appliqueDonnees('point', feature.properties);
+// Couches vectorielles
+clustersLayer.addTo(map);
+affichePoints(localStorage.getItem('points'));
 
-      // Affiche la page point
-      window.location.hash = 'point=' + feature.properties.id;
-    },
-  }).addTo(map);
+// Charge (ou recharge) les points à afficher
+setTimeout(() => // Attends que les icônes soient chargées
+  fetch(serveurAPI + '/api/points?detail=icones')
+  .then((response) => response.text())
+  .then((geoJson) => {
+    affichePoints(geoJson);
+    localStorage.setItem('points', geoJson);
+  }),
+  100);
 
-  const geoJson = localStorage.getItem('points');
+map.on('moveend', () => {
+  const pos = map.getCenter(),
+    newPermalink = [pos.lat, pos.lng, map.getZoom()]
+    .map(f => Math.round(f * 1000) / 1000)
+    .join(',');
 
-    // Affiche les points mémorisés
-  if (geoJson)
-    pointsLayer.display(JSON.parse(geoJson));
- 
-  // Charge (ou recharge) les points à afficher
-  setTimeout(() => // Attends que les icônes soient chargées
-    fetch(serveurAPI + '/api/points?detail=icones')
-    .then((response) => response.text())
-    .then((json) => {
-      pointsLayer.display(JSON.parse(json));
-      localStorage.setItem('points', json);
-    }),
-    100);
+  // Actualise le permalink
+  localStorage.setItem('permalink', newPermalink);
+  if (hash.length !== 1) //TODO BUG
+    location.hash = newPermalink;
 
-  map.on('moveend', () => {
-    const pos = map.getCenter(),
-      newPermalink = [pos.lat, pos.lng, map.getZoom()]
-      .map(f => Math.round(f * 1000) / 1000)
-      .join(',');
-
-    // Actualise le permalink
-    localStorage.setItem('permalink', newPermalink);
-    if (hash.length !== 1) //TODO BUG
-      location.hash = newPermalink;
-
-    // Prè-charge les dalles OpenHikingMap, points et commentaires autour de la zone visitée
-    preLoadTiles(map, pos);
-  });
-
-  return map;
-}
+  // Prè-charge les dalles OpenHikingMap, points et commentaires autour de la zone visitée
+  preLoadTiles(map, pos);
+});

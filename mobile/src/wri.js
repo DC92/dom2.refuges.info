@@ -1,8 +1,7 @@
 /* global requeteAPI, initCarte, prepareModeleGroupe, appliqueDonnees */
 /* global preLoadTiles, preLoadPoints, serveurAPI, idbKeyval, debugPWA */
 
-const nomPages = ['carte', 'point', 'nouvelles'],
-  map = initCarte('map');
+const nomPages = ['carte', 'point', 'nouvelles'];
 
 // Initialisation de la page lorsque l'URL principale est appelée ou l'ancre change
 function changePage() {
