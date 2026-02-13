@@ -5,7 +5,6 @@
      on click or touch action
  *
  * options:
-     url: '/api/point?&nb_points=all&detail=icones',
      icon: {
         url: (feature) => 'url calculated from feature',
         size: 16 || [16, 16], // Default 16
@@ -25,18 +24,17 @@
  *   https://github.com/Leaflet/Leaflet.markercluster
      (c) 2026, Dominique Cavailhez
  */
+
 //BEST select point type
 //BEST other vector layers
 //TODO TEST separate nearby points
 
-/* global L, idbKeyval */
+/* global L */
 
 /* eslint-disable no-unused-vars */
 class GeoJsonAjaxCluster extends L.MarkerClusterGroup {
   constructor(options) {
     super();
-
-    this.url = options.url;
 
     options.icon.size ||= 16;
     if (typeof options.icon.size === 'number')
@@ -68,26 +66,6 @@ class GeoJsonAjaxCluster extends L.MarkerClusterGroup {
           });
       },
     });
-
-    //TODO BUG Internal error opening backing store for indexedDB.open // Voir parralélisme écriture
-    // Try once to display from indexedDB
-    idbKeyval.get(this.url).then((geoJsonDB) => { //TODO utiliser localstorage
-      if (geoJsonDB)
-        this.display(geoJsonDB);
-    });
-
-    // Anyway, reload from url & store the result
-    this.reload();
-  }
-
-  reload() {
-    fetch(this.url).then((response) => response.json())
-      .then((geoJsonUrl) => {
-        if (geoJsonUrl) {
-          this.display(geoJsonUrl);
-          idbKeyval.set(this.url, geoJsonUrl); //TODO utiliser localstorage
-        };
-      });
   }
 
   display(geoJson) {

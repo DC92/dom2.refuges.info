@@ -1,8 +1,12 @@
-/* global L, GeoJsonAjaxCluster, appliqueDonnees, preLoadTiles, serveurAPI, defaultPermalink, idbKeyval */
+/* global L, GeoJsonAjaxCluster, appliqueDonnees, preLoadTiles, serveurAPI, defaultPermalink */
 
-/*****************
- * Carte Leaflet *
- *****************/
+/*******************************
+ * Gestion de la carte Leaflet *
+ *******************************/
+
+/***************************
+ * Déclaration des couches *
+ ***************************/
 const baseLayers = {
   OpenHikingMap: L.tileLayer('https://tile.openmaps.fr/openhikingmap/{z}/{x}/{y}.png', {
     maxZoom: 18,
@@ -36,6 +40,9 @@ const baseLayers = {
   //TODO https://github.com/plepe/overpass-frontend/blob/master/example-bbox.js
 };
 
+/******************************
+ * Initialisation de la carte *
+ ******************************/
 /* eslint-disable-next-line no-unused-vars */
 function initCarte(containerElId) {
   const map = L.map(containerElId),
@@ -63,29 +70,35 @@ function initCarte(containerElId) {
   }).addTo(map);
 
   // WRI poi & clusters
-  const pointsLayer = new GeoJsonAjaxCluster({
-    //idbId: 'points',
-    url: serveurAPI + '/api/points?detail=icones',
-    icon: {
-      url: (feature) => serveurAPI + '/images/icones/' + feature.properties.type.icone + '.svg',
-      size: 24,
-    },
-    label: {
-      title: (feature) => feature.properties.nom,
-      permanent: true,
-      direction: 'center',
-    },
-    click: (feature) => {
-      // Affiche les donnés d'entête de la fiche qui sont disponibles dans l'API bbox
-      appliqueDonnees('point', feature.properties);
+  const geoJson = localStorage.getItem('points'),
+    pointsLayer = new GeoJsonAjaxCluster({
+      icon: {
+        url: (feature) => serveurAPI + '/images/icones/' + feature.properties.type.icone + '.svg',
+        size: 24,
+      },
+      label: {
+        title: (feature) => feature.properties.nom,
+        permanent: true,
+        direction: 'center',
+      },
+      click: (feature) => {
+        // Affiche les donnés d'entête de la fiche qui sont disponibles dans l'API bbox
+        appliqueDonnees('point', feature.properties);
 
-      // Affiche la page point
-      window.location.hash = 'point=' + feature.properties.id;
-    },
-  }).addTo(map);
+        // Affiche la page point
+        window.location.hash = 'point=' + feature.properties.id;
+      },
+    }).addTo(map);
 
-  //TODO Appeler ?depuis avant
-  //TODO preload ALL icones points
+  if (geoJson)
+    pointsLayer.display(JSON.parse(geoJson));
+
+  fetch(serveurAPI + '/api/points?detail=icones')
+    .then((response) => response.text())
+    .then((json) => {
+      pointsLayer.display(JSON.parse(json));
+      localStorage.setItem('points', json);
+    });
 
   map.on('moveend', () => {
     const pos = map.getCenter(),

@@ -38,6 +38,7 @@ const pointsTileSize = 0.5; // ° lon / lat
 //TODO : le faire ici
 
 async function preLoadPoints(url) {
+  return;
   const pointsProps = [];
 
   // Données des points
@@ -60,6 +61,7 @@ async function preLoadPoints(url) {
 
 /* eslint-disable no-unused-vars */
 async function preLoadTiles(map, position) {
+  return;
   const preLoadedEntries = [];
 
   // Dates de préchargement des dalles
@@ -90,7 +92,6 @@ async function preLoadTiles(map, position) {
 
       idbKeyval.set(bboxString, Date.now()); // Mark cache date //TODO utiliser localstorage
     }
-
 
   //**********************************************************
   // Précharger les dalles OpenHikingMap autour de la position
