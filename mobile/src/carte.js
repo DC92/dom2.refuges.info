@@ -50,7 +50,7 @@ function initCarte(containerElId) {
     permalink = hash.length === 3 ? hash :
     (localStorage.getItem('permalink') || defaultPermalink).split(',');
 
-  // Recover last position
+  // Récupére la dernière position
   map.setView(permalink, permalink[2]);
 
   // Layer switcher
@@ -69,36 +69,41 @@ function initCarte(containerElId) {
     position: 'topleft',
   }).addTo(map);
 
-  // WRI poi & clusters
-  const geoJson = localStorage.getItem('points'),
-    pointsLayer = new GeoJsonAjaxCluster({
-      icon: {
-        url: (feature) => serveurAPI + '/images/icones/' + feature.properties.type.icone + '.svg',
-        size: 24,
-      },
-      label: {
-        title: (feature) => feature.properties.nom,
-        permanent: true,
-        direction: 'center',
-      },
-      click: (feature) => {
-        // Affiche les donnés d'entête de la fiche qui sont disponibles dans l'API bbox
-        appliqueDonnees('point', feature.properties);
+  // Icônes refuges.info
+  const pointsLayer = new GeoJsonAjaxCluster({
+    icon: {
+      url: (feature) => serveurAPI + '/images/icones/' + feature.properties.type.icone + '.svg',
+      size: 24,
+    },
+    label: {
+      title: (feature) => feature.properties.nom,
+      permanent: true,
+      direction: 'center',
+    },
+    click: (feature) => {
+      // Affiche les donnés d'entête de la fiche qui sont disponibles dans l'API bbox
+      appliqueDonnees('point', feature.properties);
 
-        // Affiche la page point
-        window.location.hash = 'point=' + feature.properties.id;
-      },
-    }).addTo(map);
+      // Affiche la page point
+      window.location.hash = 'point=' + feature.properties.id;
+    },
+  }).addTo(map);
 
+  const geoJson = localStorage.getItem('points');
+
+    // Affiche les points mémorisés
   if (geoJson)
     pointsLayer.display(JSON.parse(geoJson));
-
-  fetch(serveurAPI + '/api/points?detail=icones')
+ 
+  // Charge (ou recharge) les points à afficher
+  setTimeout(() => // Attends que les icônes soient chargées
+    fetch(serveurAPI + '/api/points?detail=icones')
     .then((response) => response.text())
     .then((json) => {
       pointsLayer.display(JSON.parse(json));
       localStorage.setItem('points', json);
-    });
+    }),
+    100);
 
   map.on('moveend', () => {
     const pos = map.getCenter(),
@@ -106,7 +111,7 @@ function initCarte(containerElId) {
       .map(f => Math.round(f * 1000) / 1000)
       .join(',');
 
-    // Refresh permalink
+    // Actualise le permalink
     localStorage.setItem('permalink', newPermalink);
     if (hash.length !== 1) //TODO BUG
       location.hash = newPermalink;

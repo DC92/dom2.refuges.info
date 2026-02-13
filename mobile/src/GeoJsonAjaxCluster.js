@@ -22,7 +22,8 @@
  * Based on :
  *   https://leafletjs.com/
  *   https://github.com/Leaflet/Leaflet.markercluster
-     (c) 2026, Dominique Cavailhez
+ *
+ *   (c)2026, Dominique Cavailhez
  */
 
 //BEST select point type
