@@ -1,5 +1,5 @@
 /* global requeteAPI, initCarte, prepareModeleGroupe, appliqueDonnees */
-/* global  preLoadTiles, preLoadPoints, serveurAPI, idbKeyval, debugPWA */
+/* global preLoadTiles, preLoadPoints, serveurAPI, idbKeyval, debugPWA */
 
 const nomPages = ['carte', 'point', 'nouvelles'],
   map = initCarte('map');

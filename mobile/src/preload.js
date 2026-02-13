@@ -1,7 +1,7 @@
 /* global idbKeyval, serveurAPI */
 
 //TODO preload nouveautés (depuis date / modifier l'API)
-//TODO flag précharger
+//TODO flag précharger ???
 
 /*********************************************************************
  * Préchargements dans une zone autour de celle parcourue par la carte
@@ -88,7 +88,7 @@ async function preLoadTiles(map, position) {
           '/api/points?detail=complet&format_texte=html&nb_points=all&bbox=' + bboxString
         );
 
-      idbKeyval.set(bboxString, Date.now()); // Mark cache date
+      idbKeyval.set(bboxString, Date.now()); // Mark cache date //TODO utiliser localstorage
     }
 
 

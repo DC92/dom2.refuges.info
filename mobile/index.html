@@ -21,7 +21,6 @@ Démonstrateur front-end pour refuges.info
   <link href="geocoder/Control.Geocoder.css" rel="stylesheet" />
   <script src="gps/leaflet-gps.min.js"></script>
   <link href="gps/leaflet-gps.min.css" rel="stylesheet">
-  <script src="permalink/leaflet.permalink.min.js"></script>
 
   <!-- Base layers -->
   <script src="ign/GpPluginLeaflet.js"></script>
@@ -48,7 +47,7 @@ Démonstrateur front-end pour refuges.info
   <script>
     //const serveurAPI = window.location.origin,
     const serveurAPI = 'https://dom2.refuges.info',
-      defaultPermalink = [45, 5.5, 10], // Puits des Ravières
+      defaultPermalink = '45,5.5,10', // Puits des Ravières
       debugPWA = true;
 
     if (!window.location.search) // Debug without PWA

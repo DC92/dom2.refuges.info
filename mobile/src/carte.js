@@ -38,7 +38,13 @@ const baseLayers = {
 
 /* eslint-disable-next-line no-unused-vars */
 function initCarte(containerElId) {
-  const map = L.map(containerElId);
+  const map = L.map(containerElId),
+    hash = location.hash.replace('#', '').split(','),
+    permalink = hash.length === 3 ? hash :
+    (localStorage.getItem('permalink') || defaultPermalink).split(',');
+
+  // Recover last position
+  map.setView(permalink, permalink[2]);
 
   // Layer switcher
   Object.values(baseLayers)[0].addTo(map); // Default layer
@@ -55,8 +61,6 @@ function initCarte(containerElId) {
   new L.Control.Geocoder({
     position: 'topleft',
   }).addTo(map);
-
-  //L.Permalink.setup(map); //TODO BUG Interférence permalink templateur
 
   // WRI poi & clusters
   const pointsLayer = new GeoJsonAjaxCluster({
@@ -80,25 +84,22 @@ function initCarte(containerElId) {
     },
   }).addTo(map);
 
-  // Recover last position
-  idbKeyval.get('permalink')
-    .then((permalink) => {
-      const position = permalink || defaultPermalink;
-
-      map.setView(position, position[2]);
-    });
-
   //TODO Appeler ?depuis avant
   //TODO preload ALL icones points
 
   map.on('moveend', () => {
-    const pos = map.getCenter();
+    const pos = map.getCenter(),
+      newPermalink = [pos.lat, pos.lng, map.getZoom()]
+      .map(f => Math.round(f * 1000) / 1000)
+      .join(',');
 
-    idbKeyval.set('permalink', [pos.lat, pos.lng, map.getZoom()]);
+    // Refresh permalink
+    localStorage.setItem('permalink', newPermalink);
+    if (hash.length !== 1) //TODO BUG
+      location.hash = newPermalink;
 
     // Prè-charge les dalles OpenHikingMap, points et commentaires autour de la zone visitée
     preLoadTiles(map, pos);
-    //TODO essayer points proches
   });
 
   return map;

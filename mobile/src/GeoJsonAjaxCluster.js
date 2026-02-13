@@ -69,9 +69,9 @@ class GeoJsonAjaxCluster extends L.MarkerClusterGroup {
       },
     });
 
-    //TODO BUG Internal error opening backing store for indexedDB.open
+    //TODO BUG Internal error opening backing store for indexedDB.open // Voir parralélisme écriture
     // Try once to display from indexedDB
-    idbKeyval.get(this.url).then((geoJsonDB) => {
+    idbKeyval.get(this.url).then((geoJsonDB) => { //TODO utiliser localstorage
       if (geoJsonDB)
         this.display(geoJsonDB);
     });
@@ -85,7 +85,7 @@ class GeoJsonAjaxCluster extends L.MarkerClusterGroup {
       .then((geoJsonUrl) => {
         if (geoJsonUrl) {
           this.display(geoJsonUrl);
-          idbKeyval.set(this.url, geoJsonUrl);
+          idbKeyval.set(this.url, geoJsonUrl); //TODO utiliser localstorage
         };
       });
   }
