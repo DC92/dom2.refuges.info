@@ -1,8 +1,5 @@
 /* global idbKeyval, serveurAPI */
 
-//TODO preload nouveautés (depuis date / modifier l'API)
-//TODO flag précharger ???
-
 /*********************************************************************
  * Préchargements dans une zone autour de celle parcourue par la carte
  * Les données sont stockées dans la base de données explorateur indexedDB
@@ -35,10 +32,8 @@ const pointsTileSize = 0.5; // ° lon / lat
  * sont raffraichies globalement par GeoJsonAjaxCluster
  * quand un point a été modifié sur la carte.
  */
-//TODO : le faire ici
 
 async function preLoadPoints(url) {
-  return;
   const pointsProps = [];
 
   // Données des points
@@ -61,7 +56,6 @@ async function preLoadPoints(url) {
 
 /* eslint-disable no-unused-vars */
 async function preLoadTiles(map, position) {
-  return;
   const preLoadedEntries = [];
 
   // Dates de préchargement des dalles
@@ -85,10 +79,10 @@ async function preLoadTiles(map, position) {
         .join(',');
 
       // Si les points de la bbox ne sont pas déjà stockés dans IndexedDB
-      if (!preLoadedEntries[bboxString])
-        await preLoadPoints(serveurAPI +
+      /*if (!preLoadedEntries[bboxString])
+        await preLoadPoints(serveurAPI + //TODO REDO
           '/api/points?detail=complet&format_texte=html&nb_points=all&bbox=' + bboxString
-        );
+        );*/
 
       idbKeyval.set(bboxString, Date.now()); // Mark cache date //TODO utiliser localstorage
     }

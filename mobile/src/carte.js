@@ -99,34 +99,36 @@ const map = L.map('map'),
   (localStorage.getItem('permalink') ||
     defaultPermalink).split('/');
 
+// Ajout de controles et couches à la carte
+[
+  Object.values(baseLayers)[0], // Fond de carte par défaut
+  clustersLayer, // Couche vectorielle
+  L.control.layers(baseLayers), // Layer switcher
+
+  L.control.scale({
+    imperial: false,
+  }),
+  new L.Control.Gps({
+    autoCenter: true,
+  }),
+  new L.Control.Geocoder({
+    position: 'topleft',
+  }),
+].map(e => e.addTo(map));
+
 // Récupére la dernière position
 map.setView([permalink[1], permalink[0]], permalink[2]);
 
-// Layer switcher et contrôles
-Object.values(baseLayers)[0].addTo(map); // Default layer
-L.control.layers(baseLayers).addTo(map);
-
-L.control.scale({
-  imperial: false
-}).addTo(map);
-
-new L.Control.Gps({
-  autoCenter: true,
-}).addTo(map);
-
-new L.Control.Geocoder({
-  position: 'topleft',
-}).addTo(map);
-
-// Couches vectorielles
-clustersLayer.addTo(map);
+// Affiche les icones
 affichePoints(localStorage.getItem('points'));
 
 // Charge (ou recharge) les points à afficher
 setTimeout(() => // Attends que les icônes soient chargées
+  //TODO demander ?depuis
   fetch(serveurAPI + '/api/points?detail=icones')
   .then((response) => response.text())
   .then((geoJson) => {
+    //TODO précharger toutes les icones
     affichePoints(geoJson);
     localStorage.setItem('points', geoJson);
   }),
@@ -148,5 +150,6 @@ setPermalink(); // Set at init
 
 map.on('moveend', () => {
   setPermalink();
-  //TODO preLoadTiles(map, pos);
+  //TODO REDO preLoadTiles(map, pos);
+  //TODO flag précharger ???
 });

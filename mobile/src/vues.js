@@ -61,9 +61,9 @@ async function affichePagePoint(idPoint) {
     //DCMM commentEl = document.getElementById('commentaires'),
     url = serveurAPI + '/api/points?detail=avec_commentaires&format_texte=html&id=' + idPoint,
     properties = debugPWA ?
-    await preLoadPoints(url) :
+    //await preLoadPoints(url) :
     await idbKeyval.get(parseInt(idPoint, 10)) || // Si le point est préchargé
-    await preLoadPoints(url); // Essaye de le charger
+    //await preLoadPoints(url); // Essaye de le charger
 
   map.setView([properties.coord.lat, properties.coord.long], 15);
   //TODO BUG positionnement carte au chargement de la fiche
