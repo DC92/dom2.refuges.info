@@ -2,7 +2,11 @@
 
 /*******************************
  * Gestion de la carte Leaflet *
- *******************************/
+ *******************************
+  L'application étant constituée d'une page unique, chargée lors du lancement de l'applacation,
+  la carte reste ouverte dans un élément <div id="map> pour toutes les varianted d'affichage de l'appli (carte, point, ...)
+  seules sont modifiées la taille du DIV et la position de la vue de la carte
+*/
 
 /*******************
  * Couches tuilées *
@@ -68,10 +72,13 @@ const pointsLayer = L.geoJson(null, {
       click: () => {
         //BEST Fonctions ctrl clic + Apple suivant demande faite à wri github
         // Affiche les donnés d'entête de la fiche qui sont disponibles dans l'API bbox
-        appliqueDonnees('point', feature.properties); //TODO REDO !!!
+        //appliqueDonnees('point', feature.properties); //TODO REDO !!!
+        console.log(feature.geometry.coordinates); //DCMM
+        map.setView([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], 15);
+        //TODO BUG doit realculer la vue quand change les dimensions css
 
         // Affiche la page point
-        window.location.hash = 'point=' + feature.properties.id;
+        window.location.hash = 'point=' + feature.id;
       },
     });
   },
@@ -92,8 +99,11 @@ function affichePoints(geoJson) {
 /******************************
  * Initialisation de la carte *
  ******************************/
-const map = L.map('map'),
-  hash = location.hash.replace('#', '').split('/'),
+const map = L.map('map');
+
+// Permalink.
+// Le permalink est un #hash ajouté à la page carte uniquement
+const hash = location.hash.replace('#', '').split('/'), //TODO ??? .map((v)=>parseFloat (v)),
   permalink = hash.length === 3 ?
   hash :
   (localStorage.getItem('permalink') ||
@@ -115,9 +125,6 @@ const map = L.map('map'),
     position: 'topleft',
   }),
 ].map(e => e.addTo(map));
-
-// Récupére la dernière position
-map.setView([permalink[1], permalink[0]], permalink[2]);
 
 // Affiche les icones
 affichePoints(localStorage.getItem('points'));
@@ -146,10 +153,12 @@ function setPermalink() {
     location.hash = newPermalink;
 }
 
-setPermalink(); // Set at init
-
 map.on('moveend', () => {
+  // Memorisation dans IndexedDB des infos (nom, caractéristiques, commentaires) des fiches autour de la position
+  // Les fiches sont chargés par tuiles une fois pour toute
+  // Elles ne sont rechargées, unitairement, que s'elles sont signalées comme ayant changé
   setPermalink();
-  //TODO REDO preLoadTiles(map, pos);
-  //TODO flag précharger ???
 });
+
+// Récupére la dernière position lors du lancement de l'application
+map.setView([permalink[1], permalink[0]], permalink[2]);

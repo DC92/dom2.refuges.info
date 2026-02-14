@@ -56,6 +56,7 @@ function affichePageNouvelles() {
  **************/
 /* eslint-disable-next-line no-unused-vars */
 async function affichePagePoint(idPoint) {
+  map.invalidateSize();
   /*DCMM
   const //DCMM infoEl = document.getElementById('infos-point'),
     //DCMM commentEl = document.getElementById('commentaires'),

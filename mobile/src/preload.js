@@ -79,10 +79,10 @@ async function preLoadTiles(map, position) {
         .join(',');
 
       // Si les points de la bbox ne sont pas déjà stockés dans IndexedDB
-      /*if (!preLoadedEntries[bboxString])
+      if (!preLoadedEntries[bboxString])
         await preLoadPoints(serveurAPI + //TODO REDO
           '/api/points?detail=complet&format_texte=html&nb_points=all&bbox=' + bboxString
-        );*/
+        );
 
       idbKeyval.set(bboxString, Date.now()); // Mark cache date //TODO utiliser localstorage
     }
