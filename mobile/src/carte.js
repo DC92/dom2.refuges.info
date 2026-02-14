@@ -1,4 +1,4 @@
-/* global L, appliqueDonnees, preLoadTiles, serveurAPI, defaultPermalink */
+/* global L, appliqueDonnees, serveurAPI, defaultPermalink */
 
 /*******************************
  * Gestion de la carte Leaflet *
@@ -68,7 +68,7 @@ const pointsLayer = L.geoJson(null, {
       click: () => {
         //BEST Fonctions ctrl clic + Apple suivant demande faite à wri github
         // Affiche les donnés d'entête de la fiche qui sont disponibles dans l'API bbox
-        appliqueDonnees('point', feature.properties);
+        appliqueDonnees('point', feature.properties); //TODO REDO !!!
 
         // Affiche la page point
         window.location.hash = 'point=' + feature.properties.id;
@@ -93,12 +93,14 @@ function affichePoints(geoJson) {
  * Initialisation de la carte *
  ******************************/
 const map = L.map('map'),
-  hash = location.hash.replace('#', '').split(','),
-  permalink = hash.length === 3 ? hash :
-  (localStorage.getItem('permalink') || defaultPermalink).split(',');
+  hash = location.hash.replace('#', '').split('/'),
+  permalink = hash.length === 3 ?
+  hash :
+  (localStorage.getItem('permalink') ||
+    defaultPermalink).split('/');
 
 // Récupére la dernière position
-map.setView(permalink, permalink[2]);
+map.setView([permalink[1], permalink[0]], permalink[2]);
 
 // Layer switcher et contrôles
 Object.values(baseLayers)[0].addTo(map); // Default layer
@@ -130,17 +132,21 @@ setTimeout(() => // Attends que les icônes soient chargées
   }),
   100);
 
-map.on('moveend', () => {
+function setPermalink() {
   const pos = map.getCenter(),
-    newPermalink = [pos.lat, pos.lng, map.getZoom()]
+    newPermalink = [pos.lng, pos.lat, map.getZoom()]
     .map(f => Math.round(f * 1000) / 1000)
-    .join(',');
+    .join('/');
 
   // Actualise le permalink
   localStorage.setItem('permalink', newPermalink);
-  if (hash.length !== 1) //TODO BUG
+  if (document.body.id === 'carte')
     location.hash = newPermalink;
+}
 
-  // Prè-charge les dalles OpenHikingMap, points et commentaires autour de la zone visitée
-  preLoadTiles(map, pos);
+setPermalink(); // Set at init
+
+map.on('moveend', () => {
+  setPermalink();
+  //TODO preLoadTiles(map, pos);
 });
