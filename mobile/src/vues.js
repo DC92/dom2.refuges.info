@@ -3,7 +3,28 @@
 /*************************
  * Gestion des templates *
  *************************/
-const nomPages = ['carte', 'point', 'nouvelles'];
+const nomPages = ['carte', 'fiche', 'nouvelles'];
+
+// Initialisation de la page lorsque l'URL principale est appelée
+idbKeyval.getMany(['permalink', 'iconesJson', location.hash.replace('#', '')])
+  .then(([dbPermalink, iconesJson, ficheJson]) => {
+    // Récupére la position dans l'argument ou la dernière position
+    const hashPermalink = location.hash.match(/[0-9.]+\/[0-9.]+\/[0-9.]+/u) || [],
+      permalink = (hashPermalink[0] || dbPermalink || defaultPermalink).split('/');
+
+    if (permalink.length === 3)
+      map.setView([permalink[1], permalink[0]], permalink[2]);
+
+    // Affiche les icones
+    if (iconesJson)
+      afficheIcones(iconesJson);
+
+    // Affiche les infos de la fiche si elles sont mémorisées
+    if (ficheJson)
+      afficheInfosFiche(ficheJson);
+  });
+
+function afficheInfosFiche() {} //TODO
 
 // Initialisation de la page lorsque l'URL principale est appelée ou l'ancre change
 function changePage() {
@@ -43,7 +64,7 @@ function affichePageNouvelles() {
       // Calcule le lien pour afficher la page qui correspond
       for (const j in json)
         /* eslint-disable-next-line camelcase */
-        json[j].lien_interne = '#point=' + json[j].id_point;
+        json[j].lien_interne = '#' + json[j].id_point;
 
       prepareModeleGroupe('nouvelles-groupe', Object.keys(json).length - 1); // -1 pour la ligne copyright dans le json
       appliqueDonnees('nouvelles-groupe', json);
@@ -52,23 +73,23 @@ function affichePageNouvelles() {
 }
 
 /**************
- * Page point *
+ * Page fiche *
  **************/
 /* eslint-disable-next-line no-unused-vars */
-async function affichePagePoint(idPoint) {
+async function affichePageFiche(idFiche) {
   map.invalidateSize();
   /*DCMM
-  const //DCMM infoEl = document.getElementById('infos-point'),
+  const //DCMM infoEl = document.getElementById('infos-fiche'),
     //DCMM commentEl = document.getElementById('commentaires'),
-    url = serveurAPI + '/api/points?detail=avec_commentaires&format_texte=html&id=' + idPoint,
+    url = serveurAPI + '/api/points?detail=avec_commentaires&format_texte=html&id=' + idfiche,
     properties = debugPWA ?
-    //await preLoadPoints(url) :
-    await idbKeyval.get(parseInt(idPoint, 10)) || // Si le point est préchargé
-    //await preLoadPoints(url); // Essaye de le charger
+    //await preLoadFiches(url) :
+    await idbKeyval.get(parseInt(idFiche, 10)) || // Si la fiche est préchargé
+    //await preLoadFiches(url); // Essaye de le charger
 
   map.setView([properties.coord.lat, properties.coord.long], 15);
   //TODO BUG positionnement carte au chargement de la fiche
-  //TODO charger à partir de la couche bbox points globale.
+  //TODO charger à partir de la couche bbox icones globale.
   //TODO autres paramètres de page
 
   Object.entries({
@@ -78,7 +99,7 @@ async function affichePagePoint(idPoint) {
       ...properties.etat
     })
     .forEach(entry => {
-      const el = document.getElementById('point-' + entry[0]);
+      const el = document.getElementById('fiche-' + entry[0]);
 
       switch (typeof entry[1]) {
         case 'string':

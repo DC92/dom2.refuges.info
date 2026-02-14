@@ -58,8 +58,8 @@ Démonstrateur front-end pour refuges.info
 <body id="carte"><!-- id = sera assigné avec le nom de la page courante -->
   <div class="bandeau">
     <h2><a href="/" title="Retour au site web">Refuges.info</a></h2>
-    <a href="#" title="Cartes géographiques te points d'intérêt">🌍<span>Cartes</span></a>
-    <a href="#nouvelles" title="Points, commentaires et photos récents">
+    <a href="#" title="Cartes géographiques et points d'intérêt">🌍<span>Cartes</span></a>
+    <a href="#nouvelles" title="Fiches, commentaires et photos récents">
       🔔<span>Nouvelles</span>
     </a>
     <a href="/point_ajout" title="Ajouter un point">
@@ -89,31 +89,31 @@ Démonstrateur front-end pour refuges.info
     </div>
   </div>
 
-  <!-- Point entête -->
-  <div class="point">
-    <h2 id="point-nom"></h2>
-    (<span id="point-type"></span>)
-    <span id="point-alt"></span> m
-    <p id="point-etat"></p>
+  <!-- Fiche entête -->
+  <div class="fiche">
+    <h2 id="fiche-nom"></h2>
+    (<span id="fiche-type"></span>)
+    <span id="fiche-alt"></span> m
+    <p id="fiche-etat"></p>
   </div>
 
   <div id="map"></div>
 
-  <!-- Point infos -->
-  <div class="point">
-    <a id="point-lien">Voir la fiche sur le site</a>
+  <!-- Fiche infos -->
+  <div class="fiche">
+    <a id="fiche-lien">Voir la fiche sur le site</a>
     <p>
-      Latitude: <span id="point-lat"></span>°,
-      Longitude: <span id="point-long"></span>°
+      Latitude: <span id="fiche-lat"></span>°,
+      Longitude: <span id="fiche-long"></span>°
     </p>
-    <div id="point-infos-groupe">
+    <div id="fiche-infos-groupe">
       <div>
-        <span id="point-infos-groupe-0-nom"></span>:
-        <span id="point-infos-groupe-0-valeur"></span>
+        <span id="fiche-infos-groupe-0-nom"></span>:
+        <span id="fiche-infos-groupe-0-valeur"></span>
       </div>
     </div>
 
-    <dl id="infos-point"></dl>
+    <dl id="infos-fiche"></dl>
     <dl id="commentaires"></dl>
   </div>
 

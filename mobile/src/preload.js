@@ -19,38 +19,38 @@ const tilesRefreshTime = 3600 * 1000, // Milliseconds
   maxTilesPerRequest = 30;
 
 /******************************************************************************************
- * Les informations nécéssaires à l'affichage de la fiche d'un point et de ses commentaires
+ * Les informations nécéssaires à l'affichage de la fiche d'une fiche et de ses commentaires
  * sont chargées par dalles dans indexedDB avec la clé égale à la valeur de id_point
- * Une fois chargés, ne sont rafraichis que les points ou commentaires récement modifiés.
- * Les photos des points visualisés sont sont mémorisées par le cache de l'explorateur
+ * Une fois chargés, ne sont rafraichis que les fiches ou commentaires récement modifiés.
+ * Les photos des fiches visualisés sont sont mémorisées par le cache de l'explorateur
  * Une entrée indexedDB est créée, dont la clé est 0.5,43.5,1,44 et la valeur la date de mise en cache
  */
-const pointsTileSize = 0.5; // ° lon / lat
+const fichesTileSize = 0.5; // ° lon / lat
 
 /********************************************************************
  * Les informations nécéssaires à l'affichage des icônes sur la carte
  * sont raffraichies globalement par GeoJsonAjaxCluster
- * quand un point a été modifié sur la carte.
+ * quand une fiche a été modifiée sur la carte.
  */
 
-async function preLoadPoints(url) {
-  const pointsProps = [];
+async function preLoadFiches(url) {
+  const ficheaAMeroriser = [];
 
-  // Données des points
+  // Données des fiches
   await fetch(url)
     .then(response => response.json())
     .then(geoJson =>
       geoJson.features.forEach(feature => {
-        pointsProps[feature.id] = feature.properties;
+        ficheaAMeroriser[feature.id] = feature.properties;
       })
     );
 
-  if (pointsProps.length) {
-    // Enregistre les propriétés du point
-    await idbKeyval.setMany(pointsProps.map((v, k) => [k, v]));
+  if (ficheaAMeroriser.length) {
+    // Enregistre les propriétés de la fiche
+    await idbKeyval.setMany(ficheaAMeroriser.map((v, k) => [k, v]));
 
-    // Retourne les propriétés du premier point
-    return Object.values(pointsProps)[0];
+    // Retourne les propriétés de la premiere fiche
+    return Object.values(ficheaAMeroriser)[0];
   }
 }
 
@@ -67,20 +67,20 @@ async function preLoadTiles(map, position) {
   );
 
   //*******************************************
-  // Memoriser les points autour de la position
+  // Memoriser les fiches autour de la position
 
   // Coordonnées de la dalle contenant la position
-  const xy = Object.values(position).map(a => Math.round(a / pointsTileSize));
+  const xy = Object.values(position).map(a => Math.round(a / fichesTileSize));
 
   for (let x = 0; x < 2; x++)
     for (let y = 0; y < 2; y++) {
       const bboxString = [xy[1] + y - 1, xy[0] + x - 1, xy[1] + y, xy[0] + x]
-        .map((a) => a * pointsTileSize)
+        .map((a) => a * fichesTileSize)
         .join(',');
 
-      // Si les points de la bbox ne sont pas déjà stockés dans IndexedDB
+      // Si les icones de la bbox ne sont pas déjà stockés dans IndexedDB
       if (!preLoadedEntries[bboxString])
-        await preLoadPoints(serveurAPI + //TODO REDO
+        await preLoadFiches(serveurAPI + //TODO REDO
           '/api/points?detail=complet&format_texte=html&nb_points=all&bbox=' + bboxString
         );
 

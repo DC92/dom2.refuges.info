@@ -42,7 +42,7 @@ a {
 
 /* Affiche uniquement les zones liées à la page courante */
 body:not(#carte) .carte,
-body:not(#point) .point,
+body:not(#fiche) .fiche,
 body:not(#nouvelles) .nouvelles,
 body#carte .attente,
 body:not([class*="attente"]) .attente {
@@ -71,19 +71,19 @@ body:not([class*="attente"]) .attente {
   margin: auto;
 }
 
-/* Page point */
-#point #map {
+/* Page fiche */
+#fiche #map {
   height: 360px;
   width: min(480px, calc(100% - 20px));
   margin: 10px;
 }
 
-#infos-point dt,
-#infos-point span:last-child {
+#infos-fiche dt,
+#infos-fiche span:last-child {
   font-weight: bold;
 }
 
-#infos-point dl {
+#infos-fiche dl {
   margin: 0 0 10px 10px;
 }
 
@@ -124,19 +124,19 @@ body:not([class*="attente"]) .attente {
     display: none;
   }
 
-  #point #map {
+  #fiche #map {
     height: 75vw;
     width: 100%;
     margin: 0;
   }
 }
 
-.point {
+.fiche {
   margin: 0 10px;
   text-align: justify;
 }
 
-.point h2 {
+.fiche h2 {
   display: inline;
 }
 
