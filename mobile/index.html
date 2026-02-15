@@ -55,7 +55,7 @@ Démonstrateur front-end pour refuges.info
   </script>
 </head>
 
-<body id="carte"><!-- id = sera assigné avec le nom de la page courante -->
+<body><!-- la classe prendra le nom de la page courante -->
   <div class="bandeau">
     <h2><a href="/" title="Retour au site web">Refuges.info</a></h2>
     <a href="#" title="Cartes géographiques et points d'intérêt">🌍<span>Cartes</span></a>
@@ -73,22 +73,6 @@ Démonstrateur front-end pour refuges.info
     </a>
   </div>
 
-  <!-- Nouvelles -->
-  <div class="nouvelles">
-    <h3>Nouvelles</h3>
-    <div id="nouvelles-groupe">
-      <div><!-- Modèle pour un nouvelle -->
-        Le <span id="nouvelles-groupe-0-date_formatee"></span>
-        <a id="nouvelles-groupe-0-lien_interne">
-          <span id="nouvelles-groupe-0-nom_point"></span>
-        </a>
-        dans <span id="nouvelles-groupe-0-localisation"></span>
-        <span id="nouvelles-groupe-0-type_point"></span>
-        de <span id="nouvelles-groupe-0-auteur"></span>
-      </div>
-    </div>
-  </div>
-
   <!-- Fiche entête -->
   <div class="fiche">
     <h2 id="fiche-nom"></h2>
@@ -104,7 +88,7 @@ Démonstrateur front-end pour refuges.info
     <a id="fiche-lien">Voir la fiche sur le site</a>
     <p>
       Latitude: <span id="fiche-lat"></span>°,
-      Longitude: <span id="fiche-long"></span>°
+      Longitude: <span id="fiche-lng"></span>°
     </p>
     <div id="fiche-infos-groupe">
       <div>
@@ -115,6 +99,22 @@ Démonstrateur front-end pour refuges.info
 
     <dl id="infos-fiche"></dl>
     <dl id="commentaires"></dl>
+  </div>
+
+  <!-- Nouvelles -->
+  <div class="nouvelles">
+    <h3>Nouvelles</h3>
+    <div id="nouvelles-groupe">
+      <div><!-- Modèle pour un nouvelle -->
+        Le <span id="nouvelles-groupe-0-date_formatee"></span>
+        <a id="nouvelles-groupe-0-lien_interne">
+          <span id="nouvelles-groupe-0-nom_point"></span>
+        </a>
+        dans <span id="nouvelles-groupe-0-localisation"></span>
+        <span id="nouvelles-groupe-0-type_point"></span>
+        de <span id="nouvelles-groupe-0-auteur"></span>
+      </div>
+    </div>
   </div>
 
   <div class="attente">Attente réseau</div>

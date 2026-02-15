@@ -71,14 +71,14 @@ const iconesLayer = L.geoJson(null, {
     layer.on({
       click: () => {
         //BEST Fonctions ctrl clic + Apple suivant demande faite à wri github
-        // Affiche les donnés d'entête de la fiche qui sont disponibles dans l'API bbox
+        // Montre les donnés d'entête de la fiche qui sont disponibles dans l'API bbox
         //appliqueDonnees('fiche', feature.properties); //TODO REDO !!!
         console.log(feature.geometry.coordinates); //DCMM
         map.setView([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], 15);
         //TODO BUG doit realculer la vue quand change les dimensions css
 
-        // Affiche la page fiche
-        window.location.hash = feature.id;
+        // Montre la page fiche
+        location.hash = feature.id;
       },
     });
   },
@@ -95,6 +95,41 @@ function afficheIcones(geoJson) {
     clustersLayer.addLayer(iconesLayer);
   }
 }
+
+/***************************************************************
+ * Initialisation des informations sauvegardées dans indexedDB *
+ ***************************************************************
+ Exécutée une fois au chargement de la page ou de l'application
+ Elle permet d'aller rechercher en une transaction les infos mémorisées dans indexedDB
+*/
+idbKeyval.getMany(['permalink', 'iconesJson', location.hash.replace('#', '')])
+  .then(([dbPermalink, iconesJson, ficheJson]) => {
+    // Récupére la position dans l'argument ou la dernière position
+    const hash = location.hash.replace('#', ''),
+      hashPermalink = hash.match(/[0-9.]+\/[0-9.]+\/[0-9.]+/u) || [],
+      permalink = (hashPermalink[0] || dbPermalink || defaultPermalink).split('/')
+
+    // Montre la page
+
+    // Positionne la carte
+    //TODO ça sert à qoui / rapatrier dans la carte ?
+    if (permalink.length === 3) {
+      map.setView([permalink[1], permalink[0]], permalink[2]);
+      //changePage( 'carte' );
+    }
+    /*
+    elseif ()
+    changePage( 'carte' );
+    elseif ()
+    changePage( hash );*/
+
+    // Montre les icones sur la carte
+    if (iconesJson)
+      afficheIcones(iconesJson);
+
+    // Montre les infos de la fiche qui sont mémorisées
+    //afficheInfosFiche(ficheJson);
+  });
 
 /******************************
  * Initialisation de la carte *
@@ -143,6 +178,6 @@ map.on('moveend', () => {
   idbKeyval.set('permalink', newPermalink);
 
   // Le permalink est un #hash ajouté à la page carte uniquement et mémorisé dans IndexedD
-  if (document.body.id === 'carte')
+  if (document.body.className === 'carte')
     location.hash = newPermalink;
 });

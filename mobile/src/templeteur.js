@@ -7,7 +7,7 @@
 function requeteAPI(nom, url, donneesPost, callBack) {
   const req = new XMLHttpRequest();
 
-  // Affiche le panneau d'attente le temps que XMLHttpRequest réponde
+  // Montre le panneau d'attente le temps que XMLHttpRequest réponde
   document.body.classList.add('attente-api-' + nom);
 
   req.open(donneesPost ? 'POST' : 'GET', serveurAPI + url, true);

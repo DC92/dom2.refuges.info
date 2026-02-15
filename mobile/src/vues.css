@@ -40,12 +40,12 @@ a {
   text-decoration: none;
 }
 
-/* Affiche uniquement les zones liées à la page courante */
-body:not(#carte) .carte,
-body:not(#fiche) .fiche,
-body:not(#nouvelles) .nouvelles,
-body#carte .attente,
-body:not([class*="attente"]) .attente {
+/* Montre uniquement les zones liées à la page courante */
+body:not(.carte) .carte,
+body:not(.fiche) .fiche,
+body:not(.nouvelles) .nouvelles,
+/*//TODO ??? body:not([class*="attente"]) .attente,*/
+body.carte .attente {
   display: none;
 }
 
@@ -65,14 +65,14 @@ body:not([class*="attente"]) .attente {
 }
 
 /* Page carte */
-#carte #map {
+.carte #map {
   height: min(900px, calc(100% - 36px));
   width: min(1200px, 100%);
   margin: auto;
 }
 
 /* Page fiche */
-#fiche #map {
+.fiche #map {
   height: 360px;
   width: min(480px, calc(100% - 20px));
   margin: 10px;
@@ -124,7 +124,7 @@ body:not([class*="attente"]) .attente {
     display: none;
   }
 
-  #fiche #map {
+  .fiche #map {
     height: 75vw;
     width: 100%;
     margin: 0;
@@ -140,7 +140,7 @@ body:not([class*="attente"]) .attente {
   display: inline;
 }
 
-#nouvelles-groupe>div,
+.nouvelles-groupe>div,
 #commentaires-groupe>div {
   margin: 10px 0;
   padding: 10px;
@@ -191,7 +191,7 @@ body:not([class*="attente"]) .attente {
 
 /* DEBUG ONLY */
 @media screen and (max-width: 200px) {
-  #carte #map {
+  .carte #map {
     max-height: 100vw;
   }
 }

@@ -265,7 +265,7 @@ foreach ($points_bruts as $i=>$point) {
     ]);
 
     $filtre['avec_commentaires'] = array_merge($filtre['complet'], [
-      'type' => ['valeur' => 'type'], // On écrase le précédent
+      'type' => ['valeur' => true], // On écrase le précédent
       'etat' => ['valeur' => 'etat'], // On écrase le précédent
       'date' => ['creation' => true], // On enlève derniere_modif
       'id' => false, // Déjà dans les features
