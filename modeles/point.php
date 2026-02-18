@@ -82,13 +82,12 @@ $conditions->rayon_du_cercle : renvoi les points situés à une distance inféri
 $conditions->centre_du_cercle : la géométrie d'un point au format WKB (en 2025 uniquement utilisé pour renvoyer les points à une distance d'un point, mais en on peut passer n'importe quelle géométrie, un segment, un polygone)
 
 $conditions->avec_liste_polygones=True : l'objet retourné dispose d'une propriété polygones, un array de tous les polygones auquels le point appartient.
+$conditions->avec_infos_fiche=True : Rend les informations liées à la fiche (proprio, accés, remarques, état, ...)
+$conditions->avec_infos_complementaires=True : Rend les informations complémentaires
 
 $conditions->avec_infos_creation=True : Rend les informations liées au créateur, date de création et modification.
 $conditions->id_createur : Dont le modérateur actuel de fiche et l'utilisation d'id id_createur
 $conditions->topic_id : Dont le topic du forum est celui-ci (permet d'avoir un lien retour du forum du point vers la fiche)
-
-$conditions->avec_infos_fiche=True : Rend les informations liées à la fiche (proprio, accés, remarques, état, ...)
-$conditions->avec_infos_complementaires=True : Rend les informations complémentaires
 
 Cette fonction contrôle du mieux qu'elle peut les paramètres qu'elle reçoit, certains viennent directement d'une URL !
 Elle retourne un texte d'erreur avec $objet->erreur=True et $objet->message="un texte", sinon. (Oui, je sais, les exceptions c'est fait pour ça)
@@ -416,15 +415,12 @@ function infos_points($conditions)
       {
         case 'fermeture':
         case 'detruit':
-          $properties->type['sym'] = "Crossing";
+          $properties->sym = "Crossing";
           break;
         case 'cle_a_recuperer': // TODO : trouver un symbole
         default:
-          $properties->type['sym'] = $point->symbole;
+          $properties->sym = $point->symbole;
       }
-
-      // Ajoute l'altitude dans le triplet de coordonnées geojson
-      $point_final->geojson = str_replace("]}", ",$point->altitude]}", $point->geojson);
 
       $properties->coord = [
         'alt' => $point->altitude,
@@ -437,7 +433,6 @@ function infos_points($conditions)
       ];
 
       $properties->lien = lien_point($point);
-      $properties->lien_site = $point->site_officiel;
 
       if (!empty($conditions->avec_infos_creation)) { // Conditionel car couteux en temps
         $properties->createur['id'] = $point->id_createur;
@@ -468,7 +463,7 @@ function infos_points($conditions)
 
       if (!empty($conditions->avec_infos_fiche)) {
         $properties->etat = [
-          'nom' => 'Etat', //TODO : générer automatiquement ?
+          'nom' => 'Etat', //TODO : $point->equivalent_etat ???
           'valeur' => texte_non_ouverte($point),
           'id' => $point->conditions_utilisation,
         ];
@@ -476,6 +471,9 @@ function infos_points($conditions)
           'nom' => $point->equivalent_proprio,
           'valeur' => $point->proprio,
         ];
+        if ($point->site_officiel)
+          $properties->proprio['valeur'] .=  "\nSite officiel: [url=$point->site_officiel]$properties->nom[/url]";
+
         $properties->places = [
           'nom' => $point->equivalent_places,
           'valeur' => $point->places,

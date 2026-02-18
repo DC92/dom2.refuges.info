@@ -1,7 +1,9 @@
 <?php
 
+$serveur = "https://dom2.refuges.info/";
 $formats = ['geojson','kml','gml','gpx','csv','xml','rss'];
 $format_texte = ['bbcode','texte','markdown'];
+$detail = ['simple','complet'];
 $bbox = '0.75,42.5,0.8,42.6'; // Lérida
 $massif = 5066; // Lérida https://refuges.info/nav/5066
 $point = 5314; // Baserca https://refuges.info/point/5314
@@ -36,7 +38,8 @@ $urls_to_test = [
 ];
 
 foreach ($formats AS $for)
-  $urls_to_test['non-reg'][] = "point?id=$point&format=$for";
+  foreach ($detail AS $det)
+    $urls_to_test['non-reg'][] = "point?id=$point&format=$for&detail=$det";
 
 foreach ($format_texte AS $dt)
   $urls_to_test['non-reg'][] = "point?id=$point&format_texte=$dt";
@@ -48,7 +51,7 @@ foreach ($urls_to_test AS $type_test => $apis_to_test) {
   foreach ($apis_to_test AS $api) {
     preg_match_all('/'.implode('|',$formats).'/', $api, $match);
     $ext = $match[0][0] ?? 'json';
-    $url = 'http://dom2.refuges.info/api/'.$api.'&nb_points=1';
+    $url = $serveur.'api/'.$api.'&nb_points=1';
     $nf = str_replace('-.', '.', str_replace(
       ['?','&','=',',',$ext.'.'],
       ['_','_','-','_','.'],
@@ -57,20 +60,27 @@ foreach ($urls_to_test AS $type_test => $apis_to_test) {
 
     echo "<br><a href=\"$url\">$nf";
 
+    $duree = microtime(true);
     $fc = $fc = file_get_contents($url);
+    $duree = round(microtime(true) - $duree, 3);
 
     if(str_contains($url, 'xml'))
       $fc = str_replace("><", ">\n<", $fc);
 
+    $trie = "";
     if($fc[0] == '{') {
-      echo ' (TRI)';
+      echo " (TRI, $duree s)";
+      $trie = ", Les données ont été triées par clés et beautifiées pour simplifier la comparaison";
+
       $json = json_decode($fc);
       ksort_recursive($json);
       $fc = json_encode($json, JSON_PRETTY_PRINT);
       $fc = str_replace('    ', '  ', $fc);
     }
+    else
+      echo " ($duree s)";
 
-    file_put_contents($nf, "$url\nLes données ont été triées par clés\n$fc");
+    file_put_contents($nf, "$url\nDélai : $duree s$trie.\n\n$fc");
   }
 }
 
