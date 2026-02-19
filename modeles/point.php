@@ -492,7 +492,7 @@ function infos_points($conditions)
       // Dom 01/2026 : simplifié et transféré depuis controlleurs/point.php pour pouvoir être utilisé dans l'API
       // Formatage des informations complèmentaires
       if (!empty($conditions->avec_infos_complementaires)) {
-        $champs=array_merge($config_wri['champs_entier_ou_sait_pas_points'],$config_wri['champs_trinaires_points'],['site_officiel']);
+        $champs=array_merge($config_wri['champs_entier_ou_sait_pas_points'],$config_wri['champs_trinaires_points']);
         $point_final->infos_complementaires = [];
 
         foreach ($champs as $champ)
@@ -506,12 +506,6 @@ function infos_points($conditions)
             ];  
             switch ($champ)
             {
-              case 'site_officiel':
-                if ($point->$champ!="") {
-                  $val['url'] = $point->$champ;
-                  $val['valeur'] = '[url='.$point->$champ.']'.protege(mb_ucfirst($point->nom)).'[/url]';
-                } break;
-
               case 'places_matelas' : case 'places' :
                 if($point->$champ === NULL )
                   $val['valeur'] = '<strong>Inconnu</strong>';
