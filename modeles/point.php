@@ -72,7 +72,6 @@ $conditions->avec_points_caches=True : Par défaut, False : les points cachés n
 $conditions->uniquement_points_cachés=True : ne retourner que les points cachés (utiles pour les modérateurs par exemple)
 
 $conditions->limite : nombre maximum d'enregistrement à aller chercher, par défaut sans limite
-$conditions->depuis : fiches (point & commentaire) modifiés depuis la date epoch
 $conditions->ordre (champ sur lequel on ordonne clause SQL : ORDER BY, sans le "ORDER BY" example 'date_derniere_modification DESC')
 
 $conditions->geometrie : Ne renvoi que les points se trouvant dans cette géométrie (qui doit être de type (MULTI-)POLY au format WKB
@@ -82,10 +81,12 @@ $conditions->rayon_du_cercle : renvoi les points situés à une distance inféri
 $conditions->centre_du_cercle : la géométrie d'un point au format WKB (en 2025 uniquement utilisé pour renvoyer les points à une distance d'un point, mais en on peut passer n'importe quelle géométrie, un segment, un polygone)
 
 $conditions->avec_liste_polygones=True : l'objet retourné dispose d'une propriété polygones, un array de tous les polygones auquels le point appartient.
+
+$conditions->depuis : fiches (point & commentaire) modifiés depuis la date epoch
 $conditions->avec_infos_fiche=True : Rend les informations liées à la fiche (proprio, accés, remarques, état, ...)
 $conditions->avec_infos_complementaires=True : Rend les informations complémentaires
-
 $conditions->avec_infos_creation=True : Rend les informations liées au créateur, date de création et modification.
+
 $conditions->id_createur : Dont le modérateur actuel de fiche et l'utilisation d'id id_createur
 $conditions->topic_id : Dont le topic du forum est celui-ci (permet d'avoir un lien retour du forum du point vers la fiche)
 
@@ -397,17 +398,32 @@ function infos_points($conditions)
         $point_final->polygones[]=$polygone;
       }
 
-      // Dom 01/2026 : factorisation de controlleurs//point.php & controlleurs/api/point.php
+      // Dom 01/2026 : factorisation de controlleurs/point.php & controlleurs/api/point.php
       // Formatage des propriétés d'un point
       $properties = new stdClass();
 
       $properties->id = $point->id_point;
       $properties->nom = mb_ucfirst($point->nom);
+      $properties->lien = lien_point($point);
 
       $properties->type = [
         'id' => $point->id_point_type,
         'valeur' => $point->nom_type,
         'icone' => choix_icone($point),
+      ];
+      $properties->article = [
+        'demonstratif' => $point->article_demonstratif,
+        'defini' => $point->article_defini,
+        'partitif' => $point->article_partitif_point_type,
+      ];
+      $properties->coord = [
+        'alt' => $point->altitude,
+        'long' => $point->longitude,
+        'lat' => $point->latitude,
+        'precision' => [
+          'nom' => $point->nom_precision_gps,
+          'type' => $point->id_type_precision_gps,
+        ],
       ];
 
       // Symbole Garmin
@@ -422,19 +438,8 @@ function infos_points($conditions)
           $properties->sym = $point->symbole;
       }
 
-      $properties->coord = [
-        'alt' => $point->altitude,
-        'long' => $point->longitude,
-        'lat' => $point->latitude,
-        'precision' => [
-          'nom' => $point->nom_precision_gps,
-          'type' => $point->id_type_precision_gps,
-        ],
-      ];
-
-      $properties->lien = lien_point($point);
-
-      if (!empty($conditions->avec_infos_creation)) { // Conditionel car couteux en temps
+      if (!empty($conditions->avec_infos_creation)) // Conditionnel car couteux en temps
+      {
         $properties->createur['id'] = $point->id_createur;
 
         // info sur le modérateur actuel de la fiche (authentifié ou non)
@@ -455,13 +460,8 @@ function infos_points($conditions)
         ];
       }
 
-      $properties->article = [
-        'demonstratif' => $point->article_demonstratif,
-        'defini' => $point->article_defini,
-        'partitif' => $point->article_partitif_point_type,
-      ];
-
-      if (!empty($conditions->avec_infos_fiche)) {
+      if (!empty($conditions->avec_infos_fiche))
+      {
         $properties->etat = [
           'nom' => 'Etat', //TODO : $point->equivalent_etat ???
           'valeur' => texte_non_ouverte($point),
@@ -471,9 +471,6 @@ function infos_points($conditions)
           'nom' => $point->equivalent_proprio,
           'valeur' => $point->proprio,
         ];
-        if ($point->site_officiel)
-          $properties->proprio['valeur'] .=  "\nSite officiel: [url=$point->site_officiel]$properties->nom[/url]";
-
         $properties->places = [
           'nom' => $point->equivalent_places,
           'valeur' => $point->places,
@@ -487,11 +484,13 @@ function infos_points($conditions)
           'valeur' => $point->acces,
         ];
       }
+
       $point_final->properties = $properties; // Pour optimiser le temps du calcul
 
       // Dom 01/2026 : simplifié et transféré depuis controlleurs/point.php pour pouvoir être utilisé dans l'API
       // Formatage des informations complèmentaires
-      if (!empty($conditions->avec_infos_complementaires)) {
+      if (!empty($conditions->avec_infos_complementaires))
+      {
         $champs=array_merge($config_wri['champs_entier_ou_sait_pas_points'],$config_wri['champs_trinaires_points']);
         $point_final->infos_complementaires = [];
 
@@ -591,6 +590,7 @@ function infos_point($id_point,$meme_si_cache=False,$avec_polygones=True, $meme_
     $conditions->avec_points_caches=True;
 
   $conditions->avec_infos_complementaires=True;
+  $conditions->avec_infos_fiche=True;
 
   // récupération des infos du point
   $points=infos_points($conditions);
@@ -726,18 +726,6 @@ function modification_ajout_point($point,$id_utilisateur_qui_modifie=0)
     return erreur("Le nom ne peut être vide");
   if ( preg_match("/[\<\>\]\[\;]/",$point->nom) )
     return erreur("Le nom contient un des caractères non autorisé suivant : [ ] < > ;");
-
-  if( isset($point->site_officiel) )
-  {
-    // Pensez bien qu'un modérateur puisse vouloir remettre à "" le site n'existant plus
-    if ($point->site_officiel=="")
-      $champs_sql['site_officiel'] = "''";
-    //cas du site un peu particulier ou l'internaute n'aura pas forcément pensé à mettre http://
-    elseif ( !preg_match("/https?:\/\//",$point->site_officiel))
-      $champs_sql['site_officiel'] = $pdo->quote('http://'.$point->site_officiel);
-    else
-      $champs_sql['site_officiel'] = $pdo->quote($point->site_officiel);
-  }
 
   // On met à jour la date de dernière modification. PGSQL peut le faire, avec un trigger..
   $champs_sql['date_derniere_modification'] = 'NOW()';

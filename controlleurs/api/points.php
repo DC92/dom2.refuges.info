@@ -29,9 +29,9 @@ $req->format = $_REQUEST['format'] ?? '';
 $req->detail = $_REQUEST['detail'] ?? '';
 $req->format_texte = $_REQUEST['format_texte'] ?? '';
 $req->nb_points = $_REQUEST['nb_points'] ?? '';
-$req->depuis = $_REQUEST['depuis'] ?? '';
 $req->cluster = $_REQUEST['cluster'] ?? '';
 $req->type_points = $_REQUEST['type_points'] ?? '';
+$req->depuis = $_REQUEST['depuis'] ?? '';
 
 // Ici c'est les valeurs possibles
 $val = new stdClass();
@@ -164,8 +164,108 @@ if($req->type_points != "all") {
   $params->ids_types_point = str_replace($val->type_points, $val->type_points_id, $req->type_points);
 }
 
-$params->avec_infos_fiche = true;
-$params->avec_infos_complementaires = true;
+/****************************** FILTRE DES DÉTAILS ******************************/
+// Dom 01/2026 : On paramètre, pour chaque niveau de détail
+// les champs qu'on veut voir figurer dans la réponse de l'API
+
+switch ($req->detail) {
+  case 'complet':
+    $params->avec_infos_creation = true;
+    $params->avec_infos_complementaires = true;
+  case 'simple':
+  case 'icone':
+    $params->avec_infos_fiche = true;
+};
+
+/* Définition des informations transmises pour chaque option "detail" */
+// Uniquement affichage d'une icône cliquable avec son nom
+$filtre = ['icones' => [
+  'nom' => true,
+  'type' => ['icone' => true],
+]];
+
+// Carte actuelle WRI
+$filtre['simple'] = array_merge($filtre['icones'], [
+  'nom' => true, // On écrase le précédent
+  'id' => true,
+  'coord' => ['alt' => true],
+  'type' => true, // On écrase le précédent
+  'sym' => true,
+  'etat' => ['valeur' => true],
+  'places' => true,
+  'lien' => true,
+]);
+
+$filtre['complet'] = array_merge($filtre['simple'], [
+  'coord' => true, // On écrase le précédent
+  'etat' => true, // On écrase le précédent
+  'date' => true,
+  'createur' => true,
+  'proprio' => true,
+  'acces' => true,
+  'remarque' => true,
+  'info_comp' => [
+    'bois_a_proximite' => 'bois', // On renomme
+    'cheminee' => true,
+    'couvertures' => true,
+    'eau_a_proximite' => 'eau',
+    'latrines' => true,
+    'manque_un_mur' => true,
+    'places' => true,
+    'places_matelas' => true,
+    'poele' => true,
+  ],
+  'description' => true,
+  'article' => true,
+]);
+
+$filtre['avec_commentaires'] = array_merge($filtre['complet'], [
+  'type' => ['valeur' => true], // On écrase le précédent
+  'etat' => ['valeur' => 'etat'], // On écrase le précédent
+  'date' => ['creation' => true], // On enlève derniere_modif
+  'commentaires' => ['*' => [ // Tout l'array commentaires
+    'id_commentaire' => 'id',
+    'id_point' => true,
+    'texte_affichage' => 'texte',
+    'auteur_commentaire' => 'auteur',
+    'date_commentaire' => 'date',
+    'lien_photo_reduite' => 'photo',
+    'date_photo' => true,
+  ]],
+  // On supprime les suivants
+  'id' => false, // Déjà dans les features
+  'coord' => false, // Déjà dans geometry->coordinates
+  'alt' => false, // Déjà dans geometry->coordinates
+  'places' => false, // Déplacé dans info_comp
+  'description' => false, // Doublon avec info_comp
+]);
+
+/* Petite fonction qui réalise le filtrage en fonction des définitions ci-dessus */
+function filtre_recursif($properties, $filtre) {
+  // On est arrivé à la fin des règles
+  if (is_scalar($properties) || is_scalar($filtre) || is_object($filtre))
+    return $properties;
+
+  $props = (array)$properties; // On transforme toutes les entrées en array car elle sont parfois object
+  $obj = [];
+
+  foreach ($filtre as $cle_filtre => $sous_filtre)
+    // Cas des tableaux : on prend tout le contenu de ce niveau
+    if ($cle_filtre == '*') {
+      $tablo=[];
+      foreach($properties AS $p)
+        $tablo[]= filtre_recursif($p, $sous_filtre);
+      return $tablo;
+    }
+    // Cas normal
+    elseif (isset($props[$cle_filtre]))
+      $obj[$cle_filtre] = filtre_recursif($props[$cle_filtre], $sous_filtre);
+
+  return $obj;
+}
+
+
+/****************************** RÉCUPÉRATION PTS ******************************/
 
 $points_bruts = new stdClass();
 $points = new stdClass();
@@ -232,57 +332,6 @@ foreach ($points_bruts as $i=>$point) {
       $conditions_commentaires->ids_points = $point->id_point;
       $point->properties->commentaires = infos_commentaires($conditions_commentaires);
     }
-
-    // Dom 01/2026 : filtre des détails
-    // On paramètre, pour chaque niveau de détail
-    // les champs qu'on veut voir figurer dans la réponse de l'API
-    // si besoin en renommant ce champ
-
-    $filtre = ['icones' => [
-      'nom' => true,
-      'type' => ['icone' => true],
-    ]];
-
-    $filtre['simple'] = array_merge($filtre['icones'], [
-      'id' => true, // On écrase le précédent
-      'type' => true, // On écrase le précédent
-      'lien' => true,
-      'coord' => ['alt' => true],
-      'places' => true,
-      'etat' => ['valeur' => true],
-    ]);
-
-    $filtre['complet'] = array_merge($filtre['simple'], [
-      'coord' => true, // On écrase le précédent
-      'etat' => true, // On écrase le précédent
-      'date' => true,
-      'proprio' => true,
-      'acces' => true,
-      'remarque' => true,
-      'createur' => true,
-      'info_comp' => true,
-      'description' => true,
-    ]);
-
-    $filtre['avec_commentaires'] = array_merge($filtre['complet'], [
-      'type' => ['valeur' => true], // On écrase le précédent
-      'etat' => ['valeur' => 'etat'], // On écrase le précédent
-      'date' => ['creation' => true], // On enlève derniere_modif
-      'id' => false, // Déjà dans les features
-      'coord' => false, // Déjà dans geometry->coordinates
-      'alt' => false, // Déjà dans geometry->coordinates
-      'places' => false, // Déplacé dans info_comp
-      'description' => false, // Doublon avec info_comp
-      'commentaires' => ['*' => [ // Tout l'array commentaires
-        'id_commentaire' => 'id',
-        'id_point' => true,
-        'texte_affichage' => 'texte',
-        'auteur_commentaire' => 'auteur',
-        'date_commentaire' => 'date',
-        'lien_photo_reduite' => 'photo',
-        'date_photo' => true,
-      ]],
-    ]);
 
     if($req->format == 'geojson')
       $points->$i = filtre_recursif($point->properties, $filtre[$req->detail]);
