@@ -1,5 +1,6 @@
-http://dom2.refuges.info/api/point?id=5314&format=kml&nb_points=1
-Les données ont été triées par clés
+https://dom2.refuges.info/api/point?id=5314&format=kml&detail=complet&nb_points=1
+Délai : 0.502 s.
+
 <?xml version="1.0" encoding="utf-8"?><kml xmlns="http://earth.google.com/kml/2.1">
   <Document>
   <name>points.kml</name>
@@ -33,9 +34,11 @@ L&#039;auvent est tombé.<br>
 L&#039;intérieur de la cabane est en sale état, mais il doit être possible d&#039;y dormir (si l&#039;on a pas peur de voir le toit tomber lui aussi).<br>
 Un parking le long de la N230, extrémité Nord du lac, est accolé à la cabane.<br>
 OT de Vielha ?<br>
+Site officiel: <a href="https://chemineur.fr/viewtopic.php?t=3219">Refugi Baserca</a><br>
+Site officiel: <a href="https://chemineur.fr/viewtopic.php?t=3219">Refugi Baserca</a><br>
 </p>
               <br>
-            <center><a href='http://dom2.refuges.info/point/5314/cabane-non-gardee/Refugi-Baserca/'>Détails</a></center>
+            <center><a href='https://dom2.refuges.info/point/5314/cabane-non-gardee/Refugi-Baserca/'>Détails</a></center>
         ]]>
       </description>
       <LookAt>
@@ -51,7 +54,7 @@ OT de Vielha ?<br>
       </Point>
       <ExtendedData>
           <Data name="url">
-          <value>http://dom2.refuges.info/point/5314/cabane-non-gardee/Refugi-Baserca/</value>
+          <value>https://dom2.refuges.info/point/5314/cabane-non-gardee/Refugi-Baserca/</value>
           </Data>
       </ExtendedData>
   </Placemark>

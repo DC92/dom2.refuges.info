@@ -335,7 +335,8 @@ foreach ($points_bruts as $i=>$point) {
       $point->properties->commentaires = infos_commentaires($conditions_commentaires);
     }
 
-    if($req->format == 'geojson')
+    // Filtre des détails
+    if(in_array($req->format, ['geojson','rss']))
       $points->$i = filtre_recursif($point->properties, $filtre[$req->detail]);
     else
       $points->$i = $point->properties;

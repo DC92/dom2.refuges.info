@@ -1,5 +1,6 @@
-http://dom2.refuges.info/api/polygones?massif=5066&bbox=-Infinity,-90,Infinity,90&nb_points=1
-Les données ont été triées par clés
+https://dom2.refuges.info/api/polygones?massif=5066&bbox=-Infinity,-90,Infinity,90&nb_points=1
+Délai : 0.584 s, Les données ont été triées par clés et beautifiées pour simplifier la comparaison.
+
 {
   "copyright": "The data included in this document is from www.refuges.info. The data is made available under CC By-Sa 2.0",
   "features": [
@@ -361,7 +362,7 @@ Les données ont été triées par clés
       "properties": {
         "couleur": "#c0302f",
         "id": 5066,
-        "lien": "http:\/\/dom2.refuges.info\/nav\/5066\/massif\/Lleida-Lerida\/",
+        "lien": "https:\/\/dom2.refuges.info\/nav\/5066\/massif\/Lleida-Lerida\/",
         "nom": "Lleida (L\u00e9rida)",
         "partitif": "de",
         "type": {
@@ -374,6 +375,6 @@ Les données ont été triées par clés
     }
   ],
   "generator": "Refuges.info API",
-  "timestamp": "2026-02-09T21:25:03+01:00",
+  "timestamp": "2026-02-20T21:16:32+01:00",
   "type": "FeatureCollection"
 }

@@ -1,5 +1,6 @@
-http://dom2.refuges.info/api/point?id=5314&format=xml&format_texte=html&nb_points=1
-Les données ont été triées par clés
+https://dom2.refuges.info/api/point?id=5314&format=xml&format_texte=html&nb_points=1
+Délai : 0.548 s.
+
 <?xml version="1.0" encoding="UTF-8" ?>
 <nodes>
 <node>
@@ -11,7 +12,7 @@ Les données ont été triées par clés
 <icone>cabane_manqueunmur_eau_cle</icone>
 </type>
 <sym>Fishing Hot Spot Facility</sym>
-<lien>&lt;a href=&quot;http://dom2.refuges.info/point/5314/cabane-non-gardee/Refugi-Baserca/&quot;&gt;http://dom2.refuges.info/point/5314/cabane-non-gardee/Refugi-Baserca/&lt;/a&gt;</lien>
+<lien>&lt;a href=&quot;https://dom2.refuges.info/point/5314/cabane-non-gardee/Refugi-Baserca/&quot;&gt;https://dom2.refuges.info/point/5314/cabane-non-gardee/Refugi-Baserca/&lt;/a&gt;</lien>
 <coord>
 <alt>1450</alt>
 <long>0.76305</long>
@@ -30,7 +31,7 @@ Les données ont été triées par clés
 <id>cle_a_recuperer</id>
 </etat>
 <date>
-<derniere_modif>2026-02-05 08:28:49.880084+01</derniere_modif>
+<derniere_modif>2026-02-19 20:38:33.356535+01</derniere_modif>
 <creation>2015-10-06 17:58:21+02</creation>
 </date>
 <remarque>
@@ -47,7 +48,9 @@ L&amp;#039;intérieur de la cabane est en sale état, mais il doit être possibl
 </acces>
 <proprio>
 <nom>Propriétaire / accessibilité</nom>
-<valeur>OT de Vielha ?</valeur>
+<valeur>OT de Vielha ?&lt;br&gt;
+Site officiel: &lt;a href=&quot;https://chemineur.fr/viewtopic.php?t=3219&quot;&gt;Refugi Baserca&lt;/a&gt;&lt;br&gt;
+Site officiel: &lt;a href=&quot;https://chemineur.fr/viewtopic.php?t=3219&quot;&gt;Refugi Baserca&lt;/a&gt;</valeur>
 </proprio>
 <createur>
 <id>1557</id>
@@ -59,11 +62,6 @@ L&amp;#039;intérieur de la cabane est en sale état, mais il doit être possibl
 <partitif>d&amp;#039;une</partitif>
 </article>
 <info_comp>
-<site_officiel>
-<nom>Site Internet</nom>
-<url>https://chemineur.fr/viewtopic.php?t=3219</url>
-<valeur>&lt;a href=&quot;https://chemineur.fr/viewtopic.php?t=3219&quot;&gt;https://chemineur.fr/viewtopic.php?t=3219&lt;/a&gt;</valeur>
-</site_officiel>
 <manque_un_mur>
 <nom>Manque un mur</nom>
 <valeur>1</valeur>
@@ -112,6 +110,8 @@ L&amp;#039;auvent est tombé.&lt;br&gt;
 L&amp;#039;intérieur de la cabane est en sale état, mais il doit être possible d&amp;#039;y dormir (si l&amp;#039;on a pas peur de voir le toit tomber lui aussi).&lt;br&gt;
 Un parking le long de la N230, extrémité Nord du lac, est accolé à la cabane.&lt;br&gt;
 OT de Vielha ?&lt;br&gt;
+Site officiel: &lt;a href=&quot;https://chemineur.fr/viewtopic.php?t=3219&quot;&gt;Refugi Baserca&lt;/a&gt;&lt;br&gt;
+Site officiel: &lt;a href=&quot;https://chemineur.fr/viewtopic.php?t=3219&quot;&gt;Refugi Baserca&lt;/a&gt;&lt;br&gt;
 </valeur>
 </description>
 </node>
