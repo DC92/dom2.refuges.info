@@ -904,8 +904,8 @@ function suppression_point($point,$id_utilisateur_qui_supprime=0)
 }
 
 /*******************************************************
-Cette fonction change la date_modification_fiche créées, modifiées ou dont un commentaire à évolué
-
+Cette fonction change la date_modification_fiche créées,
+modifiées ou dont un commentaire à évolué
 *******************************************************/
 function touch_fiches($commentaire, $commentaire_avant_modification=null)
 {

@@ -169,6 +169,8 @@ if($req->type_points != "all") {
 // les champs qu'on veut voir figurer dans la réponse de l'API
 
 switch ($req->detail) {
+  case 'avec_commentaires':
+    $params->avec_commentaires = true;
   case 'complet':
     $params->avec_infos_creation = true;
     $params->avec_infos_complementaires = true;
@@ -265,7 +267,7 @@ function filtre_recursif($properties, $filtre) {
 }
 
 
-/****************************** RÉCUPÉRATION PTS ******************************/
+/****************************** RÉCUPÉRATION DES POINTS ******************************/
 
 $points_bruts = new stdClass();
 $points = new stdClass();
