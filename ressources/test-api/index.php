@@ -31,9 +31,9 @@ $urls_to_test = [
   ],
   "new" => [
     // Front-end
-    "points?detail=icones",
-    "points?detail=avec_commentaires&depuis=$depuis",
-    "points?detail=avec_commentaires&bbox=$bbox",
+    "bbox?detail=icones",
+    "bbox?bbox=$bbox&detail=avec_commentaires&format_texte=html",
+    "bbox?depuis=$depuis&detail=avec_commentaires&format_texte=html",
   ],
 ];
 
