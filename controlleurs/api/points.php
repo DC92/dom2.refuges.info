@@ -54,9 +54,6 @@ if(!in_array($req->format_texte,$val->format_texte)) {
     case 'point':
       $req->format_texte = "bbcode";
       break;
-    case 'points':
-      $req->format_texte = "html";
-      break;
     case 'contributions':
       $req->format_texte = "rss";
       break;
@@ -75,12 +72,13 @@ if(!is_numeric($req->nb_points) && $req->nb_points!="all") {
     case 'point':
       $req->nb_points = 1;
       break;
-    case 'points':
     default:
       $req->nb_points = "all";
       break;
   }
 }
+
+//TODO : voir comment on fait les autres défauts
 
 if(!array_key_exists($req->detail,$config_wri['api_format_detail']))
   $req->detail = "simple";
@@ -133,19 +131,15 @@ if($req->bbox != "world") { // Si on a world, on ne passe pas de paramètre à p
 unset($ouest,$sud,$est,$nord);
 
 switch ($req->page) {
-  case 'points':
-    $params->ids_points = $req->id;
-    $params->pas_les_points_caches=1;
-    $params->ordre="point_type.importance DESC, points.date_modification_fiche DESC";
-    break;
+  case 'massif':
+    if (!empty($req->massif))
+      $params->ids_polygones = $req->massif;
   case 'bbox':
     $params->pas_les_points_caches=1;
-    $params->ordre="point_type.importance DESC";
-    break;
-  case 'massif':
-    $params->ids_polygones = $req->massif;
-    $params->pas_les_points_caches=1;
-    $params->ordre="point_type.importance DESC";
+    if (empty($req->depuis))
+      $params->ordre="point_type.importance DESC";
+    else
+      $params->ordre="points.date_modification_fiche DESC";
     break;
   case 'point':
     $params->ids_points = intval($req->id);
