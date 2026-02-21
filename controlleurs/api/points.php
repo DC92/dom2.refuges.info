@@ -180,18 +180,21 @@ switch ($req->detail) {
 };
 
 /* Définition des informations transmises pour chaque option "detail" */
+
 // Uniquement affichage d'une icône cliquable avec son nom
 $filtre = ['icones' => [
   'nom' => true,
   'type' => ['icone' => true],
 ]];
 
-// Carte actuelle WRI
+// Utilisé par la carte actuelle WRI
 $filtre['simple'] = array_merge($filtre['icones'], [
-  'nom' => true, // On écrase le précédent
+  // Ecrase les précédents
+  'nom' => true,
+  'type' => true,
+  // Nouveaux
   'id' => true,
   'coord' => ['alt' => true],
-  'type' => true, // On écrase le précédent
   'sym' => true,
   'etat' => ['valeur' => true],
   'places' => true,
@@ -199,8 +202,10 @@ $filtre['simple'] = array_merge($filtre['icones'], [
 ]);
 
 $filtre['complet'] = array_merge($filtre['simple'], [
-  'coord' => true, // On écrase le précédent
-  'etat' => true, // On écrase le précédent
+  // Complète avec les autres valeurs
+  'coord' => true,
+  'etat' => true,
+  // Nouveaux
   'date' => true,
   'createur' => true,
   'proprio' => true,
@@ -221,11 +226,15 @@ $filtre['complet'] = array_merge($filtre['simple'], [
   'article' => true,
 ]);
 
+// Pour les applications
 $filtre['avec_commentaires'] = array_merge($filtre['complet'], [
-  'type' => ['valeur' => true], // On écrase le précédent
-  'etat' => ['valeur' => 'etat'], // On écrase le précédent
+  // Ecrase les précédents
+  'type' => ['valeur' => true],
+  'coord' => ['alt' => true],
+  'etat' => ['valeur' => 'etat'],
   'date' => ['creation' => true], // On enlève derniere_modif
-  'commentaires' => ['*' => [ // Tout l'array commentaires
+  // Tout l'array commentaires
+  'commentaires' => ['*' => [
     'id_commentaire' => 'id',
     'id_point' => true,
     'texte_affichage' => 'texte',
@@ -234,12 +243,12 @@ $filtre['avec_commentaires'] = array_merge($filtre['complet'], [
     'lien_photo_reduite' => 'photo',
     'date_photo' => true,
   ]],
-  // On supprime les suivants
+  // On supprime
   'id' => false, // Déjà dans les features
-  'coord' => false, // Déjà dans geometry->coordinates
   'alt' => false, // Déjà dans geometry->coordinates
   'places' => false, // Déplacé dans info_comp
   'description' => false, // Doublon avec info_comp
+  'article' => false, // Pas besoin dans l'appli
 ]);
 
 /* Petite fonction qui réalise le filtrage en fonction des définitions ci-dessus */
@@ -260,8 +269,13 @@ function filtre_recursif($properties, $filtre) {
       return $tablo;
     }
     // Cas normal
-    elseif (isset($props[$cle_filtre]))
-      $obj[$cle_filtre] = filtre_recursif($props[$cle_filtre], $sous_filtre);
+    elseif (isset($props[$cle_filtre]) && // Si la valeur existe
+      !empty($sous_filtre)) // Sauf si 'id' => false
+    {
+      // Renommage de la variable
+      $cle = is_string($sous_filtre) ? $sous_filtre : $cle_filtre;
+      $obj[$cle] = filtre_recursif($props[$cle_filtre], $sous_filtre);
+    }
 
   return $obj;
 }
