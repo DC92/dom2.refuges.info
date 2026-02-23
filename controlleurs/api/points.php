@@ -78,8 +78,6 @@ if(!is_numeric($req->nb_points) && $req->nb_points!="all") {
   }
 }
 
-//TODO : voir comment on fait les autres défauts
-
 if(!array_key_exists($req->detail,$config_wri['api_format_detail']))
   $req->detail = "simple";
 

@@ -83,16 +83,50 @@ function carteAffiche() {
     el.innerHTML = html;
 }*/
 
-/* eslint-disable-next-line no-unused-vars */
-function ficheAffiche(idFiche) {
+
+function champFiche(arg){
+  if(typeof arg==='string')
+    return arg;
+  
+  if(typeof arg.valeur==='string')
+  return (arg.nom ? '<b>'+arg.nom+'</b> ' : '')+ arg.valeur;
+
+return  JSON.stringify(arg);
 }
 
-  /*  fetch(serveurAPI + '/api/point?detail=avec_commentaires&id_point=' + idFiche)
+/* eslint-disable-next-line no-unused-vars */
+function ficheAffiche(idFiche) {
+console.log(idFiche);//DCMM
+
+//TODO get point from DB
+  fetch(serveurAPI + '/api/point?detail=avec_commentaires&id_point=' + idFiche)
      .then((response) => response.json())
      .then((geoJson) => {
        if (geoJson.features.length) {
-         const props = geoJson.features[0].properties,
-           coords = geoJson.features[0].geometry.coordinates;
+         const    coord = geoJson.features[0].geometry.coordinates,
+           properties = geoJson.features[0].properties        ;
+           
+           // Positionne la carte et les coordonnées
+           map.setView([coord[1], coord[0]], 15);
+   map.invalidateSize();
+            document.getElementById('fiche-lat').innerHTML =  coord[0];
+            document.getElementById('fiche-lng').innerHTML =coord[1];
+           
+           // Affiche les zones de texte
+           for (const key in properties) {
+  const el = document.getElementById('fiche-'+key);
+  
+  if (el)
+    el.innerHTML = champFiche(properties[key]);
+           }
+  
+//console.log([p,el]);//DCMM
+
+console.log(properties);//DCMM
+console.log(el);//DCMM
+
+
+       /*
 
          innerHTMLbyID('fiche-nom', props.nom);
          innerHTMLbyID('fiche-type', props.type.valeur);
@@ -100,10 +134,12 @@ function ficheAffiche(idFiche) {
          innerHTMLbyID('fiche-lng', coords[0]);
          innerHTMLbyID('fiche-lat', coords[1]);
          innerHTMLbyID('fiche-alt', coords[2]);
+       */
        }
      });
 
-   map.invalidateSize();*/
+}
+ /*    map.invalidateSize();*/
 
 /*DCMM
   const //DCMM infoEl = document.getElementById('infos-fiche'),
