@@ -46,8 +46,8 @@ Démonstrateur front-end pour refuges.info
   <script>
     //const serveurAPI = window.location.origin,
     const serveurAPI = 'https://dom2.refuges.info',
-      defaultPermalink = '6/45/7', // Alpes de l'ouest
       debugPWA = true;
+let permalink =        '6/45/7'; // Défaut : Alpes de l'ouest
 
     if (!window.location.search) // Debug without PWA
       navigator.serviceWorker.register('service-worker.js')
@@ -90,6 +90,10 @@ Démonstrateur front-end pour refuges.info
       Latitude: <span id="fiche-lat"></span>°,
       Longitude: <span id="fiche-lng"></span>°
     </p>
+      <h3>Informations complémentaires:</h3><p id="fiche-info_comp"></p>';
+      <div id="fiche-proprio"></div>
+      <div id="fiche-acces"></div>
+      <div id="fiche-remarque"></div>
     <div id="fiche-infos-groupe">
       <div>
         <span id="fiche-infos-groupe-0-nom"></span>:

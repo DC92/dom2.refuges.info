@@ -153,6 +153,7 @@ console.info('MAP moveend');
 
   // Mémorisation de la position
   idbKeyval.set('permalink', newPermalink);
+ permalink= newPermalink;
 
   // Le permalink est un #hash ajouté à la page carte uniquement et mémorisé dans IndexedD
   if (document.body.className === 'carte')
