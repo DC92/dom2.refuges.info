@@ -1,4 +1,4 @@
-/* global serveurAPI, map */
+/* global serveurAPI, map, currentPosition:writable, afficheIcones, idbKeyval */
 
 /****************************
  * Gestion de l'application *
@@ -8,107 +8,67 @@
  La carte reste ouverte dans un élément <div id="map> pour toutes les vues (carte, point, ...)
  seules sont modifiées sa taille et les coordonnée de sa vue.
 
- Les différentes vues sont définies par l'ancre (#abcdef à la fin de l'url) qui évolue de façon à ce que l'url complète constitue un permalink.
+ Les différentes vues sont définies par l'ancre (#abcdef à la fin de l'url)
+ qui évolue de façon à ce que l'url complète constitue un permalink.
  Le nom de la vue est attribué à la classe de l'élémént <BODY> qui pilote les différentes variantes de .CSS
 */
- 
+
 /***********************
  * Affichage de la vue *
  ***********************/
 const nomVues = ['carte', 'nouvelles', 'fiche'];
 
-function afficheVue( ) {
-const ancre = location.hash.replace('#', '');
+function afficheVue() {
+  const ancre = location.hash.replace('#', '');
 
-// Par défaut, la carte
+  // Par défaut, la carte
   let vue = 'carte';
- 
- // #nouvelles
- if (nomVues.includes(ancre))
+
+  // #nouvelles
+  if (nomVues.includes(ancre))
     vue = ancre;
   // #1234 : fiche de la cabane 1234
-else if (ancre.match(/^[0-9]+$/u))
+  else if (ancre.match(/^[0-9]+$/u))
     vue = 'fiche';
 
-  console.info('affiche ' + vue+ ' ' + ancre );
+  console.info('affiche ' + vue + ' ' + ancre);
 
   // Assigne le style de la vue à montrer
   document.body.className = vue;
 
   // Execute la fonction d'initialisation de la vue
   window[vue + 'Affiche'](ancre);
-  }
-    //else if (ancre.match(/^[0-9.]+\/[0-9.]+\/[0-9.]+$/u))
-    //vue = ancre;
-//  const permalink = location.hash.match(/[0-9.]+\/[0-9.]+\/[0-9.]+/u)[0].split('/');
-
-/*function afficheVueTEST(evt) {
-console.log(evt);//DCMM
-  }
-
-function afficheVueOLD(ancreDefaut) {
-  const ancre = location.hash.replace('#', '');// || defaut || defaultPermalink;
-  //const hashPermalink = location.hash.match(/[0-9.]+\/[0-9.]+\/[0-9.]+/u);
-  let vue = '';
-
-  // Détermine la vue en fonction de l'ancre
-  if (ancre.match(/^[0-9]+$/u))
-    vue = 'fiche'; // #1234 affiche la fiche de la cabane 1234
-  else if ( ancre ==='nouvelles')
-    vue = 'nouvelles';  
-  else //if(hashPermalink) 
-    vue = 'carte';
-}*/
+}
 
 // Affiche la vue lorsque l'ancre change
-window.addEventListener('popstate',afficheVue);
+window.addEventListener('popstate', afficheVue);
 
 // Initialisation de la page ou de l'application
-window.addEventListener('load', (evt) => {
-  
-  // Récupère (en une seule transaction pour ne pas générer de deadlock) les infos mémorisées dans indexedDB
-  idbKeyval.getMany(['permalink','iconesJson'  /*, location.hash.replace('#', '')*/ ])
-    .then(([dbPermalink,  dbIconesJson/*, ficheJson*/ ]) => {
-     
-  // Récupére la dernière position
-  if(dbPermalink)
-   permalink=dbPermalink;     
- 
-       // Popule la carte avec les icones mémorisées
-      afficheIcones(dbIconesJson);
-     
-afficheVue();
+window.addEventListener('load', () => {
 
+  // Récupère (en une seule transaction pour ne pas générer de deadlock) les infos mémorisées dans indexedDB
+  idbKeyval.getMany(['currentPosition', 'iconesJson' /*, location.hash.replace('#', '')*/ ])
+    .then(([dbCurrentPosition, dbIconesJson /*, ficheJson*/ ]) => {
+
+      // Récupére la dernière position
+      if (dbCurrentPosition)
+        currentPosition = dbCurrentPosition;
+
+      // Popule la carte avec les icones mémorisées
+      afficheIcones(dbIconesJson);
       //TODO ?depuis & | (re)charge icones
 
-    });});
-     
-/*return;
-   location.hash='#123';
- console.log(evt);//DCMM
-  const hh = location.hash;
-  
-console.log(hh);//DCMM
-  
-  return;
- 
-console.log(permalink);//DCMM
-   
-     // if (location.hash)
-        afficheVue(dbPermalink);
-      //else
-       // location.hash = dbPermalink; // Assigne la position de la carte au #hash et provoque l'affichage
-*/
+      afficheVue();
+    });
+});
 
 /*************
  * Vue carte *
  *************/
 /* eslint-disable-next-line no-unused-vars */
 function carteAffiche() {
-  const hashPermalink = location.hash.match(/[0-9.]+\/[0-9.]+\/[0-9.]+/u);
-  
-const pos=(hashPermalink?hashPermalink[0]:permalink)
-.split('/');
+  const hashPermalink = location.hash.match(/[0-9.]+\/[0-9.]+\/[0-9.]+/u),
+    pos = (hashPermalink ? hashPermalink[0].split('/') : currentPosition);
 
   map.setView([pos[1], pos[0]], pos[2]);
   map.invalidateSize();
@@ -124,56 +84,50 @@ const pos=(hashPermalink?hashPermalink[0]:permalink)
     el.innerHTML = html;
 }*/
 
-
-function champFiche(arg){
-console.log(arg);//DCMM
-  if(typeof arg==='string')
+function champFiche(arg) {
+  console.log(arg); //DCMM
+  if (typeof arg === 'string')
     return arg;
-  
+
   //if(typeof arg.valeur==='string')
-  if(arg.nom && arg.valeur )
-  return (arg.nom ? '<h3>'+arg.nom+':</h3> ' : '')+ '<p>'+champFiche(arg.valeur)+ '</p>';
+  if (arg.nom && arg.valeur)
+    return (arg.nom ? '<h3>' + arg.nom + ':</h3> ' : '') + '<p>' + champFiche(arg.valeur) + '</p>';
 
-//TODO itérer
-//  if(typeof arg==='object')
-//    return champFiche(arg);
+  //TODO itérer
+  //  if(typeof arg==='object')
+  //    return champFiche(arg);
 
-return  JSON.stringify(arg);
+  return JSON.stringify(arg);
 }
 
 /* eslint-disable-next-line no-unused-vars */
 function ficheAffiche(idFiche) {
-console.log(idFiche);//DCMM
+  console.log(idFiche); //DCMM
 
-//TODO get point from DB
+  //TODO get point from DB
   fetch(serveurAPI + '/api/point?detail=avec_commentaires&id_point=' + idFiche)
-     .then((response) => response.json())
-     .then((geoJson) => {
-       if (geoJson.features.length) {
-         const    coord = geoJson.features[0].geometry.coordinates,
-           properties = geoJson.features[0].properties        ;
-           
-           // Positionne la carte et les coordonnées
-           map.setView([coord[1], coord[0]], 15);
-   map.invalidateSize();
-            document.getElementById('fiche-lat').innerHTML =  coord[0];
-            document.getElementById('fiche-lng').innerHTML =coord[1];
-           
-           // Affiche les zones de texte
-           for (const key in properties) {
-  const el = document.getElementById('fiche-'+key);
-   
-  if (el)
-    el.innerHTML = champFiche(properties[key]);
-           }
-  
-//console.log([p,el]);//DCMM
+    .then((response) => response.json())
+    .then((geoJson) => {
+      if (geoJson.features.length) {
+        const coord = geoJson.features[0].geometry.coordinates,
+          properties = geoJson.features[0].properties;
 
-console.log(properties);//DCMM
-//console.log(el);//DCMM
+        // Positionne la carte et les coordonnées
+        map.setView([coord[1], coord[0]], 15);
+        map.invalidateSize();
+        document.getElementById('fiche-lat').innerHTML = coord[0];
+        document.getElementById('fiche-lng').innerHTML = coord[1];
 
+        // Affiche les zones de texte
+        for (const key in properties) {
+          const el = document.getElementById('fiche-' + key);
 
-       /*
+          if (el)
+            el.innerHTML = champFiche(properties[key]);
+        }
+
+        console.log(properties); //DCMM
+        /*
 
          innerHTMLbyID('fiche-nom', props.nom);
          innerHTMLbyID('fiche-type', props.type.valeur);
@@ -182,12 +136,9 @@ console.log(properties);//DCMM
          innerHTMLbyID('fiche-lat', coords[1]);
          innerHTMLbyID('fiche-alt', coords[2]);
        */
-       }
-     });
-
+      }
+    });
 }
- /*    map.invalidateSize();*/
-
 /*DCMM
   const //DCMM infoEl = document.getElementById('infos-fiche'),
     //DCMM commentEl = document.getElementById('commentaires'),
@@ -225,9 +176,7 @@ console.log(properties);//DCMM
           });
       }
     });
-  */
 
-/*
   Object.entries(properties.fiche).forEach(entry => {
 //    infoEl.insertAdjacentHTML('beforeend', '<dt>' + entry[0] + ':</dt>');
   //  infoEl.insertAdjacentHTML('beforeend', '<dl>' + entry[1] + '</dl>');
@@ -250,22 +199,20 @@ console.log(properties);//DCMM
  * Vue nouvelles *
  *****************/
 /* eslint-disable-next-line no-unused-vars */
-function nouvellesAffiche() {
-}
+function nouvellesAffiche() {}
+//TODO BUG ne précharge pas les nouvelles
+/*
+requeteAPI(
+  'nouvelles',
+  '/api/contributions?format=json&format_texte=html&massif=352&nombre=10',
+  null,
+  (json) => {
+    // Calcule le lien pour afficher la page qui correspond
+    for (const j in json)
+      /* eslint-disable-next-line camelcase * /
+      json[j].lien_interne = '#' + json[j].id_point;
 
-  //TODO BUG ne précharge pas les nouvelles
-  /*
-  requeteAPI(
-    'nouvelles',
-    '/api/contributions?format=json&format_texte=html&massif=352&nombre=10',
-    null,
-    (json) => {
-      // Calcule le lien pour afficher la page qui correspond
-      for (const j in json)
-        /* eslint-disable-next-line camelcase * /
-        json[j].lien_interne = '#' + json[j].id_point;
-
-      prepareModeleGroupe('nouvelles-groupe', Object.keys(json).length - 1); // -1 pour la ligne copyright dans le json
-      appliqueDonnees('nouvelles-groupe', json);
-    }
-  );*/
+    prepareModeleGroupe('nouvelles-groupe', Object.keys(json).length - 1); // -1 pour la ligne copyright dans le json
+    appliqueDonnees('nouvelles-groupe', json);
+  }
+);*/

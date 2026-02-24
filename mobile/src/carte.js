@@ -1,4 +1,4 @@
-/* global L, serveurAPI, defaultPermalink, idbKeyval */
+/* global L, serveurAPI, currentPosition:writable, idbKeyval */
 
 /*******************************
  * Gestion de la carte Leaflet *
@@ -68,7 +68,7 @@ const iconesLayer = L.geoJson(null, {
     ).openTooltip();
 
     // Click
-        //BEST Fonctions ctrl clic + Apple suivant demande faite à wri github
+    //BEST Fonctions ctrl clic + Apple suivant demande faite à wri github
     layer.on({
       click: () => {
         // Positionne la carte sur le point
@@ -86,6 +86,7 @@ const iconesLayer = L.geoJson(null, {
 // Affichage des clusters et des icones
 const clustersLayer = new L.MarkerClusterGroup();
 
+/* eslint-disable-next-line no-unused-vars */
 function afficheIcones(geoJson) {
   if (geoJson) {
     clustersLayer.removeLayer(iconesLayer);
@@ -101,7 +102,7 @@ function afficheIcones(geoJson) {
 const // hash = location.hash.replace('#', ''),
   //hashs =  hash.split('/').map((v)=>parseFloat (v)),
   map = L.map('map');
-  
+
 console.info('MAP init');
 
 // Ajout de controles et couches à la carte
@@ -122,7 +123,7 @@ console.info('MAP init');
 ].map(e => e.addTo(map));
 
 // Charge (ou recharge) les fiches à afficher
-    //TODO précharger toutes les icones
+//TODO précharger toutes les icones
 /*DCMM
 setTimeout(() => // Attends que les icônes soient chargées
   //TODO demander ?depuis
@@ -142,20 +143,17 @@ return    response.text();
   console.log(error)
 }),
   100);*/
- 
-map.on('moveend', () => {
-  const pos = map.getCenter(),
-    newPermalink = [pos.lng, pos.lat, map.getZoom()]
-    .map(f => Math.round(f * 1000) / 1000)
-    .join('/');
 
-console.info('MAP moveend');
+map.on('moveend', () => {
+  const pos = map.getCenter();
+
+  console.info('MAP moveend');
 
   // Mémorisation de la position
-  idbKeyval.set('permalink', newPermalink);
- permalink= newPermalink;
+  currentPosition = [pos.lng, pos.lat, map.getZoom()].map(f => Math.round(f * 1000) / 1000);
+  idbKeyval.set('currentPosition', currentPosition);
 
-  // Le permalink est un #hash ajouté à la page carte uniquement et mémorisé dans IndexedD
+  // Le permalink est un #hash ajouté à la page carte uniquement et mémorisé dans indexedDB
   if (document.body.className === 'carte')
-    location.hash = newPermalink;
+    location.hash = currentPosition.join('/');
 });

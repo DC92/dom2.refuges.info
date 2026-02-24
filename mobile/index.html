@@ -35,8 +35,6 @@ Démonstrateur front-end pour refuges.info
   <script src="idb-keyval/umd.js"></script>
 
   <!-- This package -->
-  <scriptww src="src/templeteur.js"></script>
-  <scriptww src="src/preLoad.js"></script>
   <script src="src/carte.js" defer></script>
   <script src="src/vues.js" defer></script>
   <link href="src/vues.css" rel="stylesheet">
@@ -47,7 +45,7 @@ Démonstrateur front-end pour refuges.info
     //const serveurAPI = window.location.origin,
     const serveurAPI = 'https://dom2.refuges.info',
       debugPWA = true;
-let permalink =        '6/45/7'; // Défaut : Alpes de l'ouest
+    let currentPosition = [6, 45, 7]; // Défaut : Alpes de l'ouest
 
     if (!window.location.search) // Debug without PWA
       navigator.serviceWorker.register('service-worker.js')
@@ -90,10 +88,11 @@ let permalink =        '6/45/7'; // Défaut : Alpes de l'ouest
       Latitude: <span id="fiche-lat"></span>°,
       Longitude: <span id="fiche-lng"></span>°
     </p>
-      <h3>Informations complémentaires:</h3><p id="fiche-info_comp"></p>';
-      <div id="fiche-proprio"></div>
-      <div id="fiche-acces"></div>
-      <div id="fiche-remarque"></div>
+    <h3>Informations complémentaires:</h3>
+    <p id="fiche-info_comp"></p>';
+    <div id="fiche-proprio"></div>
+    <div id="fiche-acces"></div>
+    <div id="fiche-remarque"></div>
     <div id="fiche-infos-groupe">
       <div>
         <span id="fiche-infos-groupe-0-nom"></span>:
