@@ -77,35 +77,21 @@ function carteAffiche() {
 /*************
  * Vue fiche *
  *************/
-/*function innerHTMLbyID(id, html) {
-  const el = document.getElementById(id);
-
-  if (el)
-    el.innerHTML = html;
+// Ajoute le développement des propriétés à l'élément
+/*function afficheProprietes(el, proprietes) {
+  el.innerHTML = '';
+  for (const key in proprietes)
+    if (proprietes[key].nom && proprietes[key].valeur) {
+      el.insertAdjacentHTML('beforeend',
+        '<h3>' + proprietes[key].nom + ':</h3>' +
+        '<p>' + proprietes[key].valeur + '</p>');
+    }
 }*/
-
-function champFiche(arg) {
-  console.log(arg); //DCMM
-  if (typeof arg === 'string')
-    return arg;
-
-  //if(typeof arg.valeur==='string')
-  if (arg.nom && arg.valeur)
-    return (arg.nom ? '<h3>' + arg.nom + ':</h3> ' : '') + '<p>' + champFiche(arg.valeur) + '</p>';
-
-  //TODO itérer
-  //  if(typeof arg==='object')
-  //    return champFiche(arg);
-
-  return JSON.stringify(arg);
-}
 
 /* eslint-disable-next-line no-unused-vars */
 function ficheAffiche(idFiche) {
-  console.log(idFiche); //DCMM
-
   //TODO get point from DB
-  fetch(serveurAPI + '/api/point?detail=avec_commentaires&id_point=' + idFiche)
+  fetch(serveurAPI + '/api/point?detail=avec_commentaires&format_texte=html&id=' + idFiche)
     .then((response) => response.json())
     .then((geoJson) => {
       if (geoJson.features.length) {
@@ -117,28 +103,69 @@ function ficheAffiche(idFiche) {
         map.invalidateSize();
         document.getElementById('fiche-lat').innerHTML = coord[0];
         document.getElementById('fiche-lng').innerHTML = coord[1];
+        document.getElementById('fiche-coord-alt').innerHTML = properties.coord.alt;
 
-        // Affiche les zones de texte
+        // Affiche les propriétés
         for (const key in properties) {
           const el = document.getElementById('fiche-' + key);
 
-          if (el)
-            el.innerHTML = champFiche(properties[key]);
+          if (el) {
+            if (typeof properties[key] === 'string')
+              el.innerHTML = properties[key];
+            if (typeof properties[key].valeur === 'string')
+              el.innerHTML = properties[key].valeur;
+          }
         }
 
-        console.log(properties); //DCMM
-        /*
+        // Affiche les zones de texte
+        const zonesTexte = {
+          proprietes: properties,
+          info_comp: properties.info_comp,
+        };
 
-         innerHTMLbyID('fiche-nom', props.nom);
-         innerHTMLbyID('fiche-type', props.type.valeur);
-         innerHTMLbyID('fiche-lien', props.lien);
-         innerHTMLbyID('fiche-lng', coords[0]);
-         innerHTMLbyID('fiche-lat', coords[1]);
-         innerHTMLbyID('fiche-alt', coords[2]);
-       */
+        for (const zt in zonesTexte) {
+          const el = document.getElementById('fiche-' + zt),
+            proprietes = zonesTexte[zt];
+
+          el.innerHTML = '';
+          for (const key in proprietes)
+            if (proprietes[key].nom && proprietes[key].valeur) {
+              el.insertAdjacentHTML('beforeend',
+                '<h3>' + proprietes[key].nom + ':</h3>' +
+                '<p>' + proprietes[key].valeur + '</p>');
+            }
+        }
       }
     });
 }
+
+/*function innerHTMLbyID(id, html) {
+  const el = document.getElementById(id);
+
+  if (el)
+    el.innerHTML = html;
+}
+
+function champFiche(arg) {
+  //console.log(arg); //DCMM
+  if (typeof arg === 'string')
+    return arg;
+
+const titreChamp =  arg.nom ? '<h3>' + arg.nom + ':</h3> ' : '';
+
+  if(typeof arg.valeur==='string')
+return    titreChamp+  arg.valeur ;
+
+console.log(arguments);//DCMM
+
+//return    titreChamp+champFiche(  arg.valeur) ;
+ 
+  //TODO itérer
+  //  if(typeof arg==='object')
+  //    return champFiche(arg);
+
+  return JSON.stringify(arg);
+}*/
 /*DCMM
   const //DCMM infoEl = document.getElementById('infos-fiche'),
     //DCMM commentEl = document.getElementById('commentaires'),

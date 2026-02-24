@@ -71,40 +71,31 @@ Démonstrateur front-end pour refuges.info
     </a>
   </div>
 
-  <!-- Fiche entête -->
+  <!-- Template fiche, entête -->
   <div class="fiche">
-    <h2 id="fiche-nom"></h2>
-    (<span id="fiche-type"></span>)
-    <span id="fiche-alt"></span> m
-    <p id="fiche-etat"></p>
+    <h2 id="fiche-nom"></h2>,
+    (<span id="fiche-coord-alt"> </span> m)
+    <span id="fiche-type"></span>
+    <span style="color: red" id="fiche-etat"></span>
   </div>
 
+  <!-- Template carte -->
   <div id="map"></div>
 
-  <!-- Fiche infos -->
+  <!-- Template fiche, zone informations -->
   <div class="fiche">
     <a id="fiche-lien">Voir la fiche sur le site</a>
     <p>
       Latitude: <span id="fiche-lat"></span>°,
       Longitude: <span id="fiche-lng"></span>°
     </p>
+    <div id="fiche-proprietes"></div>
     <h3>Informations complémentaires:</h3>
-    <p id="fiche-info_comp"></p>';
-    <div id="fiche-proprio"></div>
-    <div id="fiche-acces"></div>
-    <div id="fiche-remarque"></div>
-    <div id="fiche-infos-groupe">
-      <div>
-        <span id="fiche-infos-groupe-0-nom"></span>:
-        <span id="fiche-infos-groupe-0-valeur"></span>
-      </div>
-    </div>
-
-    <dl id="infos-fiche"></dl>
-    <dl id="commentaires"></dl>
+    <div id="fiche-info_comp"></div>
+    <div id="fiche-commentaires"></div>
   </div>
 
-  <!-- Nouvelles -->
+  <!-- Template nouvelles -->
   <div class="nouvelles">
     <h3>Nouvelles</h3>
     <div id="nouvelles-groupe">

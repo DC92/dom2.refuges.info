@@ -223,7 +223,7 @@ $filtre['avec_commentaires'] = array_merge($filtre['complet'], [
   // Ecrase les précédents
   'type' => ['valeur' => true],
   'coord' => ['alt' => true],
-  'etat' => ['valeur' => 'etat'],
+  'etat' => ['valeur' => true],
   'date' => ['creation' => true], // On enlève derniere_modif
   // Tout l'array commentaires
   'commentaires' => ['*' => [
@@ -240,6 +240,7 @@ $filtre['avec_commentaires'] = array_merge($filtre['complet'], [
   'alt' => false, // Déjà dans geometry->coordinates
   'places' => false, // Déplacé dans info_comp
   'description' => false, // Doublon avec info_comp
+  'lien' => false, // Peut le recomposer à partir de id_point
   'article' => false, // Pas besoin dans l'appli
 ]);
 
