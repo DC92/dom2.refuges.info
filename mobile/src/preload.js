@@ -81,7 +81,7 @@ async function preLoadTiles(map, position) {
       // Si les icones de la bbox ne sont pas déjà stockés dans IndexedDB
       if (!preLoadedEntries[bboxString])
         await preLoadFiches(serveurAPI + //TODO REDO
-          '/api/points?detail=complet&format_texte=html&nb_points=all&bbox=' + bboxString
+          '/api/bbox?detail=complet&format_texte=html&nb_points=all&bbox=' + bboxString
         );
 
       idbKeyval.set(bboxString, Date.now()); // Mark cache date //TODO utiliser localstorage

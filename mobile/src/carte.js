@@ -122,28 +122,7 @@ console.info('MAP init');
   }),
 ].map(e => e.addTo(map));
 
-// Charge (ou recharge) les fiches à afficher
-//TODO précharger toutes les icones
-/*DCMM
-setTimeout(() => // Attends que les icônes soient chargées
-  //TODO demander ?depuis
-  fetch(serveurAPI + '/api/points?detail=icones')
-   .then((response) =>{
-  if (response.ok) 
-return    response.text();
-
-  throw new Error('Something went wrong');
-})
-  .then((geoJson) => {
-    afficheIcones(geoJson);
-    //localStorage.setItem('iconesJson', geoJson);//TODO
-    idbKeyval.set('iconesJson', geoJson);
-  })
-.catch((error) => {
-  console.log(error)
-}),
-  100);*/
-
+// Mémorise la position de la carte
 map.on('moveend', () => {
   const pos = map.getCenter();
 
@@ -156,4 +135,46 @@ map.on('moveend', () => {
   // Le permalink est un #hash ajouté à la page carte uniquement et mémorisé dans indexedDB
   if (document.body.className === 'carte')
     location.hash = currentPosition.join('/');
+});
+
+// Memorise les fiches autour de la position
+map.on('moveend', () => {
+  // Coordonnées de la dalle bbox contenant la position
+  const fichesTileSize = 0.25, // ° lon / lat
+    xy = Object.values(map.getCenter()).map(a => Math.round(a / fichesTileSize));
+
+  for (let x = 0; x < 2; x++)
+    for (let y = 0; y < 2; y++) {
+      const url = serveurAPI +
+        '/api/bbox?detail=avec_commentaires&format_texte=html&nb_points=all&bbox=' + [xy[1] + y - 1, xy[0] + x - 1, xy[1] + y, xy[0] + x]
+        .map((a) => a * fichesTileSize)
+        .join(',');
+
+      console.log(url); //DCMM
+
+      /* //TODO Si les fiches de la bbox ne sont pas déjà stockés dans IndexedDB
+            //
+            if (!preLoadedEntries[bboxString])
+              await preLoadFiches(serveurAPI + //TODO REDO
+                '/api/bbox?detail=complet&format_texte=html&nb_points=all&bbox=' + bboxString
+              );
+      */
+
+      fetch(url)
+        .then(response => response.json())
+        .then(geoJson => {
+          const fichesAMeroriser = [];
+
+          geoJson.features.forEach(feature => {
+            fichesAMeroriser[feature.id] = feature.properties;
+          });
+          console.log(fichesAMeroriser); //DCMM
+
+          // Enregistre les propriétés des fiches
+          if (fichesAMeroriser.length)
+            idbKeyval.setMany(fichesAMeroriser.map((v, k) => [k, v]));
+
+          //TODO marquer dans idbKeyval que cette bbox est déjà traitée
+        });
+    }
 });

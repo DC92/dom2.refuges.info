@@ -61,7 +61,8 @@ window.addEventListener('load', () => {
       afficheVue();
 
       // Demande la (re)charge des icônes depuis le serveur
-      const url = serveurAPI + '/api/points?detail=icones';
+      //TODO précharger toutes les icones
+      const url = serveurAPI + '/api/bbox?detail=icones&nb_points=all';
       fetch(url)
         .then((response) => response.text())
         .then((geoJson) => {
@@ -87,21 +88,10 @@ function carteAffiche() {
 /*************
  * Vue fiche *
  *************/
-// Ajoute le développement des propriétés à l'élément
-/*function afficheProprietes(el, proprietes) {
-  el.innerHTML = '';
-  for (const key in proprietes)
-    if (proprietes[key].nom && proprietes[key].valeur) {
-      el.insertAdjacentHTML('beforeend',
-        '<h3>' + proprietes[key].nom + ':</h3>' +
-        '<p>' + proprietes[key].valeur + '</p>');
-    }
-}*/
-
 /* eslint-disable-next-line no-unused-vars */
 function ficheAffiche(idFiche) {
-  //TODO get point from DB
-  fetch(serveurAPI + '/api/point?detail=avec_commentaires&format_texte=html&id=' + idFiche)
+  //TODO get point from DB dans une zone
+  fetch(serveurAPI + '/api/bbox?detail=avec_commentaires&format_texte=html&id=' + idFiche)
     .then((response) => response.json())
     .then((geoJson) => {
       if (geoJson.features.length) {
@@ -115,6 +105,8 @@ function ficheAffiche(idFiche) {
         document.getElementById('fiche-lng').innerHTML = coord[1];
         document.getElementById('fiche-coord-alt').innerHTML = properties.coord.alt;
 
+        //TODO css des infos complémentaires
+        //TODO factoriser ce code
         // Affiche les propriétés
         for (const key in properties) {
           const el = document.getElementById('fiche-' + key);
@@ -149,76 +141,8 @@ function ficheAffiche(idFiche) {
     });
 }
 
-/*function innerHTMLbyID(id, html) {
-  const el = document.getElementById(id);
-
-  if (el)
-    el.innerHTML = html;
-}
-
-function champFiche(arg) {
-  //console.log(arg); //DCMM
-  if (typeof arg === 'string')
-    return arg;
-
-const titreChamp =  arg.nom ? '<h3>' + arg.nom + ':</h3> ' : '';
-
-  if(typeof arg.valeur==='string')
-return    titreChamp+  arg.valeur ;
-
-console.log(arguments);//DCMM
-
-//return    titreChamp+champFiche(  arg.valeur) ;
- 
-  //TODO itérer
-  //  if(typeof arg==='object')
-  //    return champFiche(arg);
-
-  return JSON.stringify(arg);
-}*/
+//TODO COMMENTAIRES
 /*DCMM
-  const //DCMM infoEl = document.getElementById('infos-fiche'),
-    //DCMM commentEl = document.getElementById('commentaires'),
-    url = serveurAPI + '/api/points?detail=avec_commentaires&format_texte=html&id=' + idfiche,
-    properties = debugPWA ?
-    //await preLoadFiches(url) :
-    await idbKeyval.get(parseInt(idFiche, 10)) || // Si la fiche est préchargé
-    //await preLoadFiches(url); // Essaye de le charger
-
-  map.setView([properties.coord.lat, properties.coord.long], 15);
-  //TODO BUG positionnement carte au chargement de la fiche
-  //TODO charger à partir de la couche bbox icones globale.
-  //TODO autres paramètres de page
-
-  Object.entries({
-      ...properties,
-      ...properties.coord,
-      ...properties.type,
-      ...properties.etat
-    })
-    .forEach(entry => {
-      const el = document.getElementById('fiche-' + entry[0]);
-
-      switch (typeof entry[1]) {
-        case 'string':
-        case 'integer':
-          if (el)
-            el.innerHTML = entry[1];
-          break;
-        case 'object':
-          entry.forEach(subEntry => {
-            if (subEntry.valeur)
-              console.log(subEntry); //DCMM
-            //  console.log(!!subEntry.valeur); //DCMM
-          });
-      }
-    });
-
-  Object.entries(properties.fiche).forEach(entry => {
-//    infoEl.insertAdjacentHTML('beforeend', '<dt>' + entry[0] + ':</dt>');
-  //  infoEl.insertAdjacentHTML('beforeend', '<dl>' + entry[1] + '</dl>');
-  });
-
   Object.values(properties.commentaires).forEach(c => {
 
     commentEl.insertAdjacentHTML('beforeend',
@@ -230,7 +154,7 @@ console.log(arguments);//DCMM
       '</div>'
     );
   });
-  */
+*/
 
 /*****************
  * Vue nouvelles *
