@@ -56,9 +56,19 @@ window.addEventListener('load', () => {
 
       // Popule la carte avec les icones mémorisées
       afficheIcones(dbIconesJson);
-      //TODO ?depuis & | (re)charge icones
 
+      // Affiche la vue correpondant à #ancre
       afficheVue();
+
+      // Demande la (re)charge des icônes depuis le serveur
+      const url = serveurAPI + '/api/points?detail=icones';
+      fetch(url)
+        .then((response) => response.text())
+        .then((geoJson) => {
+          afficheIcones(geoJson);
+          idbKeyval.set('iconesJson', geoJson);
+        })
+        .catch((error) => console.log(error + ' ' + url));
     });
 });
 
@@ -119,8 +129,8 @@ function ficheAffiche(idFiche) {
 
         // Affiche les zones de texte
         const zonesTexte = {
-          proprietes: properties,
-          info_comp: properties.info_comp,
+          rubriques: properties,
+          complements: properties.info_comp,
         };
 
         for (const zt in zonesTexte) {

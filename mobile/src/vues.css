@@ -26,30 +26,7 @@ body {
   color: var(--couleur_texte);
 }
 
-h3 {
-  margin-bottom: 5px;
-  text-decoration: underline;
-}
-
-p {
-  margin: 0;
-}
-
-a {
-  color: var(--couleur_lien);
-  text-decoration: none;
-}
-
-/* Montre uniquement les zones liées à la page courante */
-body:not(.carte) .carte,
-body:not(.fiche) .fiche,
-body:not(.nouvelles) .nouvelles,
-/*//TODO ??? body:not([class*="attente"]) .attente,*/
-body.carte .attente {
-  display: none;
-}
-
-/* Bandeau */
+/* BANDEAU */
 .bandeau {
   width: calc(100% - 20px);
   min-height: 25px;
@@ -64,18 +41,93 @@ body.carte .attente {
   font-size: 1.3em;
 }
 
-/* Page carte */
+@media screen and (max-width: 499px) {
+  .bandeau span {
+    display: none;
+  }
+}
+
+/* CARTE */
+/* <DIV> commu à toutes les vues */
+#map {
+  background: grey;
+}
+
+.leaflet-control-gps .gps-button {
+  background-image: url('../gps/gps-icon.png');
+}
+
+.leaflet-tooltip {
+  top: -18px;
+  padding: 0 2px;
+  line-height: 12px;
+  border-radius: 5px;
+  opacity: 0.6 !important;
+}
+
+/* Avoid white lines between tiles in Opera & Chrome
+ * See: https://bugs.chromium.org/p/chromium/issues/detail?id=600120 */
+.leaflet-container img.leaflet-tile {
+  mix-blend-mode: normal;
+  width: 256px !important;
+  height: 256px !important;
+}
+
+/* GESTION DES VUES */
+/* Montre uniquement les zones liées à la vue courante */
+body:not(.carte) .carte,
+body:not(.fiche) .fiche,
+body:not(.nouvelles) .nouvelles,
+/*//TODO ??? body:not([class*="attente"]) .attente,*/
+body.carte .attente {
+  display: none;
+}
+
+/* VUE CARTE */
 .carte #map {
   height: min(900px, calc(100% - 36px));
   width: min(1200px, 100%);
   margin: auto;
 }
 
-/* Page fiche */
+/* VUE FICHE */
+/* Carte de la vue fiche */
 .fiche #map {
   height: 360px;
   width: min(480px, calc(100% - 20px));
   margin: 10px;
+}
+
+@media screen and (max-width: 499px) {
+  .fiche #map {
+    height: 75vw;
+    width: 100%;
+    margin: 0;
+  }
+}
+
+/* Commun avec les nouvelles */
+h3 {
+  margin-bottom: 5px;
+  text-decoration: underline;
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: var(--couleur_lien);
+  text-decoration: none;
+}
+
+.fiche {
+  margin: 0 10px;
+  text-align: justify;
+}
+
+.fiche h2 {
+  display: inline;
 }
 
 #infos-fiche dt,
@@ -86,6 +138,8 @@ body.carte .attente {
 #infos-fiche dl {
   margin: 0 0 10px 10px;
 }
+
+/* Commentaires */
 
 #commentaires div {
   margin: 20px 0;
@@ -119,27 +173,13 @@ body.carte .attente {
   margin: 0 5px 0 0;
 }
 
-@media screen and (max-width: 499px) {
-  .bandeau span {
-    display: none;
-  }
-
-  .fiche #map {
-    height: 75vw;
-    width: 100%;
-    margin: 0;
-  }
+#commentaires-groupe img {
+  max-height: 400px;
+  max-width: 100%;
+  margin: 10px 0;
 }
 
-.fiche {
-  margin: 0 10px;
-  text-align: justify;
-}
-
-.fiche h2 {
-  display: inline;
-}
-
+/* VUE NOUVELLES */
 .nouvelles-groupe>div,
 #commentaires-groupe>div {
   margin: 10px 0;
@@ -149,44 +189,13 @@ body.carte .attente {
   text-align: justify;
 }
 
-#commentaires-groupe img {
-  max-height: 400px;
-  max-width: 100%;
-  margin: 10px 0;
-}
-
-/* Général */
+/* PAVÉ D'ATTENTE RÉSEAU */
 .attente {
   margin: 0 2px;
   padding: 10px 0;
   border: 5px solid red;
   border-style: double;
   text-align: center;
-}
-
-/* Carte */
-#map {
-  background: grey;
-}
-
-.leaflet-control-gps .gps-button {
-  background-image: url('../gps/gps-icon.png');
-}
-
-.leaflet-tooltip {
-  top: -18px;
-  padding: 0 2px;
-  line-height: 12px;
-  border-radius: 5px;
-  opacity: 0.6 !important;
-}
-
-/* Avoid white lines between tiles in Opera & Chrome
- * See: https://bugs.chromium.org/p/chromium/issues/detail?id=600120 */
-.leaflet-container img.leaflet-tile {
-  mix-blend-mode: normal;
-  width: 256px !important;
-  height: 256px !important;
 }
 
 /* DEBUG ONLY */
