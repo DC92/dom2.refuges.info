@@ -48,7 +48,7 @@ const baseLayers = {
  * Couches vectorielles *
  ************************/
 // Icônes
-const iconesLayer = L.geoJson(null, {
+const pointsLayer = L.geoJson(null, {
   // Icônes
   pointToLayer: (feature, latlng) =>
     L.marker(latlng, {
@@ -71,28 +71,23 @@ const iconesLayer = L.geoJson(null, {
     //BEST Fonctions ctrl clic + Apple suivant demande faite à wri github
     layer.on({
       click: () => {
-        // Positionne la carte sur le point
-        map.setView([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], 15);
-        //TODO BUG doit realculer la vue quand change les dimensions css
-
         // Affiche la vue fiche
         location.hash = feature.id;
-        //TODO Montre les donnés d'entête de la fiche qui sont disponibles dans l'API bbox
       },
     });
   },
 });
 
-// Affichage des clusters et des icones
+// Affichage des clusters et des points
 const clustersLayer = new L.MarkerClusterGroup();
 
 /* eslint-disable-next-line no-unused-vars */
-function afficheIcones(geoJson) {
+function affichePoints(geoJson) {
   if (geoJson) {
-    clustersLayer.removeLayer(iconesLayer);
-    iconesLayer.clearLayers();
-    iconesLayer.addData(JSON.parse(geoJson));
-    clustersLayer.addLayer(iconesLayer);
+    clustersLayer.removeLayer(pointsLayer);
+    pointsLayer.clearLayers();
+    pointsLayer.addData(JSON.parse(geoJson));
+    clustersLayer.addLayer(pointsLayer);
   }
 }
 
@@ -135,46 +130,4 @@ map.on('moveend', () => {
   // Le permalink est un #hash ajouté à la page carte uniquement et mémorisé dans indexedDB
   if (document.body.className === 'carte')
     location.hash = currentPosition.join('/');
-});
-
-// Memorise les fiches autour de la position
-map.on('moveend', () => {
-  // Coordonnées de la dalle bbox contenant la position
-  const fichesTileSize = 0.25, // ° lon / lat
-    xy = Object.values(map.getCenter()).map(a => Math.round(a / fichesTileSize));
-
-  for (let x = 0; x < 2; x++)
-    for (let y = 0; y < 2; y++) {
-      const url = serveurAPI +
-        '/api/bbox?detail=avec_commentaires&format_texte=html&nb_points=all&bbox=' + [xy[1] + y - 1, xy[0] + x - 1, xy[1] + y, xy[0] + x]
-        .map((a) => a * fichesTileSize)
-        .join(',');
-
-      console.log(url); //DCMM
-
-      /* //TODO Si les fiches de la bbox ne sont pas déjà stockés dans IndexedDB
-            //
-            if (!preLoadedEntries[bboxString])
-              await preLoadFiches(serveurAPI + //TODO REDO
-                '/api/bbox?detail=complet&format_texte=html&nb_points=all&bbox=' + bboxString
-              );
-      */
-
-      fetch(url)
-        .then(response => response.json())
-        .then(geoJson => {
-          const fichesAMeroriser = [];
-
-          geoJson.features.forEach(feature => {
-            fichesAMeroriser[feature.id] = feature.properties;
-          });
-          console.log(fichesAMeroriser); //DCMM
-
-          // Enregistre les propriétés des fiches
-          if (fichesAMeroriser.length)
-            idbKeyval.setMany(fichesAMeroriser.map((v, k) => [k, v]));
-
-          //TODO marquer dans idbKeyval que cette bbox est déjà traitée
-        });
-    }
 });

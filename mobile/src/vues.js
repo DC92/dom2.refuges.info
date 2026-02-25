@@ -1,4 +1,4 @@
-/* global serveurAPI, map, currentPosition:writable, afficheIcones, idbKeyval */
+/* global serveurAPI, map, currentPosition:writable */
 
 /****************************
  * Gestion de l'application *
@@ -43,36 +43,6 @@ function afficheVue() {
 // Affiche la vue lorsque l'ancre change
 window.addEventListener('popstate', afficheVue);
 
-// Initialisation de la page ou de l'application
-window.addEventListener('load', () => {
-
-  // Récupère (en une seule transaction pour ne pas générer de deadlock) les infos mémorisées dans indexedDB
-  idbKeyval.getMany(['currentPosition', 'iconesJson' /*, location.hash.replace('#', '')*/ ])
-    .then(([dbCurrentPosition, dbIconesJson /*, ficheJson*/ ]) => {
-
-      // Récupére la dernière position
-      if (dbCurrentPosition)
-        currentPosition = dbCurrentPosition;
-
-      // Popule la carte avec les icones mémorisées
-      afficheIcones(dbIconesJson);
-
-      // Affiche la vue correpondant à #ancre
-      afficheVue();
-
-      // Demande la (re)charge des icônes depuis le serveur
-      //TODO précharger toutes les icones
-      const url = serveurAPI + '/api/bbox?detail=icones&nb_points=all';
-      fetch(url)
-        .then((response) => response.text())
-        .then((geoJson) => {
-          afficheIcones(geoJson);
-          idbKeyval.set('iconesJson', geoJson);
-        })
-        .catch((error) => console.log(error + ' ' + url));
-    });
-});
-
 /*************
  * Vue carte *
  *************/
@@ -91,7 +61,7 @@ function carteAffiche() {
 /* eslint-disable-next-line no-unused-vars */
 function ficheAffiche(idFiche) {
   //TODO get point from DB dans une zone
-  fetch(serveurAPI + '/api/bbox?detail=avec_commentaires&format_texte=html&id=' + idFiche)
+  fetch(serveurAPI + '/api/point?detail=avec_commentaires&format_texte=html&id=' + idFiche)
     .then((response) => response.json())
     .then((geoJson) => {
       if (geoJson.features.length) {

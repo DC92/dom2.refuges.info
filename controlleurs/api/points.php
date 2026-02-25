@@ -130,6 +130,7 @@ unset($ouest,$sud,$est,$nord);
 
 switch ($req->page) {
   case 'massif':
+    $params->pas_les_points_caches=1;
     if (!empty($req->massif))
       $params->ids_polygones = $req->massif;
   case 'bbox':
@@ -174,13 +175,13 @@ switch ($req->detail) {
 /* Définition des informations transmises pour chaque option "detail" */
 
 // Uniquement affichage d'une icône cliquable avec son nom
-$filtre = ['icones' => [
+$filtre = ['minimal' => [
   'nom' => true,
   'type' => ['icone' => true],
 ]];
 
 // Utilisé par la carte actuelle WRI
-$filtre['simple'] = array_merge($filtre['icones'], [
+$filtre['simple'] = array_merge($filtre['minimal'], [
   // Ecrase les précédents
   'nom' => true,
   'type' => true,
