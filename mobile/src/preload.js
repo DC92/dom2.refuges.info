@@ -58,79 +58,22 @@ map.on('moveend', async () => {
       }
     }
 
-  /////////////////////////////////////////////////////////////////////////////////////////////////////
   /* DALLES OPENHIKINGMAP
      elles sont mémorisées par le cache de l'explorateur le temps et l'espace permis par celui-ci
      elles sont simplement appelées par preLoad sans que le résultat ne soit utilisé
      Une entrée indexedDB est créée, dont la clé est z/x/y et la valeur la date de mise en cache
+   */
   const tilesRefreshTime = 3600 * 1000, // Milliseconds
     minZoomPreloadedTiles = 6,
     maxZoomPreloadedTiles = 15,
     preloadedTilesAround = 5,
     maxTilesPerRequest = 30;
-   */
 
+  /////////////////////////////////////////////////////////////////////////////////////////////////////
   /********************************************************************
    * Les informations nécéssaires à l'affichage des icônes sur la carte
    * sont raffraichies globalement par GeoJsonAjaxCluster
    * quand une fiche a été modifiée sur la carte.
-
-  async function preLoadFiches(apiUrl) {
-    const blocsAMeroriser = [];
-
-    // Données des fiches
-    await fetch(apiUrl)
-      .then(response => response.json())
-      .then(geoJson =>
-        geoJson.features.forEach(feature => {
-          blocsAMeroriser[feature.id] = feature.properties;
-        })
-      )
-            .catch(error => console.error(error + ' ' + apiUrl));
-
-    if (blocsAMeroriser.length) {
-      // Enregistre les propriétés de la fiche
-      await idbKeyval.setMany(blocsAMeroriser.map((v, k) => [k, v]));
-
-      // Retourne les propriétés de la premiere fiche
-      return Object.values(blocsAMeroriser)[0];
-    }
-  }
-
-  async function preLoadTiles(map, position) {
-    const preLoadedEntries = [];
-
-    // Dates de préchargement des dalles
-    await idbKeyval.entries().then(entries =>
-      entries.forEach(entry => {
-        if (typeof entry[1] !== 'object')
-          preLoadedEntries[entry[0]] = entry[1];
-      })
-    );
-
-    //*******************************************
-    // Memoriser les fiches autour de la position
-
-    // Coordonnées de la dalle contenant la position
-    const xy = Object.values(position).map(a => Math.round(a / fichesTileSize));
-
-    for (let x = 0; x < 2; x++)
-      for (let y = 0; y < 2; y++) {
-        const bboxString = [xy[1] + y - 1, xy[0] + x - 1, xy[1] + y, xy[0] + x]
-          .map((a) => a * fichesTileSize)
-          .join(',');
-
-        // Si les points de la bbox ne sont pas déjà stockés dans IndexedDB
-        if (!preLoadedEntries[bboxString])
-          await preLoadFiches(serveurAPI + //TODO REDO
-            '/api/bbox?detail=complet&format_texte=html&nb_points=all&bbox=' + bboxString
-          );
-
-        idbKeyval.set(bboxString, Date.now()); // Mark cache date //TODO utiliser localstorage
-      }
-
-    //**********************************************************
-    // Précharger les dalles OpenHikingMap autour de la position
 
     let leftToFetch = maxTilesPerRequest;
 
@@ -152,6 +95,6 @@ map.on('moveend', async () => {
             }
           }
       }
-  }
-  */
+  }*/
+
 }); // End moveend
