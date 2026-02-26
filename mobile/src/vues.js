@@ -101,40 +101,28 @@ function ficheAffiche(idFiche) {
         // Positionne la carte et les coordonnées
         map.setView([coord[1], coord[0]], 15);
         map.invalidateSize();
-        document.getElementById('fiche-lat').innerHTML = coord[0];
-        document.getElementById('fiche-lng').innerHTML = coord[1];
-        document.getElementById('fiche-coord-alt').innerHTML = properties.coord.alt;
 
-        //TODO factoriser ce code
-        // Affiche les propriétés
-        for (const key in properties) {
-          const el = document.getElementById('fiche-' + key);
-
-          if (el) {
-            if (typeof properties[key] === 'string')
-              el.innerHTML = properties[key];
-            if (typeof properties[key].valeur === 'string')
-              el.innerHTML = properties[key].valeur;
-          }
-        }
-
-        // Affiche les zones de texte
-        const zonesTexte = {
+        // Affiche les données
+        const donnees = {
+          lat: coord[0],
+          lng: coord[1],
+          'coord-alt': properties.coord.alt,
           rubriques: properties,
           complements: properties.info_comp,
         };
 
-        for (const zt in zonesTexte) {
-          const el = document.getElementById('fiche-' + zt),
-            proprietes = zonesTexte[zt];
+        for (const kd in donnees) {
+          const el = document.getElementById('fiche-' + kd);
 
-          el.innerHTML = '';
-          for (const key in proprietes)
-            if (proprietes[key].nom && proprietes[key].valeur) {
-              el.insertAdjacentHTML('beforeend',
-                '<h3>' + proprietes[key].nom + ':</h3>' +
-                '<p>' + proprietes[key].valeur + '</p>');
-            }
+          if (el && typeof donnees[kd] === 'object') {
+            el.innerHTML = '';
+            for (const kdd in donnees[kd])
+              if (donnees[kd][kdd].nom && donnees[kd][kdd].valeur)
+                el.insertAdjacentHTML('beforeend',
+                  '<h3>' + donnees[kd][kdd].nom + ':</h3>' +
+                  '<p>' + donnees[kd][kdd].valeur + '</p>');
+          } else
+            el.innerHTML = donnees[kd];
         }
       }
     })
