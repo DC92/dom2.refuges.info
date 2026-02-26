@@ -1,4 +1,4 @@
-/* global L, serveurAPI, currentPosition:writable, idbKeyval */
+/* global L, serveurAPI, currentPermalink:writable, idbKeyval */
 
 /*******************************
  * Gestion de la carte Leaflet *
@@ -124,10 +124,10 @@ map.on('moveend', () => {
   console.info('MAP moveend');
 
   // Mémorisation de la position
-  currentPosition = [pos.lng, pos.lat, map.getZoom()].map(f => Math.round(f * 1000) / 1000);
-  idbKeyval.set('currentPosition', currentPosition);
+  currentPermalink = [map.getZoom(), pos.lat, pos.lng].map(f => Math.round(f * 1000) / 1000);
+  idbKeyval.set('currentPermalink', currentPermalink);
 
   // Le permalink est un #hash ajouté à la page carte uniquement et mémorisé dans indexedDB
   if (document.body.className === 'carte')
-    location.hash = currentPosition.join('/');
+    location.hash = currentPermalink.join('/');
 });

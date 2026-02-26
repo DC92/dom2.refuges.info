@@ -1,4 +1,4 @@
-/* global serveurAPI, map, currentPosition:writable, affichePoints, idbKeyval */
+/* global serveurAPI, map, currentPermalink:writable, affichePoints, idbKeyval */
 
 /****************************
  * Gestion de l'application *
@@ -46,15 +46,15 @@ window.addEventListener('popstate', afficheVue);
 // Initialisation de la page ou de l'application
 window.addEventListener('load', () => {
   // Récupère (en une seule transaction pour ne pas générer de deadlock) les infos mémorisées dans indexedDB
-  idbKeyval.getMany(['currentPosition', 'pointsJson'])
-    .then(([dbCurrentPosition, dbPointsJson]) => {
+  idbKeyval.getMany(['currentPermalink', 'pointsJson'])
+    .then(([dbCurrentPermalink, dbPointsJson]) => {
 
       // Affiche la vue correpondant à #ancre
       afficheVue();
 
       // Récupére la dernière position
-      if (dbCurrentPosition)
-        currentPosition = dbCurrentPosition;
+      if (dbCurrentPermalink)
+        currentPermalink = dbCurrentPermalink;
 
       // Popule la carte avec les points mémorisées
       affichePoints(dbPointsJson);
@@ -78,9 +78,9 @@ window.addEventListener('load', () => {
 /* eslint-disable-next-line no-unused-vars */
 function carteAffiche() {
   const hashPermalink = location.hash.match(/[0-9.]+\/[0-9.]+\/[0-9.]+/u),
-    pos = (hashPermalink ? hashPermalink[0].split('/') : currentPosition);
+    pos = (hashPermalink ? hashPermalink[0].split('/') : currentPermalink);
 
-  map.setView([pos[1], pos[0]], pos[2]);
+  map.setView([pos[1], pos[2]], pos[0]);
   map.invalidateSize();
 }
 
