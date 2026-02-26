@@ -49,6 +49,9 @@ window.addEventListener('load', () => {
   idbKeyval.getMany(['currentPosition', 'pointsJson'])
     .then(([dbCurrentPosition, dbPointsJson]) => {
 
+      // Affiche la vue correpondant à #ancre
+      afficheVue();
+
       // Récupére la dernière position
       if (dbCurrentPosition)
         currentPosition = dbCurrentPosition;
@@ -56,8 +59,16 @@ window.addEventListener('load', () => {
       // Popule la carte avec les points mémorisées
       affichePoints(dbPointsJson);
 
-      // Affiche la vue correpondant à #ancre
-      afficheVue();
+      // Demande la (re)charge des icônes depuis le serveur
+      //TODO tester si présent sur le serveur et depuis
+      const apiUrl = serveurAPI + '/api/points?detail=minimal';
+      fetch(apiUrl)
+        .then((response) => response.text())
+        .then((geoJson) => {
+          affichePoints(geoJson);
+          idbKeyval.set('pointsJson', geoJson);
+        })
+        .catch(error => console.error(error + ' ' + apiUrl));
     });
 });
 
@@ -78,8 +89,9 @@ function carteAffiche() {
  *************/
 /* eslint-disable-next-line no-unused-vars */
 function ficheAffiche(idFiche) {
+  const apiUrl = serveurAPI + '/api/point?detail=avec_commentaires&format_texte=html&id=' + idFiche;
   //TODO get point from DB dans une zone
-  fetch(serveurAPI + '/api/point?detail=avec_commentaires&format_texte=html&id=' + idFiche)
+  fetch(apiUrl)
     .then((response) => response.json())
     .then((geoJson) => {
       if (geoJson.features.length) {
@@ -126,7 +138,8 @@ function ficheAffiche(idFiche) {
             }
         }
       }
-    });
+    })
+    .catch(error => console.error(error + ' ' + apiUrl));
 }
 
 //TODO COMMENTAIRES

@@ -43,6 +43,7 @@ self.addEventListener('fetch', interceptedFetch => {
 
           return externFetch;
         })
+        .catch(error => console.error(error + ' ' + interceptedFetch.request.url))
       )
     )
   );
