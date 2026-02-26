@@ -105,7 +105,6 @@ function ficheAffiche(idFiche) {
         document.getElementById('fiche-lng').innerHTML = coord[1];
         document.getElementById('fiche-coord-alt').innerHTML = properties.coord.alt;
 
-        //TODO css des infos complémentaires
         //TODO factoriser ce code
         // Affiche les propriétés
         for (const key in properties) {

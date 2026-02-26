@@ -26,6 +26,40 @@ body {
   color: var(--couleur_texte);
 }
 
+/* Présentations communes */
+h3 {
+  margin-bottom: 5px;
+  font-size: 20px;
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+p {
+  margin: 0;
+}
+
+#fiche-complements h3,
+#fiche-complements p {
+  display: inline;
+  font-size: 16px;
+  font-weight: normal;
+  text-decoration: none;
+}
+
+#fiche-complements p {
+  margin-left: 3px;
+}
+
+#fiche-complements p:after {
+  content: '';
+  display: block;
+}
+
+a {
+  color: var(--couleur_lien);
+  text-decoration: none;
+}
+
 /* BANDEAU */
 .bandeau {
   width: calc(100% - 20px);
@@ -106,21 +140,6 @@ body.carte .attente {
   }
 }
 
-/* Commun avec les nouvelles */
-h3 {
-  margin-bottom: 5px;
-  text-decoration: underline;
-}
-
-p {
-  margin: 0;
-}
-
-a {
-  color: var(--couleur_lien);
-  text-decoration: none;
-}
-
 .fiche {
   margin: 0 10px;
   text-align: justify;
@@ -140,7 +159,6 @@ a {
 }
 
 /* Commentaires */
-
 #commentaires div {
   margin: 20px 0;
   border: 1px solid white;
