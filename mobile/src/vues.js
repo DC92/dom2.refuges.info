@@ -1,4 +1,4 @@
-/* global serveurAPI, map, currentPosition:writable */
+/* global serveurAPI, map, currentPosition:writable, affichePoints, idbKeyval */
 
 /****************************
  * Gestion de l'application *
@@ -42,6 +42,24 @@ function afficheVue() {
 
 // Affiche la vue lorsque l'ancre change
 window.addEventListener('popstate', afficheVue);
+
+// Initialisation de la page ou de l'application
+window.addEventListener('load', () => {
+  // Récupère (en une seule transaction pour ne pas générer de deadlock) les infos mémorisées dans indexedDB
+  idbKeyval.getMany(['currentPosition', 'pointsJson'])
+    .then(([dbCurrentPosition, dbPointsJson]) => {
+
+      // Récupére la dernière position
+      if (dbCurrentPosition)
+        currentPosition = dbCurrentPosition;
+
+      // Popule la carte avec les points mémorisées
+      affichePoints(dbPointsJson);
+
+      // Affiche la vue correpondant à #ancre
+      afficheVue();
+    });
+});
 
 /*************
  * Vue carte *
