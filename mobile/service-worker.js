@@ -35,7 +35,8 @@ self.addEventListener('fetch', (event) =>
       // Sinon, on le cherche via le réseau
       fetch(event.request).then(externFetch => {
         // On met en cache uniquement les resources du même serveur
-        if (event.request.url.includes(location.host))
+        if (event.request.url.includes(location.host) ||
+          event.request.url.includes('openhikingmap'))
           cache.put(event.request, externFetch.clone());
         return externFetch;
       })

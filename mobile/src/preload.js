@@ -11,12 +11,12 @@
  * Elle s'arrête aprés chaque pas si a carte changé de position
  */
 
-let currentStartPreload = Date.now(); // Pour vérifier qu'il n'y en a qu'un à la fois
+let currentStartPreLoad = Date.now(); // Pour vérifier qu'il n'y en a qu'un à la fois
 
 /* eslint-disable-next-line no-unused-vars */
 async function preLoad() {
-  const thisStartPreload = Date.now();
-  currentStartPreload=thisStartPreload;
+  const thisStartPreLoad = Date.now();
+  currentStartPreLoad = thisStartPreLoad;
 
   console.log('PreLoad'); //DCMM
   //TODO précharger toutes les icones
@@ -42,7 +42,7 @@ async function preLoad() {
         apiUrl = serveurAPI + '/api/bbox?detail=avec_commentaires&format_texte=html&nb_points=all&bbox=' + bbox;
 
       console.log('await idbKeyval.get(bbox)'); //DCMM
-      if (thisStartPreload === currentStartPreload &&
+      if (thisStartPreLoad === currentStartPreLoad &&
         !await idbKeyval.get(bbox).then((v) => v)) { // Si cette bbox n'est pas marquée
         // Regroupe l'enregistrement de toutes les valeurs d'une bbox dans une seule transaction
         const blocsAMeroriser = [];
@@ -67,31 +67,28 @@ async function preLoad() {
      elles sont simplement appelées par preLoad sans que le résultat ne soit utilisé
      Une entrée indexedDB est créée, dont la clé est z/x/y et la valeur la date de mise en cache
    */
-  const //tilesRefreshTime = 3600 * 1000, // Milliseconds
-    minZoomPreloadedTiles = 6,
-    maxZoomPreloadedTiles = 15,
-    preloadedTilesAround = 5;
+  const tilesRefreshTime = 60 * 1000, // Milliseconds
+    minZoomPreLoadedTiles = 8,
+    maxZoomPreLoadedTiles = 10,
+    preLoadedTilesAround = 1;
 
-  for (let ecart = 1; ecart <= preloadedTilesAround; ecart++)
-    for (let zoom = minZoomPreloadedTiles; zoom <= maxZoomPreloadedTiles; zoom++) {
+  for (let ecart = 1; ecart <= preLoadedTilesAround; ecart++)
+    for (let zoom = minZoomPreLoadedTiles; zoom <= maxZoomPreLoadedTiles; zoom++) {
       const baseTileXY = Object.values(
         map.project(Object.values(map.getCenter()), zoom)
       ).map(a => Math.round(a / 256));
 
       for (let x = baseTileXY[0] - ecart; x < baseTileXY[0] + ecart; x++)
         for (let y = baseTileXY[1] - ecart; y < baseTileXY[1] + ecart; y++)
-          if (thisStartPreload === currentStartPreload) {
+          if (thisStartPreLoad === currentStartPreLoad) {
             const baseTileRef = zoom + '/' + x + '/' + y,
-              //cacheDate = (preLoadedEntries[baseTileRef] || 0) + tilesRefreshTime,
               url = 'https://tile.openmaps.fr/openhikingmap/' + baseTileRef + '.png';
 
-            console.log(url); //DCMM
+            // Si le préchargement est récent
+            if (await idbKeyval.get(baseTileRef) < (Date.now() - tilesRefreshTime)) {
               await fetch(url); // Charger la dalle dans le cache de l'explorateur
-            /*
-            if (cacheDate < Date.now() && leftToFetch-- > 0) {
-               idbKeyval.set(baseTileRef, Date.now()); // Mark cache date
+              await idbKeyval.set(baseTileRef, Date.now()); // Mark cache date
             }
-  */
           }
     }
 };
