@@ -68,7 +68,6 @@ window.addEventListener('load', () => {
         .then((response) => response.text())
         .then((geoJson) => {
           affichePoints(geoJson);
-          console.log('idbKeyval.set(pointsJson)'); //DCMM
           idbKeyval.set('pointsJson', geoJson);
         })
         .catch(error => console.error(error + ' ' + apiUrl));

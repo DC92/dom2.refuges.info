@@ -11,11 +11,14 @@
  * Elle s'arrête aprés chaque pas si a carte changé de position
  */
 
-map.on('moveend', async () => {
-  const currentLat = map.getCenter().lat;
+let currentStartPreload = Date.now(); // Pour vérifier qu'il n'y en a qu'un à la fois
+
+/* eslint-disable-next-line no-unused-vars */
+async function preLoad() {
+  const thisStartPreload = Date.now();
+  currentStartPreload=thisStartPreload;
 
   console.log('PreLoad'); //DCMM
-
   //TODO précharger toutes les icones
 
   /* INFORMATIONS NÉCÉSSAIRES À L'AFFICHAGE DES FICHES ET DE SES COMMENTAIRES
@@ -39,7 +42,7 @@ map.on('moveend', async () => {
         apiUrl = serveurAPI + '/api/bbox?detail=avec_commentaires&format_texte=html&nb_points=all&bbox=' + bbox;
 
       console.log('await idbKeyval.get(bbox)'); //DCMM
-      if (currentLat === map.getCenter().lat && // Si la carte n'a pas bougé
+      if (thisStartPreload === currentStartPreload &&
         !await idbKeyval.get(bbox).then((v) => v)) { // Si cette bbox n'est pas marquée
         // Regroupe l'enregistrement de toutes les valeurs d'une bbox dans une seule transaction
         const blocsAMeroriser = [];
@@ -55,7 +58,6 @@ map.on('moveend', async () => {
           .catch(error => console.error(error + ' ' + apiUrl));
 
         blocsAMeroriser[bbox] = Date.now(); // Marque la bbox comme mémorisée, même s'il n'y avait pas de fiches
-        console.log('idbKeyval.setMany(blocsAMeroriser.map'); //DCMM
         await idbKeyval.setMany(blocsAMeroriser.map((v, k) => [k, v]));
       }
     }
@@ -65,39 +67,31 @@ map.on('moveend', async () => {
      elles sont simplement appelées par preLoad sans que le résultat ne soit utilisé
      Une entrée indexedDB est créée, dont la clé est z/x/y et la valeur la date de mise en cache
    */
-  const tilesRefreshTime = 3600 * 1000, // Milliseconds
+  const //tilesRefreshTime = 3600 * 1000, // Milliseconds
     minZoomPreloadedTiles = 6,
     maxZoomPreloadedTiles = 15,
-    preloadedTilesAround = 5,
-    maxTilesPerRequest = 30;
+    preloadedTilesAround = 5;
 
-  /////////////////////////////////////////////////////////////////////////////////////////////////////
-  /********************************************************************
-   * Les informations nécéssaires à l'affichage des icônes sur la carte
-   * sont raffraichies globalement par GeoJsonAjaxCluster
-   * quand une fiche a été modifiée sur la carte.
+  for (let ecart = 1; ecart <= preloadedTilesAround; ecart++)
+    for (let zoom = minZoomPreloadedTiles; zoom <= maxZoomPreloadedTiles; zoom++) {
+      const baseTileXY = Object.values(
+        map.project(Object.values(map.getCenter()), zoom)
+      ).map(a => Math.round(a / 256));
 
-    let leftToFetch = maxTilesPerRequest;
-
-    for (let ecart = 1; ecart <= preloadedTilesAround; ecart++)
-      for (let zoom = minZoomPreloadedTiles; zoom <= maxZoomPreloadedTiles; zoom++) {
-        const baseTileXY = Object.values(
-          map.project(Object.values(position), zoom)
-        ).map(a => Math.round(a / 256));
-
-        for (let x = baseTileXY[0] - ecart; x < baseTileXY[0] + ecart; x++)
-          for (let y = baseTileXY[1] - ecart; y < baseTileXY[1] + ecart; y++) {
+      for (let x = baseTileXY[0] - ecart; x < baseTileXY[0] + ecart; x++)
+        for (let y = baseTileXY[1] - ecart; y < baseTileXY[1] + ecart; y++)
+          if (thisStartPreload === currentStartPreload) {
             const baseTileRef = zoom + '/' + x + '/' + y,
-              cacheDate = (preLoadedEntries[baseTileRef] || 0) + tilesRefreshTime,
+              //cacheDate = (preLoadedEntries[baseTileRef] || 0) + tilesRefreshTime,
               url = 'https://tile.openmaps.fr/openhikingmap/' + baseTileRef + '.png';
 
-            if (cacheDate < Date.now() && leftToFetch-- > 0) {
-console.log('idbKeyval.set(baseTileRef)');//DCMM
-              idbKeyval.set(baseTileRef, Date.now()); // Mark cache date
+            console.log(url); //DCMM
               await fetch(url); // Charger la dalle dans le cache de l'explorateur
+            /*
+            if (cacheDate < Date.now() && leftToFetch-- > 0) {
+               idbKeyval.set(baseTileRef, Date.now()); // Mark cache date
             }
+  */
           }
-      }
-  }*/
-
-}); // End moveend
+    }
+};
