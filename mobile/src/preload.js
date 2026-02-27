@@ -19,7 +19,18 @@ async function preLoad() {
   currentStartPreLoad = thisStartPreLoad;
 
   console.log('PreLoad'); //DCMM
+
   //TODO précharger toutes les icones
+  const pointsJson = JSON.parse(await idbKeyval.get('pointsJson')),
+    nomsIconesMemorises = await idbKeyval.get('nomsIcones') || [],
+    nomsIcones = [];
+
+  pointsJson.features.forEach((point) => {
+    nomsIcones[point.properties.type.icone] = true;
+  });
+  await idbKeyval.set('nomsIcones', nomsIcones); // Mark cache date
+  console.log(nomsIconesMemorises); //DCMM
+  console.log(nomsIcones); //DCMM
 
   /* INFORMATIONS NÉCÉSSAIRES À L'AFFICHAGE DES FICHES ET DE SES COMMENTAIRES
      Elles sont chargées par dalles bbox dans indexedDB avec une clé égale à la valeur de id_point
@@ -62,6 +73,8 @@ async function preLoad() {
       }
     }
 
+  return; //DCMM
+
   /* DALLES OPENHIKINGMAP
      elles sont mémorisées par le cache de l'explorateur le temps et l'espace permis par celui-ci
      elles sont simplement appelées par preLoad sans que le résultat ne soit utilisé
@@ -69,8 +82,8 @@ async function preLoad() {
    */
   const tilesRefreshTime = 60 * 1000, // Milliseconds
     minZoomPreLoadedTiles = 8,
-    maxZoomPreLoadedTiles = 10,
-    preLoadedTilesAround = 1;
+    maxZoomPreLoadedTiles = 12,
+    preLoadedTilesAround = 2;
 
   for (let ecart = 1; ecart <= preLoadedTilesAround; ecart++)
     for (let zoom = minZoomPreLoadedTiles; zoom <= maxZoomPreLoadedTiles; zoom++) {

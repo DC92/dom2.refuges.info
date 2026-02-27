@@ -63,7 +63,7 @@ window.addEventListener('load', () => {
 
       // Demande la (re)charge des icônes depuis le serveur
       //TODO tester si présent sur le serveur et depuis
-      const apiUrl = serveurAPI + '/api/points?detail=minimal';
+      const apiUrl = serveurAPI + '/api/bbox?nb_points=all&detail=minimal';
       fetch(apiUrl)
         .then((response) => response.text())
         .then((geoJson) => {
