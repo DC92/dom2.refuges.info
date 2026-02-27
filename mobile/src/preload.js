@@ -38,6 +38,7 @@ map.on('moveend', async () => {
         .join(','),
         apiUrl = serveurAPI + '/api/bbox?detail=avec_commentaires&format_texte=html&nb_points=all&bbox=' + bbox;
 
+      console.log('await idbKeyval.get(bbox)'); //DCMM
       if (currentLat === map.getCenter().lat && // Si la carte n'a pas bougé
         !await idbKeyval.get(bbox).then((v) => v)) { // Si cette bbox n'est pas marquée
         // Regroupe l'enregistrement de toutes les valeurs d'une bbox dans une seule transaction
@@ -54,6 +55,7 @@ map.on('moveend', async () => {
           .catch(error => console.error(error + ' ' + apiUrl));
 
         blocsAMeroriser[bbox] = Date.now(); // Marque la bbox comme mémorisée, même s'il n'y avait pas de fiches
+        console.log('idbKeyval.setMany(blocsAMeroriser.map'); //DCMM
         await idbKeyval.setMany(blocsAMeroriser.map((v, k) => [k, v]));
       }
     }
@@ -90,6 +92,7 @@ map.on('moveend', async () => {
               url = 'https://tile.openmaps.fr/openhikingmap/' + baseTileRef + '.png';
 
             if (cacheDate < Date.now() && leftToFetch-- > 0) {
+console.log('idbKeyval.set(baseTileRef)');//DCMM
               idbKeyval.set(baseTileRef, Date.now()); // Mark cache date
               await fetch(url); // Charger la dalle dans le cache de l'explorateur
             }

@@ -125,6 +125,7 @@ map.on('moveend', () => {
 
   // Mémorisation de la position
   currentPermalink = [map.getZoom(), pos.lat, pos.lng].map(f => Math.round(f * 1000) / 1000);
+  console.log('idbKeyval.set(currentPermalink)'); //DCMM
   idbKeyval.set('currentPermalink', currentPermalink);
 
   // Le permalink est un #hash ajouté à la page carte uniquement et mémorisé dans indexedDB

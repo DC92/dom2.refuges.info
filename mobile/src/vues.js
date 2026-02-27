@@ -46,8 +46,10 @@ window.addEventListener('popstate', afficheVue);
 // Initialisation de la page ou de l'application
 window.addEventListener('load', () => {
   // Récupère (en une seule transaction pour ne pas générer de deadlock) les infos mémorisées dans indexedDB
+  console.log('idbKeyval.getMany([currentPermalink, pointsJson])'); //DCMM
   idbKeyval.getMany(['currentPermalink', 'pointsJson'])
     .then(([dbCurrentPermalink, dbPointsJson]) => {
+      //TODO UnknownError: Internal error opening backing store for indexedDB.open
 
       // Affiche la vue correpondant à #ancre
       afficheVue();
@@ -66,10 +68,12 @@ window.addEventListener('load', () => {
         .then((response) => response.text())
         .then((geoJson) => {
           affichePoints(geoJson);
+          console.log('idbKeyval.set(pointsJson)'); //DCMM
           idbKeyval.set('pointsJson', geoJson);
         })
         .catch(error => console.error(error + ' ' + apiUrl));
-    });
+    })
+    .catch(error => console.error(error + ' idbKeyval.getMany'));
 });
 
 /*************
@@ -108,6 +112,7 @@ function ficheAffiche(idFiche) {
           lng: coord[1],
           'coord-alt': properties.coord.alt,
           rubriques: properties,
+          //TODO masquer Informations complémentaires: si pas d'info_comp
           complements: properties.info_comp,
         };
 
