@@ -11,6 +11,7 @@
 /*******************
  * Couches tuilées *
  *******************/
+//TODO permalink baseLayer
 const baseLayers = {
   OpenHikingMap: L.tileLayer('https://tile.openmaps.fr/openhikingmap/{z}/{x}/{y}.png', {
     maxZoom: 18,

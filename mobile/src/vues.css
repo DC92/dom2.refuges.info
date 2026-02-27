@@ -99,6 +99,38 @@ a {
   opacity: 0.6 !important;
 }
 
+#selecteur {
+  position: absolute;
+  top: 46px;
+  left: 50px;
+  z-index: 400;
+  border: 2px solid rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  background: white;
+  background-clip: padding-box;
+  /* évite un espace entre les inline-block */
+  font-size: 0;
+}
+
+#selecteur a {
+  display: inline-block;
+  width: 29px;
+  height: 29px;
+}
+
+#selecteur a:hover {
+  background: #eee;
+}
+
+#selecteur a:not(:first-child) {
+  border-left: 1px solid #ccc;
+}
+
+#selecteur img {
+  width: 16px !important;
+  margin: 6px 0 0 7px;
+}
+
 /* Avoid white lines between tiles in Opera & Chrome
  * See: https://bugs.chromium.org/p/chromium/issues/detail?id=600120 */
 .leaflet-container img.leaflet-tile {

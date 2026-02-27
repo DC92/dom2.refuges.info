@@ -43,8 +43,8 @@ Démonstrateur front-end pour refuges.info
   <!-- Progressive Web Application -->
   <link href="manifest.json" rel="manifest">
   <script>
-    const serveurAPI = window.location.origin,
-      //const serveurAPI = 'https://dom2.refuges.info',
+    //const serveurAPI = window.location.origin,
+    const serveurAPI = 'https://dom2.refuges.info',
       debugPWA = true;
     let currentPermalink = [7, 45, 7]; // [zoom, lat, lng] Défaut : Alpes de l'ouest
 
@@ -82,6 +82,12 @@ Démonstrateur front-end pour refuges.info
 
   <!-- Template carte -->
   <div id="map"></div>
+  <div id="selecteur">
+    <a href="gg" id="selecteur-cabane" title="Cabane"><img src="https://dom2.refuges.info/images/icones/cabane.svg" /></a>
+    <a href="gg" id="selecteur-refuge" title="Refuge"><img src="https://dom2.refuges.info/images/icones/cabane_red.svg" /></a>
+    <a href="gg" id="selecteur-gite" title="Gîte"><img src="https://dom2.refuges.info/images/icones/cabane_green.svg" /></a>
+    <a href="gg" id="selecteur-eau" title="Point d'au"><img src="https://dom2.refuges.info/images/icones/pointdeau.svg" /></a>
+  </div>
 
   <!-- Template fiche, zone informations -->
   <div class="fiche">
