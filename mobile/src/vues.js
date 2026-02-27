@@ -92,7 +92,7 @@ function carteAffiche() {
  *************/
 /* eslint-disable-next-line no-unused-vars */
 function ficheAffiche(idFiche) {
-  const apiUrl = serveurAPI + '/api/point?detail=avec_commentaires&format_texte=html&id=' + idFiche;
+  const apiUrl = serveurAPI + '/api/point?detail=fiche&format_texte=html&id=' + idFiche;
   //TODO get point from DB dans une zone
   fetch(apiUrl)
     .then((response) => response.json())

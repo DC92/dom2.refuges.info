@@ -162,8 +162,8 @@ if($req->type_points != "all") {
 // les champs qu'on veut voir figurer dans la réponse de l'API
 
 switch ($req->detail) {
-  case 'avec_commentaires':
-    $params->avec_commentaires = true;
+  case 'fiche':
+    $params->fiche = true;
   case 'complet':
     $params->avec_infos_creation = true;
     $params->avec_infos_complementaires = true;
@@ -220,7 +220,7 @@ $filtre['complet'] = array_merge($filtre['simple'], [
 ]);
 
 // Pour les applications
-$filtre['avec_commentaires'] = array_merge($filtre['complet'], [
+$filtre['fiche'] = array_merge($filtre['complet'], [
   // Ecrase les précédents
   'type' => ['valeur' => true],
   'coord' => ['alt' => true],
@@ -336,7 +336,7 @@ foreach ($points_bruts as $i=>$point) {
     }
 
     // Dom 01/2026 : ajout des commentaires si demandés
-    if($req->detail == 'avec_commentaires')
+    if($req->detail == 'fiche')
     {
       $conditions_commentaires = new stdClass();
       $conditions_commentaires->ids_points = $point->id_point;

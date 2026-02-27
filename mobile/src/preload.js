@@ -20,25 +20,33 @@ async function preLoad() {
 
   console.log('PreLoad'); //DCMM
 
-  //TODO précharger toutes les icones
-  const pointsJson = JSON.parse(await idbKeyval.get('pointsJson')),
-    nomsIconesMemorises = await idbKeyval.get('nomsIcones') || [],
-    nomsIcones = [];
+  /*********************************************
+   * PRÉCHARGEMENT DE TOUTES LES ICONES UTILISEES
+   */
+  const pointsGeoJson = await idbKeyval.get('pointsJson');
 
-  pointsJson.features.forEach((point) => {
-    nomsIcones[point.properties.type.icone] = true;
-  });
-  await idbKeyval.set('nomsIcones', nomsIcones); // Mark cache date
-  console.log(nomsIconesMemorises); //DCMM
-  console.log(nomsIcones); //DCMM
+  if (pointsGeoJson) {
+    const pointsJson = JSON.parse(pointsGeoJson),
+      nomsIconesMemorises = await idbKeyval.get('nomsIcones') || [],
+      nomsIcones = [];
 
-  /* INFORMATIONS NÉCÉSSAIRES À L'AFFICHAGE DES FICHES ET DE SES COMMENTAIRES
-     Elles sont chargées par dalles bbox dans indexedDB avec une clé égale à la valeur de id_point
-     sauf les photos dqui sont mémorisées par le cache de l'explorateur
-     Une fois chargés, seules sont rafraichies les fiches ou commentaires récement modifiés (API bbox?depuis=)
-     Une entrée supplémentaire indexedDB est créée pour signaler que la dalle a été traités
-     dont la clé est la bbox (0.5,43.5,1,44) et la valeur la date epoch de mise en cache
-  */
+    pointsJson.features.forEach((point) => {
+      nomsIcones[point.properties.type.icone] = true;
+    });
+
+    await idbKeyval.set('nomsIcones', nomsIcones); // Mémorise la liste des icônes mémorisées
+    console.log(nomsIconesMemorises); //DCMM
+    console.log(nomsIcones); //DCMM
+  }
+
+  /*************************************************************************
+   * INFORMATIONS NÉCÉSSAIRES À L'AFFICHAGE DES FICHES ET DE SES COMMENTAIRES
+   * Elles sont chargées par dalles bbox dans indexedDB avec une clé égale à la valeur de id_point
+   * sauf les photos dqui sont mémorisées par le cache de l'explorateur
+   * Une fois chargés, seules sont rafraichies les fiches ou commentaires récement modifiés (API bbox?depuis=)
+   * Une entrée supplémentaire indexedDB est créée pour signaler que la dalle a été traités
+   * dont la clé est la bbox (0.5,43.5,1,44) et la valeur la date epoch de mise en cache
+   */
 
   // Numéro de la dalle bbox contenant la position
   const fichesTileSize = 0.25, // ° lon / lat
@@ -50,7 +58,7 @@ async function preLoad() {
       const bbox = [xy[1] + y - 1, xy[0] + x - 1, xy[1] + y, xy[0] + x]
         .map((a) => a * fichesTileSize)
         .join(','),
-        apiUrl = serveurAPI + '/api/bbox?detail=avec_commentaires&format_texte=html&nb_points=all&bbox=' + bbox;
+        apiUrl = serveurAPI + '/api/bbox?detail=fiche&format_texte=html&nb_points=all&bbox=' + bbox;
 
       console.log('await idbKeyval.get(bbox)'); //DCMM
       if (thisStartPreLoad === currentStartPreLoad &&

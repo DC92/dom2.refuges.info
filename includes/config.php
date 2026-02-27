@@ -220,7 +220,7 @@ $config_wri['api_format_detail'] = [
   'minimal' => "long, lat, nom, type, id & icone",
   'simple' => "idem + état, places & lien",
   'complet' => "toutes les informations disponibles sur les points",
-  'avec_commentaires' => "idem + les commentaires",
+  'fiche' => "idem + les commentaires",
 ];
     
 /******** Nom du fichier contenant les points exportés **********/
