@@ -3,13 +3,13 @@
 /*******************************
  * Gestion de la carte Leaflet *
  *******************************
-  L'application étant constituée d'une page unique, chargée lors du lancement de l'applacation,
+  L'application étant constituée d'une page unique, chargée lors du lancement de l'application,
   la carte reste ouverte dans un élément <div id="map> pour toutes les variantes d'affichage de l'appli (carte, fiche, ...)
   seules sont modifiées la visibilité et la taille du DIV et la position de la vue de la carte
 */
 
 function selectionTypesPoints(el) {
-  console.log(el); //DCMM
+  console.log(1234); //DCMM //TODO
 }
 
 /*******************

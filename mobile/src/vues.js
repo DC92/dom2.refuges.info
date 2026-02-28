@@ -70,9 +70,9 @@ window.addEventListener('load', () => {
           affichePoints(geoJson);
           idbKeyval.set('pointsJson', geoJson);
         })
-        .catch(error => console.error(error + ' ' + apiUrl));
+        .catch(error => console.error(error + ' in fetching ' + apiUrl));
     })
-    .catch(error => console.error(error + ' idbKeyval.getMany'));
+    .catch(error => console.error(error));
 });
 
 /*************
@@ -130,7 +130,7 @@ function ficheAffiche(idFiche) {
         }
       }
     })
-    .catch(error => console.error(error + ' ' + apiUrl));
+    .catch(error => console.error(error + ' in fetching ' + apiUrl));
 }
 
 //TODO COMMENTAIRES

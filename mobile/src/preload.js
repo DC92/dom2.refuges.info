@@ -13,9 +13,15 @@
 
 let currentStartPreLoad = Date.now(); // Pour vérifier qu'il n'y en a qu'un à la fois
 
+async function selectionPreLoad(el) {
+  console.log(await preLoad()); //DCMM
+}
+
 /* eslint-disable-next-line no-unused-vars */
-async function preLoad() {
-  const thisStartPreLoad = Date.now();
+async function preLoad(load) {
+  // Si load est vide, effectue seulement le calcul des volumes faits / à faire
+  const thisStartPreLoad = Date.now(),
+    mesure = [];
   currentStartPreLoad = thisStartPreLoad;
 
   console.log('PreLoad'); //DCMM
@@ -34,10 +40,16 @@ async function preLoad() {
       nomsIcones[point.properties.type.icone] = true;
     });
 
-    await idbKeyval.set('nomsIcones', nomsIcones); // Mémorise la liste des icônes mémorisées
-    console.log(nomsIconesMemorises); //DCMM
-    console.log(nomsIcones); //DCMM
+    mesure['icones-fait'] = mesure['icones-total'] = Object.keys(nomsIcones).length; // 1 Kb par icône
+
+    //TODO réellement charger les icones
+    if (load && thisStartPreLoad === currentStartPreLoad)
+      await idbKeyval.set('nomsIcones', nomsIcones); // Mémorise la liste des icônes mises en cache
+
+    //console.log(nomsIconesMemorises); //DCMM
+    //console.log(nomsIcones); //DCMM
   }
+  return mesure;
 
   /*************************************************************************
    * INFORMATIONS NÉCÉSSAIRES À L'AFFICHAGE DES FICHES ET DE SES COMMENTAIRES
@@ -74,19 +86,18 @@ async function preLoad() {
               blocsAMeroriser[feature.id] = feature.properties;
             });
           })
-          .catch(error => console.error(error + ' ' + apiUrl));
+          .catch(error => console.error(error + ' in fetching ' + apiUrl));
 
         blocsAMeroriser[bbox] = Date.now(); // Marque la bbox comme mémorisée, même s'il n'y avait pas de fiches
         await idbKeyval.setMany(blocsAMeroriser.map((v, k) => [k, v]));
       }
     }
 
-  return; //DCMM
+  return mesure; //DCMM
 
   /* DALLES OPENHIKINGMAP
-     elles sont mémorisées par le cache de l'explorateur le temps et l'espace permis par celui-ci
-     elles sont simplement appelées par preLoad sans que le résultat ne soit utilisé
-     Une entrée indexedDB est créée, dont la clé est z/x/y et la valeur la date de mise en cache
+     elles sont mémorisées par le cache du service-worker
+     Une entrée indexedDB est créée dont la clé est z/x/y pour ne l'appeler qu'une fois
    */
   const tilesRefreshTime = 60 * 1000, // Milliseconds
     minZoomPreLoadedTiles = 8,
@@ -112,4 +123,6 @@ async function preLoad() {
             }
           }
     }
+
+  return mesure;
 };
