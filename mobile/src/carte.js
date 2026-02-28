@@ -8,6 +8,10 @@
   seules sont modifiées la visibilité et la taille du DIV et la position de la vue de la carte
 */
 
+function selectionTypesPoints(el) {
+  console.log(el); //DCMM
+}
+
 /*******************
  * Couches tuilées *
  *******************/

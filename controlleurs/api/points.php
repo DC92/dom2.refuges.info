@@ -175,13 +175,13 @@ switch ($req->detail) {
 /* Définition des informations transmises pour chaque option "detail" */
 
 // Uniquement affichage d'une icône cliquable avec son nom
-$filtre = ['minimal' => [
+$filtre = ['icone' => [
   'nom' => true,
   'type' => ['icone' => true],
 ]];
 
 // Utilisé par la carte actuelle WRI
-$filtre['simple'] = array_merge($filtre['minimal'], [
+$filtre['simple'] = array_merge($filtre['icone'], [
   // Ecrase les précédents
   'nom' => true,
   'type' => true,

@@ -99,6 +99,7 @@ a {
   opacity: 0.6 !important;
 }
 
+/* Sélecteur de type de points */
 #selecteur {
   position: absolute;
   top: 46px;
@@ -107,7 +108,6 @@ a {
   border: 2px solid rgba(0, 0, 0, 0.2);
   border-radius: 4px;
   background: white;
-  background-clip: padding-box;
   /* évite un espace entre les inline-block */
   font-size: 0;
 }
@@ -116,6 +116,11 @@ a {
   display: inline-block;
   width: 29px;
   height: 29px;
+  cursor: pointer;
+}
+
+#selecteur a.unselected {
+  opacity: 0.3;
 }
 
 #selecteur a:hover {
@@ -129,6 +134,41 @@ a {
 #selecteur img {
   width: 16px !important;
   margin: 6px 0 0 7px;
+}
+
+/* Selecteur de préchargement */
+#preload {
+  position: absolute;
+  top: 209px;
+  left: 11px;
+  z-index: 400;
+  border: 2px solid rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  background: white;
+  color: black;
+  text-align: center;
+}
+
+#preload a {
+  display: inline-block;
+  position: relative;
+  top: 3px;
+  width: 29px;
+  height: 29px;
+  cursor: pointer;
+}
+
+#preload.selected>a,
+#preload:not(.selected) div {
+  display: none;
+}
+
+#preload div h4 {
+  margin: 0;
+}
+
+#preload div a {
+  float: right;
 }
 
 /* Avoid white lines between tiles in Opera & Chrome

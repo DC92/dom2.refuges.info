@@ -82,11 +82,26 @@ Démonstrateur front-end pour refuges.info
 
   <!-- Template carte -->
   <div id="map"></div>
-  <div id="selecteur">
-    <a href="gg" id="selecteur-cabane" title="Cabane"><img src="https://dom2.refuges.info/images/icones/cabane.svg" /></a>
-    <a href="gg" id="selecteur-refuge" title="Refuge"><img src="https://dom2.refuges.info/images/icones/cabane_red.svg" /></a>
-    <a href="gg" id="selecteur-gite" title="Gîte"><img src="https://dom2.refuges.info/images/icones/cabane_green.svg" /></a>
-    <a href="gg" id="selecteur-eau" title="Point d'au"><img src="https://dom2.refuges.info/images/icones/pointdeau.svg" /></a>
+  <div id="selecteur" onclick="selectionTypesPoints(this)">
+    <a onclick="this.classList.toggle('unselected')" id="selecteur-cabane" title="Cabane">
+      <img src="https://dom2.refuges.info/images/icones/cabane.svg" />
+    </a>
+    <a onclick="this.classList.toggle('unselected')" id="selecteur-refuge" title="Refuge">
+      <img src="https://dom2.refuges.info/images/icones/cabane_red.svg" />
+    </a>
+    <a onclick="this.classList.toggle('unselected')" id="selecteur-gite" title="Gîte">
+      <img src="https://dom2.refuges.info/images/icones/cabane_green.svg" />
+    </a>
+    <a onclick="this.classList.toggle('unselected')" id="selecteur-eau" title="Point d'au">
+      <img src="https://dom2.refuges.info/images/icones/pointdeau.svg" />
+    </a>
+  </div>
+  <div id="preload">
+    <a title="Précharger les données" onclick="this.parentElement.classList.add('selected')">&#128259;</a>
+    <div>
+      <a title="Fermer l'encart" onclick="this.parentElement.parentElement.classList.remove('selected')">&#128473;</a>
+      <h4>Préchargement des données</h4>
+    </div>
   </div>
 
   <!-- Template fiche, zone informations -->
