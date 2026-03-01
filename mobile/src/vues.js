@@ -46,6 +46,7 @@ window.addEventListener('popstate', afficheVue);
 // Initialisation de la page ou de l'application
 window.addEventListener('load', () => {
   // Récupère les infos mémorisées dans indexedDB en enchainant les transaction pour ne pas générer de deadlock
+  console.info('idbKeyval.get dbCurrentPermalink'); //DCMM
   idbKeyval.get('dbCurrentPermalink')
     .then((dbCurrentPermalink) => {
       // Récupére la dernière position
@@ -56,6 +57,7 @@ window.addEventListener('load', () => {
       afficheVue();
 
       // maintenant, récupère les points mémorisées
+      console.info('idbKeyval.get dbPointsJson'); //DCMM
       idbKeyval.get('dbPointsJson')
         .then((dbPointsJson) => {
           // Popule la carte avec les points
@@ -73,7 +75,9 @@ window.addEventListener('load', () => {
               affichePoints(geoJson);
 
               // Les enregistre à la place des des précédents
+              console.info('idbKeyval.set dbPointsJson'); //DCMM
               idbKeyval.set('dbPointsJson', geoJson)
+                .catch(error => console.error(error + ' idbKeyval.set dbPointsJson'))
                 .finally(() => console.info('END idbKeyval.set dbPointsJson'));
             })
             .catch(error => console.error(error + ' fetching ' + apiUrl));
