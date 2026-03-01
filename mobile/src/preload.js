@@ -1,4 +1,4 @@
-/* global map, serveurAPI, idbKeyval */
+/* global serveurAPI, map, idbKeyval */
 
 /*********************************************************************
  * Préchargements dans une zone autour de celle parcourue par la carte
@@ -11,8 +11,13 @@
  * Elle s'arrête aprés chaque pas si a carte changé de position
  */
 
-let currentStartPreLoad = Date.now(); // Pour vérifier qu'il n'y en a qu'un à la fois
+let currentStartPreLoad = Date.now(), // Pour vérifier qu'il n'y en a qu'un à la fois
+  globalPointsJson = {
+    type: 'FeatureCollection',
+    features: []
+  };
 
+/* eslint-disable-next-line no-unused-vars */
 async function selectionPreLoad(el) {
   console.log(await preLoad()); //DCMM
 }
@@ -29,22 +34,29 @@ async function preLoad(load) {
   /*********************************************
    * PRÉCHARGEMENT DE TOUTES LES ICONES UTILISEES
    */
-  const pointsGeoJson = await idbKeyval.get('pointsJson');
+  console.info('idbKeyval.get dbPointsJson'); //DCMM
+  const pointsGeoJson = await idbKeyval.get('dbPointsJson')
+    .finally(() => console.info('END idbKeyval.get dbPointsJson')); //DCMM
 
   if (pointsGeoJson) {
-    const pointsJson = JSON.parse(pointsGeoJson),
-      nomsIconesMemorises = await idbKeyval.get('nomsIcones') || [],
-      nomsIcones = [];
+    console.info('idbKeyval.get nomsIcones'); //DCMM,
+    const nomsIcones = [],
+      nomsIconesMemorises = await idbKeyval.get('nomsIcones')
+      .finally(() => console.info('END idbKeyval.get nomsIcones')); //DCMM
 
-    pointsJson.features.forEach((point) => {
+    globalPointsJson = JSON.parse(pointsGeoJson);
+    globalPointsJson.features.forEach((point) => {
       nomsIcones[point.properties.type.icone] = true;
     });
 
     mesure['icones-fait'] = mesure['icones-total'] = Object.keys(nomsIcones).length; // 1 Kb par icône
 
     //TODO réellement charger les icones
-    if (load && thisStartPreLoad === currentStartPreLoad)
-      await idbKeyval.set('nomsIcones', nomsIcones); // Mémorise la liste des icônes mises en cache
+    if (load && thisStartPreLoad === currentStartPreLoad) {
+      console.info('idbKeyval.set nomsIcones'); //DCMM,
+      await idbKeyval.set('nomsIcones', nomsIcones) // Mémorise la liste des icônes mises en cache
+        .finally(() => console.info('END idbKeyval.set nomsIcones')); //DCMM,
+    }
 
     //console.log(nomsIconesMemorises); //DCMM
     //console.log(nomsIcones); //DCMM
@@ -74,7 +86,9 @@ async function preLoad(load) {
 
       console.log('await idbKeyval.get(bbox)'); //DCMM
       if (thisStartPreLoad === currentStartPreLoad &&
-        !await idbKeyval.get(bbox).then((v) => v)) { // Si cette bbox n'est pas marquée
+        !await idbKeyval.get(bbox).then((v) => v) // Si cette bbox n'est pas marquée
+        .finally(() => console.info('END idbKeyval.get nomsIcones')) //DCMM
+      ) {
         // Regroupe l'enregistrement de toutes les valeurs d'une bbox dans une seule transaction
         const blocsAMeroriser = [];
 
@@ -89,7 +103,9 @@ async function preLoad(load) {
           .catch(error => console.error(error + ' in fetching ' + apiUrl));
 
         blocsAMeroriser[bbox] = Date.now(); // Marque la bbox comme mémorisée, même s'il n'y avait pas de fiches
-        await idbKeyval.setMany(blocsAMeroriser.map((v, k) => [k, v]));
+        console.info('idbKeyval.setMany blocsAMeroriser'); //DCMM
+        await idbKeyval.setMany(blocsAMeroriser.map((v, k) => [k, v]))
+          .finally(() => console.info('END idbKeyval.setMany blocsAMeroriser')); //DCMM
       }
     }
 
@@ -117,9 +133,14 @@ async function preLoad(load) {
               url = 'https://tile.openmaps.fr/openhikingmap/' + baseTileRef + '.png';
 
             // Si le préchargement est récent
-            if (await idbKeyval.get(baseTileRef) < (Date.now() - tilesRefreshTime)) {
+            if ((Date.now() - tilesRefreshTime) >
+              await idbKeyval.get(baseTileRef)
+              .finally(() => console.info('END idbKeyval.set baseTileRef')) //DCMM
+            ) {
               await fetch(url); // Charger la dalle dans le cache de l'explorateur
-              await idbKeyval.set(baseTileRef, Date.now()); // Mark cache date
+              console.info('idbKeyval.set baseTileRef'); //DCMM
+              await idbKeyval.set(baseTileRef, Date.now()) // Mark cache date
+                .finally(() => console.info('END idbKeyval.set baseTileRef')); //DCMM
             }
           }
     }

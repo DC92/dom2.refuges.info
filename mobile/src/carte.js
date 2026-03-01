@@ -1,4 +1,4 @@
-/* global L, serveurAPI, currentPermalink:writable, preLoad, idbKeyval */
+/* global L, serveurAPI, globalCurrentPermalink:writable, idbKeyval */
 
 /*******************************
  * Gestion de la carte Leaflet *
@@ -7,10 +7,6 @@
   la carte reste ouverte dans un élément <div id="map> pour toutes les variantes d'affichage de l'appli (carte, fiche, ...)
   seules sont modifiées la visibilité et la taille du DIV et la position de la vue de la carte
 */
-
-function selectionTypesPoints(el) {
-  console.log(1234); //DCMM //TODO
-}
 
 /*******************
  * Couches tuilées *
@@ -83,15 +79,35 @@ const pointsLayer = L.geoJson(null, {
   },
 });
 
+/* eslint-disable-next-line no-unused-vars */
+function selectionTypesPoints(el) {
+  console.log(1234); //DCMM //TODO
+}
+
 // Affichage des clusters et des points
 const clustersLayer = new L.MarkerClusterGroup();
 
 /* eslint-disable-next-line no-unused-vars */
 function affichePoints(geoJson) {
   if (geoJson) {
+    const json = JSON.parse(geoJson),
+      typesPointsVisibles = [];
+    //TODO réafficher les points geoJson (les garder en mémoire !!
+
+    for (const e of document.querySelectorAll('#selecteur a')) {
+      console.log(e); //DCMM
+      console.log(e.id); //DCMM
+    }
+
+    json.features = json.features.filter((point) => {
+      console.log(point.properties.type.id); //DCMM
+      return point.properties.type.id === 7;
+    });
+    //console.log(json);//DCMM
+
     clustersLayer.removeLayer(pointsLayer);
     pointsLayer.clearLayers();
-    pointsLayer.addData(JSON.parse(geoJson));
+    pointsLayer.addData(json);
     clustersLayer.addLayer(pointsLayer);
   }
 }
@@ -129,12 +145,12 @@ map.on('moveend', () => {
   console.info('MAP moveend');
 
   // Mémorisation de la position
-  currentPermalink = [map.getZoom(), pos.lat, pos.lng].map(f => Math.round(f * 1000) / 1000);
-  idbKeyval.set('currentPermalink', currentPermalink);
+  globalCurrentPermalink = [map.getZoom(), pos.lat, pos.lng].map(f => Math.round(f * 1000) / 1000);
+  console.info('idbKeyval.set dbCurrentPermalink'); //DCMM
+  idbKeyval.set('dbCurrentPermalink', globalCurrentPermalink)
+    .finally(() => console.info('END idbKeyval.set dbCurrentPermalink')); //DCMM
 
   // Le permalink est un #hash ajouté à la page carte uniquement et mémorisé dans indexedDB
   if (document.body.className === 'carte')
-    location.hash = currentPermalink.join('/');
-
-  preLoad();
+    location.hash = globalCurrentPermalink.join('/');
 });

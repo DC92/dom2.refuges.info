@@ -1,4 +1,4 @@
-/* global serveurAPI, map, currentPermalink:writable, affichePoints, idbKeyval */
+/* global serveurAPI, map, affichePoints, globalCurrentPermalink:writable, idbKeyval */
 
 /****************************
  * Gestion de l'application *
@@ -46,8 +46,8 @@ window.addEventListener('popstate', afficheVue);
 // Initialisation de la page ou de l'application
 window.addEventListener('load', () => {
   // Récupère (en une seule transaction pour ne pas générer de deadlock) les infos mémorisées dans indexedDB
-  console.log('idbKeyval.getMany([currentPermalink, pointsJson])'); //DCMM
-  idbKeyval.getMany(['currentPermalink', 'pointsJson'])
+  console.log('idbKeyval.getMany([dbCurrentPermalink, dbPointsJson])'); //DCMM
+  idbKeyval.getMany(['dbCurrentPermalink', 'dbPointsJson'])
     .then(([dbCurrentPermalink, dbPointsJson]) => {
       //TODO UnknownError: Internal error opening backing store for indexedDB.open
 
@@ -56,7 +56,7 @@ window.addEventListener('load', () => {
 
       // Récupére la dernière position
       if (dbCurrentPermalink)
-        currentPermalink = dbCurrentPermalink;
+        globalCurrentPermalink = dbCurrentPermalink;
 
       // Popule la carte avec les points mémorisées
       affichePoints(dbPointsJson);
@@ -68,11 +68,13 @@ window.addEventListener('load', () => {
         .then((response) => response.text())
         .then((geoJson) => {
           affichePoints(geoJson);
-          idbKeyval.set('pointsJson', geoJson);
+          idbKeyval.set('dbPointsJson', geoJson)
+            .finally(() => console.info('END idbKeyval.set dbPointsJson'));
         })
         .catch(error => console.error(error + ' in fetching ' + apiUrl));
     })
-    .catch(error => console.error(error));
+    .catch(error => console.error(error))
+    .finally(() => console.info('END idbKeyval.getMany([dbCurrentPermalink, dbPointsJson])'));
 });
 
 /*************
@@ -81,7 +83,7 @@ window.addEventListener('load', () => {
 /* eslint-disable-next-line no-unused-vars */
 function carteAffiche() {
   const hashPermalink = location.hash.match(/[0-9.]+\/[0-9.]+\/[0-9.]+/u),
-    pos = (hashPermalink ? hashPermalink[0].split('/') : currentPermalink);
+    pos = (hashPermalink ? hashPermalink[0].split('/') : globalCurrentPermalink);
 
   map.setView([pos[1], pos[2]], pos[0]);
   map.invalidateSize();

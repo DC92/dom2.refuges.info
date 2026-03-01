@@ -36,8 +36,8 @@ Démonstrateur front-end pour refuges.info
 
   <!-- This package -->
   <script src="src/carte.js" defer></script>
-  <script src="src/vues.js" defer></script>
   <script src="src/preload.js" defer></script>
+  <script src="src/vues.js" defer></script>
   <link href="src/vues.css" rel="stylesheet">
 
   <!-- Progressive Web Application -->
@@ -46,7 +46,7 @@ Démonstrateur front-end pour refuges.info
     //const serveurAPI = window.location.origin,
     const serveurAPI = 'https://dom2.refuges.info',
       debugPWA = true;
-    let currentPermalink = [7, 45, 7]; // [zoom, lat, lng] Défaut : Alpes de l'ouest
+    let globalCurrentPermalink = [7, 45, 7]; // [zoom, lat, lng] Défaut : Alpes de l'ouest
 
     if (!window.location.search) // Debug without PWA
       navigator.serviceWorker.register('service-worker.js')
@@ -83,16 +83,16 @@ Démonstrateur front-end pour refuges.info
   <!-- Template carte -->
   <div id="map"></div>
   <div id="selecteur" onclick="selectionTypesPoints(this)">
-    <a onclick="this.classList.toggle('unselected')" id="selecteur-cabane" title="Cabane">
+    <a id="7" onclick="this.classList.toggle('unselected')" id="selecteur-cabane" title="Cabane">
       <img src="https://dom2.refuges.info/images/icones/cabane.svg" />
     </a>
-    <a onclick="this.classList.toggle('unselected')" id="selecteur-refuge" title="Refuge">
+    <a id="10" onclick="this.classList.toggle('unselected')" id="selecteur-refuge" title="Refuge">
       <img src="https://dom2.refuges.info/images/icones/cabane_red.svg" />
     </a>
-    <a onclick="this.classList.toggle('unselected')" id="selecteur-gite" title="Gîte">
+    <a id="9" onclick="this.classList.toggle('unselected')" id="selecteur-gite" title="Gîte">
       <img src="https://dom2.refuges.info/images/icones/cabane_green.svg" />
     </a>
-    <a onclick="this.classList.toggle('unselected')" id="selecteur-eau" title="Point d'au">
+    <a id="23" onclick="this.classList.toggle('unselected')" id="selecteur-eau" title="Point d'au">
       <img src="https://dom2.refuges.info/images/icones/pointdeau.svg" />
     </a>
   </div>
