@@ -34,14 +34,17 @@ async function preLoad(load) {
   /*********************************************
    * PRÉCHARGEMENT DE TOUTES LES ICONES UTILISEES
    */
+  //TODO reprendre à partir de globalPointsJson
   console.info('idbKeyval.get dbPointsJson'); //DCMM
   const pointsGeoJson = await idbKeyval.get('dbPointsJson')
+    .catch(error => console.error(error + ' idbKeyval.get dbPointsJson'))
     .finally(() => console.info('END idbKeyval.get dbPointsJson')); //DCMM
 
   if (pointsGeoJson) {
     console.info('idbKeyval.get nomsIcones'); //DCMM,
     const nomsIcones = [],
       nomsIconesMemorises = await idbKeyval.get('nomsIcones')
+      .catch(error => console.error(error + ' idbKeyval.get nomsIcones'))
       .finally(() => console.info('END idbKeyval.get nomsIcones')); //DCMM
 
     globalPointsJson = JSON.parse(pointsGeoJson);
@@ -55,6 +58,7 @@ async function preLoad(load) {
     if (load && thisStartPreLoad === currentStartPreLoad) {
       console.info('idbKeyval.set nomsIcones'); //DCMM,
       await idbKeyval.set('nomsIcones', nomsIcones) // Mémorise la liste des icônes mises en cache
+        .catch(error => console.error(error + ' idbKeyval.set nomsIcones'))
         .finally(() => console.info('END idbKeyval.set nomsIcones')); //DCMM,
     }
 
@@ -86,7 +90,8 @@ async function preLoad(load) {
 
       console.log('await idbKeyval.get(bbox)'); //DCMM
       if (thisStartPreLoad === currentStartPreLoad &&
-        !await idbKeyval.get(bbox).then((v) => v) // Si cette bbox n'est pas marquée
+        !await idbKeyval.get(bbox)
+        .then((v) => v) // Si cette bbox n'est pas marquée
         .finally(() => console.info('END idbKeyval.get nomsIcones')) //DCMM
       ) {
         // Regroupe l'enregistrement de toutes les valeurs d'une bbox dans une seule transaction
@@ -100,7 +105,7 @@ async function preLoad(load) {
               blocsAMeroriser[feature.id] = feature.properties;
             });
           })
-          .catch(error => console.error(error + ' in fetching ' + apiUrl));
+          .catch(error => console.error(error + ' fetching ' + apiUrl));
 
         blocsAMeroriser[bbox] = Date.now(); // Marque la bbox comme mémorisée, même s'il n'y avait pas de fiches
         console.info('idbKeyval.setMany blocsAMeroriser'); //DCMM

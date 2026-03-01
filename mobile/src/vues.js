@@ -45,36 +45,44 @@ window.addEventListener('popstate', afficheVue);
 
 // Initialisation de la page ou de l'application
 window.addEventListener('load', () => {
-  // Récupère (en une seule transaction pour ne pas générer de deadlock) les infos mémorisées dans indexedDB
-  console.log('idbKeyval.getMany([dbCurrentPermalink, dbPointsJson])'); //DCMM
-  idbKeyval.getMany(['dbCurrentPermalink', 'dbPointsJson'])
-    .then(([dbCurrentPermalink, dbPointsJson]) => {
-      //TODO UnknownError: Internal error opening backing store for indexedDB.open
-
-      // Affiche la vue correpondant à #ancre
-      afficheVue();
-
+  // Récupère les infos mémorisées dans indexedDB en enchainant les transaction pour ne pas générer de deadlock
+  idbKeyval.get('dbCurrentPermalink')
+    .then((dbCurrentPermalink) => {
       // Récupére la dernière position
       if (dbCurrentPermalink)
         globalCurrentPermalink = dbCurrentPermalink;
 
-      // Popule la carte avec les points mémorisées
-      affichePoints(dbPointsJson);
+      // Affiche la vue correpondant à #ancre
+      afficheVue();
 
-      // Demande la (re)charge des icônes depuis le serveur
-      //TODO tester si présent sur le serveur et depuis
-      const apiUrl = serveurAPI + '/api/bbox?nb_points=all&detail=icone';
-      fetch(apiUrl)
-        .then((response) => response.text())
-        .then((geoJson) => {
-          affichePoints(geoJson);
-          idbKeyval.set('dbPointsJson', geoJson)
-            .finally(() => console.info('END idbKeyval.set dbPointsJson'));
+      // maintenant, récupère les points mémorisées
+      idbKeyval.get('dbPointsJson')
+        .then((dbPointsJson) => {
+          // Popule la carte avec les points
+          affichePoints(dbPointsJson);
+
+          // Demande la (re)charge des icônes depuis le serveur
+          const apiUrl = serveurAPI + '/api/bbox?nb_points=all&detail=icone';
+
+          //TODO tester si présent sur le serveur et depuis
+          // Redemande tous les points aux serveurs
+          fetch(apiUrl)
+            .then((response) => response.text())
+            .then((geoJson) => {
+              // Les affiche
+              affichePoints(geoJson);
+
+              // Les enregistre à la place des des précédents
+              idbKeyval.set('dbPointsJson', geoJson)
+                .finally(() => console.info('END idbKeyval.set dbPointsJson'));
+            })
+            .catch(error => console.error(error + ' fetching ' + apiUrl));
         })
-        .catch(error => console.error(error + ' in fetching ' + apiUrl));
+        .catch(error => console.error(error + ' idbKeyval.get dbPointsJson'))
+        .finally(() => console.info('END idbKeyval.get dbPointsJson'));
     })
-    .catch(error => console.error(error))
-    .finally(() => console.info('END idbKeyval.getMany([dbCurrentPermalink, dbPointsJson])'));
+    .catch(error => console.error(error + ' idbKeyval.get dbCurrentPermalink'))
+    .finally(() => console.info('END idbKeyval.get dbCurrentPermalink'));
 });
 
 /*************
@@ -132,7 +140,7 @@ function ficheAffiche(idFiche) {
         }
       }
     })
-    .catch(error => console.error(error + ' in fetching ' + apiUrl));
+    .catch(error => console.error(error + ' fetching ' + apiUrl));
 }
 
 //TODO COMMENTAIRES
