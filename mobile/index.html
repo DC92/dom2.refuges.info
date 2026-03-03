@@ -36,18 +36,19 @@ Démonstrateur front-end pour refuges.info
 
   <!-- This package -->
   <script src="src/carte.js" defer></script>
-  <script src="src/preload.js" defer></script>
+  <!--script src="src/preload.js" defer></script-->
   <script src="src/vues.js" defer></script>
   <link href="src/vues.css" rel="stylesheet">
 
   <!-- Progressive Web Application -->
   <link href="manifest.json" rel="manifest">
   <script>
-    //const serveurAPI = window.location.origin,
     const serveurAPI = 'https://dom2.refuges.info',
       debugPWA = true;
-    let globalCurrentPermalink = [7, 45, 7]; // [zoom, lat, lng] Défaut : Alpes de l'ouest
 
+    localStorage.permalink ||= '7/45/7'; // zoom/latitude/longitude Défaut : Alpes de l'Ouest
+
+    // Chargement du service worker
     if (!window.location.search) // Debug without PWA
       navigator.serviceWorker.register('service-worker.js')
       .then(() => console.info('Service worker registred'));
@@ -82,7 +83,7 @@ Démonstrateur front-end pour refuges.info
 
   <!-- Template carte -->
   <div id="map"></div>
-  <div id="selecteur" onclick="selectionTypesPoints(this)">
+  <div id="selecteur" onclick="affichePoints(globalPointsJson)">
     <a id="7" onclick="this.classList.toggle('unselected')" id="selecteur-cabane" title="Cabane">
       <img src="https://dom2.refuges.info/images/icones/cabane.svg" />
     </a>
@@ -96,7 +97,7 @@ Démonstrateur front-end pour refuges.info
       <img src="https://dom2.refuges.info/images/icones/pointdeau.svg" />
     </a>
   </div>
-  <div id="preload" onclick="selectionPreLoad(this)">
+  <div id="preload" onclick="preLoad()">
     <a title="Précharger les données" onclick="this.parentElement.classList.add('selected')">&#128259;</a>
     <div>
       <a title="Fermer l'encart" onclick="this.parentElement.parentElement.classList.remove('selected')">&#128473;</a>

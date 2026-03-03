@@ -1,17 +1,16 @@
-/* global L, serveurAPI, globalCurrentPermalink:writable, idbKeyval */
+/* global L, serveurAPI */
 
 /*******************************
  * Gestion de la carte Leaflet *
  *******************************
-  L'application étant constituée d'une page unique, chargée lors du lancement de l'application,
-  la carte reste ouverte dans un élément <div id="map> pour toutes les variantes d'affichage de l'appli (carte, fiche, ...)
-  seules sont modifiées la visibilité et la taille du DIV et la position de la vue de la carte
+  L'application est constituée d'une page unique, chargée lors du lancement.
+  La carte reste ouverte dans un <div id="map> pour toutes les vues de l'appli (carte, fiche, ...)
+  seules sont modifiées la taille du DIV et la position lon/lat
 */
 
 /*******************
  * Couches tuilées *
  *******************/
-//TODO permalink baseLayer
 const baseLayers = {
   OpenHikingMap: L.tileLayer('https://tile.openmaps.fr/openhikingmap/{z}/{x}/{y}.png', {
     maxZoom: 18,
@@ -48,7 +47,7 @@ const baseLayers = {
 /************************
  * Couches vectorielles *
  ************************/
-// Icônes
+// Couche gérant tous les points
 const pointsLayer = L.geoJson(null, {
   // Icônes
   pointToLayer: (feature, latlng) =>
@@ -79,32 +78,32 @@ const pointsLayer = L.geoJson(null, {
   },
 });
 
-/* eslint-disable-next-line no-unused-vars */
-function selectionTypesPoints(el) {
-  console.log(1234); //DCMM //TODO
-}
-
-// Affichage des clusters et des points
+// Couche gérant les clusters
 const clustersLayer = new L.MarkerClusterGroup();
 
 /* eslint-disable-next-line no-unused-vars */
-function affichePoints(geoJson) {
-  if (geoJson) {
-    const json = JSON.parse(geoJson),
-      typesPointsVisibles = [];
-    //TODO réafficher les points geoJson (les garder en mémoire !!
+function affichePoints(json) {
+  if (json) {
+    // Filtre les types de points suivant sélecteur de la carte
+    //TODO filtre points
+    /*
+    const typesPointsVisibles = [];
 
     for (const e of document.querySelectorAll('#selecteur a')) {
       console.log(e); //DCMM
       console.log(e.id); //DCMM
     }
+    console.log(json); //DCMM
 
-    json.features = json.features.filter((point) => {
-      console.log(point.properties.type.id); //DCMM
-      return point.properties.type.id === 7;
-    });
-    //console.log(json);//DCMM
+    const    features = json.features.filter((point) => {
+          console.log(point.properties.type.id); //DCMM
+          return point.properties.type.id === 7;
+        });
+        console.log(json);//DCMM
+        console.log(features);//DCMM
+    */
 
+    // Vide la couche contenant les points, la détache et rattache à la couche gérant les clusters
     clustersLayer.removeLayer(pointsLayer);
     pointsLayer.clearLayers();
     pointsLayer.addData(json);
@@ -115,9 +114,7 @@ function affichePoints(geoJson) {
 /******************************
  * Initialisation de la carte *
  ******************************/
-const // hash = location.hash.replace('#', ''),
-  //hashs =  hash.split('/').map((v)=>parseFloat (v)),
-  map = L.map('map');
+const map = L.map('map');
 
 console.info('MAP init');
 
@@ -144,14 +141,12 @@ map.on('moveend', () => {
 
   console.info('MAP moveend');
 
-  // Mémorisation de la position
-  globalCurrentPermalink = [map.getZoom(), pos.lat, pos.lng].map(f => Math.round(f * 1000) / 1000);
-  console.info('idbKeyval.set dbCurrentPermalink'); //DCMM
-  idbKeyval.set('dbCurrentPermalink', globalCurrentPermalink)
-    .catch(error => console.error(error + ' idbKeyval.get dbCurrentPermalink'))
-    .finally(() => console.info('END idbKeyval.set dbCurrentPermalink')); //DCMM
+  // Le permalink est mémorisé dans la variable permanente de l'explorateur localStorage
+  localStorage.permalink = [map.getZoom(), pos.lat, pos.lng].map(f => Math.round(f * 1000) / 1000).join('/');
 
   // Le permalink est un #hash ajouté à la page carte uniquement et mémorisé dans indexedDB
   if (document.body.className === 'carte')
-    location.hash = globalCurrentPermalink.join('/');
+    location.hash = localStorage.permalink;
+
+  //TODO permalink baseLayer
 });

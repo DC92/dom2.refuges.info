@@ -1,4 +1,4 @@
-/* global serveurAPI, map, affichePoints, globalCurrentPermalink:writable, idbKeyval */
+/* global serveurAPI, map, affichePoints, globalPointsJson:writable, idbKeyval */
 
 /****************************
  * Gestion de l'application *
@@ -13,11 +13,15 @@
  Le nom de la vue est attribué à la classe de l'élémént <BODY> qui pilote les différentes variantes de .CSS
 */
 
+//TODO faire 2 caches service-worker : un pour le code à rèinitialiser, un pour les données à garder
+
+
 /***********************
  * Affichage de la vue *
  ***********************/
 const nomVues = ['carte', 'nouvelles', 'fiche'];
 
+// Affiche la vue lorsque #ancre de l'URL change
 function afficheVue() {
   const ancre = location.hash.replace('#', '');
 
@@ -40,53 +44,50 @@ function afficheVue() {
   window[vue + 'Affiche'](ancre);
 }
 
-// Affiche la vue lorsque l'ancre change
+// Exécute à l'init
+afficheVue();
+
+// Changement externe de l'ancre
 window.addEventListener('popstate', afficheVue);
 
-// Initialisation de la page ou de l'application
+/*************************************************
+ * Initialisation de la page ou de l'application *
+ *************************************************/
 window.addEventListener('load', () => {
-  // Récupère les infos mémorisées dans indexedDB en enchainant les transaction pour ne pas générer de deadlock
-  console.info('idbKeyval.get dbCurrentPermalink'); //DCMM
-  idbKeyval.get('dbCurrentPermalink')
-    .then((dbCurrentPermalink) => {
-      // Récupére la dernière position
-      if (dbCurrentPermalink)
-        globalCurrentPermalink = dbCurrentPermalink;
+  // Récupère les infos mémorisées dans indexedDB
+  //TODO faire concurence entre les 2 promises / fetch ayant la préséance
+  console.info('idbKeyval.get dbPointsJson'); //DCMM
+  idbKeyval.get('dbPointsJson')
+    .finally(() => console.info('END idbKeyval.get dbPointsJson')) //DCMM
+    .catch(er => console.error(er))
+    .then((dbPointsJson) => {
 
-      // Affiche la vue correpondant à #ancre
-      afficheVue();
+      globalPointsJson = dbPointsJson; // Les enregistre dans une variable
+      affichePoints(globalPointsJson); // Popule la carte avec les points globalPointsJson
 
-      // maintenant, récupère les points mémorisées
-      console.info('idbKeyval.get dbPointsJson'); //DCMM
-      idbKeyval.get('dbPointsJson')
-        .then((dbPointsJson) => {
-          // Popule la carte avec les points
-          affichePoints(dbPointsJson);
+      // Demande la (re)charge des icônes depuis le serveur
+      const apiUrl = serveurAPI + '/api/bbox?nb_points=all&detail=icone';
 
-          // Demande la (re)charge des icônes depuis le serveur
-          const apiUrl = serveurAPI + '/api/bbox?nb_points=all&detail=icone';
+      // Redemande tous les points aux serveurs
+      //TODO tester si présent sur le serveur et depuis
+      fetch(apiUrl)
+        .then((response) => response.text())
+        .catch(er => console.error(er + ' fetching ' + apiUrl))
+        .then((geoJson) => {
+          // geoJson est l'encodage string, pointJson une structure javascriot
+          globalPointsJson = JSON.parse(geoJson);
 
-          //TODO tester si présent sur le serveur et depuis
-          // Redemande tous les points aux serveurs
-          fetch(apiUrl)
-            .then((response) => response.text())
-            .then((geoJson) => {
-              // Les affiche
-              affichePoints(geoJson);
+          // Les enregistre à la place des des précédents
+          // globalPointsJson est une variable javascript globale, dbPointsJson son enregistrement dans indexDB
+          console.info('idbKeyval.set dbPointsJson'); //DCMM
+          idbKeyval.set('dbPointsJson', globalPointsJson)
+            .finally(() => console.info('END idbKeyval.set dbPointsJson')) //DCMM
+            .catch(er => console.error(er));
 
-              // Les enregistre à la place des des précédents
-              console.info('idbKeyval.set dbPointsJson'); //DCMM
-              idbKeyval.set('dbPointsJson', geoJson)
-                .catch(error => console.error(error + ' idbKeyval.set dbPointsJson'))
-                .finally(() => console.info('END idbKeyval.set dbPointsJson'));
-            })
-            .catch(error => console.error(error + ' fetching ' + apiUrl));
-        })
-        .catch(error => console.error(error + ' idbKeyval.get dbPointsJson'))
-        .finally(() => console.info('END idbKeyval.get dbPointsJson'));
-    })
-    .catch(error => console.error(error + ' idbKeyval.get dbCurrentPermalink'))
-    .finally(() => console.info('END idbKeyval.get dbCurrentPermalink'));
+          // Affiche ou réaffiche les points reçus
+          affichePoints(globalPointsJson);
+        });
+    });
 });
 
 /*************
@@ -94,8 +95,7 @@ window.addEventListener('load', () => {
  *************/
 /* eslint-disable-next-line no-unused-vars */
 function carteAffiche() {
-  const hashPermalink = location.hash.match(/[0-9.]+\/[0-9.]+\/[0-9.]+/u),
-    pos = (hashPermalink ? hashPermalink[0].split('/') : globalCurrentPermalink);
+  const pos = localStorage.permalink.split('/');
 
   map.setView([pos[1], pos[2]], pos[0]);
   map.invalidateSize();
@@ -144,7 +144,7 @@ function ficheAffiche(idFiche) {
         }
       }
     })
-    .catch(error => console.error(error + ' fetching ' + apiUrl));
+    .catch(er => console.error(er + ' fetching ' + apiUrl));
 }
 
 //TODO COMMENTAIRES

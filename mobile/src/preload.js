@@ -10,17 +10,14 @@
  * Elle effectue pas à pas la mémorisation des icônes, fiches & fond de carte autour de la position
  * Elle s'arrête aprés chaque pas si a carte changé de position
  */
+//TODO faire un bouton effacer les données
 
-let currentStartPreLoad = Date.now(), // Pour vérifier qu'il n'y en a qu'un à la fois
-  globalPointsJson = {
+let currentStartPreLoad = Date.now(), // Pour vérifier qu'il n'y en a qu'un actif à la fois
+  globalPointsJson = { // Initialisation par défaut
+    //TODO éliminer en testant le contenu
     type: 'FeatureCollection',
     features: []
   };
-
-/* eslint-disable-next-line no-unused-vars */
-async function selectionPreLoad(el) {
-  console.log(await preLoad()); //DCMM
-}
 
 /* eslint-disable-next-line no-unused-vars */
 async function preLoad(load) {
@@ -33,21 +30,14 @@ async function preLoad(load) {
 
   /*********************************************
    * PRÉCHARGEMENT DE TOUTES LES ICONES UTILISEES
-   */
-  //TODO reprendre à partir de globalPointsJson
-  console.info('idbKeyval.get dbPointsJson'); //DCMM
-  const pointsGeoJson = await idbKeyval.get('dbPointsJson')
-    .catch(error => console.error(error + ' idbKeyval.get dbPointsJson'))
-    .finally(() => console.info('END idbKeyval.get dbPointsJson')); //DCMM
-
-  if (pointsGeoJson) {
+   *********************************************/
+  if (globalPointsJson) {
     console.info('idbKeyval.get nomsIcones'); //DCMM,
     const nomsIconesMemorises = await idbKeyval.get('nomsIcones')
-      .catch(error => console.error(error + ' idbKeyval.get nomsIcones'))
-      .finally(() => console.info('END idbKeyval.get nomsIcones')), //DCMM
+      .finally(() => console.info('END idbKeyval.get nomsIcones')) //DCMM
+      .catch(er => console.error(er + ' idbKeyval.get nomsIcones')),
       nomsIcones = [];
 
-    globalPointsJson = JSON.parse(pointsGeoJson);
     globalPointsJson.features.forEach((point) => {
       nomsIcones[point.properties.type.icone] = true;
     });
@@ -58,23 +48,23 @@ async function preLoad(load) {
     if (load && thisStartPreLoad === currentStartPreLoad) {
       console.info('idbKeyval.set nomsIcones'); //DCMM,
       await idbKeyval.set('nomsIcones', nomsIcones) // Mémorise la liste des icônes mises en cache
-        .catch(error => console.error(error + ' idbKeyval.set nomsIcones'))
-        .finally(() => console.info('END idbKeyval.set nomsIcones')); //DCMM,
+        .finally(() => console.info('END idbKeyval.set nomsIcones')) //DCMM
+        .catch(er => console.error(er + ' idbKeyval.set nomsIcones'));
     }
 
-    //console.log(nomsIconesMemorises); //DCMM
-    //console.log(nomsIcones); //DCMM
+    console.log(nomsIconesMemorises); //DCMM
+    console.log(nomsIcones); //DCMM
   }
   return mesure;
 
-  /*************************************************************************
+  /**************************************************************************
    * INFORMATIONS NÉCÉSSAIRES À L'AFFICHAGE DES FICHES ET DE SES COMMENTAIRES
    * Elles sont chargées par dalles bbox dans indexedDB avec une clé égale à la valeur de id_point
    * sauf les photos dqui sont mémorisées par le cache de l'explorateur
    * Une fois chargés, seules sont rafraichies les fiches ou commentaires récement modifiés (API bbox?depuis=)
    * Une entrée supplémentaire indexedDB est créée pour signaler que la dalle a été traités
    * dont la clé est la bbox (0.5,43.5,1,44) et la valeur la date epoch de mise en cache
-   */
+   **************************************************************************/
 
   // Numéro de la dalle bbox contenant la position
   const fichesTileSize = 0.25, // ° lon / lat
@@ -92,7 +82,7 @@ async function preLoad(load) {
       if (thisStartPreLoad === currentStartPreLoad &&
         !await idbKeyval.get(bbox)
         .then((v) => v) // Si cette bbox n'est pas marquée
-        .catch(error => console.error(error + ' idbKeyval.get nomsIcones'))
+        .catch(er => console.error(er + ' idbKeyval.get nomsIcones'))
         .finally(() => console.info('END idbKeyval.get nomsIcones')) //DCMM
       ) {
         // Regroupe l'enregistrement de toutes les valeurs d'une bbox dans une seule transaction
@@ -106,13 +96,13 @@ async function preLoad(load) {
               blocsAMeroriser[feature.id] = feature.properties;
             });
           })
-          .catch(error => console.error(error + ' fetching ' + apiUrl));
+          .catch(er => console.error(er + ' fetching ' + apiUrl));
 
         blocsAMeroriser[bbox] = Date.now(); // Marque la bbox comme mémorisée, même s'il n'y avait pas de fiches
         console.info('idbKeyval.setMany blocsAMeroriser'); //DCMM
         await idbKeyval.setMany(blocsAMeroriser.map((v, k) => [k, v]))
-          .catch(error => console.error(error + ' idbKeyval.setMany blocsAMeroriser'))
-          .finally(() => console.info('END idbKeyval.setMany blocsAMeroriser')); //DCMM
+          .finally(() => console.info('END idbKeyval.setMany blocsAMeroriser')) //DCMM
+          .catch(er => console.error(er + ' idbKeyval.setMany blocsAMeroriser'));
       }
     }
 
@@ -143,14 +133,14 @@ async function preLoad(load) {
             console.info('idbKeyval.set baseTileRef'); //DCMM
             if ((Date.now() - tilesRefreshTime) >
               await idbKeyval.get(baseTileRef)
-              .catch(error => console.error(error + ' idbKeyval.get baseTileRef'))
               .finally(() => console.info('END idbKeyval.set baseTileRef')) //DCMM
+              .catch(er => console.error(er + ' idbKeyval.get baseTileRef'))
             ) {
               await fetch(url); // Charger la dalle dans le cache de l'explorateur
               console.info('idbKeyval.set baseTileRef'); //DCMM
               await idbKeyval.set(baseTileRef, Date.now()) // Mark cache date
-                .catch(error => console.error(error + ' idbKeyval.set baseTileRef'))
-                .finally(() => console.info('END idbKeyval.set baseTileRef')); //DCMM
+                .finally(() => console.info('END idbKeyval.set baseTileRef')) //DCMM
+                .catch(er => console.error(er + ' idbKeyval.set baseTileRef'));
             }
           }
     }
