@@ -32,9 +32,9 @@ async function preLoad(load) {
    * PRÉCHARGEMENT DE TOUTES LES ICONES UTILISEES
    *********************************************/
   if (globalPointsJson) {
-    console.info('idbKeyval.get nomsIcones'); //DCMM,
+    //console.info('idbKeyval.get nomsIcones'); //DCMM,
     const nomsIconesMemorises = await idbKeyval.get('nomsIcones')
-      .finally(() => console.info('END idbKeyval.get nomsIcones')) //DCMM
+      //.finally(() => console.info('END idbKeyval.get nomsIcones')) //DCMM
       .catch(er => console.error(er + ' idbKeyval.get nomsIcones')),
       nomsIcones = [];
 
@@ -46,9 +46,9 @@ async function preLoad(load) {
 
     //TODO réellement charger les icones
     if (load && thisStartPreLoad === currentStartPreLoad) {
-      console.info('idbKeyval.set nomsIcones'); //DCMM,
+      //console.info('idbKeyval.set nomsIcones'); //DCMM,
       await idbKeyval.set('nomsIcones', nomsIcones) // Mémorise la liste des icônes mises en cache
-        .finally(() => console.info('END idbKeyval.set nomsIcones')) //DCMM
+        //.finally(() => console.info('END idbKeyval.set nomsIcones')) //DCMM
         .catch(er => console.error(er + ' idbKeyval.set nomsIcones'));
     }
 
@@ -83,7 +83,7 @@ async function preLoad(load) {
         !await idbKeyval.get(bbox)
         .then((v) => v) // Si cette bbox n'est pas marquée
         .catch(er => console.error(er + ' idbKeyval.get nomsIcones'))
-        .finally(() => console.info('END idbKeyval.get nomsIcones')) //DCMM
+        //.finally(() => console.info('END idbKeyval.get nomsIcones')) //DCMM
       ) {
         // Regroupe l'enregistrement de toutes les valeurs d'une bbox dans une seule transaction
         const blocsAMeroriser = [];
@@ -99,9 +99,9 @@ async function preLoad(load) {
           .catch(er => console.error(er + ' fetching ' + apiUrl));
 
         blocsAMeroriser[bbox] = Date.now(); // Marque la bbox comme mémorisée, même s'il n'y avait pas de fiches
-        console.info('idbKeyval.setMany blocsAMeroriser'); //DCMM
+        //console.info('idbKeyval.setMany blocsAMeroriser'); //DCMM
         await idbKeyval.setMany(blocsAMeroriser.map((v, k) => [k, v]))
-          .finally(() => console.info('END idbKeyval.setMany blocsAMeroriser')) //DCMM
+          //.finally(() => console.info('END idbKeyval.setMany blocsAMeroriser')) //DCMM
           .catch(er => console.error(er + ' idbKeyval.setMany blocsAMeroriser'));
       }
     }
@@ -130,16 +130,16 @@ async function preLoad(load) {
               url = 'https://tile.openmaps.fr/openhikingmap/' + baseTileRef + '.png';
 
             // Si le préchargement est récent
-            console.info('idbKeyval.set baseTileRef'); //DCMM
+            //console.info('idbKeyval.set baseTileRef'); //DCMM
             if ((Date.now() - tilesRefreshTime) >
               await idbKeyval.get(baseTileRef)
-              .finally(() => console.info('END idbKeyval.set baseTileRef')) //DCMM
+              //.finally(() => console.info('END idbKeyval.set baseTileRef')) //DCMM
               .catch(er => console.error(er + ' idbKeyval.get baseTileRef'))
             ) {
               await fetch(url); // Charger la dalle dans le cache de l'explorateur
-              console.info('idbKeyval.set baseTileRef'); //DCMM
+              //console.info('idbKeyval.set baseTileRef'); //DCMM
               await idbKeyval.set(baseTileRef, Date.now()) // Mark cache date
-                .finally(() => console.info('END idbKeyval.set baseTileRef')) //DCMM
+                //.finally(() => console.info('END idbKeyval.set baseTileRef')) //DCMM
                 .catch(er => console.error(er + ' idbKeyval.set baseTileRef'));
             }
           }

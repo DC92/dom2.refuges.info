@@ -1,4 +1,4 @@
-/* global serveurAPI, map, affichePoints, globalPointsJson:writable, idbKeyval */
+/* global serveurAPI, map */
 
 /****************************
  * Gestion de l'application *
@@ -14,7 +14,6 @@
 */
 
 //TODO faire 2 caches service-worker : un pour le code à rèinitialiser, un pour les données à garder
-
 
 /***********************
  * Affichage de la vue *
@@ -53,12 +52,12 @@ window.addEventListener('popstate', afficheVue);
 /*************************************************
  * Initialisation de la page ou de l'application *
  *************************************************/
-window.addEventListener('load', () => {
+/*window.addEventListener('wwwwload', () => {
   // Récupère les infos mémorisées dans indexedDB
   //TODO faire concurence entre les 2 promises / fetch ayant la préséance
-  console.info('idbKeyval.get dbPointsJson'); //DCMM
+  //console.info('idbKeyval.get dbPointsJson'); //DCMM
   idbKeyval.get('dbPointsJson')
-    .finally(() => console.info('END idbKeyval.get dbPointsJson')) //DCMM
+    //.finally(() => console.info('END idbKeyval.get dbPointsJson')) //DCMM
     .catch(er => console.error(er))
     .then((dbPointsJson) => {
 
@@ -79,16 +78,16 @@ window.addEventListener('load', () => {
 
           // Les enregistre à la place des des précédents
           // globalPointsJson est une variable javascript globale, dbPointsJson son enregistrement dans indexDB
-          console.info('idbKeyval.set dbPointsJson'); //DCMM
+          //console.info('idbKeyval.set dbPointsJson'); //DCMM
           idbKeyval.set('dbPointsJson', globalPointsJson)
-            .finally(() => console.info('END idbKeyval.set dbPointsJson')) //DCMM
+            //.finally(() => console.info('END idbKeyval.set dbPointsJson')) //DCMM
             .catch(er => console.error(er));
 
           // Affiche ou réaffiche les points reçus
           affichePoints(globalPointsJson);
         });
     });
-});
+});*/
 
 /*************
  * Vue carte *

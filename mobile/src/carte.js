@@ -1,4 +1,4 @@
-/* global L, serveurAPI */
+/* global L, serveurAPI, idbKeyval */
 
 /*******************************
  * Gestion de la carte Leaflet *
@@ -81,7 +81,6 @@ const pointsLayer = L.geoJson(null, {
 // Couche gérant les clusters
 const clustersLayer = new L.MarkerClusterGroup();
 
-/* eslint-disable-next-line no-unused-vars */
 function affichePoints(json) {
   if (json) {
     // Filtre les types de points suivant sélecteur de la carte
@@ -144,9 +143,37 @@ map.on('moveend', () => {
   // Le permalink est mémorisé dans la variable permanente de l'explorateur localStorage
   localStorage.permalink = [map.getZoom(), pos.lat, pos.lng].map(f => Math.round(f * 1000) / 1000).join('/');
 
-  // Le permalink est un #hash ajouté à la page carte uniquement et mémorisé dans indexedDB
+  // Le permalink est un #hash ajouté à la page carte uniquement
   if (document.body.className === 'carte')
     location.hash = localStorage.permalink;
 
   //TODO permalink baseLayer
 });
+
+// Affiche les icônes mémorisées dans indexBD
+//console.info('idbKeyval.get dbPointsJson'); //DCMM
+idbKeyval.get('dbPointsJson')
+  //.finally(() => console.info('END idbKeyval.get dbPointsJson')) //DCMM
+  .catch(er => console.error(er))
+  .then((dbPointsJson) => affichePoints(dbPointsJson));
+
+// Redemande tous les points aux serveurs
+//TODO tester si présent sur le serveur et depuis
+const apiUrl = serveurAPI + '/api/bbox?nb_points=all&detail=icone';
+
+fetch(apiUrl)
+  .then((response) => response.text())
+  .catch(er => console.error(er + ' fetching ' + apiUrl))
+  .then((geoJson) => {
+    //TODO précharger toutes les icônes citées
+    const json = JSON.parse(geoJson);
+
+    // Affiche ou réaffiche les points reçus
+    affichePoints(json);
+
+    // Les enregistre à la place des des précédents dans indexDB
+    //console.info('idbKeyval.set dbPointsJson'); //DCMM
+    idbKeyval.set('dbPointsJson', json)
+      //.finally(() => console.info('END idbKeyval.set dbPointsJson')) //DCMM
+      .catch(er => console.error(er));
+  });
