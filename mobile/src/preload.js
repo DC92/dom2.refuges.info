@@ -12,12 +12,12 @@
  */
 //TODO faire un bouton effacer les données
 
-let currentStartPreLoad = Date.now(), // Pour vérifier qu'il n'y en a qu'un actif à la fois
-  globalPointsJson = { // Initialisation par défaut
-    //TODO éliminer en testant le contenu
-    type: 'FeatureCollection',
-    features: []
-  };
+let currentStartPreLoad = Date.now(); // Pour vérifier qu'il n'y en a qu'un actif à la fois
+const globalPointsJson = { // Initialisation par défaut
+  //TODO éliminer en testant le contenu
+  type: 'FeatureCollection',
+  features: []
+};
 
 /* eslint-disable-next-line no-unused-vars */
 async function preLoad(load) {
@@ -42,7 +42,8 @@ async function preLoad(load) {
       nomsIcones[point.properties.type.icone] = true;
     });
 
-    mesure['icones-fait'] = mesure['icones-total'] = Object.keys(nomsIcones).length; // 1 Kb par icône
+    mesure['icones-fait'] = Object.keys(nomsIcones).length; // 1 Kb par icône
+    mesure['icones-total'] = mesure['icones-fait'];
 
     //TODO réellement charger les icones
     if (load && thisStartPreLoad === currentStartPreLoad) {
@@ -55,7 +56,7 @@ async function preLoad(load) {
     console.log(nomsIconesMemorises); //DCMM
     console.log(nomsIcones); //DCMM
   }
-  return mesure;
+  //return mesure;
 
   /**************************************************************************
    * INFORMATIONS NÉCÉSSAIRES À L'AFFICHAGE DES FICHES ET DE SES COMMENTAIRES
@@ -106,7 +107,7 @@ async function preLoad(load) {
       }
     }
 
-  return mesure; //DCMM
+  //return mesure; //DCMM
 
   /* DALLES OPENHIKINGMAP
      elles sont mémorisées par le cache du service-worker

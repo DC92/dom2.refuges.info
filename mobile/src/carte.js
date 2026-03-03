@@ -94,28 +94,21 @@ const clustersLayer = new L.MarkerClusterGroup();
 function affichePoints() {
   if (globalPointsJson) {
     // Filtre les types de points suivant sélecteur de la carte
-    //TODO filtre points
-    const typesPointsVisibles = [];
+    const typesPointsVisibles = Array.from(
+        document.querySelectorAll('#selecteur a')
+      ).filter((el) =>
+        el.classList.contains('selected')
+      ).map((el) => parseInt(el.id, 10)),
 
-    for (const e of document.querySelectorAll('#selecteur a')) {
-      console.log(e); //DCMM
-      console.log(e.id); //DCMM
-    }
-    /*
-    console.log(globalPointsJson); //DCMM
-
-    const    features = globalPointsJson.features.filter((point) => {
-          console.log(point.properties.type.id); //DCMM
-          return point.properties.type.id === 7;
-        });
-        console.log(globalPointsJson);//DCMM
-        console.log(features);//DCMM
-    */
+      filteredPoints = globalPointsJson.features
+      .filter((features) =>
+        typesPointsVisibles.includes(features.properties.type.id)
+      );
 
     // Vide la couche contenant les points, la détache et rattache à la couche gérant les clusters
     clustersLayer.removeLayer(pointsLayer);
     pointsLayer.clearLayers();
-    pointsLayer.addData(globalPointsJson);
+    pointsLayer.addData(filteredPoints);
     clustersLayer.addLayer(pointsLayer);
   }
 }

@@ -116,11 +116,12 @@ a {
   display: inline-block;
   width: 29px;
   height: 29px;
+  opacity: 0.3;
   cursor: pointer;
 }
 
-#selecteur a.unselected {
-  opacity: 0.3;
+#selecteur a.selected {
+  opacity: 1;
 }
 
 #selecteur a:hover {
