@@ -49,46 +49,6 @@ afficheVue();
 // Changement externe de l'ancre
 window.addEventListener('popstate', afficheVue);
 
-/*************************************************
- * Initialisation de la page ou de l'application *
- *************************************************/
-/*window.addEventListener('wwwwload', () => {
-  // Récupère les infos mémorisées dans indexedDB
-  //TODO faire concurence entre les 2 promises / fetch ayant la préséance
-  //console.info('idbKeyval.get dbPointsJson'); //DCMM
-  idbKeyval.get('dbPointsJson')
-    //.finally(() => console.info('END idbKeyval.get dbPointsJson')) //DCMM
-    .catch(er => console.error(er))
-    .then((dbPointsJson) => {
-
-      globalPointsJson = dbPointsJson; // Les enregistre dans une variable
-      affichePoints(globalPointsJson); // Popule la carte avec les points globalPointsJson
-
-      // Demande la (re)charge des icônes depuis le serveur
-      const apiUrl = serveurAPI + '/api/bbox?nb_points=all&detail=icone';
-
-      // Redemande tous les points aux serveurs
-      //TODO tester si présent sur le serveur et depuis
-      fetch(apiUrl)
-        .then((response) => response.text())
-        .catch(er => console.error(er + ' fetching ' + apiUrl))
-        .then((geoJson) => {
-          // geoJson est l'encodage string, pointJson une structure javascriot
-          globalPointsJson = JSON.parse(geoJson);
-
-          // Les enregistre à la place des des précédents
-          // globalPointsJson est une variable javascript globale, dbPointsJson son enregistrement dans indexDB
-          //console.info('idbKeyval.set dbPointsJson'); //DCMM
-          idbKeyval.set('dbPointsJson', globalPointsJson)
-            //.finally(() => console.info('END idbKeyval.set dbPointsJson')) //DCMM
-            .catch(er => console.error(er));
-
-          // Affiche ou réaffiche les points reçus
-          affichePoints(globalPointsJson);
-        });
-    });
-});*/
-
 /*************
  * Vue carte *
  *************/

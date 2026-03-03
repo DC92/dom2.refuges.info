@@ -46,8 +46,18 @@ const baseLayers = {
 
 /************************
  * Couches vectorielles *
- ************************/
-// Couche gérant tous les points
+ ************************
+  Une icône est une image .png représentant un type de point
+  Un point est défini par un position, un nom et une icône destinée à être affiché sur une carte
+  Une fiche contient toutes les informations concernant un point, y compris les commentaires
+*/
+
+// globalPointsJson est une variable javascript, dbPointsJson son enregistrement dans indexDB
+// json est une structure contenant des définitions de points, geoJson sa représentation en string
+
+let globalPointsJson = {};
+
+// Couche affichant tous les points de la base refuges.info
 const pointsLayer = L.geoJson(null, {
   // Icônes
   pointToLayer: (feature, latlng) =>
@@ -81,31 +91,31 @@ const pointsLayer = L.geoJson(null, {
 // Couche gérant les clusters
 const clustersLayer = new L.MarkerClusterGroup();
 
-function affichePoints(json) {
-  if (json) {
+function affichePoints() {
+  if (globalPointsJson) {
     // Filtre les types de points suivant sélecteur de la carte
     //TODO filtre points
-    /*
     const typesPointsVisibles = [];
 
     for (const e of document.querySelectorAll('#selecteur a')) {
       console.log(e); //DCMM
       console.log(e.id); //DCMM
     }
-    console.log(json); //DCMM
+    /*
+    console.log(globalPointsJson); //DCMM
 
-    const    features = json.features.filter((point) => {
+    const    features = globalPointsJson.features.filter((point) => {
           console.log(point.properties.type.id); //DCMM
           return point.properties.type.id === 7;
         });
-        console.log(json);//DCMM
+        console.log(globalPointsJson);//DCMM
         console.log(features);//DCMM
     */
 
     // Vide la couche contenant les points, la détache et rattache à la couche gérant les clusters
     clustersLayer.removeLayer(pointsLayer);
     pointsLayer.clearLayers();
-    pointsLayer.addData(json);
+    pointsLayer.addData(globalPointsJson);
     clustersLayer.addLayer(pointsLayer);
   }
 }
@@ -150,14 +160,18 @@ map.on('moveend', () => {
   //TODO permalink baseLayer
 });
 
-// Affiche les icônes mémorisées dans indexBD
+// Affiche les points mémorisés dans indexBD
+
 //console.info('idbKeyval.get dbPointsJson'); //DCMM
 idbKeyval.get('dbPointsJson')
   //.finally(() => console.info('END idbKeyval.get dbPointsJson')) //DCMM
   .catch(er => console.error(er))
-  .then((dbPointsJson) => affichePoints(dbPointsJson));
+  .then((dbPointsJson) => {
+    globalPointsJson = dbPointsJson;
+    affichePoints();
+  });
 
-// Redemande tous les points aux serveurs
+// Redemande tous les points au serveur
 //TODO tester si présent sur le serveur et depuis
 const apiUrl = serveurAPI + '/api/bbox?nb_points=all&detail=icone';
 
@@ -165,15 +179,15 @@ fetch(apiUrl)
   .then((response) => response.text())
   .catch(er => console.error(er + ' fetching ' + apiUrl))
   .then((geoJson) => {
-    //TODO précharger toutes les icônes citées
-    const json = JSON.parse(geoJson);
+    globalPointsJson = JSON.parse(geoJson);
 
+    //TODO précharger toutes les icônes citées
     // Affiche ou réaffiche les points reçus
-    affichePoints(json);
+    affichePoints();
 
     // Les enregistre à la place des des précédents dans indexDB
     //console.info('idbKeyval.set dbPointsJson'); //DCMM
-    idbKeyval.set('dbPointsJson', json)
+    idbKeyval.set('dbPointsJson', globalPointsJson)
       //.finally(() => console.info('END idbKeyval.set dbPointsJson')) //DCMM
       .catch(er => console.error(er));
   });
