@@ -15,6 +15,8 @@
 
 //TODO faire 2 caches service-worker : un pour le code à rèinitialiser, un pour les données à garder
 
+const apiFicheUrl = serveurAPI + '/api/point?detail=fiche&format_texte=html&id='; // + idFiche
+
 /***********************
  * Affichage de la vue *
  ***********************/
@@ -65,9 +67,8 @@ function carteAffiche() {
  *************/
 /* eslint-disable-next-line no-unused-vars */
 function ficheAffiche(idFiche) {
-  const apiUrl = serveurAPI + '/api/point?detail=fiche&format_texte=html&id=' + idFiche;
   //TODO get point from DB dans une zone
-  fetch(apiUrl)
+  fetch(apiFicheUrl + idFiche)
     .then((response) => response.json())
     .then((geoJson) => {
       if (geoJson.features.length) {
@@ -103,7 +104,7 @@ function ficheAffiche(idFiche) {
         }
       }
     })
-    .catch(er => console.error(er + ' fetching ' + apiUrl));
+    .catch(er => console.error(er + ' fetching ' + apiFicheUrl));
 }
 
 //TODO COMMENTAIRES

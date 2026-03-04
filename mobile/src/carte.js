@@ -1,4 +1,4 @@
-/* global L, serveurAPI, idbKeyval */
+/* global L, idbKeyval */
 
 /*******************************
  * Gestion de la carte Leaflet *
@@ -7,6 +7,11 @@
   La carte reste ouverte dans un <div id="map> pour toutes les vues de l'appli (carte, fiche, ...)
   seules sont modifiées la taille du DIV et la position lon/lat
 */
+
+const serveurAPI = 'https://dom2.refuges.info',
+  apiPointsUrl = serveurAPI + '/api/bbox?nb_points=all&detail=icone';
+
+localStorage.permalink ||= '7/45/7'; // zoom/latitude/longitude Défaut : Alpes de l'Ouest
 
 /*******************
  * Couches tuilées *
@@ -93,7 +98,8 @@ const clustersLayer = new L.MarkerClusterGroup();
 
 function affichePoints() {
   if (globalPointsJson) {
-    // Filtre les types de points suivant sélecteur de la carte
+    // Filtre les types de points suivant le sélecteur de la carte
+    //TODO générer le html des sélecteurs à partir d'une liste de type => nom_icone
     const typesPointsVisibles = Array.from(
         document.querySelectorAll('#selecteur a')
       ).filter((el) =>
@@ -166,11 +172,9 @@ idbKeyval.get('dbPointsJson')
 
 // Redemande tous les points au serveur
 //TODO tester si présent sur le serveur et depuis
-const apiUrl = serveurAPI + '/api/bbox?nb_points=all&detail=icone';
-
-fetch(apiUrl)
+fetch(apiPointsUrl)
   .then((response) => response.text())
-  .catch(er => console.error(er + ' fetching ' + apiUrl))
+  .catch(er => console.error(er + ' fetching ' + apiPointsUrl))
   .then((geoJson) => {
     globalPointsJson = JSON.parse(geoJson);
 

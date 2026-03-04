@@ -43,14 +43,7 @@ Démonstrateur front-end pour refuges.info
   <!-- Progressive Web Application -->
   <link href="manifest.json" rel="manifest">
   <script>
-    const serveurAPI = 'https://dom2.refuges.info',
-      debugPWA = true;
-
-    // Mémoire de l'explorateur du permalink
-    localStorage.permalink ||= '7/45/7'; // zoom/latitude/longitude Défaut : Alpes de l'Ouest
-
-    // Chargement du service worker
-    if (!window.location.search) // Debug without PWA
+    if (window.location.search !== '?debug') // Debug without PWA
       navigator.serviceWorker.register('service-worker.js')
       .then(() => console.info('Service worker registred'));
   </script>
