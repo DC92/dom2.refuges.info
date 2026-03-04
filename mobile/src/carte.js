@@ -12,6 +12,7 @@ const serveurAPI = 'https://dom2.refuges.info',
   apiPointsUrl = serveurAPI + '/api/bbox?nb_points=all&detail=icone';
 
 localStorage.permalink ||= '7/45/7'; // zoom/latitude/longitude Défaut : Alpes de l'Ouest
+//TODO permalink baseLayer
 
 /*******************
  * Couches tuilées *
@@ -57,12 +58,13 @@ const baseLayers = {
   Une fiche contient toutes les informations concernant un point, y compris les commentaires
 */
 
-// globalPointsJson est une variable javascript, dbPointsJson son enregistrement dans indexDB
+// pointsJson est une variable javascript, dbPointsJson son enregistrement dans indexDB
 // json est une structure contenant des définitions de points, geoJson sa représentation en string
 
-let globalPointsJson = {};
+// Mémorise dans une variable tous les points de la base WRI
+let pointsJson = {};
 
-// Couche affichant tous les points de la base refuges.info
+// Couche affichant tous les points
 const pointsLayer = L.geoJson(null, {
   // Icônes
   pointToLayer: (feature, latlng) =>
@@ -97,7 +99,7 @@ const pointsLayer = L.geoJson(null, {
 const clustersLayer = new L.MarkerClusterGroup();
 
 function affichePoints() {
-  if (globalPointsJson) {
+  if (pointsJson) {
     // Filtre les types de points suivant le sélecteur de la carte
     //TODO générer le html des sélecteurs à partir d'une liste de type => nom_icone
     const typesPointsVisibles = Array.from(
@@ -106,7 +108,7 @@ function affichePoints() {
         el.classList.contains('selected')
       ).map((el) => parseInt(el.id, 10)),
 
-      filteredPoints = globalPointsJson.features
+      filteredPoints = pointsJson.features
       .filter((features) =>
         typesPointsVisibles.includes(features.properties.type.id)
       );
@@ -155,8 +157,6 @@ map.on('moveend', () => {
   // Le permalink est un #hash ajouté à la page carte uniquement
   if (document.body.className === 'carte')
     location.hash = localStorage.permalink;
-
-  //TODO permalink baseLayer
 });
 
 // Affiche les points mémorisés dans indexBD
@@ -166,7 +166,7 @@ idbKeyval.get('dbPointsJson')
   //.finally(() => console.info('END idbKeyval.get dbPointsJson')) //DCMM
   .catch(er => console.error(er))
   .then((dbPointsJson) => {
-    globalPointsJson = dbPointsJson;
+    pointsJson = dbPointsJson;
     affichePoints();
   });
 
@@ -176,7 +176,7 @@ fetch(apiPointsUrl)
   .then((response) => response.text())
   .catch(er => console.error(er + ' fetching ' + apiPointsUrl))
   .then((geoJson) => {
-    globalPointsJson = JSON.parse(geoJson);
+    pointsJson = JSON.parse(geoJson);
 
     //TODO précharger toutes les icônes citées
     // Affiche ou réaffiche les points reçus
@@ -184,7 +184,7 @@ fetch(apiPointsUrl)
 
     // Les enregistre à la place des des précédents dans indexDB
     //console.info('idbKeyval.set dbPointsJson'); //DCMM
-    idbKeyval.set('dbPointsJson', globalPointsJson)
+    idbKeyval.set('dbPointsJson', pointsJson)
       //.finally(() => console.info('END idbKeyval.set dbPointsJson')) //DCMM
       .catch(er => console.error(er));
   });

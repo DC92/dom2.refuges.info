@@ -13,8 +13,6 @@
  Le nom de la vue est attribué à la classe de l'élémént <BODY> qui pilote les différentes variantes de .CSS
 */
 
-//TODO faire 2 caches service-worker : un pour le code à rèinitialiser, un pour les données à garder
-
 const apiFicheUrl = serveurAPI + '/api/point?detail=fiche&format_texte=html&id='; // + idFiche
 
 /***********************
@@ -70,10 +68,12 @@ function ficheAffiche(idFiche) {
   //TODO get point from DB dans une zone
   fetch(apiFicheUrl + idFiche)
     .then((response) => response.json())
-    .then((geoJson) => {
-      if (geoJson.features.length) {
-        const coord = geoJson.features[0].geometry.coordinates,
-          properties = geoJson.features[0].properties;
+    .then((json) => {
+
+      if (json.features.length) {
+        const coord = json.features[0].geometry.coordinates,
+          properties = json.features[0].properties,
+          commentEl = document.getElementById('fiche-commentaires');
 
         // Positionne la carte et les coordonnées
         map.setView([coord[1], coord[0]], 15);
@@ -85,7 +85,7 @@ function ficheAffiche(idFiche) {
           lng: coord[1],
           'coord-alt': properties.coord.alt,
           rubriques: properties,
-          //TODO masquer Informations complémentaires: si pas d'info_comp
+          //TODO masquer "Informations complémentaires": si pas d'info_comp
           complements: properties.info_comp,
         };
 
@@ -102,25 +102,26 @@ function ficheAffiche(idFiche) {
           } else
             el.innerHTML = donnees[kd];
         }
+
+        // Affiche les commentaires
+        if (properties.commentaires && properties.commentaires.length) {
+          commentEl.innerHTML = ''; // Efface la zone commentaires
+
+          for (const comment of properties.commentaires) {
+            commentEl.insertAdjacentHTML('beforeend',
+              '<div>' +
+              '<span>' + (comment.auteur || 'Inconnu') + ' - ' + (comment.date || '') + '</span>' +
+              (comment.texte ? '<p>' +
+                (comment.photo ? '<img src="' + (serveurAPI + comment.photo) + '"></img>' : '') +
+                comment.texte + '</p>' : '') +
+              '</div>'
+            );
+          }
+        }
       }
     })
     .catch(er => console.error(er + ' fetching ' + apiFicheUrl));
 }
-
-//TODO COMMENTAIRES
-/*DCMM
-  Object.values(properties.commentaires).forEach(c => {
-
-    commentEl.insertAdjacentHTML('beforeend',
-      '<div>' +
-      '<span>' + (c.auteur || 'Inconnu') + ' - ' + (c.date || '') + '</span>' +
-      (c.texte ? '<p>' +
-        (c.photo ? '<img src="' + (serveurAPI + c.photo) + '"></img>' : '') +
-        c.texte + '</p>' : '') +
-      '</div>'
-    );
-  });
-*/
 
 /*****************
  * Vue nouvelles *

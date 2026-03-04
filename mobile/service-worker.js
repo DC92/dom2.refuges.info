@@ -23,6 +23,7 @@ self.addEventListener('install', () => {
   caches.delete(cacheName)
     .then(console.info('Cache ' + cacheName + ' deleted'));
   //TODO SURVEILLER : supprime le cache mais ne le recrée pas à ce moment.
+  //TODO faire 2 caches service-worker : un pour le code à rèinitialiser, un pour les données à garder
 });
 
 self.addEventListener('fetch', (event) =>

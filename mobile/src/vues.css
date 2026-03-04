@@ -232,13 +232,13 @@ body.carte .attente {
 }
 
 /* Commentaires */
-#commentaires div {
+#fiche-commentaires div {
   margin: 20px 0;
   border: 1px solid white;
   padding: 0 5px;
 }
 
-#commentaires span {
+#fiche-commentaires span {
   position: relative;
   top: -15px;
   background: var(--couleur_fond);
@@ -246,33 +246,26 @@ body.carte .attente {
   z-index: 10;
 }
 
-#commentaires p {
+#fiche-commentaires p {
   position: relative;
   top: -8px;
   text-indent: 15px;
   overflow: hidden;
 }
 
-#commentaires img {
+#fiche-commentaires img {
   float: right;
   max-width: 50vw;
   margin: 0 0 0 5px;
 }
 
-#commentaires div:nth-child(odd) img {
+#fiche-commentaires div:nth-child(odd) img {
   float: left;
   margin: 0 5px 0 0;
 }
 
-#commentaires-groupe img {
-  max-height: 400px;
-  max-width: 100%;
-  margin: 10px 0;
-}
-
 /* VUE NOUVELLES */
-.nouvelles-groupe>div,
-#commentaires-groupe>div {
+.nouvelles-groupe>div {
   margin: 10px 0;
   padding: 10px;
   border: 1px solid var(--couleur_texte);
