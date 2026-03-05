@@ -34,13 +34,14 @@ const baseLayers = {
   // https://geoservices.ign.fr/documentation/services/utilisation-web/extension-pour-leaflet
   // https://ignf.github.io/geoportal-extensions/leaflet-latest/jsdoc/module-Layers.html#.WMTS
   /* eslint-disable-next-line new-cap */
-  'Ign plan': L.geoportalLayer.WMTS({
+  /* //TODO BUG format non pris en compte
+    'Ign plan': L.geoportalLayer.WMTS({
     layer: 'GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2',
-    format: 'image/png', //TODO BUG format non pris en compte
+    format: 'image/png',
     'attribution': 'Orthophotos - Carte © IGN/Geoportail',
     'maxNativeZoom': 19,
     'maxZoom': 22,
-  }),
+  }),*/
 
   /* eslint-disable-next-line new-cap */
   'Ign photo': L.geoportalLayer.WMTS({

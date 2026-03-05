@@ -177,7 +177,7 @@ switch ($req->detail) {
 // Uniquement affichage d'une icône cliquable avec son nom
 $filtre = ['icone' => [
   'nom' => true,
-  'type' => ['icone' => true],
+  'type' => ['icone' => true, 'id' => true],
 ]];
 
 // Utilisé par la carte actuelle WRI
