@@ -230,7 +230,7 @@ $filtre['fiche'] = array_merge($filtre['complet'], [
   'commentaires' => ['*' => [
     'id_commentaire' => 'id',
     'id_point' => true,
-    'texte_affichage' => 'texte',
+    'texte' => true,
     'auteur_commentaire' => 'auteur',
     'date_commentaire' => 'date',
     'lien_photo_reduite' => 'photo',

@@ -69,8 +69,7 @@ function ficheAffiche(idFiche) {
   fetch(apiFicheUrl + idFiche)
     .then((response) => response.json())
     .then((json) => {
-
-      if (json.features.length) {
+      if (json && json.features.length) {
         const coord = json.features[0].geometry.coordinates,
           properties = json.features[0].properties,
           commentEl = document.getElementById('fiche-commentaires');

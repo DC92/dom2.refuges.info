@@ -33,7 +33,6 @@ const baseLayers = {
 
   // https://geoservices.ign.fr/documentation/services/utilisation-web/extension-pour-leaflet
   // https://ignf.github.io/geoportal-extensions/leaflet-latest/jsdoc/module-Layers.html#.WMTS
-  /* eslint-disable-next-line new-cap */
   /* //TODO BUG format non pris en compte
     'Ign plan': L.geoportalLayer.WMTS({
     layer: 'GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2',
