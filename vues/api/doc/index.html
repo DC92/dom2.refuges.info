@@ -5,12 +5,12 @@
         <meta charset=utf-8 />
         <link rel="stylesheet" type="text/css" media="all" href="style.css" />
     </head>
-    
+
     <body>
         <header>
             <p>API Refuges<span class="small">.info</span></p>
         </header>
-        
+
         <section id="intro">
             <h1>Introduction à l'API</h1>
             <p>
@@ -34,7 +34,7 @@
                 <a href="http://www.openstreetmap.org/copyright">la licence d'OpenStreetMap</a>.
             </p>
         </section>
-        
+
         <section id="sommaire">
             <h1>Sommaire de l'API</h1>
             <ul>
@@ -44,20 +44,21 @@
                     <span class="url">/api/bbox</span>
                     <span class="url">/api/massif</span>
                     <span class="url">/api/point</span>
-                  </a> 
+                  </a>
                   &mdash; <span class="description">Export de points</span>
                 </li>
                 <li><a href="#/api/contributions"><span class="methode">GET</span> <span class="url">/api/contributions</span></a> &mdash; <span class="description">Export de la liste des dernières contributions</span></li>
                 <li><a href="#/api/polygones"><span class="methode">GET</span> <span class="url">/api/polygones</span></a> &mdash; <span class="description">Export des polygones de la base (massifs, parcs...)</span></li>
+                <li><a href="#/api/commentaires"><span class="methode">GET</span> <span class="url">/api/commentaires</span></a> &mdash; <span class="description">Export des commentaires d'un point</span></li>
             </ul>
         </section>
-        
+
         <section>
             <p>
                 Notons que lorsque les variables booléennes, sont à 1 pour VRAI et 0 pour FAUX (par exemple pour les informations complémentaires). Lorsqu'une variable est non définie (NULL), c'est tout simplement que nous le champ n'a pas de valeur car il n'a pas lieu d'être (couvertures pour un point d'eau par exemple) ou que la valeur est inconnue.
             </p>
             <p>
-                Voici un exemple de requête : 
+                Voici un exemple de requête :
                 <a class="url" href="../massif?massif=351&type_points=all&nb_points=22">api/massif?massif=351&type_points=all&nb_points=22</a>
             </p>
 
@@ -165,7 +166,7 @@
                 Notons que lorsque les variables booléennes, sont à 1 pour VRAI et 0 pour FAUX (par exemple pour les informations complémentaires). Lorsqu'une variable est non définie (NULL), c'est tout simplement que nous le champ n'a pas de valeur car il n'a pas lieu d'être (couvertures pour un point d'eau par exemple) ou que la valeur est inconnue.
             </p>
             <p>
-                Voici un exemple de requête : 
+                Voici un exemple de requête :
                 <a class="url" href="../point?id=583&format=xml&format_texte=html">api/point?id=583&format=xml&format_texte=html</a>
             </p>
         </section>
@@ -232,7 +233,7 @@
                 Notons que lorsque les variables booléennes, sont à 1 pour VRAI et 0 pour FAUX (par exemple pour les informations complémentaires). Lorsqu'une variable est non définie (NULL), c'est tout simplement que nous le champ n'a pas de valeur car il n'a pas lieu d'être (couvertures pour un point d'eau par exemple) ou que la valeur est inconnue.
             </p>
             <p>
-                Voici un exemple de requête : 
+                Voici un exemple de requête :
                 <a class="url" href="../contributions?format=rss&format_texte=html&massif=351">api/contributions?format=rss&format_texte=html&massif=351</a>
             </p>
             <h1 id="/api/polygones">Polygones de la base de donnée (massifs, parcs, cartes...)</h1>
@@ -281,11 +282,45 @@
                </table>
             </p>
             <p>
-                Voici un exemple de requête : 
+                Voici un exemple de requête :
                 <a class="url" href="../polygones?format=gml">api/polygones?format=gml</a>
             </p>
         </section>
-        
+
+        <section>
+            <h1 id="/api/commentaires">Export des commentaires d'un point</h1>
+            <p>
+                La requête <a href="#/api/commentaires"><span class="methode">GET</span><span class="url">/api/commentaires</span></a> permet de retourner les commentairess d'un point
+                de la base de donnée à partir de son <b>ID</b>. Les paramètres sont définis
+                dans le tableau suivant, et vous trouverez au dessous des exemples de structuration des réponses.
+                <table>
+                    <tr><th>Paramètre</th><th>Description</th><th>Valeur par défaut</th><th>Exemples</th></tr>
+                    <tr>
+                        <td>id_point</td>
+                        <td><span class="req">Requis</span> L'id du point ou des points dont on veut les commentaires</td>
+                        <td>Aucune</td>
+                        <td><span class="url">2536  583,2536</span>...</td>
+                    </tr>
+                    <tr>
+                        <td>format_texte</td>
+                        <td><span class="opt">Optionnel</span> Le formatage du texte, que vous devrez retravailler par la suite.</td>
+                        <td><span class="url">bbcode</span></td>
+                        <td><span class="url">bbcode</span>, <span class="url">texte</span>, <span class="url">markdown</span>, <span class="url">html</span></td>
+                    </tr>
+                    <tr>
+                        <td>format</td>
+                        <td><span class="opt">Fixe</span> Le format de l'export.</td>
+                        <td><span class="url">json</span></td>
+                        <td><span class="url">Le seul format json est accepté</td>
+                    </tr>
+                 </table>
+            </p>
+            <p>
+                Voici un exemple de requête :
+                <a class="url" href="../commentaires?id_point=583&format_texte=html">api/commentaires?id=583&format_texte=html</a>
+            </p>
+        </section>
+
         <footer></footer>
     </body>
 </html>
