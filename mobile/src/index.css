@@ -102,12 +102,11 @@ a {
 /* Sélecteur de type de points */
 #selecteur {
   position: absolute;
-  top: 46px;
-  left: 50px;
-  z-index: 400;
+  top: 10px;
+  left: 55px;
+  z-index: 1000;
   border: 2px solid rgba(0, 0, 0, 0.2);
   border-radius: 4px;
-  background: white;
   /* évite un espace entre les inline-block */
   font-size: 0;
 }
@@ -116,6 +115,7 @@ a {
   display: inline-block;
   width: 29px;
   height: 29px;
+  background: white;
   opacity: 0.3;
   cursor: pointer;
 }
@@ -126,6 +126,16 @@ a {
 
 #selecteur a:hover {
   background: #eee;
+}
+
+#selecteur a:first-child {
+  border-top-left-radius: 2px;
+  border-bottom-left-radius: 2px;
+}
+
+#selecteur a:last-child {
+  border-top-right-radius: 2px;
+  border-bottom-right-radius: 2px;
 }
 
 #selecteur a:not(:first-child) {

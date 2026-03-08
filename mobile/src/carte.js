@@ -64,6 +64,7 @@ const baseLayers = {
 // Mémorise dans une variable tous les points de la base WRI
 let pointsJson = {};
 
+//TODO séparer plusieurs layers par type de point avec un cluster global
 // Couche affichant tous les points
 const pointsLayer = L.geoJson(null, {
   // Icônes

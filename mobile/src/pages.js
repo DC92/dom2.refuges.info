@@ -62,18 +62,18 @@ function controleurCarte() {
  * Fiches *
  **********/
 function vueFiche(json) {
-  const //coordinates = json.geometry.coordinates,
-    properties = json.properties,
-    commentEl = document.getElementById('fiche-commentaires'),
+  const properties = json.properties,
     donnees = {
+      nom: properties.nom,
       lat: json.geometry.coordinates[0],
       lng: json.geometry.coordinates[1],
-      'coord-alt': properties.coord.alt,
+      alt: properties.coord.alt,
       rubriques: properties,
       //TODO masquer "Informations complémentaires": si pas d'info_comp
       //TODO format de Léo
       complements: properties.info_comp,
     };
+  console.log(properties); //DCMM
 
   // Positionne la carte et les coordonnées
   map.setView([donnees.lng, donnees.lat], 15);
@@ -95,6 +95,8 @@ function vueFiche(json) {
   }
 
   // Affiche les commentaires
+  const commentEl = document.getElementById('fiche-commentaires');
+
   if (properties.commentaires && properties.commentaires.length) {
     commentEl.innerHTML = ''; // Efface la zone commentaires
 

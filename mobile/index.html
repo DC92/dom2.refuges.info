@@ -69,34 +69,35 @@ Démonstrateur front-end pour refuges.info
   <!-- Template fiche, entête -->
   <div class="fiche">
     <h2 id="fiche-nom"></h2>,
-    (<span id="fiche-coord-alt"> </span> m)
+    (<span id="fiche-alt"> </span> m)
     <span id="fiche-type"></span>
     <span style="color: red" id="fiche-etat"></span>
   </div>
 
   <!-- Template carte -->
-  <div id="map"></div>
-  <div id="selecteur" onclick="affichePoints(pointsJson)">
-    <a id="7" class="selected" onclick="this.classList.toggle('selected')" id="selecteur-cabane" title="Cabane">
-      <img src="https://dom2.refuges.info/images/icones/cabane.svg" />
-    </a>
-    <a id="10" class="selected" onclick="this.classList.toggle('selected')" id="selecteur-refuge" title="Refuge">
-      <img src="https://dom2.refuges.info/images/icones/cabane_red.svg" />
-    </a>
-    <a id="9" class="selected" onclick="this.classList.toggle('selected')" id="selecteur-gite" title="Gîte">
-      <img src="https://dom2.refuges.info/images/icones/cabane_green.svg" />
-    </a>
-    <a id="23" class="selected" onclick="this.classList.toggle('selected')" id="selecteur-eau" title="Point d'au">
-      <img src="https://dom2.refuges.info/images/icones/pointdeau.svg" />
-    </a>
+  <div id="map">
+    <div id="selecteur" onclick="affichePoints(pointsJson)">
+      <a id="7" class="selected" onclick="this.classList.toggle('selected')" id="selecteur-cabane" title="Cabane">
+        <img src="https://dom2.refuges.info/images/icones/cabane.svg" />
+      </a>
+      <a id="10" class="selected" onclick="this.classList.toggle('selected')" id="selecteur-refuge" title="Refuge">
+        <img src="https://dom2.refuges.info/images/icones/cabane_red.svg" />
+      </a>
+      <a id="9" class="selected" onclick="this.classList.toggle('selected')" id="selecteur-gite" title="Gîte">
+        <img src="https://dom2.refuges.info/images/icones/cabane_green.svg" />
+      </a>
+      <a id="23" class="selected" onclick="this.classList.toggle('selected')" id="selecteur-eau" title="Point d'au">
+        <img src="https://dom2.refuges.info/images/icones/pointdeau.svg" />
+      </a>
+    </div>
   </div>
-  <div id="preload" onclick="preLoad()">
+  <!-- div id="preload" onclick="preLoad()">
     <a title="Précharger les données" onclick="this.parentElement.classList.add('selected')">&#128259;</a>
     <div>
       <a title="Fermer l'encart" onclick="this.parentElement.parentElement.classList.remove('selected')">&#128473;</a>
       <h4>Préchargement des données</h4>
     </div>
-  </div>
+  </div -->
 
   <!-- Template fiche, zone informations -->
   <div class="fiche">
