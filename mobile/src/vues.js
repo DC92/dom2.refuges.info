@@ -58,30 +58,9 @@ function afficheVuecarte() {
   map.invalidateSize();
 }
 
-/*************
- * Vue fiche *
- *************/
-// Async permet l'utilisation en await des promises et un code plus linéaire
-/* eslint-disable-next-line no-unused-vars */
-async function afficheVuefiche(idFiche) {
-  const apiUneFicheUrl = serveurAPI + '/api/point?detail=fiche&format_texte=html&id=' + idFiche;
-
-  // Récupère les infos de la fiche dans indexDB
-  let jsonFiche = await idbKeyval.get(parseInt(idFiche, 10));
-
-  //TODO BUG quand il n'y a pas de base keyval
-  // Sinon, va les chercher sur le serveur
-  if (!jsonFiche)
-    jsonFiche = await fetch(apiUneFicheUrl)
-    .catch(er => console.error(er + ' fetching ' + apiUneFicheUrl))
-    .then((response) => response.json())
-    .then((json) => json.features.length ? json.features[0] : null);
-
-  if (jsonFiche)
-    /* eslint-disable-next-line no-use-before-define */
-    afficheInfosFiche(jsonFiche);
-}
-
+/**********
+ * Fiches *
+ **********/
 function afficheInfosFiche(json) {
   const //coordinates = json.geometry.coordinates,
     properties = json.properties,
@@ -129,7 +108,32 @@ function afficheInfosFiche(json) {
       );
     }
   }
+}
 
+/*************
+ * Vue fiche *
+ *************/
+/* eslint-disable-next-line no-unused-vars */
+function afficheVuefiche(idFiche) {
+  const apiUneFicheUrl = serveurAPI + '/api/point?detail=fiche&format_texte=html&id=' + idFiche;
+
+  // Récupère les infos de la fiche dans indexDB
+  idbKeyval.get(parseInt(idFiche, 10))
+    .catch((er) => console.error(er))
+    //TODO BUG quand il n'y a pas de base keyval
+    .then((jsonFiche) => {
+      if (jsonFiche)
+        afficheInfosFiche(jsonFiche);
+      else
+        // Sinon, va les chercher sur le serveur
+        fetch(apiUneFicheUrl)
+        .catch((er) => console.error(er + ' fetching ' + apiUneFicheUrl))
+        .then((response) => response.json())
+        .then((json) => {
+          if (json.features.length)
+            afficheInfosFiche(json.features[0]);
+        });
+    });
 }
 
 /*****************
@@ -182,7 +186,7 @@ map.on('moveend', async () => {
       //console.log('await idbKeyval.get(bbox)'); //DCMM
       if (!await idbKeyval.get(bbox) // Si la dalle n'est pas déjà notée chargée
         .then((v) => v) //  
-        .catch(er => console.error(er + ' idbKeyval.get nomsIcones'))
+        .catch((er) => console.error(er + ' idbKeyval.get nomsIcones'))
         //.finally(() => console.info('END idbKeyval.get nomsIcones')) //DCMM
       ) {
         // Regroupe l'enregistrement de toutes les fiches d'une bbox dans une seule transaction
@@ -196,13 +200,13 @@ map.on('moveend', async () => {
               blocsAMeroriser[feature.id] = feature;
             });
           })
-          .catch(er => console.error(er + ' fetching ' + apiUrl));
+          .catch((er) => console.error(er + ' fetching ' + apiUrl));
 
         blocsAMeroriser[bbox] = Date.now(); // Marque la bbox comme mémorisée, même s'il n'y avait pas de fiches
         //console.info('idbKeyval.setMany blocsAMeroriser'); //DCMM
         await idbKeyval.setMany(blocsAMeroriser.map((v, k) => [k, v]))
           //.finally(() => console.info('END idbKeyval.setMany blocsAMeroriser')) //DCMM
-          .catch(er => console.error(er + ' idbKeyval.setMany blocsAMeroriser'));
+          .catch((er) => console.error(er + ' idbKeyval.setMany blocsAMeroriser'));
       }
     }
 });

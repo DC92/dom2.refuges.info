@@ -164,7 +164,7 @@ map.on('moveend', () => {
 //console.info('idbKeyval.get dbPointsJson'); //DCMM
 idbKeyval.get('dbPointsJson')
   //.finally(() => console.info('END idbKeyval.get dbPointsJson')) //DCMM
-  .catch(er => console.error(er))
+  .catch((er) => console.error(er))
   .then((dbPointsJson) => {
     pointsJson = dbPointsJson;
     affichePoints();
@@ -174,7 +174,7 @@ idbKeyval.get('dbPointsJson')
 //TODO tester si présent sur le serveur et depuis
 fetch(apiPointsUrl)
   .then((response) => response.text())
-  .catch(er => console.error(er + ' fetching ' + apiPointsUrl))
+  .catch((er) => console.error(er + ' fetching ' + apiPointsUrl))
   .then((geoJson) => {
     pointsJson = JSON.parse(geoJson);
 
@@ -186,5 +186,5 @@ fetch(apiPointsUrl)
     //console.info('idbKeyval.set dbPointsJson'); //DCMM
     idbKeyval.set('dbPointsJson', pointsJson)
       //.finally(() => console.info('END idbKeyval.set dbPointsJson')) //DCMM
-      .catch(er => console.error(er));
+      .catch((er) => console.error(er));
   });

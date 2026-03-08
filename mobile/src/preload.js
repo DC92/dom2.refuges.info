@@ -35,7 +35,7 @@ async function preLoad(load) {
     //console.info('idbKeyval.get nomsIcones'); //DCMM,
     const nomsIconesMemorises = await idbKeyval.get('nomsIcones')
       //.finally(() => console.info('END idbKeyval.get nomsIcones')) //DCMM
-      .catch(er => console.error(er + ' idbKeyval.get nomsIcones')),
+      .catch((er) => console.error(er + ' idbKeyval.get nomsIcones')),
       nomsIcones = [];
 
     globalPointsJson.features.forEach((point) => {
@@ -50,7 +50,7 @@ async function preLoad(load) {
       //console.info('idbKeyval.set nomsIcones'); //DCMM,
       await idbKeyval.set('nomsIcones', nomsIcones) // Mémorise la liste des icônes mises en cache
         //.finally(() => console.info('END idbKeyval.set nomsIcones')) //DCMM
-        .catch(er => console.error(er + ' idbKeyval.set nomsIcones'));
+        .catch((er) => console.error(er + ' idbKeyval.set nomsIcones'));
     }
 
     console.log(nomsIconesMemorises); //DCMM
@@ -83,7 +83,7 @@ async function preLoad(load) {
       if (thisStartPreLoad === currentStartPreLoad &&
         !await idbKeyval.get(bbox)
         .then((v) => v) // Si cette bbox n'est pas marquée
-        .catch(er => console.error(er + ' idbKeyval.get nomsIcones'))
+        .catch((er) => console.error(er + ' idbKeyval.get nomsIcones'))
         //.finally(() => console.info('END idbKeyval.get nomsIcones')) //DCMM
       ) {
         // Regroupe l'enregistrement de toutes les valeurs d'une bbox dans une seule transaction
@@ -97,13 +97,13 @@ async function preLoad(load) {
               blocsAMeroriser[feature.id] = feature.properties;
             });
           })
-          .catch(er => console.error(er + ' fetching ' + apiUrl));
+          .catch((er) => console.error(er + ' fetching ' + apiUrl));
 
         blocsAMeroriser[bbox] = Date.now(); // Marque la bbox comme mémorisée, même s'il n'y avait pas de fiches
         //console.info('idbKeyval.setMany blocsAMeroriser'); //DCMM
         await idbKeyval.setMany(blocsAMeroriser.map((v, k) => [k, v]))
           //.finally(() => console.info('END idbKeyval.setMany blocsAMeroriser')) //DCMM
-          .catch(er => console.error(er + ' idbKeyval.setMany blocsAMeroriser'));
+          .catch((er) => console.error(er + ' idbKeyval.setMany blocsAMeroriser'));
       }
     }
 
@@ -135,13 +135,13 @@ async function preLoad(load) {
             if ((Date.now() - tilesRefreshTime) >
               await idbKeyval.get(baseTileRef)
               //.finally(() => console.info('END idbKeyval.set baseTileRef')) //DCMM
-              .catch(er => console.error(er + ' idbKeyval.get baseTileRef'))
+              .catch((er) => console.error(er + ' idbKeyval.get baseTileRef'))
             ) {
               await fetch(url); // Charger la dalle dans le cache de l'explorateur
               //console.info('idbKeyval.set baseTileRef'); //DCMM
               await idbKeyval.set(baseTileRef, Date.now()) // Mark cache date
                 //.finally(() => console.info('END idbKeyval.set baseTileRef')) //DCMM
-                .catch(er => console.error(er + ' idbKeyval.set baseTileRef'));
+                .catch((er) => console.error(er + ' idbKeyval.set baseTileRef'));
             }
           }
     }
