@@ -159,11 +159,7 @@ map.on('moveend', () => {
     location.hash = localStorage.permalink;
 });
 
-// Affiche les points mémorisés dans indexBD
-
-//console.info('idbKeyval.get dbPointsJson'); //DCMM
 idbKeyval.get('dbPointsJson')
-  //.finally(() => console.info('END idbKeyval.get dbPointsJson')) //DCMM
   .catch((er) => console.error(er))
   .then((dbPointsJson) => {
     pointsJson = dbPointsJson;
@@ -183,8 +179,6 @@ fetch(apiPointsUrl)
     affichePoints();
 
     // Les enregistre à la place des des précédents dans indexDB
-    //console.info('idbKeyval.set dbPointsJson'); //DCMM
     idbKeyval.set('dbPointsJson', pointsJson)
-      //.finally(() => console.info('END idbKeyval.set dbPointsJson')) //DCMM
       .catch((er) => console.error(er));
   });

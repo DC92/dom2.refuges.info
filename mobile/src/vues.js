@@ -5,53 +5,53 @@
  ****************************
  L'application est constituée d'une page HTML unique (index.html),
  chargé lors du lancement de l'application s'il est "installé' (PWA) ou comme une fichier html classique
- La carte reste ouverte dans un élément <div id="map> pour toutes les vues (carte, point, ...)
- seules sont modifiées sa taille et les coordonnée de sa vue.
+ La carte reste ouverte dans un élément <div id="map> pour toutes les pages (carte, point, ...)
+ seules sont modifiées sa taille et les coordonnées.
 
- Les différentes vues sont définies par l'ancre (#abcdef à la fin de l'url)
+ Les différentes pages sont définies par l'ancre (#abcdef à la fin de l'url)
  qui évolue de façon à ce que l'url complète constitue un permalink.
- Le nom de la vue est attribué à la classe de l'élémént <BODY> qui pilote les différentes variantes de .CSS
+ Le nom de la page est attribué à la classe de l'élémént <BODY> qui pilote les différentes variantes de .CSS
 */
 
-/***********************
- * Affichage de la vue *
- ***********************/
-const nomVues = ['carte', 'nouvelles', 'fiche'];
+/************************
+ * Affichage de la page *
+ ************************/
+const nomPages = ['carte', 'fiche'];
 
-// Affiche la vue lorsque #ancre de l'URL change
-function afficheVue() {
+// Affiche la page lorsque #ancre de l'URL change
+function route() {
   const ancre = location.hash.replace('#', '');
 
   // Par défaut, la carte
-  let vue = 'carte';
+  let page = 'carte';
 
-  // #nouvelles
-  if (nomVues.includes(ancre))
-    vue = ancre;
+  // #autre_page (à développer)
+  if (nomPages.includes(ancre))
+    page = ancre;
   // #1234 : fiche de la cabane 1234
   else if (ancre.match(/^[0-9]+$/u))
-    vue = 'fiche';
+    page = 'fiche';
 
-  console.info('affiche ' + vue + ' ' + ancre);
+  console.info('affiche ' + page + ' ' + ancre);
 
-  // Assigne le style de la vue à montrer
-  document.body.className = vue;
+  // Assigne le style de la page à montrer
+  document.body.className = page;
 
-  // Execute la fonction d'initialisation de la vue
-  window['afficheVue' + vue](ancre);
+  // Execute la fonction d'initialisation de la page
+  window[page + 'Controleur'](ancre);
 }
 
 // Exécute à l'init
-afficheVue();
+route();
 
 // Changement externe de l'ancre
-window.addEventListener('popstate', afficheVue);
+window.addEventListener('popstate', route);
 
-/*************
- * Vue carte *
- *************/
+/**************
+ * Page carte *
+ **************/
 /* eslint-disable-next-line no-unused-vars */
-function afficheVuecarte() {
+function carteControleur() {
   const pos = localStorage.permalink.split('/');
 
   map.setView([pos[1], pos[2]], pos[0]);
@@ -61,7 +61,7 @@ function afficheVuecarte() {
 /**********
  * Fiches *
  **********/
-function afficheInfosFiche(json) {
+function ficheVue(json) {
   const //coordinates = json.geometry.coordinates,
     properties = json.properties,
     commentEl = document.getElementById('fiche-commentaires'),
@@ -110,11 +110,8 @@ function afficheInfosFiche(json) {
   }
 }
 
-/*************
- * Vue fiche *
- *************/
 /* eslint-disable-next-line no-unused-vars */
-function afficheVuefiche(idFiche) {
+function ficheControleur(idFiche) {
   const apiUneFicheUrl = serveurAPI + '/api/point?detail=fiche&format_texte=html&id=' + idFiche;
 
   // Récupère les infos de la fiche dans indexDB
@@ -123,7 +120,7 @@ function afficheVuefiche(idFiche) {
     //TODO BUG quand il n'y a pas de base keyval
     .then((jsonFiche) => {
       if (jsonFiche)
-        afficheInfosFiche(jsonFiche);
+        ficheVue(jsonFiche);
       else
         // Sinon, va les chercher sur le serveur
         fetch(apiUneFicheUrl)
@@ -131,32 +128,10 @@ function afficheVuefiche(idFiche) {
         .then((response) => response.json())
         .then((json) => {
           if (json.features.length)
-            afficheInfosFiche(json.features[0]);
+            ficheVue(json.features[0]);
         });
     });
 }
-
-/*****************
- * Vue nouvelles *
- *****************/
-/* eslint-disable-next-line no-unused-vars */
-function afficheVuenouvelles() {}
-//TODO BUG ne précharge pas les nouvelles
-/*
-requeteAPI(
-  'nouvelles',
-  '/api/contributions?format=json&format_texte=html&massif=352&nombre=10',
-  null,
-  (json) => {
-    // Calcule le lien pour afficher la page qui correspond
-    for (const j in json)
-      /* eslint-disable-next-line camelcase * /
-      json[j].lien_interne = '#' + json[j].id_point;
-
-    prepareModeleGroupe('nouvelles-groupe', Object.keys(json).length - 1); // -1 pour la ligne copyright dans le json
-    appliqueDonnees('nouvelles-groupe', json);
-  }
-);*/
 
 /************************************************
  * Préchargement des fiches autour de la position
@@ -168,7 +143,6 @@ requeteAPI(
  */
 map.on('moveend', async () => {
   //TODO BUG demande avant de récupérer la fiche !
-  //return;/*DCMM*/
   console.info('MAP moveend préchargement fiches');
 
   // Numéro de la dalle bbox contenant la position
@@ -183,11 +157,9 @@ map.on('moveend', async () => {
         .join(','),
         apiUrl = serveurAPI + '/api/bbox?detail=fiche&format_texte=html&nb_points=all&bbox=' + bbox;
 
-      //console.log('await idbKeyval.get(bbox)'); //DCMM
       if (!await idbKeyval.get(bbox) // Si la dalle n'est pas déjà notée chargée
         .then((v) => v) //  
         .catch((er) => console.error(er + ' idbKeyval.get nomsIcones'))
-        //.finally(() => console.info('END idbKeyval.get nomsIcones')) //DCMM
       ) {
         // Regroupe l'enregistrement de toutes les fiches d'une bbox dans une seule transaction
         const blocsAMeroriser = [];
@@ -203,9 +175,7 @@ map.on('moveend', async () => {
           .catch((er) => console.error(er + ' fetching ' + apiUrl));
 
         blocsAMeroriser[bbox] = Date.now(); // Marque la bbox comme mémorisée, même s'il n'y avait pas de fiches
-        //console.info('idbKeyval.setMany blocsAMeroriser'); //DCMM
         await idbKeyval.setMany(blocsAMeroriser.map((v, k) => [k, v]))
-          //.finally(() => console.info('END idbKeyval.setMany blocsAMeroriser')) //DCMM
           .catch((er) => console.error(er + ' idbKeyval.setMany blocsAMeroriser'));
       }
     }

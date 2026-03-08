@@ -36,7 +36,6 @@ Démonstrateur front-end pour refuges.info
 
   <!-- This package -->
   <script src="src/carte.js" defer></script>
-  <!--script src="src/preload.js" defer></script-->
   <script src="src/vues.js" defer></script>
   <link href="src/vues.css" rel="stylesheet">
 
@@ -53,7 +52,7 @@ Démonstrateur front-end pour refuges.info
   <div class="bandeau">
     <h2><a href="/" title="Retour au site web">Refuges.info</a></h2>
     <a href="#" title="Cartes géographiques et points d'intérêt">🌍<span>Cartes</span></a>
-    <a href="#nouvelles" title="Fiches, commentaires et photos récents">
+    <a href="/nouvelles/" title="Contribuer aux discussions">
       🔔<span>Nouvelles</span>
     </a>
     <a href="/point_ajout" title="Ajouter un point">
@@ -112,22 +111,6 @@ Démonstrateur front-end pour refuges.info
       <div id="fiche-complements"></div>
     </div>
     <div id="fiche-commentaires"></div>
-  </div>
-
-  <!-- Template nouvelles -->
-  <div class="nouvelles">
-    <h3>Nouvelles</h3>
-    <div id="nouvelles-groupe">
-      <div><!-- Modèle pour un nouvelle -->
-        Le <span id="nouvelles-groupe-0-date_formatee"></span>
-        <a id="nouvelles-groupe-0-lien_interne">
-          <span id="nouvelles-groupe-0-nom_point"></span>
-        </a>
-        dans <span id="nouvelles-groupe-0-localisation"></span>
-        <span id="nouvelles-groupe-0-type_point"></span>
-        de <span id="nouvelles-groupe-0-auteur"></span>
-      </div>
-    </div>
   </div>
 
   <div class="attente">Attente réseau</div>

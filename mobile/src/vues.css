@@ -184,7 +184,6 @@ a {
 /* Montre uniquement les zones liées à la vue courante */
 body:not(.carte) .carte,
 body:not(.fiche) .fiche,
-body:not(.nouvelles) .nouvelles,
 /*//TODO ??? body:not([class*="attente"]) .attente,*/
 body.carte .attente {
   display: none;
@@ -262,15 +261,6 @@ body.carte .attente {
 #fiche-commentaires div:nth-child(odd) img {
   float: left;
   margin: 0 5px 0 0;
-}
-
-/* VUE NOUVELLES */
-.nouvelles-groupe>div {
-  margin: 10px 0;
-  padding: 10px;
-  border: 1px solid var(--couleur_texte);
-  text-indent: 20px;
-  text-align: justify;
 }
 
 /* PAVÉ D'ATTENTE RÉSEAU */
