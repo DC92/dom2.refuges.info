@@ -38,7 +38,7 @@ function route() {
   document.body.className = page;
 
   // Execute la fonction d'initialisation de la page
-  window[page + 'Controleur'](ancre);
+  window['controleur' + page[0].toUpperCase() + page.slice(1)](ancre);
 }
 
 // Exécute à l'init
@@ -51,7 +51,7 @@ window.addEventListener('popstate', route);
  * Page carte *
  **************/
 /* eslint-disable-next-line no-unused-vars */
-function carteControleur() {
+function controleurCarte() {
   const pos = localStorage.permalink.split('/');
 
   map.setView([pos[1], pos[2]], pos[0]);
@@ -61,7 +61,7 @@ function carteControleur() {
 /**********
  * Fiches *
  **********/
-function ficheVue(json) {
+function vueFiche(json) {
   const //coordinates = json.geometry.coordinates,
     properties = json.properties,
     commentEl = document.getElementById('fiche-commentaires'),
@@ -112,7 +112,7 @@ function ficheVue(json) {
 }
 
 /* eslint-disable-next-line no-unused-vars */
-function ficheControleur(idFiche) {
+function controleurFiche(idFiche) {
   const apiUneFicheUrl = serveurAPI + '/api/point?detail=fiche&format_texte=html&id=' + idFiche;
 
   // Récupère les infos de la fiche dans indexDB
@@ -121,7 +121,7 @@ function ficheControleur(idFiche) {
     //TODO BUG quand il n'y a pas de base keyval
     .then((jsonFiche) => {
       if (jsonFiche)
-        ficheVue(jsonFiche);
+        vueFiche(jsonFiche);
       else
         // Sinon, va les chercher sur le serveur
         fetch(apiUneFicheUrl)
@@ -129,7 +129,7 @@ function ficheControleur(idFiche) {
         .then((response) => response.json())
         .then((json) => {
           if (json.features.length)
-            ficheVue(json.features[0]);
+            vueFiche(json.features[0]);
         });
     });
 }
