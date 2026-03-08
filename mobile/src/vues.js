@@ -1,4 +1,4 @@
-/* global serveurAPI, map */
+/* global serveurAPI, map, idbKeyval */
 
 /****************************
  * Gestion de l'application *
@@ -12,8 +12,6 @@
  qui évolue de façon à ce que l'url complète constitue un permalink.
  Le nom de la vue est attribué à la classe de l'élémént <BODY> qui pilote les différentes variantes de .CSS
 */
-
-const apiFicheUrl = serveurAPI + '/api/point?detail=fiche&format_texte=html&id='; // + idFiche
 
 /***********************
  * Affichage de la vue *
@@ -40,7 +38,7 @@ function afficheVue() {
   document.body.className = vue;
 
   // Execute la fonction d'initialisation de la vue
-  window[vue + 'Affiche'](ancre);
+  window['afficheVue' + vue](ancre);
 }
 
 // Exécute à l'init
@@ -53,7 +51,7 @@ window.addEventListener('popstate', afficheVue);
  * Vue carte *
  *************/
 /* eslint-disable-next-line no-unused-vars */
-function carteAffiche() {
+function afficheVuecarte() {
   const pos = localStorage.permalink.split('/');
 
   map.setView([pos[1], pos[2]], pos[0]);
@@ -63,70 +61,82 @@ function carteAffiche() {
 /*************
  * Vue fiche *
  *************/
+// Async permet l'utilisation en await des promises et un code plus linéaire
 /* eslint-disable-next-line no-unused-vars */
-function ficheAffiche(idFiche) {
-  //TODO get point from DB dans une zone
-  fetch(apiFicheUrl + idFiche)
+async function afficheVuefiche(idFiche) {
+  const apiUneFicheUrl = serveurAPI + '/api/point?detail=fiche&format_texte=html&id=' + idFiche;
+
+  // Récupère les infos de la fiche dans indexDB
+  let jsonFiche = await idbKeyval.get(parseInt(idFiche, 10));
+
+  //TODO BUG quand il n'y a pas de base keyval
+  // Sinon, va les chercher sur le serveur
+  if (!jsonFiche)
+    jsonFiche = await fetch(apiUneFicheUrl)
+    .catch(er => console.error(er + ' fetching ' + apiUneFicheUrl))
     .then((response) => response.json())
-    .then((json) => {
-      if (json && json.features.length) {
-        const coord = json.features[0].geometry.coordinates,
-          properties = json.features[0].properties,
-          commentEl = document.getElementById('fiche-commentaires');
+    .then((json) => json.features.length ? json.features[0] : null);
 
-        // Positionne la carte et les coordonnées
-        map.setView([coord[1], coord[0]], 15);
-        map.invalidateSize();
+  if (jsonFiche)
+    /* eslint-disable-next-line no-use-before-define */
+    afficheInfosFiche(jsonFiche);
+}
 
-        // Affiche les données
-        const donnees = {
-          lat: coord[0],
-          lng: coord[1],
-          'coord-alt': properties.coord.alt,
-          rubriques: properties,
-          //TODO masquer "Informations complémentaires": si pas d'info_comp
-          complements: properties.info_comp,
-        };
+function afficheInfosFiche(json) {
+  const //coordinates = json.geometry.coordinates,
+    properties = json.properties,
+    commentEl = document.getElementById('fiche-commentaires'),
+    donnees = {
+      lat: json.geometry.coordinates[0],
+      lng: json.geometry.coordinates[1],
+      'coord-alt': properties.coord.alt,
+      rubriques: properties,
+      //TODO masquer "Informations complémentaires": si pas d'info_comp
+      complements: properties.info_comp,
+    };
 
-        for (const kd in donnees) {
-          const el = document.getElementById('fiche-' + kd);
+  // Positionne la carte et les coordonnées
+  map.setView([donnees.lng, donnees.lat], 15);
+  map.invalidateSize();
 
-          if (el && typeof donnees[kd] === 'object') {
-            el.innerHTML = '';
-            for (const kdd in donnees[kd])
-              if (donnees[kd][kdd].nom && donnees[kd][kdd].valeur)
-                el.insertAdjacentHTML('beforeend',
-                  '<h3>' + donnees[kd][kdd].nom + ':</h3>' +
-                  '<p>' + donnees[kd][kdd].valeur + '</p>');
-          } else
-            el.innerHTML = donnees[kd];
-        }
+  // Affiche les données de la fiche
+  for (const kd in donnees) {
+    const el = document.getElementById('fiche-' + kd);
 
-        // Affiche les commentaires
-        if (properties.commentaires && properties.commentaires.length) {
-          commentEl.innerHTML = ''; // Efface la zone commentaires
+    if (el && typeof donnees[kd] === 'object') {
+      el.innerHTML = '';
+      for (const kdd in donnees[kd])
+        if (donnees[kd][kdd].nom && donnees[kd][kdd].valeur)
+          el.insertAdjacentHTML('beforeend',
+            '<h3>' + donnees[kd][kdd].nom + ':</h3>' +
+            '<p>' + donnees[kd][kdd].valeur + '</p>');
+    } else
+      el.innerHTML = donnees[kd];
+  }
 
-          for (const comment of properties.commentaires) {
-            commentEl.insertAdjacentHTML('beforeend',
-              '<div>' +
-              '<span>' + (comment.auteur || 'Inconnu') + ' - ' + (comment.date || '') + '</span>' +
-              (comment.texte ? '<p>' +
-                (comment.photo ? '<img src="' + (serveurAPI + comment.photo) + '"></img>' : '') +
-                comment.texte + '</p>' : '') +
-              '</div>'
-            );
-          }
-        }
-      }
-    })
-    .catch(er => console.error(er + ' fetching ' + apiFicheUrl));
+  // Affiche les commentaires
+  if (properties.commentaires && properties.commentaires.length) {
+    commentEl.innerHTML = ''; // Efface la zone commentaires
+
+    for (const comment of properties.commentaires) {
+      commentEl.insertAdjacentHTML('beforeend',
+        '<div>' +
+        '<span>' + (comment.auteur || 'Inconnu') + ' - ' + (comment.date || '') + '</span>' +
+        (comment.texte ? '<p>' +
+          (comment.photo ? '<img src="' + (serveurAPI + comment.photo) + '"></img>' : '') +
+          comment.texte + '</p>' : '') +
+        '</div>'
+      );
+    }
+  }
+
 }
 
 /*****************
  * Vue nouvelles *
  *****************/
 /* eslint-disable-next-line no-unused-vars */
-function nouvellesAffiche() {}
+function afficheVuenouvelles() {}
 //TODO BUG ne précharge pas les nouvelles
 /*
 requeteAPI(
@@ -143,3 +153,56 @@ requeteAPI(
     appliqueDonnees('nouvelles-groupe', json);
   }
 );*/
+
+/************************************************
+ * Préchargement des fiches autour de la position
+ * Elles sont chargées par dalles bbox dans indexedDB avec une clé égale à la valeur de id_point
+ * sauf les photos dqui sont mémorisées par le cache de l'explorateur
+ * Une fois chargés, seules sont rafraichies les fiches ou commentaires récement modifiés (API bbox?depuis=)
+ * Une entrée supplémentaire indexedDB est créée pour signaler que la dalle a été traités
+ * dont la clé est la bbox (0.5,43.5,1,44) et la valeur la date epoch de mise en cache
+ */
+map.on('moveend', async () => {
+  //TODO BUG demande avant de récupérer la fiche !
+  //return;/*DCMM*/
+  console.info('MAP moveend préchargement fiches');
+
+  // Numéro de la dalle bbox contenant la position
+  const fichesTileSize = 0.25, // ° lon / lat
+    xy = Object.values(map.getCenter()).map(a => Math.round(a / fichesTileSize));
+
+  // Parcours les 4 dalles entourant la position
+  for (let x = 0; x < 2; x++)
+    for (let y = 0; y < 2; y++) {
+      const bbox = [xy[1] + y - 1, xy[0] + x - 1, xy[1] + y, xy[0] + x]
+        .map((a) => a * fichesTileSize)
+        .join(','),
+        apiUrl = serveurAPI + '/api/bbox?detail=fiche&format_texte=html&nb_points=all&bbox=' + bbox;
+
+      //console.log('await idbKeyval.get(bbox)'); //DCMM
+      if (!await idbKeyval.get(bbox) // Si la dalle n'est pas déjà notée chargée
+        .then((v) => v) //  
+        .catch(er => console.error(er + ' idbKeyval.get nomsIcones'))
+        //.finally(() => console.info('END idbKeyval.get nomsIcones')) //DCMM
+      ) {
+        // Regroupe l'enregistrement de toutes les fiches d'une bbox dans une seule transaction
+        const blocsAMeroriser = [];
+
+        // Demande les fiches dans la bbox (requêtes suspensives, donc faites une par une en attendant le retour
+        await fetch(apiUrl)
+          .then(response => response.json())
+          .then(geoJson => {
+            geoJson.features.forEach(feature => {
+              blocsAMeroriser[feature.id] = feature;
+            });
+          })
+          .catch(er => console.error(er + ' fetching ' + apiUrl));
+
+        blocsAMeroriser[bbox] = Date.now(); // Marque la bbox comme mémorisée, même s'il n'y avait pas de fiches
+        //console.info('idbKeyval.setMany blocsAMeroriser'); //DCMM
+        await idbKeyval.setMany(blocsAMeroriser.map((v, k) => [k, v]))
+          //.finally(() => console.info('END idbKeyval.setMany blocsAMeroriser')) //DCMM
+          .catch(er => console.error(er + ' idbKeyval.setMany blocsAMeroriser'));
+      }
+    }
+});
