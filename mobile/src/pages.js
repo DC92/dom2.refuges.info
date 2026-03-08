@@ -71,6 +71,7 @@ function ficheVue(json) {
       'coord-alt': properties.coord.alt,
       rubriques: properties,
       //TODO masquer "Informations complémentaires": si pas d'info_comp
+      //TODO format de Léo
       complements: properties.info_comp,
     };
 

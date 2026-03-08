@@ -178,7 +178,7 @@ fetch(apiPointsUrl)
     // Affiche ou réaffiche les points reçus
     affichePoints();
 
-    // Les enregistre à la place des des précédents dans indexDB
+    // Les enregistre à la place des précédents dans indexDB
     idbKeyval.set('dbPointsJson', pointsJson)
       .catch((er) => console.error(er));
   });
