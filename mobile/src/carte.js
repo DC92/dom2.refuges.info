@@ -1,4 +1,4 @@
-/* global L, idbKeyval */
+/* global L */
 
 /*******************************
  * Gestion de la carte Leaflet *
@@ -58,12 +58,10 @@ const baseLayers = {
   Une fiche contient toutes les informations concernant un point, y compris les commentaires
 */
 
-// pointsJson est une variable javascript, dbPointsJson son enregistrement dans indexDB
-// json est une structure contenant des définitions de points, geoJson sa représentation en string
+// json est une structure contenant des définitions de points
+// geoJson sa représentation en string
 
-// Mémorise dans une variable tous les points de la base WRI
-let pointsJson = {};
-
+//TODO générer le html des sélecteurs à partir d'une liste de type => nom_icone
 //TODO séparer plusieurs layers par type de point avec un cluster global
 // Couche affichant tous les points
 const pointsLayer = L.geoJson(null, {
@@ -99,17 +97,18 @@ const pointsLayer = L.geoJson(null, {
 // Couche gérant les clusters
 const clustersLayer = new L.MarkerClusterGroup();
 
-function affichePoints() {
-  if (pointsJson) {
+function affichePoints(geoJson) {
+  const json = JSON.parse(geoJson || '{"type":"FeatureCollection","features":[]}');
+
+  if (json.features.length) {
     // Filtre les types de points suivant le sélecteur de la carte
-    //TODO générer le html des sélecteurs à partir d'une liste de type => nom_icone
     const typesPointsVisibles = Array.from(
         document.querySelectorAll('#selecteur a')
       ).filter((el) =>
         el.classList.contains('selected')
       ).map((el) => parseInt(el.id, 10)),
 
-      filteredPoints = pointsJson.features
+      filteredPoints = json.features
       .filter((features) =>
         typesPointsVisibles.includes(features.properties.type.id)
       );
@@ -146,6 +145,9 @@ console.info('MAP init');
   }),
 ].map(e => e.addTo(map));
 
+// Initialise les points s'il y en a de mémorisés
+affichePoints(localStorage.pointsGeoJson);
+
 // Mémorise la position de la carte
 map.on('moveend', () => {
   const pos = map.getCenter();
@@ -160,26 +162,17 @@ map.on('moveend', () => {
     location.hash = localStorage.permalink;
 });
 
-idbKeyval.get('dbPointsJson')
-  .catch((er) => console.error(er))
-  .then((dbPointsJson) => {
-    pointsJson = dbPointsJson;
-    affichePoints();
-  });
-
 // Redemande tous les points au serveur
+//TODO le faire quand tout le reste est stable
 //TODO tester si présent sur le serveur et depuis
 fetch(apiPointsUrl)
   .then((response) => response.text())
   .catch((er) => console.error(er + ' fetching ' + apiPointsUrl))
   .then((geoJson) => {
-    pointsJson = JSON.parse(geoJson);
-
     //TODO précharger toutes les icônes citées
     // Affiche ou réaffiche les points reçus
-    affichePoints();
+    affichePoints(geoJson);
 
-    // Les enregistre à la place des précédents dans indexDB
-    idbKeyval.set('dbPointsJson', pointsJson)
-      .catch((er) => console.error(er));
+    // Les enregistre à la place des précédents
+    localStorage.pointsGeoJson = geoJson;
   });
