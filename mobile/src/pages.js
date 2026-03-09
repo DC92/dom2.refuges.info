@@ -14,7 +14,7 @@
 */
 
 /************************
- * Affichage de la page *
+ * Affichage d'une page *
  ************************/
 const nomPages = ['carte', 'fiche'];
 
@@ -54,6 +54,7 @@ window.addEventListener('popstate', route);
 function controleurCarte() {
   const pos = localStorage.permalink.split('/');
 
+  //TODO BUG ne se positionne pas au milieu
   map.setView([pos[1], pos[2]], pos[0]);
   map.invalidateSize();
 }
@@ -70,7 +71,7 @@ function vueFiche(json) {
       alt: properties.coord.alt,
       rubriques: properties,
       //TODO masquer "Informations complémentaires": si pas d'info_comp
-      //TODO format de Léo
+      //BEST format de Léo
       complements: properties.info_comp,
     };
   console.log(properties); //DCMM
@@ -113,7 +114,6 @@ function vueFiche(json) {
   }
 }
 
-//TODO attente fond de carte si premier chargement
 /* eslint-disable-next-line no-unused-vars */
 function controleurFiche(idFiche) {
   const apiUneFicheUrl = serveurAPI + '/api/point?detail=fiche&format_texte=html&id=' + idFiche;
@@ -138,57 +138,3 @@ function controleurFiche(idFiche) {
         });
     });
 }
-
-/**************************************************
- * Préchargement des fiches autour de la position *
- **************************************************
-Elles sont chargées par dalles bbox dans indexedDB avec une clé égale à la valeur de id_point
-sauf les photos qui sont mémorisées par le cache de l'explorateur
-Une fois chargés, seules sont rafraichies les fiches ou commentaires récement modifiés (API bbox?depuis=)
-Une entrée supplémentaire indexedDB est créée pour signaler que la dalle a été traités
-dont la clé est la bbox (0.5,43.5,1,44) et la valeur la date epoch de mise en cache
-*/
-//TODO le faire quand tout le reste est stable
-map.on('moveend', async () => {
-  //TODO BUG demande avant de récupérer la fiche !
-  console.info('MAP moveend préchargement fiches');
-
-  console.log(new Error().stack); //DCMM
-
-  // Numéro de la dalle bbox contenant la position
-  const fichesTileSize = 0.25, // ° lon / lat
-    xy = Object.values(map.getCenter()).map(a => Math.round(a / fichesTileSize));
-
-  // Parcours les 4 dalles entourant la position
-  for (let x = 0; x < 2; x++)
-    for (let y = 0; y < 2; y++) {
-      const bbox = [xy[1] + y - 1, xy[0] + x - 1, xy[1] + y, xy[0] + x]
-        .map((a) => a * fichesTileSize)
-        .join(','),
-        apiUrl = serveurAPI + '/api/bbox?detail=fiche&format_texte=html&nb_points=all&bbox=' + bbox;
-
-      console.log(idbKeyval); //DCMM
-      if (!await idbKeyval.get(bbox) // Si la dalle n'est pas déjà notée chargée
-        .then((v) => v) //  
-        .catch((er) => console.error(er + ' idbKeyval get nomsIcones'))
-      ) {
-        // Regroupe l'enregistrement de toutes les fiches d'une bbox dans une seule transaction
-        const blocsAMeroriser = [];
-
-        // Demande les fiches dans la bbox (requêtes suspensives, donc faites une par une en attendant le retour
-        await fetch(apiUrl)
-          .then(response => response.json())
-          .then(geoJson => {
-            geoJson.features.forEach(feature => {
-              blocsAMeroriser[feature.id] = feature;
-            });
-          })
-          .catch((er) => console.error(er + ' fetching ' + apiUrl));
-
-        blocsAMeroriser[bbox] = Date.now(); // Marque la bbox comme mémorisée, même s'il n'y avait pas de fiches
-        console.log(idbKeyval); //DCMM
-        await idbKeyval.setMany(blocsAMeroriser.map((v, k) => [k, v]))
-          .catch((er) => console.error(er + ' idbKeyval setMany blocsAMeroriser'));
-      }
-    }
-});

@@ -12,7 +12,7 @@ const serveurAPI = 'https://dom2.refuges.info',
   apiPointsUrl = serveurAPI + '/api/bbox?nb_points=all&detail=icone';
 
 localStorage.permalink ||= '7/45/7'; // zoom/latitude/longitude Défaut : Alpes de l'Ouest
-//TODO permalink baseLayer
+//BEST permalink baseLayer
 
 /*******************
  * Couches tuilées *
@@ -33,7 +33,7 @@ const baseLayers = {
 
   // https://geoservices.ign.fr/documentation/services/utilisation-web/extension-pour-leaflet
   // https://ignf.github.io/geoportal-extensions/leaflet-latest/jsdoc/module-Layers.html#.WMTS
-  /* //TODO BUG format non pris en compte
+  /* //BEST BUG format non pris en compte
     'Ign plan': L.geoportalLayer.WMTS({
     layer: 'GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2',
     format: 'image/png',
@@ -47,7 +47,7 @@ const baseLayers = {
     layer: 'ORTHOIMAGERY.ORTHOPHOTOS',
   }),
 
-  //TODO https://github.com/plepe/overpass-frontend/blob/master/example-bbox.js
+  //BEST https://github.com/plepe/overpass-frontend/blob/master/example-bbox.js
 };
 
 /************************
@@ -61,8 +61,8 @@ const baseLayers = {
 // json est une structure contenant des définitions de points
 // geoJson sa représentation en string
 
-//TODO générer le html des sélecteurs à partir d'une liste de type => nom_icone
-//TODO séparer plusieurs layers par type de point avec un cluster global
+//BEST générer le html des sélecteurs à partir d'une liste de type => nom_icone
+//BEST séparer plusieurs layers par type de point avec un cluster global
 // Couche affichant tous les points
 const pointsLayer = L.geoJson(null, {
   // Icônes
@@ -87,6 +87,7 @@ const pointsLayer = L.geoJson(null, {
     //BEST Fonctions ctrl clic + Apple suivant demande faite à wri github
     layer.on({
       click: () => {
+
         // Affiche la vue fiche
         location.hash = feature.id;
       },
@@ -154,25 +155,10 @@ map.on('moveend', () => {
 
   console.info('MAP moveend');
 
-  // Le permalink est mémorisé dans la variable permanente de l'explorateur localStorage
+  // Le permalink est mémorisé dans la mémoire permanente de l'explorateur localStorage
   localStorage.permalink = [map.getZoom(), pos.lat, pos.lng].map(f => Math.round(f * 1000) / 1000).join('/');
 
   // Le permalink est un #hash ajouté à la page carte uniquement
   if (document.body.className === 'carte')
     location.hash = localStorage.permalink;
 });
-
-// Redemande tous les points au serveur
-//TODO le faire quand tout le reste est stable
-//TODO tester si présent sur le serveur et depuis
-fetch(apiPointsUrl)
-  .then((response) => response.text())
-  .catch((er) => console.error(er + ' fetching ' + apiPointsUrl))
-  .then((geoJson) => {
-    //TODO précharger toutes les icônes citées
-    // Affiche ou réaffiche les points reçus
-    affichePoints(geoJson);
-
-    // Les enregistre à la place des précédents
-    localStorage.pointsGeoJson = geoJson;
-  });
