@@ -31,7 +31,7 @@ $req->format_texte = $_REQUEST['format_texte'] ?? '';
 $req->nb_points = $_REQUEST['nb_points'] ?? '';
 $req->cluster = $_REQUEST['cluster'] ?? '';
 $req->type_points = $_REQUEST['type_points'] ?? '';
-$req->depuis = $_REQUEST['depuis'] ?? '';
+$req->depuis = intval($_REQUEST['depuis']) ?? 0;
 
 // Ici c'est les valeurs possibles
 $val = new stdClass();
@@ -81,8 +81,8 @@ if(!is_numeric($req->nb_points) && $req->nb_points!="all") {
 if(!array_key_exists($req->detail,$config_wri['api_format_detail']))
   $req->detail = "simple";
 
-if(!is_numeric($req->depuis) || $req->depuis < 0 || $req->depuis > time())
-  $req->depuis = '';
+if($req->depuis < 0 || $req->depuis > time())
+  $req->depuis = 0;
 
 // On vérifie que les types de points sont ok, sinon on met all comme valeur
 if($req->page!="point") {
@@ -129,16 +129,15 @@ if($req->bbox != "world") { // Si on a world, on ne passe pas de paramètre à p
 unset($ouest,$sud,$est,$nord);
 
 switch ($req->page) {
-  case 'massif':
-    $params->pas_les_points_caches=1;
-    if (!empty($req->massif))
-      $params->ids_polygones = $req->massif;
   case 'bbox':
     $params->pas_les_points_caches=1;
-    if (empty($req->depuis))
-      $params->ordre="point_type.importance DESC";
-    else
-      $params->ordre="points.date_modification_fiche DESC";
+    $params->ordre="point_type.importance DESC";
+    break;
+  case 'massif':
+    if (!empty($req->massif))
+      $params->ids_polygones = $req->massif;
+    $params->pas_les_points_caches=1;
+    $params->ordre="point_type.importance DESC";
     break;
   case 'point':
     $params->ids_points = intval($req->id);
@@ -155,6 +154,10 @@ if(is_numeric($req->cluster)) {
 }
 if($req->type_points != "all") {
   $params->ids_types_point = str_replace($val->type_points, $val->type_points_id, $req->type_points);
+}
+if (!empty($req->depuis)) {
+  $params->depuis = $req->depuis;
+  $params->ordre = "points.date_modification_fiche DESC";
 }
 
 /****************************** FILTRE DES DÉTAILS ******************************/

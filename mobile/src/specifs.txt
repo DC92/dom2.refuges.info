@@ -1,10 +1,18 @@
+Spécifications des fonctionnalités actuelles :
+
 Une application PWA qui est un frontal du site orienté petits écrans, simplicité, rapidité et hors réseau.
 C’est aussi une page HTML qui fonctionne dans l’explorateur d’un PC
 Elle intègre les vues :
 - carte (similaire à l’appli /gps actuelle mais sous Leaflet avec les contrôles zoom, GPS & géolocalisation)
 - point (similaire à nos pages points)
 - nouvelles
-La création et l’édition de points & commentaires, la recherche, le forum et la modération restent sur le site
+A VENIR
+- création de commentaires avec photos issues de l'appareil photo (le nom de l'utilisateur vient de l'identification faite sur le forum)
+NECESITENT L'AFFICHAGE D'UNE PAGE DU SITE
+- identification
+- création et édition de points compte (tenu de la complexité du questionnaire d'infos complémentaires)
+- recherche, recherche étendue
+- le forum et la modération restent sur le site
 
 Simplicité : minimum de duplications ou explications, maximum de visuels.
 Ex : - pas de liste de points proches, il y a la carte.
@@ -16,28 +24,28 @@ Rapidité : précharger les infos pour une navigation instantanée
 
 Hors réseau : précharger les infos suivantes :
 
-- Les 6500 points du monde, importés en 300 kb et 2 secondes par /api/bbox?detail=icone
+- Les 6500 points du monde à afficher sur la carte, importés en 300 kb et 2 secondes par /api/bbox?detail=icone
 Leaflet n’en fait qu’une bouchée en mode cluster
 Tous les points sont rechargés à chaque lancement de l’application si au moins un changement de point a eu lieu.
 Comme la modification nécessite de passer sur le site, la liste des points est mise à jour au retour dans l’application.
 Les points supprimés ne sont plus accessibles
-Cette mise en cache n’est pas optionnelle
+Cette mise en cache obligatoire et automatique
 
 - Toutes les icones.svg utilisées par les points du monde, sans limite de péremption.
-Cette mise en cache n’est pas optionnelle
+Cette mise en cache est obligatoire et automatique
 
 - Les infos des fiches avec commentaires chargées par dalles de 0,25° long/lat (250 fiches, moins d’1 Mb pour les zones les plus chargées).
 /api/bbox?bbox=45,5,45.25,5.25&detail=fiche
-Les fiches sont mémorisées une par une dans le cache indexé « indexedDB » de l’explorateur.
-Seraient chargées les 4 dalles les plus proches du point visualisé de façon à couvrir une moyenne de 30 km autour de la position de la carte.
-Chaque dalle n’est chargée qu’une fois, seuls les points modifiés sont rechargés par la suite.
-A chaque lancement de l’application, les points changés sont rechargés par /api/bbox?depuis=epoch&detail=fiche
+Les fiches des 4 dalles les plus proches du point sont mémorisées mémorisées une par une dans indexedDB
+de façon à couvrir une moyenne de 30 km autour de la position de la carte.
+Chaque dalle n’est chargée qu’une fois, seuls les points modifiés sont rechargés à chaque lancement de l’application par /api/bbox?depuis=epoch&detail=fiche
 Les commentaires supprimés ou transférés ne sont plus visibles
-Cette mise en cache n’est pas optionnelle
+Cette mise en cache est obligatoire et automatique
 
 - Les photos des fiches sont mémorisées par le cache de l’explorateur lors de la visualisation de chaque fiche.
+Cette mise en cache est implicite et automatique
 
-- Les dalles OpenHickingMaps sur un zoom 6 (navigation dans les continents) à 16 (le zoom de la carte des pages point) et sur 3 fois le nombre de dalles visibles sur la carte dans toutes les directions, soit environ 450 dalles. Ces dalles ne sont mises à jour qu’en effaçant complétement le cache.
+A VENIR - Les dalles OpenHickingMaps sur un zoom 6 (navigation dans les continents) à 16 (le zoom de la carte des pages point) et sur 3 fois le nombre de dalles visibles sur la carte dans toutes les directions, soit environ 450 dalles. Ces dalles ne sont mises à jour qu’en effaçant complétement le cache.
 Chaque dalle n’est mémorisée qu’une fois sans limite de validité
 Cette mise en cache est optionnelle et proposée par un bouton « mémoriser la carte OpenHickingMaps autour du point »
 
@@ -47,6 +55,7 @@ Elles y restent dans un délai max_age défini par le fournisseur
 - Le logiciel est mis en cache par le service_worker et upgradé quand un des fichiers source change mais n’est mis en service au prochain lancement de l’application.
 
 - Un bouton « effacer tout le cache » remet tout à zéro pour celui qui veut récupérer de la place ou qui a des problèmes.
+
 
 Architecture : HTML, CSS, JavaScript (PWA, promises, localStorage, indexedDB), Leaflet et quelques modules Leaflet.
 Pas de modules perso (templéteur, MyOl, …)
