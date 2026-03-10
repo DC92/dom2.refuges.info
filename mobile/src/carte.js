@@ -20,6 +20,7 @@ localStorage.permalink ||= '7/45/7'; // zoom/latitude/longitude Défaut : Alpes 
 const baseLayers = {
   OpenHikingMap: L.tileLayer('https://tile.openmaps.fr/openhikingmap/{z}/{x}/{y}.png', {
     maxZoom: 18,
+    edgeBufferTiles: 3,
     attribution: '<a href="https://wiki.openstreetmap.org/wiki/OpenHikingMap">© OpenHikingMap</a>|' +
       '<a href="https://openmaps.fr/donate">❤️ Donation</a>|' +
       '<a href="http://www.openstreetmap.org/copyright">© OpenStreetMap</a>|' +

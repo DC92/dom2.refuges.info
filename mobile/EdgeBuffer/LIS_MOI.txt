@@ -1,0 +1,1 @@
+https://github.com/TolonUK/Leaflet.EdgeBuffer/releases/tag/v1.0.7

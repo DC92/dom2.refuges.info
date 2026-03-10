@@ -54,7 +54,6 @@ window.addEventListener('popstate', route);
 function controleurCarte() {
   const pos = localStorage.permalink.split('/');
 
-  //TODO BUG ne se positionne pas au milieu
   map.setView([pos[1], pos[2]], pos[0]);
   map.invalidateSize();
 }
