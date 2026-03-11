@@ -31,7 +31,7 @@ $req->format_texte = $_REQUEST['format_texte'] ?? '';
 $req->nb_points = $_REQUEST['nb_points'] ?? '';
 $req->cluster = $_REQUEST['cluster'] ?? '';
 $req->type_points = $_REQUEST['type_points'] ?? '';
-$req->depuis = intval($_REQUEST['depuis']) ?? 0;
+$req->depuis = $_REQUEST['depuis'] ?? '';
 
 // Ici c'est les valeurs possibles
 $val = new stdClass();
@@ -81,8 +81,7 @@ if(!is_numeric($req->nb_points) && $req->nb_points!="all") {
 if(!array_key_exists($req->detail,$config_wri['api_format_detail']))
   $req->detail = "simple";
 
-if($req->depuis < 0 || $req->depuis > time())
-  $req->depuis = 0;
+$req->depuis = max(0, min (intval($req->depuis), time()));
 
 // On vérifie que les types de points sont ok, sinon on met all comme valeur
 if($req->page!="point") {

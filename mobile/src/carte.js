@@ -9,10 +9,11 @@
 */
 
 const serveurAPI = 'https://dom2.refuges.info',
-  apiPointsUrl = serveurAPI + '/api/bbox?nb_points=all&detail=icone';
+  apiDepuisUrl = serveurAPI + '/api/bbox?detail=fiche&depuis=' + Date.now();
+
+console.log(apiDepuisUrl); //DCMM
 
 localStorage.permalink ||= '7/45/7'; // zoom/latitude/longitude Défaut : Alpes de l'Ouest
-//BEST permalink baseLayer
 
 /*******************
  * Couches tuilées *
@@ -160,6 +161,7 @@ map.on('moveend', () => {
   localStorage.permalink = [map.getZoom(), pos.lat, pos.lng].map(f => Math.round(f * 1000) / 1000).join('/');
 
   // Le permalink est un #hash ajouté à la page carte uniquement
+  //BEST permalink baseLayer
   if (document.body.className === 'carte')
     location.hash = localStorage.permalink;
 });

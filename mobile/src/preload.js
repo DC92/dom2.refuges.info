@@ -1,8 +1,10 @@
-/* global serveurAPI, map, apiPointsUrl, affichePoints, idbKeyval */
+/* global serveurAPI, map, affichePoints, idbKeyval */
 
 // Redemande tous les points au serveur
 //TODO le faire quand tout le reste est stable
 //TODO tester si présent sur le serveur et depuis
+const apiPointsUrl = serveurAPI + '/api/bbox?detail=icone&nb_points=all';
+
 fetch(apiPointsUrl)
   .then((response) => response.text())
   .catch((er) => console.error(er + ' fetching ' + apiPointsUrl))
