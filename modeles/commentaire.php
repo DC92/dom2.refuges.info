@@ -203,22 +203,6 @@ function infos_commentaires ($conditions)
     $commentaire->auteur_commentaire_affichage=htmlentities($commentaire->auteur_commentaire);
     $commentaire->date_commentaire_format_francais= date_format_francais($commentaire->ts_unix_commentaire);
 
-    // Formatage des données et affichage d'un commentaire de la fiche d'un point
-    // ici le lien pour modérer ce commentaire si on est modérateur ou auteur du commentaire
-    if (est_autorise($commentaire->id_createur_commentaire))
-    {
-      $commentaire->lien_commentaire =
-        '/gestion/moderation?id_point_retour='.$commentaire->id_point.
-        '&amp;id_commentaire='.$commentaire->id_commentaire;
-      $commentaire->texte_lien_commentaire = 'Modifier';
-    }
-    else
-    {
-      // l'internaute, en cliquant ici va nous donner ce qu'il pense de ce commentaire
-      $commentaire->lien_commentaire = "/avis_internaute_commentaire/$commentaire->id_commentaire/";
-      $commentaire->texte_lien_commentaire = 'Info périmée ?';
-    }
-
     // Si, selon la base une photo existe, on va l'afficher
     if ($commentaire->photo_existe)
     {
