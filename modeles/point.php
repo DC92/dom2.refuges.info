@@ -502,7 +502,7 @@ function infos_points($conditions)
           {
             $val = [
               'nom' => $point->$champ_equivalent,
-            ];  
+            ];
             switch ($champ)
             {
               case 'places_matelas' : case 'places' :
@@ -917,7 +917,7 @@ function touch_fiches($commentaire, $commentaire_avant_modification=null)
     $condition = "IN ($commentaire->id_point, $commentaire_avant_modification->id_point)";
 
   $query_modif_fiche = "UPDATE points SET date_modification_fiche=NOW() WHERE id_point $condition";
-  
+
   if (!$pdo->exec($query_modif_fiche))
     return erreur("Erreur sur la requête SQL", $query_modif_fiche);
 }

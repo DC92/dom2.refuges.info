@@ -48,10 +48,6 @@ class listener implements EventSubscriberInterface
     // dans des variables des templates de PhpBB V3.2
     global $config_wri, $pdo, $__time_start, $request, $template, $user, $phpbb_dispatcher;
 
-    // Mémorise le nom du user pour pouvoir être utilisé dans une appli
-    if(!empty($user->data['username']))
-      setcookie('username',$user->data['username']);
-
     // Pour avoir accés aux variables globales $_SERVER, ... dans config.php
     $request->enable_super_globals();
 
