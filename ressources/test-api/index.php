@@ -30,7 +30,7 @@ $urls_to_test = [
     "bbox?nb_points=all&bbox=$bbox",
   ],
   "new" => [
-    // Front-end
+    // Application
     "bbox?detail=icones",
     "bbox?bbox=$bbox&detail=avec_commentaires&format_texte=html",
     "bbox?depuis=$depuis&detail=avec_commentaires&format_texte=html",
