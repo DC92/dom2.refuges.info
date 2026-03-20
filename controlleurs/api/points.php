@@ -346,7 +346,7 @@ if($req->detail == 'fiche')
   $points_exportés = array_keys(get_object_vars($points));
 
   // Découpe la liste en fragments pour y rechercher les commentaires
-  $chunk = array_chunk($points_exportés, 2048);
+  $chunk = array_chunk($points_exportés, 256);
   foreach ($chunk as $fragment) {
     $conditions_commentaires = new stdClass();
     $conditions_commentaires->ids_points = implode(',', $fragment);
