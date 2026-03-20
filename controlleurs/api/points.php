@@ -228,16 +228,6 @@ $filtre['fiche'] = array_merge($filtre['complet'], [
   'coord' => ['alt' => true],
   'etat' => ['valeur' => true],
   'date' => ['creation' => true], // On enlève derniere_modif
-  // Tout l'array commentaires
-  'commentaires' => ['*' => [
-    'id_commentaire' => 'id',
-    'id_point' => true,
-    'texte' => true,
-    'auteur_commentaire' => 'auteur',
-    'date_commentaire' => 'date',
-    'lien_photo_reduite' => 'photo',
-    'date_photo' => true,
-  ]],
   // On supprime
   'id' => false, // Déjà dans les features
   'alt' => false, // Déjà dans geometry->coordinates
@@ -246,6 +236,16 @@ $filtre['fiche'] = array_merge($filtre['complet'], [
   'lien' => false, // Peut le recomposer à partir de id_point
   'article' => false, // Pas besoin dans l'appli
 ]);
+
+$filtre_commentaires = [
+  'id_commentaire' => 'id',
+  'id_point' => true,
+  'texte' => true,
+  'auteur_commentaire' => 'auteur',
+  'date_commentaire' => 'date',
+  'lien_photo_reduite' => 'photo',
+  'date_photo' => true,
+];
 
 /* Petite fonction qui réalise le filtrage en fonction des définitions ci-dessus */
 function filtre_recursif($properties, $filtre) {
@@ -257,15 +257,7 @@ function filtre_recursif($properties, $filtre) {
   $obj = [];
 
   foreach ($filtre as $cle_filtre => $sous_filtre)
-    // Cas des tableaux : on prend tout le contenu de ce niveau
-    if ($cle_filtre == '*') {
-      $tablo=[];
-      foreach($properties AS $p)
-        $tablo[]= filtre_recursif($p, $sous_filtre);
-      return $tablo;
-    }
-    // Cas normal
-    elseif (isset($props[$cle_filtre]) && // Si la valeur existe
+    if (isset($props[$cle_filtre]) && // Si la valeur existe
       !empty($sous_filtre)) // Sauf si 'id' => false
     {
       // Renommage de la variable
@@ -275,7 +267,6 @@ function filtre_recursif($properties, $filtre) {
 
   return $obj;
 }
-
 
 /****************************** RÉCUPÉRATION DES POINTS ******************************/
 
@@ -295,25 +286,25 @@ Car c'est celui utilisé par la carte et que le fichier est généré par un jso
 foreach ($points_bruts as $i=>$point) {
   if(isset ($point->nb_points)) // cas des clusters
   {
-    $points->$i = new stdClass();
-    $points->$i->cluster = $point->nb_points;
-    $points->$i->id = $point->id_point;
-    $points->$i->nom = mb_ucfirst($point->nom);
-    $points->$i->type['icone'] = 'cluster_n'.$point->nb_points;
+    $point_final = new stdClass();
+    $point_final->cluster = $point->nb_points;
+    $point_final->id = $point->id_point;
+    $point_final->nom = mb_ucfirst($point->nom);
+    $point_final->type['icone'] = 'cluster_n'.$point->nb_points;
     $points_geojson[$point->id_point]['geojson'] = $point->geojson;
+    $points->$i = $point_final;
   }
-  else
+  // Les cabanes cachées ne sont pas exportées. Les coordonnées étant volontairement stockées fausses, les sortir ne fera que créer de la confusion
+  elseif(($point->id_type_precision_gps??'') != $config_wri['id_coordonees_gps_fausses'])
   {
-    // les cabanes cachées ne sont pas exportées. Les coordonnées étant volontairement stockées fausses, les sortir ne fera que créer de la confusion
-    if(($point->id_type_precision_gps??'') == $config_wri['id_coordonees_gps_fausses'])
-      break;
-
     $points_geojson[$point->id_point]['geojson'] = $point->geojson;
     // FIXME: comme l'array $points est converti en intégralité en xml ou json, je planque dans une autre variable ce que je veux séparément
 
+    $point_final = $point->properties;
+
     // Dom 01/2026 : transfert du formattage dans le /modele/point.php
     if (!empty($point->infos_complementaires))
-      $point->properties->info_comp = $point->infos_complementaires;
+      $point_final->info_comp = $point->infos_complementaires;
 
     // En geojson, utilisé par la carte, on a pas besoin de tout ça, autant simplifier pour réduire le temps de chargement,
     // sauf si on appel explicitement le mode complet avec &detail=complet
@@ -334,36 +325,43 @@ foreach ($points_bruts as $i=>$point) {
       $description.=$point->remark."\n";
       $description.=$point->acces."\n";
       $description.=$point->proprio."\n";
-      $point->properties->description['valeur']=$description;
-    }
-
-    // Dom 01/2026 : ajout des commentaires si demandés
-    if($req->detail == 'fiche')
-    {
-      $conditions_commentaires = new stdClass();
-      $conditions_commentaires->ids_points = $point->id_point;
-      $point->properties->commentaires = infos_commentaires($conditions_commentaires);
+      $point_final->description['valeur']=$description;
     }
 
     // Filtre des détails
     if(in_array($req->format, ['geojson','rss']))
-      $points->$i = filtre_recursif($point->properties, $filtre[$req->detail]);
-    else
-      $points->$i = $point->properties;
+      $point_final = filtre_recursif($point_final, $filtre[$req->detail]);
 
-    /****************************** FORMATAGE DU TEXTE ******************************/
-    // On transforme le texte dans la correcte syntaxe
-    if($req->format_texte == "texte") {
-      array_walk_recursive($points->$i, 'updatebbcode2txt');
-    }
-    elseif($req->format_texte == "html") {
-      array_walk_recursive($points->$i, 'updatebbcode2html');
-    }
-    elseif($req->format_texte == "markdown") {
-      array_walk_recursive($points->$i, 'updatebbcode2markdown');
-    }
+    // Formatage du texte
+    mise_en_forme_texte($point_final, $req->format_texte);
 
-    array_walk_recursive($points->$i, 'updatebool2char'); // Remplace les False et True en 0 ou 1
+    $points->$i = $point_final;
+  }
+}
+
+// Dom 01/2026 : ajout des commentaires si demandés
+if($req->detail == 'fiche')
+{
+  // Extrait les commentaires de tous les points exportés
+  $points_exportés = array_keys(get_object_vars($points));
+
+  // Découpe la liste en fragments pour y rechercher les commentaires
+  $chunk = array_chunk($points_exportés, 2048);
+  foreach ($chunk as $fragment) {
+    $conditions_commentaires = new stdClass();
+    $conditions_commentaires->ids_points = implode(',', $fragment);
+    $commentaires_bruts = infos_commentaires($conditions_commentaires);
+    foreach ($commentaires_bruts as $c) {
+      $i = $c->id_point;
+      $commentaire = filtre_recursif($c, $filtre_commentaires);
+
+      mise_en_forme_texte($commentaire, $req->format_texte);
+
+      if(isset($points->$i['commentaires']))
+        $points->$i['commentaires'][] = $commentaire;
+      else
+        $points->$i['commentaires'] = [$commentaire];
+    }
   }
 }
 

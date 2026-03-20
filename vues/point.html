@@ -290,7 +290,7 @@
             <a href="<?=$commentaire->lien_photo['originale'] ?? ''?>">
               <img src="<?=$commentaire->lien_photo['reduite'] ?? ''?>" alt="Photo" style="max-width:100%;">
             </a>
-            <div class="texte_sur_image"><?=$commentaire->date_photo_format_francais?></div>
+            <div class="texte_sur_image"><?=$commentaire->date_photo_format_francais??''?></div>
            </div> 
           <?php }?>
           

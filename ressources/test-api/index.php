@@ -32,8 +32,8 @@ $urls_to_test = [
   "new" => [
     // Application
     "bbox?detail=icones",
-    "bbox?bbox=$bbox&detail=avec_commentaires&format_texte=html",
-    "bbox?depuis=$depuis&detail=avec_commentaires&format_texte=html",
+    "bbox?bbox=$bbox&detail=fiche&format_texte=html",
+    "bbox?depuis=$depuis&detail=fiche&format_texte=html",
   ],
 ];
 

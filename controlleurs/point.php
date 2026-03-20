@@ -22,7 +22,6 @@ else
 $point=infos_point($id_point,$meme_si_cache,True,$meme_si_modele);
 
 
-
 // Partie spécifique de la page
 
 // Le point n'est pas trouvé ou il y a un problème avec ce point
