@@ -1,22 +1,18 @@
 https://dom2.refuges.info/api/point?id=5314&format=xml&detail=complet&nb_points=1
-Délai : 0.61 s.
+Délai : 0.521 s.
 
 <?xml version="1.0" encoding="UTF-8" ?>
 <nodes>
 <node>
 <id>5314</id>
 <nom>Refugi Baserca</nom>
-<lien>https://dom2.refuges.info/point/5314/cabane-non-gardee/Refugi-Baserca/</lien>
 <type>
 <id>7</id>
 <valeur>cabane non gardée</valeur>
-<icone>cabane_manqueunmur_eau_cle</icone>
+<icone>cabane_manqueunmur_a48_eau_x</icone>
 </type>
-<article>
-<demonstratif>cette</demonstratif>
-<defini>la</defini>
-<partitif>d&#039;une</partitif>
-</article>
+<sym>Crossing</sym>
+<lien>https://dom2.refuges.info/point/5314/cabane-non-gardee/refugi-Baserca/</lien>
 <coord>
 <alt>1450</alt>
 <long>0.76305</long>
@@ -26,30 +22,19 @@ Délai : 0.61 s.
 <type>7</type>
 </precision>
 </coord>
-<sym>Fishing Hot Spot Facility</sym>
-<createur>
-<id>1557</id>
-<nom>leosw</nom>
-</createur>
-<date>
-<creation>2015-10-06 17:58:21+02</creation>
-<derniere_modif>2026-02-19 20:38:33.356535+01</derniere_modif>
-</date>
-<etat>
-<nom>Etat</nom>
-<valeur>Clés à récupérer</valeur>
-<id>cle_a_recuperer</id>
-</etat>
-<proprio>
-<nom>Propriétaire / accessibilité</nom>
-<valeur>OT de Vielha ?
-Site officiel: [url=https://chemineur.fr/viewtopic.php?t=3219]Refugi Baserca[/url]
-Site officiel: [url=https://chemineur.fr/viewtopic.php?t=3219]Refugi Baserca[/url]</valeur>
-</proprio>
 <places>
 <nom>Places prévues pour dormir</nom>
-<valeur>10</valeur>
+<valeur>
+</valeur>
 </places>
+<etat>
+<valeur>Détruite</valeur>
+<id>detruit</id>
+</etat>
+<date>
+<derniere_modif>2025-12-11 16:51:26.101529+01</derniere_modif>
+<creation>2015-10-06 17:58:21+02</creation>
+</date>
 <remarque>
 <nom>Remarque</nom>
 <valeur>Cabane en bordure de l&#039;étang de Baserca.
@@ -62,58 +47,67 @@ L&#039;intérieur de la cabane est en sale état, mais il doit être possible d&
 <nom>Accès</nom>
 <valeur>Un parking le long de la N230, extrémité Nord du lac, est accolé à la cabane.</valeur>
 </acces>
+<proprio>
+<nom>Auprès de qui se renseigner / accessibilité</nom>
+<valeur>OT de Vielha ?</valeur>
+</proprio>
+<createur>
+<id>1557</id>
+<nom>leosw</nom>
+</createur>
+<article>
+<demonstratif>cette</demonstratif>
+<defini>la</defini>
+<partitif>d&#039;une</partitif>
+</article>
 <info_comp>
-<places>
-<nom>Places prévues pour dormir</nom>
-<nb>10</nb>
-<valeur>10</valeur>
-</places>
-<places_matelas>
-<nom>Places sur Matelas</nom>
-<nb>2</nb>
-<valeur>2</valeur>
-</places_matelas>
-<couvertures>
-<nom>Couvertures</nom>
-<valeur>&lt;strong&gt;Inconnu&lt;/strong&gt;</valeur>
-</couvertures>
 <manque_un_mur>
 <nom>Manque un mur</nom>
-<valeur>Oui</valeur>
+<valeur>1</valeur>
 </manque_un_mur>
-<eau_a_proximite>
-<nom>Eau à proximité</nom>
-<valeur>Oui</valeur>
-</eau_a_proximite>
-<latrines>
-<nom>Latrines</nom>
-<valeur>Non</valeur>
-</latrines>
-<poele>
-<nom>Poêle</nom>
-<valeur>Non</valeur>
-</poele>
 <cheminee>
 <nom>Cheminée</nom>
-<valeur>Non</valeur>
+<valeur>
+</valeur>
 </cheminee>
-<bois_a_proximite>
-<nom>Bois à proximité</nom>
-<valeur>Oui</valeur>
-</bois_a_proximite>
+<poele>
+<nom>Poêle</nom>
+<valeur>
+</valeur>
+</poele>
+<couvertures>
+<nom>Couvertures</nom>
+<valeur>
+</valeur>
+</couvertures>
+<places_matelas>
+<nom>Places sur Matelas</nom>
+<nb>
+</nb>
+<valeur>Sans</valeur>
+</places_matelas>
+<latrines>
+<nom>Latrines</nom>
+<valeur>
+</valeur>
+</latrines>
+<bois>
+<nom>Forêt à moins de 100m</nom>
+<valeur>1</valeur>
+</bois>
+<eau>
+<nom>Eau à moins de 100m</nom>
+<valeur>1</valeur>
+</eau>
 </info_comp>
 <description>
-<valeur>Places prévues pour dormir: 10
-Places sur Matelas: 2
-Cabane en bordure de l&#039;étang de Baserca.
+<valeur>Cabane en bordure de l&#039;étang de Baserca.
 En très grande partie détruite, mais il est possible de s&#039;abriter sous un bout de toit en cas d&#039;orage.
 
 L&#039;auvent est tombé.
 L&#039;intérieur de la cabane est en sale état, mais il doit être possible d&#039;y dormir (si l&#039;on a pas peur de voir le toit tomber lui aussi).
 Un parking le long de la N230, extrémité Nord du lac, est accolé à la cabane.
 OT de Vielha ?
-Site officiel: [url=https://chemineur.fr/viewtopic.php?t=3219]Refugi Baserca[/url]
-Site officiel: [url=https://chemineur.fr/viewtopic.php?t=3219]Refugi Baserca[/url]
 </valeur>
 </description>
 </node>

@@ -1,5 +1,5 @@
 https://dom2.refuges.info/api/bbox?nb_points=all&cluster=0.1&bbox=0.75,42.5,0.8,42.6&nb_points=1
-Délai : 0.59 s, Les données ont été triées par clés et beautifiées pour simplifier la comparaison.
+Délai : 0.537 s, Les données ont été triées par clés et beautifiées pour simplifier la comparaison.
 
 {
   "copyright": "The data included in this document is from www.refuges.info. The data is made available under CC By-Sa 2.0",
@@ -18,18 +18,18 @@ Délai : 0.59 s, Les données ont été triées par clés et beautifiées pour s
           "alt": 1450
         },
         "etat": {
-          "valeur": "Cl\u00e9s \u00e0 r\u00e9cup\u00e9rer"
+          "valeur": "D\u00e9truite"
         },
         "id": 5314,
-        "lien": "https:\/\/dom2.refuges.info\/point\/5314\/cabane-non-gardee\/Refugi-Baserca\/",
+        "lien": "https:\/\/dom2.refuges.info\/point\/5314\/cabane-non-gardee\/refugi-Baserca\/",
         "nom": "Refugi Baserca",
         "places": {
           "nom": "Places pr\u00e9vues pour dormir",
-          "valeur": 10
+          "valeur": 0
         },
-        "sym": "Fishing Hot Spot Facility",
+        "sym": "Crossing",
         "type": {
-          "icone": "cabane_manqueunmur_eau_cle",
+          "icone": "cabane_manqueunmur_a48_eau_x",
           "id": 7,
           "valeur": "cabane non gard\u00e9e"
         }
@@ -38,7 +38,7 @@ Délai : 0.59 s, Les données ont été triées par clés et beautifiées pour s
     }
   ],
   "generator": "Refuges.info API",
-  "size": 1,
-  "timestamp": "2026-02-21T21:27:56+01:00",
+  "size": "1",
+  "timestamp": "2026-03-20T18:35:34+01:00",
   "type": "FeatureCollection"
 }
