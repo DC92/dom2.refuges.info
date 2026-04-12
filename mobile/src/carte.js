@@ -18,6 +18,7 @@ localStorage.permalink ||= '7/45/7'; // zoom/latitude/longitude Défaut : Alpes 
 /*******************
  * Couches tuilées *
  *******************/
+//TODO légendes
 const baseLayers = {
   OpenHikingMap: L.tileLayer('https://tile.openmaps.fr/openhikingmap/{z}/{x}/{y}.png', {
     maxZoom: 18,
@@ -35,18 +36,25 @@ const baseLayers = {
 
   // https://geoservices.ign.fr/documentation/services/utilisation-web/extension-pour-leaflet
   // https://ignf.github.io/geoportal-extensions/leaflet-latest/jsdoc/module-Layers.html#.WMTS
-  /* //BEST BUG format non pris en compte
-    'Ign plan': L.geoportalLayer.WMTS({
-    layer: 'GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2',
+  /* eslint-disable-next-line new-cap */
+  'Ign plan': L.geoportalLayer.WMTS({
+    layer: 'GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2'
+  }, {
     format: 'image/png',
-    'attribution': 'Orthophotos - Carte © IGN/Geoportail',
-    'maxNativeZoom': 19,
-    'maxZoom': 22,
-  }),*/
+    attribution: 'Orthophotos - Carte © IGN/Geoportail',
+    maxNativeZoom: 19,
+    maxZoom: 22,
+  }),
 
   /* eslint-disable-next-line new-cap */
   'Ign photo': L.geoportalLayer.WMTS({
     layer: 'ORTHOIMAGERY.ORTHOPHOTOS',
+  }),
+
+  /* eslint-disable-next-line new-cap */
+  'Ign TOP25': L.geoportalLayer.WMTS({
+    //TODO BUG
+    layer: 'GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN25TOUR'
   }),
 
   //BEST https://github.com/plepe/overpass-frontend/blob/master/example-bbox.js
