@@ -34,27 +34,33 @@ const baseLayers = {
       '<a target="_blank" href="https://www.openstreetmap.org/panes/legend">Légende</a>'
   }),
 
+  /* eslint-disable-next-line new-cap */
+  TOP25: L.geoportalLayer.WMTS({
+    layer: 'GEOGRAPHICALGRIDSYSTEMS.MAPS',
+    apiKey: 'ign_scan_ws',
+  }, {
+    attribution: '© IGN/Geoportail',
+    maxNativeZoom: 18,
+  }),
+
   // https://geoservices.ign.fr/documentation/services/utilisation-web/extension-pour-leaflet
   // https://ignf.github.io/geoportal-extensions/leaflet-latest/jsdoc/module-Layers.html#.WMTS
   /* eslint-disable-next-line new-cap */
-  'Ign plan': L.geoportalLayer.WMTS({
-    layer: 'GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2'
+  'IGN plan': L.geoportalLayer.WMTS({
+    layer: 'GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2',
   }, {
     format: 'image/png',
-    attribution: 'Orthophotos - Carte © IGN/Geoportail',
+    attribution: '© IGN/Geoportail',
+    //TODO légende
     maxNativeZoom: 19,
-    maxZoom: 22,
   }),
 
   /* eslint-disable-next-line new-cap */
-  'Ign photo': L.geoportalLayer.WMTS({
+  'IGN photo': L.geoportalLayer.WMTS({
     layer: 'ORTHOIMAGERY.ORTHOPHOTOS',
-  }),
-
-  /* eslint-disable-next-line new-cap */
-  'Ign TOP25': L.geoportalLayer.WMTS({
-    //TODO BUG
-    layer: 'GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN25TOUR'
+  }, {
+    attribution: '© IGN/Geoportail',
+    maxNativeZoom: 19,
   }),
 
   //BEST https://github.com/plepe/overpass-frontend/blob/master/example-bbox.js
