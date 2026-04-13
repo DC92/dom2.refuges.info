@@ -75,7 +75,7 @@ const baseLayers = {
   }, {
     format: 'image/png',
     attribution: '© IGN/Geoportail',
-    //TODO légende //TODO BUG la légense se retrouve dans l'url !
+    //TODO revoir zooms & légendes //TODO BUG la légende se retrouve dans l'url !
     maxNativeZoom: 19,
   }),
   /* eslint-disable-next-line new-cap */
@@ -92,6 +92,7 @@ const baseLayers = {
     format: 'image/png',
     attribution: '© IGN/Geoportail',
     maxNativeZoom: 19,
+    maxZoom: 21,
   }),
 
   SwissTopo: L.tileLayer.wms('http://wms.geo.admin.ch/?', {
@@ -102,7 +103,13 @@ const baseLayers = {
   }),
   //TODO Autriche
   //TODO Espagne
-  //TODO Photo ArcGis, Maxar, Google ?
+  'Photo Maxar': L.tileLayer.wms(
+    'https://api.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}@2x.webp?access_token=' + mapKeys.mapbox, {
+      maxZoom: 20,
+      attribution: '<a href="https://www.mapbox.com/">&copy; Mapbox</a>',
+    }),
+  //TODO Photo ArcGis, Google ?
+
   //TODO Couches vectorielles
   //TODO https://github.com/plepe/overpass-frontend/blob/master/example-bbox.js
 };
