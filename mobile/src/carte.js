@@ -1,4 +1,4 @@
-/* global L */
+/* global L, mapKeys */
 
 /*******************************
  * Gestion de la carte Leaflet *
@@ -18,8 +18,13 @@ localStorage.permalink ||= '7/45/7'; // zoom/latitude/longitude Défaut : Alpes 
 /*******************
  * Couches tuilées *
  *******************/
-//TODO légendes
 const baseLayers = {
+  // Cartes lbres
+  OpenStreetMap: L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy;<a target="_blank" href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>|' +
+      '<a target="_blank" href="https://www.openstreetmap.org/panes/legend">Légende</a>'
+  }),
   OpenHikingMap: L.tileLayer('https://tile.openmaps.fr/openhikingmap/{z}/{x}/{y}.png', {
     maxZoom: 18,
     edgeBufferTiles: 3,
@@ -28,33 +33,43 @@ const baseLayers = {
       '<a href="http://www.openstreetmap.org/copyright">© OpenStreetMap</a>|' +
       '<a target="_blank" href="https://wiki.openstreetmap.org/wiki/OpenHikingMap#Map_Legend">Légende</a>',
   }),
-  OpenStreetMap: L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19,
-    attribution: '&copy;<a target="_blank" href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>|' +
-      '<a target="_blank" href="https://www.openstreetmap.org/panes/legend">Légende</a>'
+
+  // Thunderforest
+  // https://leaflet-extras.github.io/leaflet-providers/preview/
+  Outdoors: L.tileLayer('https://api.thunderforest.com/outdoors/{z}/{x}/{y}{r}.png?apikey={apikey}', {
+    apikey: mapKeys.thunderforest,
+    attribution: '&copy; <a href="http://www.thunderforest.com/">Thunderforest</a>, ' +
+      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    maxZoom: 22,
+  }),
+  OpenCycleMap: L.tileLayer('https://api.thunderforest.com/cycle/{z}/{x}/{y}{r}.png?apikey={apikey}', {
+    apikey: mapKeys.thunderforest,
+    maxZoom: 22,
+    attribution: '&copy; <a href="http://www.thunderforest.com/">Thunderforest</a>, ' +
+      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
   }),
 
+  // IGN
+  // https://geoservices.ign.fr/documentation/services/utilisation-web/extension-pour-leaflet
+  // https://ignf.github.io/geoportal-extensions/leaflet-latest/jsdoc/module-Layers.html#.WMTS
   /* eslint-disable-next-line new-cap */
   TOP25: L.geoportalLayer.WMTS({
     layer: 'GEOGRAPHICALGRIDSYSTEMS.MAPS',
     apiKey: 'ign_scan_ws',
   }, {
+    //TODO légendes
     attribution: '© IGN/Geoportail',
     maxNativeZoom: 18,
   }),
-
-  // https://geoservices.ign.fr/documentation/services/utilisation-web/extension-pour-leaflet
-  // https://ignf.github.io/geoportal-extensions/leaflet-latest/jsdoc/module-Layers.html#.WMTS
   /* eslint-disable-next-line new-cap */
   'IGN plan': L.geoportalLayer.WMTS({
     layer: 'GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2',
   }, {
     format: 'image/png',
     attribution: '© IGN/Geoportail',
-    //TODO légende
+    //TODO légende //TODO BUG la légense se retrouve dans l'url !
     maxNativeZoom: 19,
   }),
-
   /* eslint-disable-next-line new-cap */
   'IGN photo': L.geoportalLayer.WMTS({
     layer: 'ORTHOIMAGERY.ORTHOPHOTOS',
@@ -62,8 +77,29 @@ const baseLayers = {
     attribution: '© IGN/Geoportail',
     maxNativeZoom: 19,
   }),
+  //TODO use IGN || convert all IGN ????
+  Cadastre: L.tileLayer('https://data.geopf.fr/wmts?REQUEST=GetTile&SERVICE=WMTS&VERSION=1.0.0&STYLE={style}&TILEMATRIXSET=PM&FORMAT={format}&LAYER=CADASTRALPARCELS.PARCELLAIRE_EXPRESS&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', {
+    attribution: '<a target="_blank" href="https://www.geoportail.gouv.fr/">Geoportail France</a>',
+    bounds: [
+      [-75, -180],
+      [81, 180]
+    ],
+    minZoom: 2,
+    maxZoom: 20,
+    format: 'image/png',
+    style: 'PCI vecteur'
+  }),
 
-  //BEST https://github.com/plepe/overpass-frontend/blob/master/example-bbox.js
+  SwissTopo: L.tileLayer.wms('http://wms.geo.admin.ch/?', {
+    layers: 'ch.swisstopo.pixelkarte-farbe',
+    //layers: 'ch.swisstopo.swissimage',
+    format: 'image/jpeg',
+    detectRetina: true,
+  }),
+
+  //TODO Espagne, Photo ArcGis, Maxar, Google ?
+  //TODO Couches vectorielles
+  //TODO https://github.com/plepe/overpass-frontend/blob/master/example-bbox.js
 };
 
 /************************

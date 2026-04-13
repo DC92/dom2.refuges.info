@@ -1,5 +1,7 @@
 /* global serveurAPI, map, idbKeyval */
 
+//TODO supprimer le SW et le cache si debug
+
 /****************************
  * Gestion de l'application *
  ****************************
