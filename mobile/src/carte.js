@@ -21,17 +21,24 @@ localStorage.permalink ||= '7/45/7'; // zoom/latitude/longitude Défaut : Alpes 
 const baseLayers = {
   // Cartes lbres
   OpenStreetMap: L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19,
+    maxNativeZoom: 19,
     attribution: '&copy;<a target="_blank" href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>|' +
       '<a target="_blank" href="https://www.openstreetmap.org/panes/legend">Légende</a>'
   }),
   OpenHikingMap: L.tileLayer('https://tile.openmaps.fr/openhikingmap/{z}/{x}/{y}.png', {
-    maxZoom: 18,
+    maxNativeZoom: 18,
     edgeBufferTiles: 3,
     attribution: '<a href="https://wiki.openstreetmap.org/wiki/OpenHikingMap">© OpenHikingMap</a>|' +
       '<a href="https://openmaps.fr/donate">❤️ Donation</a>|' +
       '<a href="http://www.openstreetmap.org/copyright">© OpenStreetMap</a>|' +
       '<a target="_blank" href="https://wiki.openstreetmap.org/wiki/OpenHikingMap#Map_Legend">Légende</a>',
+  }),
+  OpenTopoMap: L.tileLayer('https://tile.openmaps.fr/opentopomap/{z}/{x}/{y}.png', {
+    maxNativeZoom: 19,
+    attribution: '<a href="https://github.com/sletuffe/OpenTopoMap">&copy; OTM-R</a> ' +
+      '<a href="https://openmaps.fr/donate">❤️ Donation</a> ' +
+      '<a href="http://www.openstreetmap.org/copyright">&copy; OpenStreetMap</a> ' +
+      '<a target="_blank" href="https://openmaps.fr/map-legend/opentopomap-legend.html">Légende</a>',
   }),
 
   // Thunderforest
@@ -40,11 +47,12 @@ const baseLayers = {
     apikey: mapKeys.thunderforest,
     attribution: '&copy; <a href="http://www.thunderforest.com/">Thunderforest</a>, ' +
       '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    maxZoom: 22,
+    maxNativeZoom: 22,
   }),
+  //ISO-Maps Topo
   OpenCycleMap: L.tileLayer('https://api.thunderforest.com/cycle/{z}/{x}/{y}{r}.png?apikey={apikey}', {
     apikey: mapKeys.thunderforest,
-    maxZoom: 22,
+    maxNativeZoom: 22,
     attribution: '&copy; <a href="http://www.thunderforest.com/">Thunderforest</a>, ' +
       '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
   }),
@@ -77,17 +85,13 @@ const baseLayers = {
     attribution: '© IGN/Geoportail',
     maxNativeZoom: 19,
   }),
-  //TODO use IGN || convert all IGN ????
-  Cadastre: L.tileLayer('https://data.geopf.fr/wmts?REQUEST=GetTile&SERVICE=WMTS&VERSION=1.0.0&STYLE={style}&TILEMATRIXSET=PM&FORMAT={format}&LAYER=CADASTRALPARCELS.PARCELLAIRE_EXPRESS&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', {
-    attribution: '<a target="_blank" href="https://www.geoportail.gouv.fr/">Geoportail France</a>',
-    bounds: [
-      [-75, -180],
-      [81, 180]
-    ],
-    minZoom: 2,
-    maxZoom: 20,
+  /* eslint-disable-next-line new-cap */
+  Cadastre: L.geoportalLayer.WMTS({
+    layer: 'CADASTRALPARCELS.PARCELLAIRE_EXPRESS',
+  }, {
     format: 'image/png',
-    style: 'PCI vecteur'
+    attribution: '© IGN/Geoportail',
+    maxNativeZoom: 19,
   }),
 
   SwissTopo: L.tileLayer.wms('http://wms.geo.admin.ch/?', {
@@ -96,8 +100,9 @@ const baseLayers = {
     format: 'image/jpeg',
     detectRetina: true,
   }),
-
-  //TODO Espagne, Photo ArcGis, Maxar, Google ?
+  //TODO Autriche
+  //TODO Espagne
+  //TODO Photo ArcGis, Maxar, Google ?
   //TODO Couches vectorielles
   //TODO https://github.com/plepe/overpass-frontend/blob/master/example-bbox.js
 };
