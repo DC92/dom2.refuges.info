@@ -8,16 +8,45 @@
   seules sont modifiées la taille du DIV et la position lon/lat
 */
 
-const serveurAPI = 'https://dom2.refuges.info',
-  apiDepuisUrl = serveurAPI + '/api/bbox?detail=fiche&depuis=' + Date.now();
-
-console.log(apiDepuisUrl); //DCMM
+const serveurAPI = 'https://www.refuges.info';
+//  apiDepuisUrl = serveurAPI + '/api/bbox?detail=fiche&depuis=' + Date.now();
+//console.log(apiDepuisUrl); //DCMM
 
 localStorage.permalink ||= '7/45/7'; // zoom/latitude/longitude Défaut : Alpes de l'Ouest
 
 /*******************
  * Couches tuilées *
  *******************/
+// Remplace avantageusement 663 Ko de lib IGN
+function tileLayerIGN(paramsIGN, paramsLayer) {
+  const url = paramsIGN.apikey ?
+    'https://data.geopf.fr/private/wmts?' :
+    'https://data.geopf.fr/wmts?',
+    params = {
+      request: 'GetTile',
+      service: 'WMTS',
+      version: '1.0.0',
+      tilematrixset: 'PM',
+      style: 'normal',
+      format: 'image/jpeg',
+      tilematrix: '{z}',
+      tilerow: '{y}',
+      tilecol: '{x}',
+      ...paramsIGN,
+    };
+
+  return L.tileLayer(url + Object.entries(params).map(e => e.join('=')).join('&'), {
+    bounds: [
+      [-75, -180],
+      [81, 180]
+    ],
+    attribution: '<a target="_blank" href="https://www.geoportail.gouv.fr/">IGN Geoportail</a>',
+    maxNativeZoom: 19,
+    maxZoom: 21,
+    ...paramsLayer,
+  });
+}
+
 const baseLayers = {
   // Cartes lbres
   OpenStreetMap: L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -60,46 +89,30 @@ const baseLayers = {
   // IGN
   // https://geoservices.ign.fr/documentation/services/utilisation-web/extension-pour-leaflet
   // https://ignf.github.io/geoportal-extensions/leaflet-latest/jsdoc/module-Layers.html#.WMTS
-  /* eslint-disable-next-line new-cap */
-  TOP25: L.geoportalLayer.WMTS({
+  TOP25: tileLayerIGN({
     layer: 'GEOGRAPHICALGRIDSYSTEMS.MAPS',
-    apiKey: 'ign_scan_ws',
+    apikey: 'ign_scan_ws',
   }, {
-    //TODO légendes
-    attribution: '© IGN/Geoportail',
     maxNativeZoom: 18,
   }),
-  /* eslint-disable-next-line new-cap */
-  'IGN plan': L.geoportalLayer.WMTS({
+  'IGN plan': tileLayerIGN({
     layer: 'GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2',
-  }, {
     format: 'image/png',
-    attribution: '© IGN/Geoportail',
-    //TODO revoir zooms & légendes //TODO BUG la légende se retrouve dans l'url !
-    maxNativeZoom: 19,
   }),
-  /* eslint-disable-next-line new-cap */
-  'IGN photo': L.geoportalLayer.WMTS({
+  'IGN photo': tileLayerIGN({
     layer: 'ORTHOIMAGERY.ORTHOPHOTOS',
-  }, {
-    attribution: '© IGN/Geoportail',
-    maxNativeZoom: 19,
   }),
-  /* eslint-disable-next-line new-cap */
-  Cadastre: L.geoportalLayer.WMTS({
+  Cadastre: tileLayerIGN({
     layer: 'CADASTRALPARCELS.PARCELLAIRE_EXPRESS',
-  }, {
+    style: 'PCI vecteur',
     format: 'image/png',
-    attribution: '© IGN/Geoportail',
-    maxNativeZoom: 19,
-    maxZoom: 21,
   }),
 
   SwissTopo: L.tileLayer.wms('http://wms.geo.admin.ch/?', {
     layers: 'ch.swisstopo.pixelkarte-farbe',
     //layers: 'ch.swisstopo.swissimage',
     format: 'image/jpeg',
-    detectRetina: true,
+    //TODO DELETE detectRetina: true,
   }),
   //TODO Autriche
   //TODO Espagne

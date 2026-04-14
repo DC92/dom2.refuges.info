@@ -19,9 +19,6 @@ Démonstrateur front-end pour refuges.info
   <link href="geocoder/Control.Geocoder.css" rel="stylesheet" />
   <link href="gps/leaflet-gps.min.css" rel="stylesheet">
 
-  <!-- Base layers -->
-  <link href="ign/GpPluginLeaflet.css" rel="stylesheet" />
-
   <!-- Vector layers -->
   <link href="markercluster/MarkerCluster.css" rel="stylesheet" />
   <link href="markercluster/MarkerCluster.Default.css" rel="stylesheet" />
@@ -68,16 +65,16 @@ Démonstrateur front-end pour refuges.info
   <div id="map">
     <div id="selecteur" onclick="affichePoints(localStorage.pointsGeoJson)">
       <a id="7" class="selected" onclick="this.classList.toggle('selected')" id="selecteur-cabane" title="Cabane">
-        <img src="https://dom2.refuges.info/images/icones/cabane.svg" />
+        <img src="https://www.refuges.info/images/icones/cabane.svg" />
       </a>
       <a id="10" class="selected" onclick="this.classList.toggle('selected')" id="selecteur-refuge" title="Refuge">
-        <img src="https://dom2.refuges.info/images/icones/cabane_red.svg" />
+        <img src="https://www.refuges.info/images/icones/cabane_red.svg" />
       </a>
       <a id="9" class="selected" onclick="this.classList.toggle('selected')" id="selecteur-gite" title="Gîte">
-        <img src="https://dom2.refuges.info/images/icones/cabane_green.svg" />
+        <img src="https://www.refuges.info/images/icones/cabane_green.svg" />
       </a>
       <a id="23" class="selected" onclick="this.classList.toggle('selected')" id="selecteur-eau" title="Point d'au">
-        <img src="https://dom2.refuges.info/images/icones/pointdeau.svg" />
+        <img src="https://www.refuges.info/images/icones/pointdeau.svg" />
       </a>
     </div>
   </div>
@@ -114,7 +111,6 @@ Démonstrateur front-end pour refuges.info
   <script src="gps/leaflet-gps.min.js"></script>
 
   <!-- Base layers -->
-  <script src="ign/GpPluginLeaflet.js"></script>
   <script src="EdgeBuffer/leaflet.edgebuffer.js"></script>
 
   <!-- Vector layers -->
