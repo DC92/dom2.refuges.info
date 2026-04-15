@@ -247,6 +247,10 @@ console.info('MAP init');
   }),
 ].map(e => e.addTo(map));
 
+map.addControl(new L.Control.Compass({
+  autoActive: true,
+}));
+
 // Initialise les points s'il y en a de mémorisés
 affichePoints(localStorage.pointsGeoJson);
 
