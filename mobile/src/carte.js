@@ -49,6 +49,7 @@ function tileLayerIGN(paramsIGN, paramsLayer) {
 
 const baseLayers = {
   // Cartes lbres
+  OpenStreetMap: L.tileLayer(
     'https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxNativeZoom: 19, //TODO revoir zoomS
       attribution: '&copy;<a target="_blank" href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>|' +
