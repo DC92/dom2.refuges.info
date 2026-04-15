@@ -18,33 +18,31 @@ localStorage.permalink ||= '7/45/7'; // zoom/latitude/longitude Défaut : Alpes 
  * Couches tuilées *
  *******************/
 // Remplace avantageusement 663 Ko de lib IGN
-function tileLayerIGN(paramsIGN, paramsLayer) {
-  const url = paramsIGN.apikey ?
-    'https://data.geopf.fr/private/wmts?' :
-    'https://data.geopf.fr/wmts?',
-    params = {
-      request: 'GetTile',
-      service: 'WMTS',
-      version: '1.0.0',
-      tilematrixset: 'PM',
-      style: 'normal',
-      format: 'image/jpeg',
-      tilematrix: '{z}',
-      tilerow: '{y}',
-      tilecol: '{x}',
-      ...paramsIGN,
-    };
+function tileLayerIGN(url, paramsIGN, paramsLayer) {
+  const params = {
+    request: 'GetTile',
+    service: 'WMTS',
+    version: '1.0.0',
+    tilematrixset: 'PM',
+    style: 'normal',
+    format: 'image/jpeg',
+    tilematrix: '{z}',
+    tilerow: '{y}',
+    tilecol: '{x}',
+    ...paramsIGN,
+  };
 
-  return L.tileLayer(url + Object.entries(params).map(e => e.join('=')).join('&'), {
-    bounds: [
-      [-75, -180],
-      [81, 180]
-    ],
-    attribution: '<a target="_blank" href="https://www.geoportail.gouv.fr/">IGN Geoportail</a>',
-    maxNativeZoom: 19,
-    maxZoom: 21,
-    ...paramsLayer,
-  });
+  return L.tileLayer(
+    url + Object.entries(params).map(e => e.join('=')).join('&'), {
+      bounds: [
+        [-75, -180],
+        [81, 180]
+      ],
+      attribution: '<a target="_blank" href="https://www.geoportail.gouv.fr/">IGN Geoportail</a>',
+      maxNativeZoom: 19,
+      maxZoom: 21,
+      ...paramsLayer,
+    });
 }
 
 const baseLayers = {
@@ -97,24 +95,36 @@ const baseLayers = {
   // IGN
   // https://geoservices.ign.fr/documentation/services/utilisation-web/extension-pour-leaflet
   // https://ignf.github.io/geoportal-extensions/leaflet-latest/jsdoc/module-Layers.html#.WMTS
-  TOP25: tileLayerIGN({
-    layer: 'GEOGRAPHICALGRIDSYSTEMS.MAPS',
-    apikey: 'ign_scan_ws',
-  }, {
-    maxNativeZoom: 18,
-  }),
-  'IGN plan': tileLayerIGN({
-    layer: 'GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2',
-    format: 'image/png',
-  }),
-  'IGN photo': tileLayerIGN({
-    layer: 'ORTHOIMAGERY.ORTHOPHOTOS',
-  }),
-  Cadastre: tileLayerIGN({
-    layer: 'CADASTRALPARCELS.PARCELLAIRE_EXPRESS',
-    style: 'PCI vecteur',
-    format: 'image/png',
-  }),
+  TOP25: tileLayerIGN(
+    'https://data.geopf.fr/private/wmts?', {
+      layer: 'GEOGRAPHICALGRIDSYSTEMS.MAPS',
+      apikey: 'ign_scan_ws',
+    }, {
+      maxNativeZoom: 18,
+    }),
+  'IGN plan': tileLayerIGN(
+    'https://data.geopf.fr/wmts?', {
+      layer: 'GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2',
+      format: 'image/png',
+    }),
+  'IGN photo': tileLayerIGN(
+    'https://data.geopf.fr/wmts?', {
+      layer: 'ORTHOIMAGERY.ORTHOPHOTOS',
+    }),
+  Cadastre: tileLayerIGN(
+    'https://data.geopf.fr/wmts?', {
+      layer: 'CADASTRALPARCELS.PARCELLAIRE_EXPRESS',
+      style: 'PCI vecteur',
+      format: 'image/png',
+    }),
+  Espagne: tileLayerIGN(
+    'https://www.ign.es/wmts/mapa-raster?', {
+      layer: 'MTN',
+      style: 'default',
+      tilematrixset: 'GoogleMapsCompatible',
+    }, {
+      attribution: '&Copy; <a target="_blank" href="https://www.ign.es/">Instituto Geográfico Nacional</a> | '
+    }),
 
   SwissTopo: L.tileLayer.wms(
     'http://wms.geo.admin.ch/?', {
@@ -123,8 +133,8 @@ const baseLayers = {
       format: 'image/jpeg',
       //TODO DELETE detectRetina: true,
     }),
+
   //TODO Autriche
-  //TODO Espagne
 
   'Photo Maxar': L.tileLayer.wms(
     'https://api.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}@2x.webp?access_token=' + mapKeys.mapbox, {
