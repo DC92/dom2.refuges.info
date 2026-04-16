@@ -247,9 +247,23 @@ console.info('MAP init');
   }),
 ].map(e => e.addTo(map));
 
-map.addControl(new L.Control.Compass({
-  autoActive: true,
-}));
+///////////////////////////////////////////////////////////////////////////////
+if (window.DeviceOrientationEvent)
+  document.addEventListener('DOMContentLoaded', (event) => {
+    console.log(event); //DCMM
+    window.addEventListener('deviceorientation', (eventData) => {
+      console.log(eventData); //DCMM
+
+      /*
+      // Rotate the disc of the compass. - CSS transform
+      const compassDisc = document.getElementById('compassDiscImg');
+      compassDisc.style.transform = `rotate(${eventData.alpha}deg)`;
+      compassDisc.style.webkitTransform = `rotate(${eventData.alpha}deg)`;
+      compassDisc.style.MozTransform = `rotate(${eventData.alpha}deg)`;
+      */
+    }, false);
+  });
+///////////////////////////////////////////////////////////////////////////////
 
 // Initialise les points s'il y en a de mémorisés
 affichePoints(localStorage.pointsGeoJson);
