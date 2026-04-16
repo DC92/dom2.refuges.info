@@ -37,6 +37,7 @@ Démonstrateur front-end pour refuges.info
   <link href="src/index.css" rel="stylesheet">
   <script src="src/keys.js" defer></script>
   <script src="src/carte.js" defer></script>
+  <script src="src/compass.js" defer></script>
   <script src="src/pages.js" defer></script>
 
   <!-- Progressive Web Application -->
@@ -48,7 +49,7 @@ Démonstrateur front-end pour refuges.info
   </script>
 </head>
 
-<body><!-- la classe prendra le nom de la page courante -->
+<body><!-- la classe du body prendra le nom de la page courante -->
   <div class="bandeau">
     <h2><a href="/" title="Retour au site web">Refuges.info</a></h2>
     <a href="#" title="Cartes géographiques et points d'intérêt">🌍<span>Cartes</span></a>
@@ -90,7 +91,9 @@ Démonstrateur front-end pour refuges.info
         <img src="https://www.refuges.info/images/icones/pointdeau.svg" />
       </a>
     </div>
+    <div id="compass"></div>
   </div>
+
   <!-- div id="preload" onclick="preLoad()">
     <a title="Précharger les données" onclick="this.parentElement.classList.add('selected')">&#128259;</a>
     <div>
@@ -115,7 +118,6 @@ Démonstrateur front-end pour refuges.info
   </div>
 
   <div class="attente">Attente réseau</div>
-  <script src="leaflet/leaflet.js"></script>
 </body>
 
 </html>
