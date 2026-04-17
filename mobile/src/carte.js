@@ -1,4 +1,4 @@
-/* global L, mapKeys */
+/* global L, mapKeys, MyLeafletGpsCompass */
 
 /*******************************
  * Gestion de la carte Leaflet *
@@ -239,7 +239,7 @@ console.info('MAP init');
   L.control.scale({
     imperial: false,
   }),
-  new L.Control.Gps({
+  new MyLeafletGpsCompass({
     autoCenter: true,
   }),
   new L.Control.Geocoder({

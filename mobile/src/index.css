@@ -282,13 +282,6 @@ body.carte .attente {
   text-align: center;
 }
 
-#compass {
-  position: absolute;
-  top: 68px;
-  right: 18px;
-  z-index: 1000;
-}
-
 /* DEBUG ONLY */
 @media screen and (max-width: 200px) {
   .carte #map {
