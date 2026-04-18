@@ -17,13 +17,13 @@ Démonstrateur front-end pour refuges.info
 
   <!-- Leaflet -->
   <link href="leaflet/leaflet.css" rel="stylesheet" />
-  <script src="leaflet/leaflet.js" defer></script>
+  <script src="leaflet/leaflet-src.js" defer></script>
 
   <!-- Controls -->
   <link href="geocoder/Control.Geocoder.css" rel="stylesheet" />
   <script src="geocoder/Control.Geocoder.js" defer></script>
   <link href="gps/leaflet-gps.min.css" rel="stylesheet">
-  <script src="gps/leaflet-gps.min.js" defer></script>
+  <script src="gps/leaflet-gps.src.js" defer></script>
 
   <!-- Base layers -->
   <script src="EdgeBuffer/leaflet.edgebuffer.js" defer></script>
@@ -37,12 +37,17 @@ Démonstrateur front-end pour refuges.info
   <link href="src/index.css" rel="stylesheet">
   <script src="src/compass.js" defer></script>
   <script src="src/keys.js" defer></script>
+  <script src="src/baselayers.js" defer></script>
   <script src="src/carte.js" defer></script>
   <script src="src/pages.js" defer></script>
 
   <!-- Progressive Web Application -->
   <link href="manifest.json" rel="manifest">
   <script>
+    const serveurAPI = 'https://www.refuges.info';
+
+    localStorage.permalink ||= '7/45/7'; // zoom/latitude/longitude Défaut : Alpes de l'Ouest
+
     if (window.location.search !== '?debug') // Debug without PWA
       navigator.serviceWorker.register('service-worker.js')
       .then(() => console.info('Service worker registred'));
