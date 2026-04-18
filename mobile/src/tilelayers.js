@@ -32,7 +32,7 @@ function tileLayerIGN(url, paramsIGN, paramsLayer) {
 }
 
 /* eslint-disable-next-line no-unused-vars */
-const baseLayers = {
+const tileLayers = {
   // Cartes lbres
   OpenStreetMap: L.tileLayer(
     'https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
