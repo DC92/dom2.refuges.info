@@ -26,11 +26,15 @@ console.info('MAP init');
   }),
   new MyLeafletGpsCompass({
     autoCenter: true,
-    autoActive: true,
-    style: {
-      radius: 25,
-      color: 'blue',
-    },
+    autoActive: true, //DCMM
+    marker: L.marker([0, 0], { //TODO move in class
+      rotationAngle: 30,
+      icon: L.icon({
+        iconUrl: 'src/gpsmarker.svg',
+        iconSize: [32, 32],
+        iconAnchor: [16, 16],
+      }),
+    }),
   }),
   new L.Control.Geocoder({
     position: 'topleft',
