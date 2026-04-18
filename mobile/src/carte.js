@@ -24,11 +24,11 @@ console.info('MAP init');
   L.control.scale({
     imperial: false,
   }),
-  new MyLeafletGpsCompass({
+  new L.Control.Gps({
+    //TODO BUG ne positionne pas au centre !
     autoCenter: true,
     autoActive: true, //DCMM
-    marker: L.marker([0, 0], { //TODO move in class
-      rotationAngle: 30,
+    marker: L.marker([0, 0], {
       icon: L.icon({
         iconUrl: 'src/gpsmarker.svg',
         iconSize: [32, 32],

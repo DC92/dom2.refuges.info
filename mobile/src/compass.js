@@ -6,12 +6,33 @@
 /* global L */
 /* eslint-disable-next-line no-unused-vars */
 class MyLeafletGpsCompass extends L.Control.Gps {
+  constructor(options) {
+    const icon = L.icon({
+        iconUrl: 'src/gpsmarker.svg',
+        iconSize: [32, 32],
+        iconAnchor: [16, 16],
+      }),
+      marker = L.marker([0, 0], { //TODO move in class
+        //rotationAngle: 30,
+        icon: icon,
+      });
+
+    super({
+      marker: marker,
+
+      ...options,
+    });
+    //marker.options.rotationAngle=280;
+
+    this.icon = icon;
+    this.marker = marker;
+  }
+
   onAdd(map) {
     if (window.DeviceOrientationEvent)
       document.addEventListener('DOMContentLoaded', () => {
         window.addEventListener('deviceorientationabsolute', (event) => {
-          if (event.alpha !== null && this._isActive)
-            this._gpsMarker.style.transform = 'rotateZ(' + event.alpha + 'deg)';
+          //TODO rotate marker following event.alpha
         });
       });
 
