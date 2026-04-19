@@ -13,7 +13,6 @@ class MyLeafletGpsCompass extends L.Control.Gps {
         iconAnchor: [16, 16],
       }),
       marker = L.marker([0, 0], { //TODO move in class
-        //rotationAngle: 30,
         icon: icon,
       });
 
@@ -22,7 +21,6 @@ class MyLeafletGpsCompass extends L.Control.Gps {
 
       ...options,
     });
-    //marker.options.rotationAngle=280;
 
     this.icon = icon;
     this.marker = marker;
@@ -31,7 +29,7 @@ class MyLeafletGpsCompass extends L.Control.Gps {
   onAdd(map) {
     if (window.DeviceOrientationEvent)
       document.addEventListener('DOMContentLoaded', () => {
-        window.addEventListener('deviceorientationabsolute', (event) => {
+        window.addEventListener('deviceorientationabsolute', () => {
           //TODO rotate marker following event.alpha
         });
       });
