@@ -23,19 +23,20 @@ const icon = L.icon({
   }),
   protoSetPos = L.Marker.prototype._setPos;
 
-let angle = -40;
+let angle = 20;
 
 L.Marker.include({
   _setPos: function(pos) {
     protoSetPos.call(this, pos);
-    this._icon.style.transform += ' rotateZ(100deg)';
+    this._icon.style.transform += ' rotateZ(30deg)';
   },
 });
 
 document.onkeypress = function() {
   angle += 30;
+  //marker.update();
+  //marker.setIcon(icon);
   marker._icon.style.transform = marker._icon.style.transform.replace(/[0-9]*deg/u, angle + 'deg');
-  marker.update();
 };
 
 /******************************
@@ -56,15 +57,7 @@ console.info('MAP init');
   }),
   new L.Control.Gps({
     autoCenter: true,
-    //autoActive: true, //DCMM
     marker: marker,
-    /*marker: L.marker([0, 0], {
-      icon: L.icon({
-        iconUrl: 'src/gpsmarker.svg',
-        iconSize: [32, 32],
-        iconAnchor: [16, 16],
-      }),
-    }),*/
   }),
   new L.Control.Geocoder({
     position: 'topleft',
