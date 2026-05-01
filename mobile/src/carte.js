@@ -29,9 +29,12 @@ const iconMarker = L.icon({
 
 function rotateMarker(angle) {
   if (gpsMarker._icon) { // If gps enabled
-    const transform = gpsMarker._icon.style.transform.match(/[^)]*/u);
+    const transform = gpsMarker._icon.style.transform.match(/[a-z][^)]*/gu);
 
-    gpsMarker.setIcon(iconCompas);
+    if (transform.length === 1) { // First time
+      gpsMarker.setIcon(iconCompas);
+      gpsMarker._icon.style.transformOrigin = 'center';
+    }
     gpsMarker._icon.style.transform = transform[0] + ') rotateZ(' + angle + 'deg)';
   }
 };
