@@ -27,17 +27,27 @@ const iconMarker = L.icon({
     icon: iconMarker,
   });
 
-let angle = 20;
-
-document.onkeypress = function() {
+function rotateMarker(angle) {
   if (gpsMarker._icon) { // If gps enabled
     const transform = gpsMarker._icon.style.transform.match(/[^)]*/u);
 
-    angle += 30;
     gpsMarker.setIcon(iconCompas);
     gpsMarker._icon.style.transform = transform[0] + ') rotateZ(' + angle + 'deg)';
   }
 };
+
+if (window.DeviceOrientationEvent)
+  document.addEventListener('DOMContentLoaded', () => {
+    window.addEventListener('deviceorientationabsolute', (evt) => {
+      if (evt.alpha)
+        rotateMarker(-parseInt(evt.alpha, 10));
+    });
+  });
+
+let angle = 0;
+document.onkeypress = function() {
+  rotateMarker(angle += 30);
+}
 
 /******************************
  * Initialisation de la carte *
