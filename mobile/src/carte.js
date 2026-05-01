@@ -13,30 +13,30 @@
  			timeout: 300000, //DCMM 5 minutes
 */
 
-const icon = L.icon({
+const iconMarker = L.icon({
     iconUrl: 'src/gpsmarker.svg',
     iconSize: [32, 32],
     iconAnchor: [16, 16],
   }),
-  marker = L.marker([0, 0], {
-    icon: icon,
+  iconCompas = L.icon({
+    iconUrl: 'src/gpscompas.svg',
+    iconSize: [32, 32],
+    iconAnchor: [16, 16],
   }),
-  protoSetPos = L.Marker.prototype._setPos;
+  gpsMarker = L.marker([0, 0], {
+    icon: iconMarker,
+  });
 
 let angle = 20;
 
-L.Marker.include({
-  _setPos: function(pos) {
-    protoSetPos.call(this, pos);
-    this._icon.style.transform += ' rotateZ(30deg)';
-  },
-});
-
 document.onkeypress = function() {
-  angle += 30;
-  //marker.update();
-  //marker.setIcon(icon);
-  marker._icon.style.transform = marker._icon.style.transform.replace(/[0-9]*deg/u, angle + 'deg');
+  if (gpsMarker._icon) { // If gps enabled
+    const transform = gpsMarker._icon.style.transform.match(/[^)]*/u);
+
+    angle += 30;
+    gpsMarker.setIcon(iconCompas);
+    gpsMarker._icon.style.transform = transform[0] + ') rotateZ(' + angle + 'deg)';
+  }
 };
 
 /******************************
@@ -57,7 +57,7 @@ console.info('MAP init');
   }),
   new L.Control.Gps({
     autoCenter: true,
-    marker: marker,
+    marker: gpsMarker,
   }),
   new L.Control.Geocoder({
     position: 'topleft',
