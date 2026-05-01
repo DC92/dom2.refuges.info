@@ -13,44 +13,38 @@
  			timeout: 300000, //DCMM 5 minutes
 */
 
+/******************************
+ * Marqueur orientable du GPS *
+ ******************************/
 const iconMarker = L.icon({
     iconUrl: 'src/gpsmarker.svg',
-    iconSize: [32, 32],
-    iconAnchor: [16, 16],
+    iconSize: [16, 16],
+    iconAnchor: [8, 8],
   }),
   iconCompas = L.icon({
     iconUrl: 'src/gpscompas.svg',
-    iconSize: [32, 32],
-    iconAnchor: [16, 16],
+    iconSize: [16, 16],
+    iconAnchor: [8, 8],
   }),
   gpsMarker = L.marker([0, 0], {
     icon: iconMarker,
   });
 
-function rotateMarker(angle) {
-  if (gpsMarker._icon) { // If gps enabled
-    const transform = gpsMarker._icon.style.transform.match(/[a-z][^)]*/gu);
-
-    if (transform.length === 1) { // First time
-      gpsMarker.setIcon(iconCompas);
-      gpsMarker._icon.style.transformOrigin = 'center';
-    }
-    gpsMarker._icon.style.transform = transform[0] + ') rotateZ(' + angle + 'deg)';
-  }
-};
-
 if (window.DeviceOrientationEvent)
   document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('deviceorientationabsolute', (evt) => {
-      if (evt.alpha)
-        rotateMarker(-parseInt(evt.alpha, 10));
+      if (gpsMarker._icon && evt.alpha) { // If gps enabled
+        const transform = gpsMarker._icon.style.transform.match(/[a-z][^)]*/gu),
+          angle = 45 - parseInt(evt.alpha, 10);
+
+        if (transform.length === 1) { // First time
+          gpsMarker.setIcon(iconCompas);
+          gpsMarker._icon.style.transformOrigin = 'center';
+        }
+        gpsMarker._icon.style.transform = transform[0] + ') rotateZ(' + angle + 'deg)';
+      }
     });
   });
-
-let angle = 0;
-document.onkeypress = function() {
-  rotateMarker(angle += 30);
-}
 
 /******************************
  * Initialisation de la carte *
