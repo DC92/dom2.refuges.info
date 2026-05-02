@@ -82,31 +82,7 @@ Démonstrateur front-end pour refuges.info
   </div>
 
   <!-- Template carte -->
-  <div id="map">
-    <div id="selecteur" onclick="affichePoints(localStorage.pointsGeoJson)">
-      <a id="7" class="selected" onclick="this.classList.toggle('selected')" id="selecteur-cabane" title="Cabane">
-        <img src="https://www.refuges.info/images/icones/cabane.svg" />
-      </a>
-      <a id="10" class="selected" onclick="this.classList.toggle('selected')" id="selecteur-refuge" title="Refuge">
-        <img src="https://www.refuges.info/images/icones/cabane_red.svg" />
-      </a>
-      <a id="9" class="selected" onclick="this.classList.toggle('selected')" id="selecteur-gite" title="Gîte">
-        <img src="https://www.refuges.info/images/icones/cabane_green.svg" />
-      </a>
-      <a id="23" class="selected" onclick="this.classList.toggle('selected')" id="selecteur-eau" title="Point d'au">
-        <img src="https://www.refuges.info/images/icones/pointdeau.svg" />
-      </a>
-    </div>
-    <div id="compass"></div>
-  </div>
-
-  <!-- div id="preload" onclick="preLoad()">
-    <a title="Précharger les données" onclick="this.parentElement.classList.add('selected')">&#128259;</a>
-    <div>
-      <a title="Fermer l'encart" onclick="this.parentElement.parentElement.classList.remove('selected')">&#128473;</a>
-      <h4>Préchargement des données</h4>
-    </div>
-  </div -->
+  <div id="map"></div>
 
   <!-- Template fiche, zone informations -->
   <div class="fiche">
