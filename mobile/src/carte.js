@@ -1,4 +1,4 @@
-/* global L, tileLayers, clustersLayer, affichePoints */
+/* global L, tileLayers, clustersLayer, overlays, affichePoints */
 
 /*******************************
  * Gestion de la carte Leaflet *
@@ -8,7 +8,8 @@
   seules sont modifiées la taille du DIV et la position lon/lat
 */
 
-/*//TODO intégrer modif leaflet-src.js
+/* Modif leaflet-src.js à ajouter lors de chaque mise à jour
+//TODO modif automatique ???
 		this._map.locate({
  			timeout: 300000, //DCMM 5 minutes
 */
@@ -16,13 +17,13 @@
 /******************************
  * Marqueur orientable du GPS *
  ******************************/
-const iconMarker = L.icon({
-    iconUrl: 'src/gpsmarker.svg',
+const iconMarker = L.icon({ // Icône sans orientation
+    iconUrl: 'images/gpsmarker.svg',
     iconSize: [16, 16],
     iconAnchor: [8, 8],
   }),
-  iconCompas = L.icon({
-    iconUrl: 'src/gpscompas.svg',
+  iconCompas = L.icon({ // Icône orientée
+    iconUrl: 'images/gpscompas.svg',
     iconSize: [16, 16],
     iconAnchor: [8, 8],
   }),
@@ -30,21 +31,20 @@ const iconMarker = L.icon({
     icon: iconMarker,
   });
 
-if (window.DeviceOrientationEvent)
-  document.addEventListener('DOMContentLoaded', () => {
-    window.addEventListener('deviceorientationabsolute', (evt) => {
-      if (gpsMarker._icon && evt.alpha) { // If gps enabled
-        const transform = gpsMarker._icon.style.transform.match(/[a-z][^)]*/gu),
-          angle = 45 - parseInt(evt.alpha, 10);
+window.addEventListener('deviceorientationabsolute', (evt) => {
+  if (gpsMarker._icon && evt.alpha) { // If gps enabled
+    const transform = gpsMarker._icon.style.transform.match(/[a-z][^)]*/gu),
+      angle = 45 - parseInt(evt.alpha, 10);
 
-        if (transform.length === 1) { // First time
-          gpsMarker.setIcon(iconCompas);
-          gpsMarker._icon.style.transformOrigin = 'center';
-        }
-        gpsMarker._icon.style.transform = transform[0] + ') rotateZ(' + angle + 'deg)';
-      }
-    });
-  });
+    // La première fois, changement de l'icône et ajout de l'orientation
+    if (transform.length === 1) {
+      gpsMarker.setIcon(iconCompas);
+      gpsMarker._icon.style.transformOrigin = 'center';
+    }
+    gpsMarker._icon.style.transform = transform[0] + ') rotateZ(' + angle + 'deg)';
+    //TODO BUG compas bouge quand zoom
+  }
+});
 
 /******************************
  * Initialisation de la carte *
@@ -57,7 +57,7 @@ console.info('MAP init');
 [
   Object.values(tileLayers)[0], // Fond de carte par défaut
   clustersLayer, // Couche vectorielle
-  L.control.layers(tileLayers), // Layer switcher
+  L.control.layers(tileLayers, overlays), // Layer switcher
 
   L.control.scale({
     imperial: false,

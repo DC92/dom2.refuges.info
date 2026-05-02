@@ -72,3 +72,7 @@ function affichePoints(geoJson) {
     clustersLayer.addLayer(pointsLayer);
   }
 }
+
+
+/* eslint-disable-next-line no-unused-vars */
+const overlays = {};

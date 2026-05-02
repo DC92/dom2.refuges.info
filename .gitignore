@@ -27,4 +27,4 @@
 /myol/node_modules/*
 /ressources/geoip/*.dat
 node_modules
-mobile/src/keys.js
+mobile/keys.js
