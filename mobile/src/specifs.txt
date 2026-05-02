@@ -24,7 +24,7 @@ Rapidité : précharger les infos pour une navigation instantanée
 
 Hors réseau : précharger les infos suivantes :
 
-- Les 6500 points du monde à afficher sur la carte, importés en 300 kb et 2 secondes par /api/bbox?detail=icone
+- Les 6500 points du monde à afficher sur la carte, importés en 300 kb et 2 secondes par /api/bbox?detail=icone&nb_points=all
 Leaflet n’en fait qu’une bouchée en mode cluster
 Tous les points sont rechargés à chaque lancement de l’application si au moins un changement de point a eu lieu.
 Comme la modification nécessite de passer sur le site, la liste des points est mise à jour au retour dans l’application.
