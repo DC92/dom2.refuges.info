@@ -50,14 +50,14 @@ window.addEventListener('deviceorientationabsolute', (evt) => {
  * Initialisation de la carte *
  ******************************/
 const map = L.map('map');
-  
+
 console.info('MAP init');
 
 // Ajout de controles et couches à la carte
 [
   Object.values(tileLayers)[0], // Fond de carte par défaut
-   vectorCluster, // Couche vectorielle
-   L.control.layers(tileLayers,vectorLayers), // Layer switcher
+  vectorCluster, // Couche vectorielle
+  L.control.layers(tileLayers, vectorLayers), // Layer switcher
 
   L.control.scale({
     imperial: false,
