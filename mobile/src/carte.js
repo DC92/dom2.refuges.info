@@ -1,4 +1,4 @@
-/* global L, tileLayers, clustersLayer, overlays, affichePoints */
+/* global L, tileLayers, vectorLayers, vectorCluster */
 
 /*******************************
  * Gestion de la carte Leaflet *
@@ -50,14 +50,14 @@ window.addEventListener('deviceorientationabsolute', (evt) => {
  * Initialisation de la carte *
  ******************************/
 const map = L.map('map');
-
+  
 console.info('MAP init');
 
 // Ajout de controles et couches à la carte
 [
   Object.values(tileLayers)[0], // Fond de carte par défaut
-  clustersLayer, // Couche vectorielle
-  L.control.layers(tileLayers, overlays), // Layer switcher
+   vectorCluster, // Couche vectorielle
+   L.control.layers(tileLayers,vectorLayers), // Layer switcher
 
   L.control.scale({
     imperial: false,
@@ -70,9 +70,6 @@ console.info('MAP init');
     position: 'topleft',
   }),
 ].map(e => e.addTo(map));
-
-// Initialise les points s'il y en a de mémorisés
-affichePoints(localStorage.pointsGeoJson);
 
 // Mémorise la position de la carte
 map.on('moveend', () => {
