@@ -129,9 +129,7 @@ const tileLayers = {
   SwissTopo: L.tileLayer.wms(
     'http://wms.geo.admin.ch/?', {
       layers: 'ch.swisstopo.pixelkarte-farbe',
-      //layers: 'ch.swisstopo.swissimage',
       format: 'image/jpeg',
-      //TODO DELETE detectRetina: true,
     }),
 
   //TODO Autriche
@@ -189,8 +187,8 @@ const massifsLayer = L.geoJson(null, {
     //BEST Fonctions ctrl clic + Apple suivant demande faite à wri github
     layer.on({
       click: () => {
-        // Affiche la vue fiche
-        //TODO location.hash = feature.id;
+        //TODO Affiche la vue fiche
+        // location.hash = feature.id;
       },
     });
   },
@@ -323,6 +321,7 @@ console.info('MAP init');
   new L.Control.Geocoder({
     position: 'topleft',
   }),
+  new L.Control.Fullscreen(),
 ].map(e => e.addTo(map));
 
 // Mémorisation des couches
@@ -337,9 +336,9 @@ const memCheckedLayers = (localStorage.checkedLayers || ' Massifs').split(',');
       const titre = lsInputEl.parentElement.lastChild.innerText;
 
       // Restaure les couches précédents
+      //TODO n'affiche pas les couches dans le cluster
       if (evt.type === 'load' && memCheckedLayers.includes(titre))
         lsInputEl.click();
-      //TODO n'affiche pas quand dans le cluster
 
       // Mémorise les couches réels
       if (lsInputEl.checked)
@@ -357,7 +356,6 @@ map.on('moveend', () => {
   console.info('MAP moveend');
 
   // Le permalink est mémorisé dans la mémoire permanente de l'explorateur localStorage
-  //TODO BUG le round ne positionne pas au centre quand on bouge la carte !
   localStorage.permalink = [map.getZoom(), pos.lat, pos.lng].map(f => Math.round(f * 1000) / 1000).join('/');
 
   // Le permalink est un #hash ajouté à la page carte uniquement
