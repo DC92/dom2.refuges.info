@@ -47,12 +47,6 @@ function tileLayerIGN(url, paramsIGN, paramsLayer) {
 
 const tileLayers = {
   // Cartes lbres
-  OpenStreetMap: L.tileLayer(
-    'https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxNativeZoom: 19, //TODO revoir zoomS
-      attribution: '&copy;<a target="_blank" href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>|' +
-        '<a target="_blank" href="https://www.openstreetmap.org/panes/legend">Légende</a>'
-    }),
   OpenHikingMap: L.tileLayer(
     'https://tile.openmaps.fr/openhikingmap/{z}/{x}/{y}.png', {
       maxNativeZoom: 18,
@@ -61,6 +55,12 @@ const tileLayers = {
         '<a href="https://openmaps.fr/donate">❤️ Donation</a>|' +
         '<a href="http://www.openstreetmap.org/copyright">© OpenStreetMap</a>|' +
         '<a target="_blank" href="https://wiki.openstreetmap.org/wiki/OpenHikingMap#Map_Legend">Légende</a>',
+    }),
+  OpenStreetMap: L.tileLayer(
+    'https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxNativeZoom: 19, //TODO revoir zoomS
+      attribution: '&copy;<a target="_blank" href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>|' +
+        '<a target="_blank" href="https://www.openstreetmap.org/panes/legend">Légende</a>'
     }),
   OpenTopoMap: L.tileLayer(
     'https://tile.openmaps.fr/opentopomap/{z}/{x}/{y}.png', {
@@ -85,12 +85,12 @@ const tileLayers = {
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       maxNativeZoom: 22,
     }),
-  OpenCycleMap: L.tileLayer(
+  /*OpenCycleMap: L.tileLayer(
     'https://api.thunderforest.com/cycle/{z}/{x}/{y}{r}.png?apikey=' + mapKeys.thunderforest, {
       maxNativeZoom: 22,
       attribution: '&copy; <a href="http://www.thunderforest.com/">Thunderforest</a>, ' +
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    }),
+    }),*/
 
   // IGN
   // https://geoservices.ign.fr/documentation/services/utilisation-web/extension-pour-leaflet
@@ -107,7 +107,7 @@ const tileLayers = {
       layer: 'GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2',
       format: 'image/png',
     }),
-  'IGN photo': tileLayerIGN(
+  /*'IGN photo': tileLayerIGN(
     'https://data.geopf.fr/wmts?', {
       layer: 'ORTHOIMAGERY.ORTHOPHOTOS',
     }),
@@ -116,6 +116,12 @@ const tileLayers = {
       layer: 'CADASTRALPARCELS.PARCELLAIRE_EXPRESS',
       style: 'PCI vecteur',
       format: 'image/png',
+    // }),*/
+
+  SwissTopo: L.tileLayer.wms(
+    'http://wms.geo.admin.ch/?', {
+      layers: 'ch.swisstopo.pixelkarte-farbe',
+      format: 'image/jpeg',
     }),
   Espagne: tileLayerIGN(
     'https://www.ign.es/wmts/mapa-raster?', {
@@ -124,12 +130,6 @@ const tileLayers = {
       tilematrixset: 'GoogleMapsCompatible',
     }, {
       attribution: '&Copy; <a target="_blank" href="https://www.ign.es/">Instituto Geográfico Nacional</a> | '
-    }),
-
-  SwissTopo: L.tileLayer.wms(
-    'http://wms.geo.admin.ch/?', {
-      layers: 'ch.swisstopo.pixelkarte-farbe',
-      format: 'image/jpeg',
     }),
 
   //TODO Autriche
@@ -185,7 +185,7 @@ const massifsLayer = L.geoJson(null, {
 
     // Click
     //BEST Fonctions ctrl clic + Apple suivant demande faite à wri github
-    layer.on({
+    layer.on({ //TODO essayer ce format switch / case:
       click: () => {
         //TODO Affiche la vue fiche
         // location.hash = feature.id;
@@ -203,7 +203,7 @@ fetch(serveurAPI + '/api/polygones?type_polygon=1')
   });
 
 // Points d'intérêt refuges.info
-function geoJsonLayer(cluster, url) {
+function geoJsonLayer(url) {
   const poiLayer = L.geoJson(null, {
     // Icônes
     pointToLayer: (feature, latlng) =>
@@ -245,20 +245,33 @@ function geoJsonLayer(cluster, url) {
     });
 
   // Build clusters subgroups
-  return L.featureGroup.subGroup(cluster).addLayer(poiLayer);
+  //return L.featureGroup.subGroup(cluster).addLayer(poiLayer);
+  return poiLayer;
 }
 
 const vectorCluster = L.markerClusterGroup(),
   vectorLayers = {
-    "Massifs": massifsLayer,
-    'Cabane non gardée': geoJsonLayer(vectorCluster, serveurAPI + '/api/bbox?nb_points=all&type_points=7'),
-    'Refuge gardé': geoJsonLayer(vectorCluster, serveurAPI + '/api/bbox?nb_points=all&type_points=10'),
-    'Gîte d\'étape': geoJsonLayer(vectorCluster, serveurAPI + '/api/bbox?nb_points=all&type_points=9'),
-    'Grotte': geoJsonLayer(vectorCluster, serveurAPI + '/api/bbox?nb_points=all&type_points=29'),
-    'Point d\'eau': geoJsonLayer(vectorCluster, serveurAPI + '/api/bbox?nb_points=all&type_points=23'),
-    'Passage délicat': geoJsonLayer(vectorCluster, serveurAPI + '/api/bbox?nb_points=all&type_points=3'),
-    'Bâtiment en montagne': geoJsonLayer(vectorCluster, serveurAPI + '/api/bbox?nb_points=all&type_points=28'),
+    'Massifs': massifsLayer,
+  },
+  wriTypesPoints = {
+    7: 'Cabane non gardée',
+    10: 'Refuge gardé',
+    9: 'Gîte d\'étape',
+    29: 'Grotte',
+    23: 'Point d\'eau',
+    3: 'Passage délicat',
+    28: 'Bâtiment en montagne',
   };
+
+for (const type in wriTypesPoints)
+  vectorLayers[wriTypesPoints[type]] =
+  L.featureGroup.subGroup(vectorCluster).addLayer(
+    geoJsonLayer(serveurAPI + '/api/bbox?nb_points=all&type_points=' + type)
+  );
+
+/*vectorCluster.on('add',(evt)=>{
+  console.log(evt);//DCMM
+});*/
 
 /******************************
  * Marqueur orientable du GPS *
@@ -329,6 +342,8 @@ const memCheckedLayers = (localStorage.checkedLayers || ' Massifs').split(',');
 
 ['load', 'baselayerchange', 'overlayadd', 'overlayremove'].forEach((type) => {
   map.on(type, (evt) => {
+    console.log(evt); //DCMM
+
     const lsControls = evt.target.getContainer().getElementsByClassName('leaflet-control-layers-selector'),
       checkedLayers = [];
 

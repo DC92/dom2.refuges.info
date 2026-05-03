@@ -1,2 +1,2 @@
-httpsgithub.comghybsLeaflet.FeatureGroup.SubGroup
+https://github.com/ghybs/Leaflet.FeatureGroup.SubGroup
 De : https://stackoverflow.com/questions/35949424/leaflet-clustering-with-multiple-layers-use-markercluster-layersupport
