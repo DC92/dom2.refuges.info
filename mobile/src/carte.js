@@ -311,17 +311,17 @@ console.info('MAP init');
   vectorCluster, // Couche vectorielle
   L.control.layers(tileLayers, vectorLayers), // Layer switcher
 
-  L.control.scale({
-    imperial: false,
+  new L.Control.Geocoder({
+    position: 'topleft',
   }),
   new L.Control.Gps({
     autoCenter: true,
     marker: gpsMarker,
   }),
-  new L.Control.Geocoder({
-    position: 'topleft',
-  }),
   new L.Control.Fullscreen(),
+  L.control.scale({
+    imperial: false,
+  }),
 ].map(e => e.addTo(map));
 
 // Mémorisation des couches
@@ -335,12 +335,12 @@ const memCheckedLayers = (localStorage.checkedLayers || ' Massifs').split(',');
     for (const lsInputEl of lsControls) {
       const titre = lsInputEl.parentElement.lastChild.innerText;
 
-      // Restaure les couches précédents
+      // Restaure les couches précédentes
       //TODO n'affiche pas les couches dans le cluster
       if (evt.type === 'load' && memCheckedLayers.includes(titre))
         lsInputEl.click();
 
-      // Mémorise les couches réels
+      // Mémorise les couches actuelles
       if (lsInputEl.checked)
         checkedLayers.push(titre);
     }
