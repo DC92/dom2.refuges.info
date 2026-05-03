@@ -319,7 +319,32 @@ console.info('MAP init');
   }),
 ].map(e => e.addTo(map));
 
-// Mémorise la position de la carte
+// Mémorisation des couches
+const memCheckedLayers = (localStorage.checkedLayers || ' Massifs').split(',');
+
+['load', 'baselayerchange', 'overlayadd', 'overlayremove'].forEach((type) => {
+  map.on(type, (evt) => {
+    const lsControls = evt.target.getContainer().getElementsByClassName('leaflet-control-layers-selector'),
+      checkedLayers = [];
+
+    for (const lsInputEl of lsControls) {
+      const titre = lsInputEl.parentElement.lastChild.innerText;
+
+      // Restaure les couches précédents
+      if (evt.type === 'load' && memCheckedLayers.includes(titre))
+        lsInputEl.click();
+      //TODO n'affiche pas quand dans le cluster
+
+      // Mémorise les couches réels
+      if (lsInputEl.checked)
+        checkedLayers.push(titre);
+    }
+
+    localStorage.checkedLayers = checkedLayers.join(',');
+  });
+})
+
+// Mémorisation de la position de la carte
 map.on('moveend', () => {
   const pos = map.getCenter();
 
