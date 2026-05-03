@@ -279,19 +279,25 @@ const iconMarker = L.icon({ // Icône sans orientation
     icon: iconMarker,
   });
 
+let gpsAngle = 0;
+
 window.addEventListener('deviceorientationabsolute', (evt) => {
   if (gpsMarker._icon && evt.alpha) { // If gps enabled
-    const transform = gpsMarker._icon.style.transform.match(/[a-z][^)]*/gu),
-      angle = 45 - parseInt(evt.alpha, 10);
+    gpsMarker.setIcon(iconCompas);
+    gpsMarker._icon.style.transformOrigin = 'center';
 
-    // La première fois, changement de l'icône et ajout de l'orientation
-    if (transform.length === 1) {
-      gpsMarker.setIcon(iconCompas);
-      gpsMarker._icon.style.transformOrigin = 'center';
-    }
-    gpsMarker._icon.style.transform = transform[0] + ') rotateZ(' + angle + 'deg)';
-    //TODO BUG compas bouge quand zoom
+    gpsAngle = 45 - parseInt(evt.alpha, 10);
+    gpsMarker._icon.style.transform = gpsMarker._icon.style.transform.replace(/[0-9]*deg/u, gpsAngle + 'deg');
   }
+});
+
+// Evite à la direction du marqueur d'être perturbée par le zoom
+const protoSetPos = L.Marker.prototype._setPos;
+L.Marker.include({
+  _setPos: function(pos) {
+    protoSetPos.call(this, pos);
+    this._icon.style.transform += ' rotateZ(' + gpsAngle + 'deg)';
+  },
 });
 
 /******************************
