@@ -13,6 +13,7 @@
 		this._map.locate({
  			timeout: 300000, //DCMM 5 minutes
 */
+//TODO recherche de points
 
 /******************************
  * Initialisation de la carte *

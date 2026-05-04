@@ -1,2 +1,0 @@
-https://leafletjs.com/download.html
-Leaflet 1.9.4

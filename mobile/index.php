@@ -12,29 +12,12 @@ Démonstrateur front-end pour refuges.info
   <link href="favicon.svg" type="image/svg+xml" rel="icon" />
   <title>Refuges.info</title>
 
+  <!-- Leaflet -->
+  <link href="../leaflet/leaflet.css.php" rel="stylesheet" />
+  <script src="../leaflet/leaflet.js.php" defer></script>
+
   <!-- Browser database indexedDB -->
   <script src="idb-keyval/umd.js" defer></script>
-
-  <!-- Leaflet -->
-  <link href="leaflet/leaflet.css" rel="stylesheet" />
-  <script src="leaflet/leaflet-src.js" defer></script>
-
-  <!-- Controls -->
-  <link href="geocoder/Control.Geocoder.css" rel="stylesheet" />
-  <script src="geocoder/Control.Geocoder.js" defer></script>
-  <link href="gps/leaflet-gps.min.css" rel="stylesheet">
-  <script src="gps/leaflet-gps.src.js" defer></script>
-  <link href="Leaflet.fullscreen/Leaflet.fullscreen.css" rel="stylesheet">
-  <script src="Leaflet.fullscreen/Leaflet.fullscreen.js" defer></script>
-
-  <!-- Base layers -->
-  <script src="EdgeBuffer/leaflet.edgebuffer.js" defer></script>
-
-  <!-- Vector layers -->
-  <link href="markercluster/MarkerCluster.css" rel="stylesheet" />
-  <link href="markercluster/MarkerCluster.Default.css" rel="stylesheet" />
-  <script src="markercluster/leaflet.markercluster.js" defer></script>
-  <script src="FeatureGroup.SubGroup/subgroup.js" defer></script>
 
   <!-- This package -->
   <link href="src/index.css" rel="stylesheet">
