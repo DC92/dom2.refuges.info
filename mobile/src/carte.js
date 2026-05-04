@@ -14,6 +14,66 @@
  			timeout: 300000, //DCMM 5 minutes
 */
 
+/******************************
+ * Initialisation de la carte *
+ ******************************/
+const map = L.map('map');
+
+new L.Control.Fullscreen().addTo(map);
+
+L.control.scale({
+  imperial: false,
+}).addTo(map);
+
+new L.Control.Geocoder({
+  position: 'topleft',
+}).addTo(map);
+
+console.info('MAP init');
+
+/********************************
+ * GPS avec marqueur orientable *
+ ********************************/
+const iconMarker = L.icon({ // Icône sans orientation
+    iconUrl: 'images/gpsmarker.svg',
+    iconSize: [16, 16],
+    iconAnchor: [8, 8],
+  }),
+  iconCompas = L.icon({ // Icône orientée
+    iconUrl: 'images/gpscompas.svg',
+    iconSize: [16, 16],
+    iconAnchor: [8, 8],
+  }),
+  gpsMarker = L.marker([0, 0], {
+    icon: iconMarker,
+  });
+
+let gpsAngle = 0;
+
+window.addEventListener('deviceorientationabsolute', (evt) => {
+  if (gpsMarker._icon && evt.alpha) { // If gps enabled
+    gpsMarker.setIcon(iconCompas);
+    gpsMarker._icon.style.transformOrigin = 'center';
+
+    gpsAngle = 45 - parseInt(evt.alpha, 10);
+    gpsMarker._icon.style.transform = gpsMarker._icon.style.transform.replace(/[0-9]*deg/u, gpsAngle + 'deg');
+  }
+});
+
+// Evite à la direction du marqueur d'être perturbée par le zoom
+const protoSetPos = L.Marker.prototype._setPos;
+L.Marker.include({
+  _setPos: function(pos) {
+    protoSetPos.call(this, pos);
+    this._icon.style.transform += ' rotateZ(' + gpsAngle + 'deg)';
+  },
+});
+
+new L.Control.Gps({
+  autoCenter: true,
+  marker: gpsMarker,
+}).addTo(map);
+
 /*******************
  * Couches tuilées *
  *******************/
@@ -47,6 +107,13 @@ function tileLayerIGN(url, paramsIGN, paramsLayer) {
 
 const tileLayers = {
   // Cartes lbres
+  OpenStreetMap: L.tileLayer(
+    'https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxNativeZoom: 19, //TODO revoir zoomS
+      attribution: '&copy;<a target="_blank" href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>|' +
+        '<a target="_blank" href="https://www.openstreetmap.org/panes/legend">Légende</a>'
+    }),
+  //TODO remettre en première position aprés les tests
   OpenHikingMap: L.tileLayer(
     'https://tile.openmaps.fr/openhikingmap/{z}/{x}/{y}.png', {
       maxNativeZoom: 18,
@@ -55,12 +122,6 @@ const tileLayers = {
         '<a href="https://openmaps.fr/donate">❤️ Donation</a>|' +
         '<a href="http://www.openstreetmap.org/copyright">© OpenStreetMap</a>|' +
         '<a target="_blank" href="https://wiki.openstreetmap.org/wiki/OpenHikingMap#Map_Legend">Légende</a>',
-    }),
-  OpenStreetMap: L.tileLayer(
-    'https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxNativeZoom: 19, //TODO revoir zoomS
-      attribution: '&copy;<a target="_blank" href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>|' +
-        '<a target="_blank" href="https://www.openstreetmap.org/panes/legend">Légende</a>'
     }),
   OpenTopoMap: L.tileLayer(
     'https://tile.openmaps.fr/opentopomap/{z}/{x}/{y}.png', {
@@ -147,6 +208,8 @@ const tileLayers = {
     }),
   //TODO https://github.com/plepe/overpass-frontend/blob/master/example-bbox.js
 };
+
+Object.values(tileLayers)[0].addTo(map); // Fond de carte par défaut
 
 /************************
  * Couches vectorielles *
@@ -243,17 +306,11 @@ function geoJsonLayer(url) {
       if (json.features.length)
         poiLayer.addData(json);
     });
-
-  // Build clusters subgroups
-  //return L.featureGroup.subGroup(cluster).addLayer(poiLayer);
   return poiLayer;
 }
 
-const vectorCluster = L.markerClusterGroup(),
-  vectorLayers = {
-    'Massifs': massifsLayer,
-  },
-  wriTypesPoints = {
+// Sélecteur de couches
+const wriTypesPoints = {
     7: 'Cabane non gardée',
     10: 'Refuge gardé',
     9: 'Gîte d\'étape',
@@ -261,7 +318,11 @@ const vectorCluster = L.markerClusterGroup(),
     23: 'Point d\'eau',
     3: 'Passage délicat',
     28: 'Bâtiment en montagne',
-  };
+  },
+  vectorLayers = {
+    'Massifs': massifsLayer,
+  },
+  vectorCluster = L.markerClusterGroup();
 
 for (const type in wriTypesPoints)
   vectorLayers[wriTypesPoints[type]] =
@@ -269,75 +330,10 @@ for (const type in wriTypesPoints)
     geoJsonLayer(serveurAPI + '/api/bbox?nb_points=all&type_points=' + type)
   );
 
-/*vectorCluster.on('add',(evt)=>{
-  console.log(evt);//DCMM
-});*/
+vectorCluster.addTo(map); // Couche vectorielle
+L.control.layers(tileLayers, vectorLayers).addTo(map); // Layer switcher
 
-/******************************
- * Marqueur orientable du GPS *
- ******************************/
-const iconMarker = L.icon({ // Icône sans orientation
-    iconUrl: 'images/gpsmarker.svg',
-    iconSize: [16, 16],
-    iconAnchor: [8, 8],
-  }),
-  iconCompas = L.icon({ // Icône orientée
-    iconUrl: 'images/gpscompas.svg',
-    iconSize: [16, 16],
-    iconAnchor: [8, 8],
-  }),
-  gpsMarker = L.marker([0, 0], {
-    icon: iconMarker,
-  });
-
-let gpsAngle = 0;
-
-window.addEventListener('deviceorientationabsolute', (evt) => {
-  if (gpsMarker._icon && evt.alpha) { // If gps enabled
-    gpsMarker.setIcon(iconCompas);
-    gpsMarker._icon.style.transformOrigin = 'center';
-
-    gpsAngle = 45 - parseInt(evt.alpha, 10);
-    gpsMarker._icon.style.transform = gpsMarker._icon.style.transform.replace(/[0-9]*deg/u, gpsAngle + 'deg');
-  }
-});
-
-// Evite à la direction du marqueur d'être perturbée par le zoom
-const protoSetPos = L.Marker.prototype._setPos;
-L.Marker.include({
-  _setPos: function(pos) {
-    protoSetPos.call(this, pos);
-    this._icon.style.transform += ' rotateZ(' + gpsAngle + 'deg)';
-  },
-});
-
-/******************************
- * Initialisation de la carte *
- ******************************/
-const map = L.map('map');
-
-console.info('MAP init');
-
-// Ajout de controles et couches à la carte
-[
-  Object.values(tileLayers)[0], // Fond de carte par défaut
-  vectorCluster, // Couche vectorielle
-  L.control.layers(tileLayers, vectorLayers), // Layer switcher
-
-  new L.Control.Geocoder({
-    position: 'topleft',
-  }),
-  new L.Control.Gps({
-    autoCenter: true,
-    marker: gpsMarker,
-  }),
-  new L.Control.Fullscreen(),
-  L.control.scale({
-    imperial: false,
-  }),
-].map(e => e.addTo(map));
-
-// Mémorisation des couches
+// Mémorisation des couches sélectionnées
 const memCheckedLayers = (localStorage.checkedLayers || ' Massifs').split(',');
 
 ['load', 'baselayerchange', 'overlayadd', 'overlayremove'].forEach((type) => {
@@ -364,17 +360,17 @@ const memCheckedLayers = (localStorage.checkedLayers || ' Massifs').split(',');
   });
 })
 
-// Mémorisation de la position de la carte
+// Permalink
+//TODO permalink baseLayer
 map.on('moveend', () => {
   const pos = map.getCenter();
 
   console.info('MAP moveend');
 
   // Le permalink est mémorisé dans la mémoire permanente de l'explorateur localStorage
-  localStorage.permalink = [map.getZoom(), pos.lat, pos.lng].map(f => Math.round(f * 1000) / 1000).join('/');
+  localStorage.permalink = [map.getZoom(), pos.lat, pos.lng].map(f => Math.round(f * 10000) / 10000).join('/');
 
   // Le permalink est un #hash ajouté à la page carte uniquement
-  //BEST permalink baseLayer
   if (document.body.className === 'carte')
     location.hash = localStorage.permalink;
 });
