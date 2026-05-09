@@ -1,16 +1,44 @@
-<div class="contenu">
-  <!-- PRESENTATION   -->
+<style>
+body {
+  height: 100%;
+  display: grid;
+  grid-template-rows: auto auto 1fr 1fr;
+}
 
-  <p style="margin-top:0">
-    <?=wiki_page_html("contenu_accueil")?>
-    <?=wiki_page_html("nouvelles_generales")?>
-  </p>
+.bandeau-haut {
+  background-image:none;
+}
 
-  <!-- CARTE DES MASSIFS -->
-  <div class="tablo" style="padding-right:1em;">
-    <h4><?=$vue->stat->nbpoints?> points, <?=$vue->stat->nbmassifs?> massifs</h4>
-    <div class="carte" id="carte-accueil"></div>
-    <h5>Et encore...</h5>
+#wcarte-accueil{
+  width: 98%;
+  height: 100%;
+  background-color: dodgerblue;
+  border: 3px solid yellow;
+}
+
+.mob-contenu{
+  height:100p%;
+  overflow-y: scroll; 
+}
+ 
+.logo-haut,
+.recherche-haut,
+.bandeau_info,
+.basdepage {
+  display:none;
+}
+</style>
+    
+<div class="wiki-accueil">
+  <?=wiki_page_html("contenu_accueil")?>
+  <?=wiki_page_html("nouvelles_generales")?>
+</div>
+      
+<div class="mob-carte" id="wcarte-accueil"></div>
+    
+<div class="mob-contenu">
+  <!-- MASSIFS -->
+     <h4><?=$vue->stat->nbmassifs?> massifs</h4>
     <ul class="liste-massifs">
       <?php if (isset($vue->zones_couvertes)) foreach ($vue->zones_couvertes AS $nom_zone => $lien) { ?>
         <li>
@@ -18,9 +46,7 @@
         </li>
       <? } ?>
     </ul>
-  </div>
 
-  <div class="tablo" style="float:none;">
     <h4><?=$vue->stat->nbphotos?> photos. Les dernières :</h4>
     <br/>
       <?php if (isset($vue->nouveaux_commentaires))
@@ -87,6 +113,5 @@
         </a>
       </li>
     </ul>
-    <br/>
-  </div>
-</div>
+ </div>
+ 
