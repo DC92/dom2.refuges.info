@@ -6,26 +6,48 @@ body {
 }
 
 .bandeau-haut {
-  background-image:none;
+  background-image: none;
 }
 
-#wcarte-accueil{
-  width: 98%;
+#wcarte-accueil {
   height: 100%;
-  background-color: dodgerblue;
-  border: 3px solid yellow;
+  background: #642;
+  margin: 0;
 }
 
-.mob-contenu{
-  height:100p%;
-  overflow-y: scroll; 
+.mob-contenu {
+  overflow-y: scroll;
 }
- 
+
 .logo-haut,
 .recherche-haut,
 .bandeau_info,
 .basdepage {
-  display:none;
+  display: none;
+}
+
+@media (min-aspect-ratio: 1) {
+  body {
+    grid-template-rows: auto auto 1fr;
+  }
+
+  .bandeau-haut,
+  .wiki-accueil {
+    background-image: none;
+    width: 50%;
+  }
+
+  #wcarte-accueil {
+    width: 50%;
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin-left: 50%;
+  }
+
+  .mob-contenu {
+    width: 50%;
+  }
 }
 </style>
     
