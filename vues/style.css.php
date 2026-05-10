@@ -114,14 +114,6 @@ body {
   height: 100%;
   background-color: var(--couleur_fond);
   color: var(--couleur_texte);
-
-/* Rend le bandeau fixe en haut de page */
-  display: grid;
-  grid-template-rows: auto auto 1fr;
-}
-
-.scrolable {
-  overflow-y: scroll;
 }
 
 /*==================================================================*/

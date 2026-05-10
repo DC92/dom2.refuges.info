@@ -2,6 +2,18 @@
 /* Entête de page : Logo, menus, identification                     */
 /* Initialement dans style.css.php                                  */
 /*==================================================================*/
+
+/* Rend le bandeau fixe en haut de page */
+body {
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+}
+
+.scrolable {
+  overflow-y: scroll;
+}
+
+/* Bandeau haut */
 .bandeau-haut * {
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
   font-size: 18px;
@@ -219,7 +231,16 @@
 }
 
 /* Fenêtres étroites */
-@media screen and (max-width: 449.9px) {
+@media screen and ((max-width: 449.9px) or ((max-width: 899.9px) and (min-aspect-ratio: 1.6))) {
+  .menu-titre,
+  .scrolable {
+    width: 50%;
+  }
+
+  .bandeau_info {
+    width: 100%;
+  }
+
   .bandeau-haut * {
     font-size: 16px;
   }
