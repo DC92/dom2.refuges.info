@@ -1,13 +1,4 @@
 <style>
-  /*body {
-    display: grid;
-    grid-template-rows: auto auto 1fr;
-  }
-
-  .scrolable {
-    overflow-y: scroll;
-  }*/
-
 @media (min-aspect-ratio: 10) {
   .bandeau-haut,
   .wiki-accueil {
@@ -32,23 +23,24 @@
 }
 </style>
 
-<div class="contenu-accueil">
-  <!-- PRESENTATION   -->
-  <div class="wiki-accueil">
-    <?=wiki_page_html("contenu-accueil_accueil")?>
-    <?=wiki_page_html("nouvelles_generales")?>
-  </div>
+<div class="contenu">
+  <!-- PRESENTATION -->
+  <?=wiki_page_html("contenu_accueil")?>
+  <?=wiki_page_html("nouvelles_generales")?>
 
+  <!-- CARTE -->
   <div id="carte-accueil"></div>
 
     <!-- MASSIFS -->
     <h4><?=$vue->stat->nbmassifs?> massifs</h4>
     <ul class="liste-massifs">
-      <?php if (isset($vue->zones_couvertes)) foreach ($vue->zones_couvertes AS $nom_zone => $lien) { ?>
-        <li>
-          <a href="<?=$lien?>"><?=$nom_zone?></a>
-        </li>
-      <? } ?>
+      <?php
+        if (isset($vue->zones_couvertes))
+          foreach ($vue->zones_couvertes AS $nom_zone => $lien) { ?>
+            <li>
+              <a href="<?=$lien?>"><?=$nom_zone?></a>
+            </li>
+          <? } ?>
     </ul>
 
     <!-- PHOTOS -->

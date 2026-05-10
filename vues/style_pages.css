@@ -2,16 +2,6 @@
 /* Styles des pages hors forum                                      */
 /*==================================================================*/
 
-/* Rend le bandeau fixe en haut de page */
-body {
-  display: grid;
-  grid-template-rows: auto auto 1fr;
-}
-
-.scrolable {
-  overflow-y: scroll;
-}
-
 /* zone de contenu */
 .contenu {
   margin: 0.5%;
