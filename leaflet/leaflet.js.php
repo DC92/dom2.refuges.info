@@ -12,7 +12,9 @@ $files = [
   'EdgeBuffer/leaflet.edgebuffer',
   'markercluster/leaflet.markercluster',
   'FeatureGroup.SubGroup/subgroup',
-  'carte',
+  'src/baseLayers',
+  'src/vectorLayers',
+  'src/map',
 ];
 
 foreach ($files as $file_name)

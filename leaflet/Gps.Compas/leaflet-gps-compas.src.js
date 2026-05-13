@@ -1,6 +1,9 @@
-/* Transform the GPS marker into a orientable compass
-* that indicates the direction you are looking. */
+/* global L */
 
+/******************************************************
+ * Transform the GPS marker into a orientable compass *
+ * that indicates the direction you are looking.      *
+ ******************************************************/
 const iconMarker = L.icon({ // Icône sans orientation
     iconUrl: '../leaflet/Gps.Compas/gps-marker.svg', //TODO résoudre leaflet/src
     iconSize: [16, 16],
@@ -36,12 +39,12 @@ L.Marker.include({
   },
 });
 
- class   GpsCompas extends  L.Control.Gps {
+/* eslint-disable-next-line no-unused-vars */
+class GpsCompas extends L.Control.Gps {
   constructor(options) {
- return   super( {
-   marker: gpsMarker,
+    super({
+      marker: gpsMarker,
       ...options,
-  });}
+    });
+  }
 };
-
- 
