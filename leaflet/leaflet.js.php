@@ -1,4 +1,4 @@
-<?php // Concatanate the leaflet & plugins .js files
+<?php // Concatenate the leaflet & plugins .js files
 
 header('content-type: application/javascript');
 header('Cache-Control: max-age=86000');
@@ -8,9 +8,11 @@ $files = [
   'fullscreen/Leaflet.fullscreen',
   'geocoder/Control.Geocoder',
   'gps/leaflet-gps.src',
+  'Gps.Compas/leaflet-gps-compas.src',
   'EdgeBuffer/leaflet.edgebuffer',
   'markercluster/leaflet.markercluster',
   'FeatureGroup.SubGroup/subgroup',
+  'carte',
 ];
 
 foreach ($files as $file_name)

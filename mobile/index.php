@@ -13,6 +13,7 @@ Démonstrateur front-end pour refuges.info
   <title>Refuges.info</title>
 
   <!-- Leaflet -->
+  <script src="keys.js" defer></script>
   <link href="../leaflet/leaflet.css.php" rel="stylesheet" />
   <script src="../leaflet/leaflet.js.php" defer></script>
 
@@ -21,8 +22,6 @@ Démonstrateur front-end pour refuges.info
 
   <!-- This package -->
   <link href="src/index.css" rel="stylesheet">
-  <script src="keys.js" defer></script>
-  <script src="src/carte.js" defer></script>
   <script src="src/pages.js" defer></script>
 
   <!-- Progressive Web Application -->

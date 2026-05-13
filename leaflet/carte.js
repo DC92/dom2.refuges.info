@@ -26,54 +26,15 @@ L.control.scale({
   imperial: false,
 }).addTo(map);
 
+new  GpsCompas({
+  autoCenter: true,
+}).addTo(map);
+
 new L.Control.Geocoder({
   position: 'topleft',
 }).addTo(map);
 
 console.info('MAP init');
-
-/********************************
- * GPS avec marqueur orientable *
- ********************************/
-const iconMarker = L.icon({ // Icône sans orientation
-    iconUrl: 'images/gpsmarker.svg',
-    iconSize: [16, 16],
-    iconAnchor: [8, 8],
-  }),
-  iconCompas = L.icon({ // Icône orientée
-    iconUrl: 'images/gpscompas.svg',
-    iconSize: [16, 16],
-    iconAnchor: [8, 8],
-  }),
-  gpsMarker = L.marker([0, 0], {
-    icon: iconMarker,
-  });
-
-let gpsAngle = 0;
-
-window.addEventListener('deviceorientationabsolute', (evt) => {
-  if (gpsMarker._icon && evt.alpha) { // If gps enabled
-    gpsMarker.setIcon(iconCompas);
-    gpsMarker._icon.style.transformOrigin = 'center';
-
-    gpsAngle = 45 - parseInt(evt.alpha, 10);
-    gpsMarker._icon.style.transform = gpsMarker._icon.style.transform.replace(/[0-9]*deg/u, gpsAngle + 'deg');
-  }
-});
-
-// Evite à la direction du marqueur d'être perturbée par le zoom
-const protoSetPos = L.Marker.prototype._setPos;
-L.Marker.include({
-  _setPos: function(pos) {
-    protoSetPos.call(this, pos);
-    this._icon.style.transform += ' rotateZ(' + gpsAngle + 'deg)';
-  },
-});
-
-new L.Control.Gps({
-  autoCenter: true,
-  marker: gpsMarker,
-}).addTo(map);
 
 /*******************
  * Couches tuilées *

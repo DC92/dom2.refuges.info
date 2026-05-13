@@ -1,4 +1,4 @@
-<?php // Concatanate the leaflet & plugins .css files
+<?php // Concatenate the leaflet & plugins .css files
 
 header('content-type: text/css');
 header('Cache-Control: max-age=86000');
