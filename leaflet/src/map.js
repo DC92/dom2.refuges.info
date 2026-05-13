@@ -36,7 +36,8 @@ new L.Control.Geocoder({
 
 console.info('MAP init');
 
-Object.values(tileLayers)[0].addTo(map); // Fond de carte par défaut
+// Fond de carte par défaut
+Object.values(tileLayers)[0].addTo(map);
 
 // Couches vectorielle contrôlées par le sélecteur
 vectorCluster.addTo(map);

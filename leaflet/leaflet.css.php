@@ -5,7 +5,7 @@ header('Cache-Control: max-age=86000');
 
 $files = [
   'leaflet/leaflet url(images url(leaflet/images',
-  'fullscreen/Leaflet.fullscreen url( url(fullscreen/',
+  'fullscreen/leaflet.fullscreen url( url(fullscreen/',
   'geocoder/Control.Geocoder',
   'gps/leaflet-gps.min',
   'markercluster/MarkerCluster',
