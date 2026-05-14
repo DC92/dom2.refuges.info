@@ -8,17 +8,20 @@
     </a>
     <?=(temps_execution()."s")?>
   </div>
-<?php }
-
-// Pour accélérer le chargement initial de la page,
-// on inclue ici les librairies qui ne sont appelées que quand la page est chargée.
-if (isset ($vue->java_lib_foot))
-  foreach ($vue->java_lib_foot as $js_lib) { ?>
-    <script src="<?=$js_lib?>"></script>
 <?php } ?>
 
 <!-- Fin de zone scrolable -->
 </div>
+
+<?php
+// Pour accélérer le chargement initial de la page,
+// on inclue ici les librairies qui ne sont appelées que quand la page est chargée.
+//$vue->java_lib_foot[] = fichier_vue('bandeau.js');
+  
+if (isset ($vue->java_lib_foot))
+  foreach ($vue->java_lib_foot as $js_lib) { ?>
+    <script src="<?=$js_lib?>"></script>
+<?php } ?>
 
 <script>
 //<![CDATA[

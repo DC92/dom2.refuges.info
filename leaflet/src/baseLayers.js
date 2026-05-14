@@ -1,4 +1,4 @@
-/* global L, mapKeys */
+/* global L */
 
 /*******************
  * Couches tuilées *
@@ -32,7 +32,8 @@ function tileLayerIGN(url, paramsIGN, paramsLayer) {
 }
 
 /* eslint-disable-next-line no-unused-vars */
-const tileLayers = {
+function tileLayersCollection(keys) {
+  return{
   // Pour tests, à enlever à la fin
   'Google': L.tileLayer('http://mt0.google.com/vt/lyrs=r&x={x}&y={y}&z={z}'),
 
@@ -61,7 +62,7 @@ const tileLayers = {
         '<a target="_blank" href="https://openmaps.fr/map-legend/opentopomap-legend.html">Légende</a>',
     }),
   'ISO-Maps Topo': L.tileLayer(
-    'https://api.iso-maps.com/v1/tiles/{z}/{x}/{y}.webp?api_key=' + mapKeys.isomaps, {
+    'https://api.iso-maps.com/v1/tiles/{z}/{x}/{y}.webp?api_key=' + keys.isomaps, {
       maxZoom: 20,
       attribution: '©<a target="_blank" href="https://www.iso-maps.com/">Isomaps</a> | ' +
         '©<a target="_blank" href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
@@ -70,13 +71,13 @@ const tileLayers = {
   // Thunderforest
   // https://leaflet-extras.github.io/leaflet-providers/preview/
   Outdoors: L.tileLayer(
-    'https://api.thunderforest.com/outdoors/{z}/{x}/{y}{r}.png?apikey=' + mapKeys.thunderforest, {
+    'https://api.thunderforest.com/outdoors/{z}/{x}/{y}{r}.png?apikey=' + keys.thunderforest, {
       attribution: '&copy; <a href="http://www.thunderforest.com/">Thunderforest</a>, ' +
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       maxNativeZoom: 22,
     }),
   /*OpenCycleMap: L.tileLayer(
-    'https://api.thunderforest.com/cycle/{z}/{x}/{y}{r}.png?apikey=' + mapKeys.thunderforest, {
+    'https://api.thunderforest.com/cycle/{z}/{x}/{y}{r}.png?apikey=' + keys.thunderforest, {
       maxNativeZoom: 22,
       attribution: '&copy; <a href="http://www.thunderforest.com/">Thunderforest</a>, ' +
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
@@ -125,7 +126,7 @@ const tileLayers = {
   //TODO Autriche
 
   'Photo Maxar': L.tileLayer.wms(
-    'https://api.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}@2x.webp?access_token=' + mapKeys.mapbox, {
+    'https://api.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}@2x.webp?access_token=' + keys.mapbox, {
       maxZoom: 20,
       attribution: '<a href="https://www.mapbox.com/">&copy; Mapbox</a>',
     }),
@@ -136,4 +137,4 @@ const tileLayers = {
       attribution: '<a href="https://www.google.com/maps">&copy; Google</a>',
     }),
   //TODO https://github.com/plepe/overpass-frontend/blob/master/example-bbox.js
-};
+};};

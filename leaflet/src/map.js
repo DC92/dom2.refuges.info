@@ -1,4 +1,4 @@
-/* global L, GpsCompas, tileLayers, vectorLayers, vectorCluster */
+/* global L, GpsCompas, tileLayersCollection, vectorLayers, vectorCluster */
 
 /*******************************
  * Gestion de la carte Leaflet *
@@ -34,18 +34,46 @@ new L.Control.Geocoder({
   position: 'topleft',
 }).addTo(map);
 
-console.info('MAP init');
+/***************************************************
+ * Couches vectorielle contrôlées par le sélecteur *
+ ***************************************************/
+const wriTypesPoints = {
+    7: 'Cabane non gardée',
+    10: 'Refuge gardé',
+    9: 'Gîte d\'étape',
+    29: 'Grotte',
+    23: 'Point d\'eau',
+    3: 'Passage délicat',
+    28: 'Bâtiment en montagne',
+  },
+  // Tableau des couches
+  vectorLayers = {
+    'Massifs': wriMassifsLayer(serveurAPI) ,
+  },
+  // Groupe utilisé par le layerswitcher
+  vectorCluster = L.markerClusterGroup().addTo(map);
 
-// Fond de carte par défaut
+for (const type in wriTypesPoints)
+  vectorLayers[wriTypesPoints[type]] =
+  L.featureGroup.subGroup(vectorCluster).addLayer(
+    wriPOILayer(serveurAPI,type)
+  );
+  
+/****************************
+ * Fond de carte par défaut *
+ ****************************/
+const tileLayers=tileLayersCollection(mapKeys);
+
 Object.values(tileLayers)[0].addTo(map);
 
-// Couches vectorielle contrôlées par le sélecteur
-vectorCluster.addTo(map);
-
-// Layer switcher
+/******************
+ * Layer switcher *
+ ******************/
 L.control.layers(tileLayers, vectorLayers).addTo(map);
 
-// Mémorisation des couches sélectionnées
+/******************************************
+ * Mémorisation des couches sélectionnées *
+ ******************************************/
 const memCheckedLayers = (localStorage.checkedLayers || Object.keys(vectorLayers)[0]).split(',');
 
 ['load', 'baselayerchange', 'overlayadd', 'overlayremove'].forEach((type) => {
@@ -72,7 +100,9 @@ const memCheckedLayers = (localStorage.checkedLayers || Object.keys(vectorLayers
   });
 })
 
-// Permalink
+/*************
+ * Permalink *
+ *************/
 //TODO permalink baseLayer
 map.on('moveend', () => {
   const pos = map.getCenter();
@@ -86,3 +116,5 @@ map.on('moveend', () => {
   if (document.body.className === 'carte')
     location.hash = localStorage.permalink;
 });
+
+console.info('MAP init');

@@ -1,4 +1,4 @@
-/* global L, serveurAPI */
+/* global L */
 
 /************************
  * Couches vectorielles *
@@ -12,7 +12,8 @@
   geoJson sa représentation en string
 */
 
-// Affichage des massifs
+// Affichage des polygones de massifs de refuges.info
+function wriMassifsLayer(serveurAPI) {
 const massifsLayer = L.geoJson(null, {
   style: function(feature) {
     return {
@@ -54,10 +55,13 @@ fetch(serveurAPI + '/api/polygones?type_polygon=1')
     if (json.features.length)
       massifsLayer.addData(json);
   });
+  
+return massifsLayer;}
 
 // Points d'intérêt refuges.info
-function geoJsonLayer(url) {
-  const poiLayer = L.geoJson(null, {
+function wriPOILayer(serveurAPI,type) {
+  const url=serveurAPI + '/api/bbox?nb_points=all&type_points=' + type,
+  poiLayer = L.geoJson(null, {
     // Icônes
     pointToLayer: (feature, latlng) =>
       L.marker(latlng, {
@@ -98,26 +102,3 @@ function geoJsonLayer(url) {
     });
   return poiLayer;
 }
-
-// Sélecteur de couches
-const wriTypesPoints = {
-    7: 'Cabane non gardée',
-    10: 'Refuge gardé',
-    9: 'Gîte d\'étape',
-    29: 'Grotte',
-    23: 'Point d\'eau',
-    3: 'Passage délicat',
-    28: 'Bâtiment en montagne',
-  },
-  // Tableau des couches
-  vectorLayers = {
-    'Massifs': massifsLayer,
-  },
-  // Groupe utilisé par le layerswitcher
-  vectorCluster = L.markerClusterGroup();
-
-for (const type in wriTypesPoints)
-  vectorLayers[wriTypesPoints[type]] =
-  L.featureGroup.subGroup(vectorCluster).addLayer(
-    geoJsonLayer(serveurAPI + '/api/bbox?nb_points=all&type_points=' + type)
-  );
