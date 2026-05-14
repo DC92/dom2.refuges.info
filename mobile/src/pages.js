@@ -1,4 +1,4 @@
-/* global serveurAPI, map, idbKeyval */
+/* global serveurAPI, mapKeys, initMap, idbKeyval */
 
 //TODO supprimer le SW et le cache si debug
 
@@ -18,7 +18,8 @@
 /************************
  * Affichage d'une page *
  ************************/
-const nomPages = ['carte', 'fiche'];
+const nomPages = ['carte', 'fiche'],
+  map = initMap('map', serveurAPI, mapKeys);
 
 // Affiche la page lorsque #ancre de l'URL change
 function route() {
