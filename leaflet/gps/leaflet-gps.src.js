@@ -159,7 +159,6 @@ L.Control.Gps = L.Control.extend({
 
 		this._map.locate({
 			enableHighAccuracy: false,
- 			timeout: 300000, //DCMM 5 minutes
 			watch: true,
 			setView: false,//this.options.autoCenter,
 			//maxZoom: this.options.maxZoom || this._map.getZoom()

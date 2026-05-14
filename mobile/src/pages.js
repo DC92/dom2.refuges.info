@@ -1,6 +1,7 @@
 /* global serveurAPI, mapKeys, initMap, idbKeyval */
 
 //TODO supprimer le SW et le cache si debug
+//TODO recherche de points
 
 /****************************
  * Gestion de l'application *

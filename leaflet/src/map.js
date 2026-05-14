@@ -8,12 +8,6 @@
   seules sont modifiées la taille du DIV et la position lon/lat
 */
 
-/* Modif leaflet-src.js à ajouter lors de chaque mise à jour
-//TODO modif automatique ???
-		this._map.locate({
- 			timeout: 300000, //DCMM 5 minutes
-*/
-//TODO recherche de points
 /* eslint-disable-next-line no-unused-vars */
 function initMap(mapId, serveurAPI, kays) {
 
@@ -37,8 +31,8 @@ function initMap(mapId, serveurAPI, kays) {
   }).addTo(mapObj);
 
   /**************************************************
-  * Couches vectorielle contrôlées par le sélecteur *
-  ***************************************************/
+   * Couches vectorielle contrôlées par le sélecteur *
+   ***************************************************/
   const wriTypesPoints = {
       7: 'Cabane non gardée',
       10: 'Refuge gardé',
@@ -62,20 +56,20 @@ function initMap(mapId, serveurAPI, kays) {
     );
 
   /***************************
-  * Fond de carte par défaut *
-  ****************************/
+   * Fond de carte par défaut *
+   ****************************/
   const tileLayers = tileLayersCollection(kays);
 
   Object.values(tileLayers)[0].addTo(mapObj);
 
   /*****************
-  * Layer switcher *
-  *****************/
+   * Layer switcher *
+   *****************/
   L.control.layers(tileLayers, vectorLayers).addTo(mapObj);
 
   /*****************************************
-  * Mémorisation des couches sélectionnées *
-  ******************************************/
+   * Mémorisation des couches sélectionnées *
+   ******************************************/
   const memCheckedLayers = (localStorage.checkedLayers || Object.keys(vectorLayers)[0]).split(',');
 
   ['load', 'baselayerchange', 'overlayadd', 'overlayremove']
@@ -103,8 +97,8 @@ function initMap(mapId, serveurAPI, kays) {
   })
 
   /************
-  * Permalink *
-  *************/
+   * Permalink *
+   *************/
   //TODO permalink baseLayer
   mapObj.on('moveend', (evt) => {
     const pos = evt.target.getCenter();
