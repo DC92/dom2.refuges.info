@@ -4,13 +4,14 @@
  * Transform the GPS marker into a orientable compass *
  * that indicates the direction you are looking.      *
  ******************************************************/
-const iconMarker = L.icon({ // Icône sans orientation
-    iconUrl: '../leaflet/Gps.Compas/gps-marker.svg', //TODO résoudre leaflet/src
+const scriptDir = document.currentScript.src.replace(/[^\/]*$/u, ''),
+  iconMarker = L.icon({ // Icône sans orientation
+    iconUrl: scriptDir + 'Gps.Compas/gps-marker.svg',
     iconSize: [16, 16],
     iconAnchor: [8, 8],
   }),
   iconCompas = L.icon({ // Icône orientée
-    iconUrl: '../leaflet/Gps.Compas/gps-compas.svg',
+    iconUrl: scriptDir + 'gps-compas.svg',
     iconSize: [16, 16],
     iconAnchor: [8, 8],
   }),

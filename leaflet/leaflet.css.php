@@ -7,7 +7,7 @@ $files = [
   'leaflet/leaflet url(images url(leaflet/images',
   'fullscreen/leaflet.fullscreen url( url(fullscreen/',
   'geocoder/Control.Geocoder',
-  'gps/leaflet-gps.min',
+  'gps/leaflet-gps.src ../images/gps-icon.svg gps/gps-icon.png',
   'markercluster/MarkerCluster',
   'markercluster/MarkerCluster.Default',
 ];
