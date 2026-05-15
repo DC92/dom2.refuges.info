@@ -10,25 +10,26 @@
 
 /* eslint-disable-next-line no-unused-vars */
 function initMap(mapId, serveurAPI, kays) {
+  console.info('MAP init');
 
   /******************************
    * Initialisation de la carte *
    ******************************/
-  const mapObj = L.map(mapId);
+  const map = L.map(mapId);
 
-  new L.Control.Fullscreen().addTo(mapObj);
+  new L.Control.Fullscreen().addTo(map);
 
   L.control.scale({
     imperial: false,
-  }).addTo(mapObj);
+  }).addTo(map);
 
   new GpsCompas({
     autoCenter: true,
-  }).addTo(mapObj);
+  }).addTo(map);
 
   new L.Control.Geocoder({
     position: 'topleft',
-  }).addTo(mapObj);
+  }).addTo(map);
 
   /**************************************************
    * Couches vectorielle contrôlées par le sélecteur *
@@ -47,7 +48,7 @@ function initMap(mapId, serveurAPI, kays) {
       'Massifs': wriMassifsLayer(serveurAPI),
     },
     // Groupe utilisé par le layerswitcher
-    vectorCluster = L.markerClusterGroup().addTo(mapObj);
+    vectorCluster = L.markerClusterGroup().addTo(map);
 
   for (const type in wriTypesPoints)
     vectorLayers[wriTypesPoints[type]] =
@@ -60,12 +61,12 @@ function initMap(mapId, serveurAPI, kays) {
    ****************************/
   const tileLayers = tileLayersCollection(kays);
 
-  Object.values(tileLayers)[0].addTo(mapObj);
+  Object.values(tileLayers)[0].addTo(map);
 
   /*****************
    * Layer switcher *
    *****************/
-  L.control.layers(tileLayers, vectorLayers).addTo(mapObj);
+  L.control.layers(tileLayers, vectorLayers).addTo(map);
 
   /*****************************************
    * Mémorisation des couches sélectionnées *
@@ -74,7 +75,7 @@ function initMap(mapId, serveurAPI, kays) {
 
   ['load', 'baselayerchange', 'overlayadd', 'overlayremove']
   .forEach((type) => {
-    mapObj.on(type, (evt) => {
+    map.on(type, (evt) => {
 
       const lsControls = evt.target.getContainer().getElementsByClassName('leaflet-control-layers-selector'),
         checkedLayers = [];
@@ -100,7 +101,7 @@ function initMap(mapId, serveurAPI, kays) {
    * Permalink *
    *************/
   //TODO permalink baseLayer
-  mapObj.on('moveend', (evt) => {
+  map.on('moveend', (evt) => {
     const pos = evt.target.getCenter();
 
     console.info('MAP moveend');
@@ -115,7 +116,5 @@ function initMap(mapId, serveurAPI, kays) {
       location.hash = localStorage.permalink;
   });
 
-  console.info('MAP init');
-
-  return mapObj;
+  return map;
 }
