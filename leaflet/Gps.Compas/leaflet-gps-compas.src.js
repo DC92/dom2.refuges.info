@@ -4,7 +4,7 @@
  * Transform the GPS marker into a orientable compass *
  * that indicates the direction you are looking.      *
  ******************************************************/
-const scriptDir = document.currentScript.src.replace(/[^\/]*$/u, ''),
+const scriptDir = document.currentScript.src.replace(/[^/]*$/u, ''),
   iconMarker = L.icon({ // Icône sans orientation
     iconUrl: scriptDir + 'Gps.Compas/gps-marker.svg',
     iconSize: [16, 16],

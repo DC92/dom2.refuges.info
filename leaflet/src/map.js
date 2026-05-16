@@ -1,20 +1,12 @@
 /* global L, GpsCompas, tileLayersCollection, wriMassifsLayer, wriPOILayer */
 
-/*******************************
- * Gestion de la carte Leaflet *
- *******************************
-  L'application est constituée d'une page unique, chargée lors du lancement.
-  La carte reste ouverte dans un <div id="map> pour toutes les vues de l'appli (carte, fiche, ...)
-  seules sont modifiées la taille du DIV et la position lon/lat
-*/
-
 /* eslint-disable-next-line no-unused-vars */
 function initMap(mapId, serveurAPI, kays) {
   console.info('MAP init');
 
-  /******************************
+  /*****************************
    * Initialisation de la carte *
-   ******************************/
+   *****************************/
   const map = L.map(mapId);
 
   new L.Control.Fullscreen().addTo(map);
@@ -33,7 +25,7 @@ function initMap(mapId, serveurAPI, kays) {
 
   /**************************************************
    * Couches vectorielle contrôlées par le sélecteur *
-   ***************************************************/
+   **************************************************/
   const wriTypesPoints = {
       7: 'Cabane non gardée',
       10: 'Refuge gardé',
@@ -46,6 +38,10 @@ function initMap(mapId, serveurAPI, kays) {
     // Tableau des couches
     vectorLayers = {
       'Massifs': wriMassifsLayer(serveurAPI),
+      //TODO étiquette opaque sur page accueil WRI
+      //TODO effacer les étiquettes au delà d'un certain zoom
+      //TODO afficher les étiquettes au survol
+      //TODO click sur un massif
     },
     // Groupe utilisé par le layerswitcher
     vectorCluster = L.markerClusterGroup().addTo(map);
@@ -58,26 +54,27 @@ function initMap(mapId, serveurAPI, kays) {
 
   /***************************
    * Fond de carte par défaut *
-   ****************************/
+   ***************************/
   const tileLayers = tileLayersCollection(kays);
 
   Object.values(tileLayers)[0].addTo(map);
 
-  /*****************
+  /******************
    * Layer switcher *
    *****************/
   L.control.layers(tileLayers, vectorLayers).addTo(map);
 
   /*****************************************
    * Mémorisation des couches sélectionnées *
-   ******************************************/
+   *****************************************/
   const memCheckedLayers = (localStorage.checkedLayers || Object.keys(vectorLayers)[0]).split(',');
 
   ['load', 'baselayerchange', 'overlayadd', 'overlayremove']
   .forEach((type) => {
     map.on(type, (evt) => {
 
-      const lsControls = evt.target.getContainer().getElementsByClassName('leaflet-control-layers-selector'),
+      const lsControls = evt.target.getContainer()
+        .getElementsByClassName('leaflet-control-layers-selector'),
         checkedLayers = [];
 
       for (const lsInputEl of lsControls) {
@@ -85,8 +82,12 @@ function initMap(mapId, serveurAPI, kays) {
 
         // Restaure les couches précédentes
         //TODO n'affiche pas les couches dans le cluster
-        if (evt.type === 'load' && memCheckedLayers.includes(titre))
-          lsInputEl.click();
+        if (evt.type === 'load' && memCheckedLayers.includes(titre)) {
+          setTimeout(() => lsInputEl.click(), 500);
+
+          //console.log(vectorLayers[titre.substring(1)]); //DCMM
+          //vectorLayers[titre.substring(1)].onAdd
+        }
 
         // Mémorise les couches actuelles
         if (lsInputEl.checked)
@@ -99,7 +100,7 @@ function initMap(mapId, serveurAPI, kays) {
 
   /************
    * Permalink *
-   *************/
+   ************/
   //TODO permalink baseLayer
   map.on('moveend', (evt) => {
     const pos = evt.target.getCenter();
