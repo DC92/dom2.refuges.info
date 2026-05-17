@@ -35,7 +35,7 @@ function tileLayerIGN(url, paramsIGN, paramsLayer) {
 function tileLayersCollection(keys) {
   return {
     // Pour tests, à enlever à la fin
-    'Google': L.tileLayer('http://mt0.google.com/vt/lyrs=r&x={x}&y={y}&z={z}'),
+    'Google': L.tileLayer('https://mt0.google.com/vt/lyrs=r&x={x}&y={y}&z={z}'),
 
     // Cartes lbres
     OpenHikingMap: L.tileLayer(
@@ -44,7 +44,7 @@ function tileLayersCollection(keys) {
         edgeBufferTiles: 3,
         attribution: '<a href="https://wiki.openstreetmap.org/wiki/OpenHikingMap">© OpenHikingMap</a>|' +
           '<a href="https://openmaps.fr/donate">❤️ Donation</a>|' +
-          '<a href="http://www.openstreetmap.org/copyright">© OpenStreetMap</a>|' +
+          '<a href="https://www.openstreetmap.org/copyright">© OpenStreetMap</a>|' +
           '<a target="_blank" href="https://wiki.openstreetmap.org/wiki/OpenHikingMap#Map_Legend">Légende</a>',
       }),
     OpenStreetMap: L.tileLayer(
@@ -58,7 +58,7 @@ function tileLayersCollection(keys) {
         maxNativeZoom: 19,
         attribution: '<a href="https://github.com/sletuffe/OpenTopoMap">&copy; OTM-R</a> ' +
           '<a href="https://openmaps.fr/donate">❤️ Donation</a> ' +
-          '<a href="http://www.openstreetmap.org/copyright">&copy; OpenStreetMap</a> ' +
+          '<a href="https://www.openstreetmap.org/copyright">&copy; OpenStreetMap</a> ' +
           '<a target="_blank" href="https://openmaps.fr/map-legend/opentopomap-legend.html">Légende</a>',
       }),
     'ISO-Maps Topo': L.tileLayer(
@@ -72,14 +72,14 @@ function tileLayersCollection(keys) {
     // https://leaflet-extras.github.io/leaflet-providers/preview/
     Outdoors: L.tileLayer(
       'https://api.thunderforest.com/outdoors/{z}/{x}/{y}{r}.png?apikey=' + keys.thunderforest, {
-        attribution: '&copy; <a href="http://www.thunderforest.com/">Thunderforest</a>, ' +
+        attribution: '&copy; <a href="https://www.thunderforest.com/">Thunderforest</a>, ' +
           '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
         maxNativeZoom: 22,
       }),
     /*OpenCycleMap: L.tileLayer(
       'https://api.thunderforest.com/cycle/{z}/{x}/{y}{r}.png?apikey=' + keys.thunderforest, {
         maxNativeZoom: 22,
-        attribution: '&copy; <a href="http://www.thunderforest.com/">Thunderforest</a>, ' +
+        attribution: '&copy; <a href="https://www.thunderforest.com/">Thunderforest</a>, ' +
           '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       }),*/
 
@@ -110,7 +110,7 @@ function tileLayersCollection(keys) {
       // }),*/
 
     SwissTopo: L.tileLayer.wms(
-      'http://wms.geo.admin.ch/?', {
+      'https://wms.geo.admin.ch/?', {
         layers: 'ch.swisstopo.pixelkarte-farbe',
         format: 'image/jpeg',
       }),
@@ -131,7 +131,7 @@ function tileLayersCollection(keys) {
         attribution: '<a href="https://www.mapbox.com/">&copy; Mapbox</a>',
       }),
     'Photo Google': L.tileLayer(
-      'http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+      'https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
         subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
         maxZoom: 22,
         attribution: '<a href="https://www.google.com/maps">&copy; Google</a>',

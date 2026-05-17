@@ -12,7 +12,58 @@
   geoJson sa représentation en string
 */
 
-// Affichage des polygones de massifs de refuges.info
+// Points d'intérêt refuges.info
+/* eslint-disable-next-line no-unused-vars */
+function wriPOILayer(serveurAPI, type) {
+  const url = serveurAPI + '/api/bbox?nb_points=all&type_points=' + type,
+    poiLayer = L.geoJson(null, {
+      // Icônes
+      pointToLayer: (feature, latlng) =>
+        L.marker(latlng, {
+          icon: L.icon({
+            iconUrl: serveurAPI + '/images/icones/' + feature.properties.type.icone + '.svg',
+            size: 24,
+          }),
+        }),
+
+      onEachFeature: (feature, layer) => {
+        // Etiquettes
+        layer.bindTooltip(
+          feature.properties.nom, {
+            permanent: true,
+            direction: 'center',
+          }
+        ).openTooltip();
+
+        // Click
+        //BEST Fonctions ctrl clic + Apple suivant demande faite à wri github
+        layer.on({
+          click: () => {
+            // Affiche la vue fiche
+            location.hash = feature.id;
+          },
+        });
+      },
+    });
+
+  // Fetch remote data
+  fetch(url)
+    .catch((er) => console.error(er + ' fetching ' + url))
+    .then((response) => response.json())
+    .then((json) => {
+      console.log(url); //DCMM
+      if (json.features.length)
+        poiLayer.addData(json);
+
+      poiLayer.fire('onadddata', {
+        url: url
+      });
+    });
+
+  return poiLayer;
+}
+
+// Polygones de massifs de refuges.info
 /* eslint-disable-next-line no-unused-vars */
 function wriMassifsLayer(serveurAPI) {
   const massifsLayer = L.geoJson(null, {
@@ -58,50 +109,4 @@ function wriMassifsLayer(serveurAPI) {
     });
 
   return massifsLayer;
-}
-
-// Points d'intérêt refuges.info
-/* eslint-disable-next-line no-unused-vars */
-function wriPOILayer(serveurAPI, type) {
-  const url = serveurAPI + '/api/bbox?nb_points=all&type_points=' + type,
-    poiLayer = L.geoJson(null, {
-      // Icônes
-      pointToLayer: (feature, latlng) =>
-        L.marker(latlng, {
-          icon: L.icon({
-            iconUrl: serveurAPI + '/images/icones/' + feature.properties.type.icone + '.svg',
-            size: 24,
-          }),
-        }),
-
-      onEachFeature: (feature, layer) => {
-        // Etiquettes
-        layer.bindTooltip(
-          feature.properties.nom, {
-            permanent: true,
-            direction: 'center',
-          }
-        ).openTooltip();
-
-        // Click
-        //BEST Fonctions ctrl clic + Apple suivant demande faite à wri github
-        layer.on({
-          click: () => {
-            // Affiche la vue fiche
-            location.hash = feature.id;
-          },
-        });
-      },
-    });
-
-  // Fetch remote data
-  fetch(url)
-    .catch((er) => console.error(er + ' fetching ' + url))
-    .then((response) => response.json())
-    .then((json) => {
-      if (json.features.length)
-        poiLayer.addData(json);
-    });
-
-  return poiLayer;
 }
