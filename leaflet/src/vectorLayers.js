@@ -35,11 +35,8 @@ function wriPOILayer(serveurAPI, type) {
           }
         ).openTooltip();
 
-        // Click
-        //BEST Fonctions ctrl clic + Apple suivant demande faite à wri github
         layer.on({
           click: () => {
-            //TODO click sur un massif / point
             location.hash = feature.id;
           },
         });
@@ -86,12 +83,9 @@ function wriMassifsLayer(serveurAPI) {
         });
       });
 
-      // Click
-      //BEST Fonctions ctrl clic + Apple suivant demande faite à wri github
-      layer.on({ //TODO essayer ce format switch / case:
-        click: () => {
-          //TODO Affiche la vue fiche
-          // location.hash = feature.id;
+      layer.on({
+        click: (evt) => {
+          window.location.href = '/nav/' + evt.sourceTarget.feature.id;
         },
       });
     },

@@ -7,7 +7,8 @@ function initMap(mapId, serveurAPI, kays) {
   /******************************
    * Initialisation de la carte *
    ******************************/
-  const map = L.map(mapId);
+  const map = L.map(mapId),
+    permalink = localStorage.permalink.split('/');
 
   new L.Control.Fullscreen().addTo(map);
 
@@ -23,12 +24,14 @@ function initMap(mapId, serveurAPI, kays) {
     position: 'topleft',
   }).addTo(map);
 
-  /****************************
-   * Fond de carte par défaut *
-   ****************************/
-  const tileLayers = tileLayersCollection(kays);
+  /*************************
+   * Récupère le permalink *
+   *************************/
+  const tileLayers = tileLayersCollection(kays),
+    baselayer = tileLayers[permalink[3]] || Object.values(tileLayers)[0];
 
-  Object.values(tileLayers)[0].addTo(map);
+  map.setView([permalink[1], permalink[2]], permalink[0]);
+  baselayer.addTo(map); // Fond de carte par défaut
 
   /***************************************************
    * Couches vectorielle contrôlées par le sélecteur *
@@ -65,8 +68,7 @@ function initMap(mapId, serveurAPI, kays) {
   /*****************************************
    * Mémorisation des couches sélectionnées *
    *****************************************/
-  ['load', 'baselayerchange', 'overlayadd', 'overlayremove']
-  .forEach((type) => {
+  ['load', 'baselayerchange', 'overlayadd', 'overlayremove', 'zoomend'].forEach((type) => {
     map.on(type, (evt) => {
       const overlaySelectors = document.querySelectorAll('.leaflet-control-layers-overlays input'),
         checkedLayers = [];
@@ -75,6 +77,7 @@ function initMap(mapId, serveurAPI, kays) {
         const titre = lsInputEl.parentElement.lastChild.innerText.substring(1);
 
         // Restaure les couches précédentes
+        //TODO ne marche pas
         if (evt.type === 'load' && memCheckedLayers.includes(titre)) {
           if (Object.keys(clusteredOverlays).includes(titre))
             vectorLayers[titre].eachLayer((layer) => {
@@ -90,33 +93,31 @@ function initMap(mapId, serveurAPI, kays) {
       }
 
       localStorage.checkedLayers = checkedLayers.join(',');
-    });
-  })
 
-  /**********************
-   * Label zoom control *
-   **********************/
-  map.on('zoomend', () => {
-    map.getContainer().classList[map.getZoom() < 8 ? 'add' : 'remove']('hide-tooltips');
+      // Cache les étiquettes pour les grandes échèles
+      map.getContainer().classList[map.getZoom() < 8 ? 'add' : 'remove']('hide-tooltips');
+    });
   });
 
   /*************
    * Permalink *
    *************/
-  //TODO permalink baseLayer
-  map.on('moveend', (evt) => {
-    const pos = evt.target.getCenter();
+  ['moveend', 'baselayerchange'].forEach((type) => {
+    map.on(type, (evt) => {
+      const baselayerSelector = document.querySelectorAll('.leaflet-control-layers-base input'),
+        pos = evt.target.getCenter();
+      let baseLayerName = Object.keys(tileLayers)[0];
 
-    console.info('MAP moveend');
+      for (const lsInputEl of baselayerSelector)
+        if (lsInputEl.checked)
+          baseLayerName = lsInputEl.parentElement.lastChild.innerText.substring(1);
 
-    // Le permalink est mémorisé dans la mémoire permanente de l'explorateur localStorage
-    localStorage.permalink = [evt.target.getZoom(), pos.lat, pos.lng]
-      .map(f => Math.round(f * 10000) / 10000)
-      .join('/');
-
-    // Le permalink est un #hash ajouté à la page carte uniquement
-    if (document.body.className === 'carte')
-      location.hash = localStorage.permalink;
+      // Le permalink est mémorisé dans la mémoire permanente de l'explorateur localStorage
+      localStorage.permalink = [evt.target.getZoom(), pos.lat, pos.lng]
+        .map(f => Math.round(f * 10000) / 10000)
+        .join('/') +
+        '/' + encodeURI(baseLayerName);
+    });
   });
 
   return map;
