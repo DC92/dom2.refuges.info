@@ -4,9 +4,9 @@
 function initMap(mapId, serveurAPI, kays) {
   console.info('MAP init');
 
-  /*****************************
+  /******************************
    * Initialisation de la carte *
-   *****************************/
+   ******************************/
   const map = L.map(mapId);
 
   new L.Control.Fullscreen().addTo(map);
@@ -23,52 +23,48 @@ function initMap(mapId, serveurAPI, kays) {
     position: 'topleft',
   }).addTo(map);
 
-  /**************************************************
-   * Couches vectorielle contrôlées par le sélecteur *
-   **************************************************/
-  const wriTypesPoints = {
-      7: 'Cabane non gardée',
-      10: 'Refuge gardé',
-      9: 'Gîte d\'étape',
-      29: 'Grotte',
-      23: 'Point d\'eau',
-      3: 'Passage délicat',
-      28: 'Bâtiment en montagne',
-    },
-    // Tableau des couches
-    vectorLayers = {
-      'Massifs': wriMassifsLayer(serveurAPI),
-      //TODO étiquette opaque sur page accueil WRI
-      //TODO effacer les étiquettes au delà d'un certain zoom
-      //TODO afficher les étiquettes au survol
-      //TODO click sur un massif
-    },
-    // Groupe utilisé par le layerswitcher
-    vectorCluster = L.markerClusterGroup().addTo(map);
-
-  for (const type in wriTypesPoints)
-    vectorLayers[wriTypesPoints[type]] =
-    L.featureGroup.subGroup(vectorCluster).addLayer(
-      wriPOILayer(serveurAPI, type)
-    );
-
-  /***************************
+  /****************************
    * Fond de carte par défaut *
-   ***************************/
+   ****************************/
   const tileLayers = tileLayersCollection(kays);
 
   Object.values(tileLayers)[0].addTo(map);
 
+  /***************************************************
+   * Couches vectorielle contrôlées par le sélecteur *
+   ***************************************************/
+  const vectorLayers = {
+      'Massifs': wriMassifsLayer(serveurAPI),
+    },
+    clusteredOverlays = {
+      'Cabane non gardée': 7,
+      'Refuge gardé': 10,
+      'Gîte d\'étape': 9,
+      'Grotte': 29,
+      'Point d\'eau': 23,
+      'Passage délicat': 3,
+      'Bâtiment en montagne': 28,
+    },
+    memCheckedLayers = typeof localStorage.checkedLayers === 'string' ?
+    localStorage.checkedLayers.split(',') : ['Cabane non gardée', 'Refuge gardé', 'Gîte d\'étape'], // Par défaut
+
+    // Groupe utilisé par le layerswitcher
+    vectorCluster = L.markerClusterGroup().addTo(map);
+
+  for (const [titre, typeId] of Object.entries(clusteredOverlays))
+    vectorLayers[titre] =
+    L.featureGroup.subGroup(vectorCluster).addLayer(
+      wriPOILayer(serveurAPI, typeId)
+    );
+
   /******************
    * Layer switcher *
-   *****************/
+   ******************/
   L.control.layers(tileLayers, vectorLayers).addTo(map);
 
   /*****************************************
    * Mémorisation des couches sélectionnées *
    *****************************************/
-  const memCheckedLayers = (localStorage.checkedLayers || Object.keys(vectorLayers)[0]).split(',');
-
   ['load', 'baselayerchange', 'overlayadd', 'overlayremove']
   .forEach((type) => {
     map.on(type, (evt) => {
@@ -80,7 +76,7 @@ function initMap(mapId, serveurAPI, kays) {
 
         // Restaure les couches précédentes
         if (evt.type === 'load' && memCheckedLayers.includes(titre)) {
-          if (Object.values(wriTypesPoints).includes(titre))
+          if (Object.keys(clusteredOverlays).includes(titre))
             vectorLayers[titre].eachLayer((layer) => {
               layer.on('adddata', () => lsInputEl.click());
             });
@@ -97,9 +93,9 @@ function initMap(mapId, serveurAPI, kays) {
     });
   })
 
-  /************
+  /*************
    * Permalink *
-   ************/
+   *************/
   //TODO permalink baseLayer
   map.on('moveend', (evt) => {
     const pos = evt.target.getCenter();
