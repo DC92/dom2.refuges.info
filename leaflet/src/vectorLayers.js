@@ -51,13 +51,10 @@ function wriPOILayer(serveurAPI, type) {
     .catch((er) => console.error(er + ' fetching ' + url))
     .then((response) => response.json())
     .then((json) => {
-      console.log(url); //DCMM
-      if (json.features.length)
+      if (json.features.length) {
         poiLayer.addData(json);
-
-      poiLayer.fire('onadddata', {
-        url: url
-      });
+        poiLayer.fire('adddata');
+      }
     });
 
   return poiLayer;

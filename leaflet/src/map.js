@@ -72,21 +72,20 @@ function initMap(mapId, serveurAPI, kays) {
   ['load', 'baselayerchange', 'overlayadd', 'overlayremove']
   .forEach((type) => {
     map.on(type, (evt) => {
-
-      const lsControls = evt.target.getContainer()
-        .getElementsByClassName('leaflet-control-layers-selector'),
+      const overlaySelectors = document.querySelectorAll('.leaflet-control-layers-overlays input'),
         checkedLayers = [];
 
-      for (const lsInputEl of lsControls) {
-        const titre = lsInputEl.parentElement.lastChild.innerText;
+      for (const lsInputEl of overlaySelectors) {
+        const titre = lsInputEl.parentElement.lastChild.innerText.substring(1);
 
         // Restaure les couches précédentes
-        //TODO n'affiche pas les couches dans le cluster
         if (evt.type === 'load' && memCheckedLayers.includes(titre)) {
-          setTimeout(() => lsInputEl.click(), 500);
-
-          //console.log(vectorLayers[titre.substring(1)]); //DCMM
-          //vectorLayers[titre.substring(1)].onAdd
+          if (Object.values(wriTypesPoints).includes(titre))
+            vectorLayers[titre].eachLayer((layer) => {
+              layer.on('adddata', () => lsInputEl.click());
+            });
+          else
+            lsInputEl.click();
         }
 
         // Mémorise les couches actuelles
