@@ -87,18 +87,6 @@ a {
   background: grey;
 }
 
-.leaflet-control-gps .gps-button {
-  background-image: url('../../leaflet/gps/gps-icon.png');
-}
-
-.leaflet-tooltip {
-  top: -18px;
-  padding: 0 2px;
-  line-height: 12px;
-  border-radius: 5px;
-  opacity: 0.6 !important;
-}
-
 /* Selecteur de préchargement */
 #preload {
   position: absolute;

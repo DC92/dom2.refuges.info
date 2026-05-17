@@ -10,6 +10,7 @@ $files = [
   'gps/leaflet-gps.src ../images/gps-icon.svg gps/gps-icon.png',
   'markercluster/MarkerCluster',
   'markercluster/MarkerCluster.Default',
+  'src/map',
 ];
 
 foreach ($files as $file_def) {

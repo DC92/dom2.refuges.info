@@ -11,10 +11,6 @@
   json est une structure contenant des définitions de points
   geoJson sa représentation en string
 */
-//TODO étiquette opaque sur page accueil WRI
-//TODO effacer les étiquettes au delà d'un certain zoom
-//TODO afficher les étiquettes au survol
-//TODO click sur un massif
 
 // Points d'intérêt refuges.info
 /* eslint-disable-next-line no-unused-vars */
@@ -43,7 +39,7 @@ function wriPOILayer(serveurAPI, type) {
         //BEST Fonctions ctrl clic + Apple suivant demande faite à wri github
         layer.on({
           click: () => {
-            // Affiche la vue fiche
+            //TODO click sur un massif / point
             location.hash = feature.id;
           },
         });

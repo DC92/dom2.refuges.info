@@ -93,6 +93,13 @@ function initMap(mapId, serveurAPI, kays) {
     });
   })
 
+  /**********************
+   * Label zoom control *
+   **********************/
+  map.on('zoomend', () => {
+    map.getContainer().classList[map.getZoom() < 8 ? 'add' : 'remove']('hide-tooltips');
+  });
+
   /*************
    * Permalink *
    *************/
