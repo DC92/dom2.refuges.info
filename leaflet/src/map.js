@@ -76,7 +76,6 @@ function initMap(mapId, serveurAPI, keys) {
         const titre = lsInputEl.parentElement.lastChild.innerText.substring(1);
 
         // Restaure les couches précédentes
-        //TODO ne marche pas
         if (evt.type === 'load' && memCheckedLayers.includes(titre)) {
           if (Object.keys(clusteredOverlays).includes(titre))
             vectorLayers[titre].eachLayer((layer) => {
