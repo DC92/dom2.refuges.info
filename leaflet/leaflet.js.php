@@ -12,7 +12,7 @@ $files = [
   'EdgeBuffer/leaflet.edgebuffer',
   'markercluster/leaflet.markercluster',
   'FeatureGroup.SubGroup/subgroup',
-  'src/baseLayers',
+  'src/tileLayers',
   'src/vectorLayers',
   'src/map',
 ];

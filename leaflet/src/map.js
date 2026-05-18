@@ -1,7 +1,7 @@
 /* global L, GpsCompas, tileLayersCollection, wriMassifsLayer, wriPOILayer */
 
 /* eslint-disable-next-line no-unused-vars */
-function initMap(mapId, serveurAPI, kays) {
+function initMap(mapId, serveurAPI, keys) {
   console.info('MAP init');
 
   /******************************
@@ -24,18 +24,17 @@ function initMap(mapId, serveurAPI, kays) {
     position: 'topleft',
   }).addTo(map);
 
-  /*************************
-   * Récupère le permalink *
-   *************************/
-  const tileLayers = tileLayersCollection(kays),
+  /*******************
+   * Couches tuilées *
+   *******************/
+  const tileLayers = tileLayersCollection(keys),
     baselayer = tileLayers[permalink[3]] || Object.values(tileLayers)[0];
 
-  map.setView([permalink[1], permalink[2]], permalink[0]);
   baselayer.addTo(map); // Fond de carte par défaut
 
-  /***************************************************
-   * Couches vectorielle contrôlées par le sélecteur *
-   ***************************************************/
+  /***********************
+   * Couches vectorielle *
+   ***********************/
   const vectorLayers = {
       'Massifs': wriMassifsLayer(serveurAPI),
     },
@@ -51,7 +50,7 @@ function initMap(mapId, serveurAPI, kays) {
     memCheckedLayers = typeof localStorage.checkedLayers === 'string' ?
     localStorage.checkedLayers.split(',') : ['Cabane non gardée', 'Refuge gardé', 'Gîte d\'étape'], // Par défaut
 
-    // Groupe utilisé par le layerswitcher
+    // Groupement des couches qui doivent être clustérisées ensembles
     vectorCluster = L.markerClusterGroup().addTo(map);
 
   for (const [titre, typeId] of Object.entries(clusteredOverlays))
@@ -65,10 +64,10 @@ function initMap(mapId, serveurAPI, kays) {
    ******************/
   L.control.layers(tileLayers, vectorLayers).addTo(map);
 
-  /*****************************************
-   * Mémorisation des couches sélectionnées *
-   *****************************************/
-  ['load', 'baselayerchange', 'overlayadd', 'overlayremove', 'zoomend'].forEach((type) => {
+  /*****************************
+   * Mémorisation des overlays *
+   *****************************/
+  ['load', 'overlayadd', 'overlayremove'].forEach((type) => {
     map.on(type, (evt) => {
       const overlaySelectors = document.querySelectorAll('.leaflet-control-layers-overlays input'),
         checkedLayers = [];
@@ -92,6 +91,7 @@ function initMap(mapId, serveurAPI, kays) {
           checkedLayers.push(titre);
       }
 
+      // Mémorisé dans la mémoire permanente de l'explorateur localStorage
       localStorage.checkedLayers = checkedLayers.join(',');
 
       // Cache les étiquettes pour les grandes échèles
@@ -112,13 +112,15 @@ function initMap(mapId, serveurAPI, kays) {
         if (lsInputEl.checked)
           baseLayerName = lsInputEl.parentElement.lastChild.innerText.substring(1);
 
-      // Le permalink est mémorisé dans la mémoire permanente de l'explorateur localStorage
       localStorage.permalink = [evt.target.getZoom(), pos.lat, pos.lng]
         .map(f => Math.round(f * 10000) / 10000)
         .join('/') +
         '/' + encodeURI(baseLayerName);
     });
   });
+
+  // Lance le chargement de la carte
+  map.setView([permalink[1], permalink[2]], permalink[0]);
 
   return map;
 }
