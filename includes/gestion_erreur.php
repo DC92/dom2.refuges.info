@@ -14,7 +14,8 @@ function fichier_vue($nom_fichier_vue, $chemin = 'chemin_vues', $url = false)
   if (file_exists($config_wri[$chemin].$nom_fichier_vue)) {
     if($url)
       // Met un hash pour l'uploader quand il évolue
-      return $config_wri['url_'.$chemin].$nom_fichier_vue.'?'.md5_file($config_wri[$chemin].$nom_fichier_vue);
+      return $config_wri['url_'.$chemin].$nom_fichier_vue.'?'
+        .substr(md5_file($config_wri[$chemin].$nom_fichier_vue), -6);
     else
       return $config_wri[$chemin].$nom_fichier_vue;
   }
