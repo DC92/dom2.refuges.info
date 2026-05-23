@@ -31,9 +31,9 @@ Démonstrateur front-end pour refuges.info
 
     localStorage.permalink ||= '7/45/7'; // zoom/latitude/longitude Défaut : Alpes de l'Ouest
 
-    if (window.location.search !== '?debug') // Debug without PWA
+    /*if (window.location.search !== '?debug') // Debug without PWA
       navigator.serviceWorker.register('service-worker.js')
-      .then(() => console.info('Service worker registred'));
+      .then(() => console.info('Service worker registred'));*/
   </script>
 </head>
 
