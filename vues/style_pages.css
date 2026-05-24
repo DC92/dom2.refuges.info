@@ -440,12 +440,12 @@ a:hover {
   opacity: 0.5;
 }
 
-@media screen and (max-width: 750px) {
+/*@media screen and (max-width: 750px) {
   #carte-accueil {
     width: calc(100vw - 22px);
     height: 90vw;
   }
-}
+}*/
 
 /* Carte NAV présentation mobile verticale */
 #carte-nav {
