@@ -13,7 +13,7 @@ body {
   overflow-y: scroll;
 }
 
-/* Fenêtres larges, tablettes, PC */
+/* Styles communs à toutes les tailles de fenêtres */
 .bandeau-haut * {
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
   font-size: 18px;
@@ -23,43 +23,12 @@ body {
   color: var(--couleur_lien);
 }
 
-.recherche-haut {
-  float: right;
-  padding: 11px 0;
-  font-size: 16px;
-}
-
-.recherche-haut input {
-  font-size: 16px;
-}
-
-.recherche-haut a {
-  padding-right: 2px;
-  font-size: 18px;
-}
-
-.menu-haut {
-  clear: both;
-}
-
-.menu-haut ul {
-  list-style-type: none;
-}
-
 .menu-haut form li {
   margin: 5px 2px 10px 2px;
 }
 
 .menu-haut .edit-posts {
   color: orange;
-}
-
-/* Ligne de menus */
-/* //TODO elipsis */
-.menu-liste>ul {
-  display: flex;
-  justify-content: space-between;
-  padding: 0;
 }
 
 /* Blocs rétractables en dessous des boutons */
@@ -94,33 +63,15 @@ body {
   border-color: grey;
 }
 
-.menu-touch:not(.menu-liste) li,
-.menu-hover:not(.menu-liste) li {
-  max-height: 2.2em;
-}
-
-.menu-connexion {
-  float: right;
-}
-
 .menu-connexion ul {
   right: 0;
   border-radius: 10px 0 10px 10px !important;
 }
 
-.menu-connexion span span {
-  vertical-align: super;
-  font-size: 12px;
-}
-
 /* Fenêtres larges, tablettes, PC */
-@media screen and (min-width: 500px) {}
+@media screen and (min-width: 500000px) {}
 
-@media screen and (min-width: 500000px) {
-  .bandeau-haut {
-    background-image: var(--image_bandeau);
-    background-repeat: no-repeat;
-  }
+@media screen and (min-width: 500px) {
 
   .menu-liste>span,
   .menu-bouton>ul>li:first-child,
@@ -128,12 +79,70 @@ body {
   .menu-recherche {
     display: none;
   }
+
+  .bandeau-haut {
+    background-image: var(--image_bandeau);
+    background-repeat: no-repeat;
+  }
+
+  .recherche-haut {
+    float: right;
+    padding: 11px 0;
+    font-size: 16px;
+  }
+
+  .recherche-haut input {
+    font-size: 16px;
+  }
+
+  .recherche-haut a {
+    padding-right: 2px;
+    font-size: 18px;
+  }
+
+  .menu-haut {
+    clear: both;
+  }
+
+  .menu-haut ul {
+    list-style-type: none;
+  }
+
+  /* Ligne de menus */
+  /* //TODO elipsis */
+  .menu-liste>ul {
+    display: flex;
+    justify-content: space-between;
+    padding: 0;
+  }
+
+  /* Boutons */
+  .menu-bouton:not(.menu-liste) {
+    border: 2px solid transparent;
+    border-radius: 10px;
+    padding: 2px;
+  }
+
+  .menu-touch:not(.menu-liste) li,
+  .menu-hover:not(.menu-liste) li {
+    max-height: 2.2em;
+  }
+
+  .menu-connexion {
+    float: right;
+  }
+
+  .menu-connexion span span {
+    vertical-align: super;
+    font-size: 12px;
+  }
+
 }
 
 /* Fenêtres étroites */
-@media screen and (max-width: 449.9px) {}
+@media screen and (max-width: 444449.9px) {}
 
-@media screen and (max-width: 444449.9px) {
+@media screen and (max-width: 499.9px) {
   .bandeau-haut * {
     font-size: 16px;
   }
@@ -148,9 +157,57 @@ body {
     display: none;
   }
 
-}
+  .menu-haut {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+    background: var(--couleur_fond_titre);
+    color: var(--couleur_texte);
+  }
 
-/********** FAIT **********/
+  /* Boutons */
+  div.menu-bouton>span,
+  .menu-titre {
+    display: block;
+    padding: 0 8px 2px 8px;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--couleur_titre) !important;
+    cursor: pointer;
+  }
+
+  .menu-titre * {
+    padding-top: 4px;
+    font-size: 18px;
+    color: var(--couleur_titre) !important;
+  }
+
+  .menu-connexion.menu-touch>ul,
+  .menu-connexion.menu-hover>ul,
+  .menu-liste.menu-touch>ul,
+  .menu-liste.menu-hover>ul,
+  .menu-recherche.menu-touch>ul,
+  .menu-recherche.menu-hover>ul {
+    opacity: 1;
+    z-index: 2000;
+  }
+
+  .menu-liste.menu-touch li,
+  .menu-liste.menu-hover li {
+    max-height: initial;
+  }
+
+  .menu-liste.menu-touch ul ul li,
+  .menu-liste.menu-hover ul ul li,
+  .menu-connexion.menu-touch li,
+  .menu-connexion.menu-hover li {
+    padding: 1.5px 0;
+    max-height: 1.2em;
+  }
+
+  /********** FAIT **********/
+
+}
 
 @media screen and (min-width: 5000px) {
 
@@ -203,84 +260,15 @@ body {
 
 @media screen and (max-width: 9.9px) {
 
-  .menu-haut {
-    display: flex;
-    flex-direction: row-reverse;
-    justify-content: space-between;
-    background: var(--couleur_fond_titre);
-    color: var(--couleur_texte);
-  }
-
-  /* Boutons */
-  div.menu-bouton>span,
-  .menu-titre {
-    display: block;
-    padding: 0 8px 2px 8px;
-    font-size: 20px;
-    font-weight: 700;
-    color: var(--couleur_titre) !important;
-    cursor: pointer;
-  }
-
-  /* Blocs rétractables en dessous des boutons */
-  .menu-connexion ul,
-  .menu-recherche ul,
-  .menu-liste>ul {
-    position: absolute;
-    border-radius: 0 0 10px 10px;
-    border: 2px solid var(--couleur_decoration_titres);
-    padding: 0 4px;
-    background: var(--couleur_fond);
-    white-space: nowrap;
-    opacity: 0;
-    z-index: -2000;
-  }
-
   /* Sous menu connexion */
   .menu-connexion ul,
   .menu-recherche ul {
     right: 0;
   }
 
-  .menu-connexion.menu-touch>ul,
-  .menu-connexion.menu-hover>ul,
-  .menu-liste.menu-touch>ul,
-  .menu-liste.menu-hover>ul,
-  .menu-recherche.menu-touch>ul,
-  .menu-recherche.menu-hover>ul {
-    opacity: 1;
-    z-index: 2000;
-  }
-
-  /* Lignes des blocs rétractables */
-  .menu-liste li,
-  .menu-connexion li {
-    max-height: 0;
-    transition: max-height 0.2s ease-in;
-  }
-
-  .menu-liste.menu-touch li,
-  .menu-liste.menu-hover li {
-    max-height: initial;
-  }
-
-  .menu-liste.menu-touch ul ul li,
-  .menu-liste.menu-hover ul ul li,
-  .menu-connexion.menu-touch li,
-  .menu-connexion.menu-hover li {
-    padding: 1.5px 0;
-    max-height: 1.2em;
-  }
-
   .menu-titre,
   .scrolable {
     /*width: 50%;*/
-  }
-
-  .menu-titre * {
-    padding-top: 4px;
-    font-size: 18px;
-    color: var(--couleur_titre) !important;
   }
 
   .menu-liste>ul {
@@ -307,11 +295,6 @@ body {
   }
 
   /* Ligne de menus */
-  .menu-liste>ul {
-    display: flex;
-    justify-content: space-between;
-    padding: 0;
-  }
 
   .menu-liste span {
     text-overflow: "**";
@@ -331,13 +314,6 @@ body {
     font-size: 12px;
   }
 
-  /* Boutons */
-  .menu-bouton:not(.menu-liste) {
-    border: 2px solid transparent;
-    border-radius: 10px;
-    padding: 2px;
-  }
-
   .menu-bouton:not(.menu-liste):hover {
     border-radius: 10px 10px 0 0;
   }
@@ -346,41 +322,9 @@ body {
   .menu-hover {
     border-color: var(--couleur_decoration_titres) !important;
   }
-
-  /* Blocs rétractables en dessous des boutons */
-  .menu-bouton:not(.menu-liste)>p,
-  .menu-bouton:not(.menu-liste)>ul {
-    position: absolute;
-    margin: 2px 0 0 -4px;
-    border-radius: 0 10px 10px 10px;
-    border: 2px solid var(--couleur_decoration_titres);
-    background: var(--couleur_fond);
-    padding: 0 4px;
-    opacity: 0;
-    z-index: -2000;
-  }
-
-  .menu-touch:not(.menu-liste)>ul,
-  .menu-hover:not(.menu-liste)>ul,
-  .menu-hover:not(.menu-liste)>p,
-  .menu-hover:not(.menu-liste)>a {
-    opacity: 1;
-  }
-
-  /* Lignes des blocs rétractables */
-  .menu-bouton:not(.menu-liste) li {
-    max-height: 0;
-    transition: max-height 0.2s ease-in;
-  }
-
-  .menu-touch:not(.menu-liste) li,
-  .menu-hover:not(.menu-liste) li {
-    max-height: 2.2em;
-  }
 }
 
-/* On enlève le bandeau pour les fenêtres de faible hauteur
-   quelle que soit la largeur */
+/* On enlève le bandeau pour les fenêtres de faible hauteur quelle que soit la largeur */
 @media screen and (max-height: 600px) {
   .bandeau-haut {
     background-image: none;
