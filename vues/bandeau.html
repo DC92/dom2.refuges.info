@@ -28,7 +28,7 @@
               <span title="Emails en erreur">🌙</span>
             <?php }
             if( $vue->posts_edit) { ?>
-              <span  title="Posts édités à vérifier" class="edit-posts">&#9732;</span>
+              <span  title="Posts édités à vérifier" class="edit-posts">☄</span>
             <?php }
           } ?>
         <ul>
@@ -130,8 +130,9 @@
       <?php }
     } ?>
     </ul>
-    <?php } elseif ($_SERVER['REQUEST_SCHEME'] == 'http') { ?>
-      <span>👤</span><span class="menu-large">Connexion</span>
+    <?php }
+    elseif ($_SERVER['REQUEST_SCHEME'] == 'http') { ?>
+      👤Connexion
       <ul>
         <li>Pour vous connecter,</li>
         <li>
@@ -142,7 +143,7 @@
         </li>
       </ul>
     <?php } else { ?>
-      <span>👤</span><span class="menu-large">Connexion</span>
+      👤Connexion
       <ul>
       <form method="post" action="<?=$config_wri['lien_forum']?>ucp.php?mode=login">
         <li>
@@ -210,7 +211,6 @@
     </div>
 
     <div class="menu-titre">
-      <span>Forum de </span>
       <a href="/" title="Revenir à l'accueil">
         Refuges.info
       </a>
@@ -221,30 +221,30 @@
       <ul>
         <li class="menu-bouton" style="order:1">
           <a href="/nouvelles">
-            <span>🔔</span><span>Nouvelles</span>
+            🔔Nouvelles
           </a>
           <p>Les entrées les plus récentes</p>
         </li>
         <li class="menu-bouton" style="order:2">
           <a href="/point_ajout">
-            <span>📌</span><span>Ajouter</span>
+            📌Ajouter
           </a>
           <p>Ajouter une nouvelle cabane ou refuge</p>
         </li>
         <li class="menu-bouton" style="order:3">
           <a href="/nav">
-            <span>🌍</span><span>Cartes</span>
+            🌍Cartes
           </a>
           <p>Afficher les points sur divers fonds de cartes</p>
         </li>
         <li class="menu-bouton" style="order:4">
           <a href="<?=$config_wri['lien_forum']?>">
-            <span>💬</span><span>Forum</span>
+            💬Forum
           </a>
           <p>Forum de discussion</p>
         </li>
         <li class="menu-bouton" style="order:0">
-          <span class="menu-large">☰</span><span class="menu-large"> Refuges.info</span>
+          ☰ Refuges.info
           <ul>
             <li><hr></li>
             <li>
@@ -260,7 +260,7 @@
             </li>
             <li>
               <a href="<?=lien_wiki('dons')?>">
-                <span>❤️</span><span> Donation €</span>
+                ❤️ Donation €
               </a>
             </li>
             <li>

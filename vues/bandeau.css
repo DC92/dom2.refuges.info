@@ -72,7 +72,7 @@ body {
   background: var(--couleur_fond);
   padding: 0 4px;
   opacity: 0;
-  z-index: -1000;
+  z-index: -2000;
 }
 
 .menu-touch:not(.menu-liste)>ul,
@@ -80,7 +80,8 @@ body {
 .menu-hover:not(.menu-liste)>p,
 .menu-hover:not(.menu-liste)>a {
   opacity: 1;
-  z-index: 1000;
+  z-index: 2000;
+  /* Les controles de cartes leaflet sont z-index 1000 */
 }
 
 /* Lignes des blocs rétractables */
@@ -112,7 +113,10 @@ body {
   font-size: 12px;
 }
 
-@media screen and (min-width: 500px) {
+/* Fenêtres larges, tablettes, PC */
+@media screen and (min-width: 500px) {}
+
+@media screen and (min-width: 500000px) {
   .bandeau-haut {
     background-image: var(--image_bandeau);
     background-repeat: no-repeat;
@@ -126,11 +130,24 @@ body {
   }
 }
 
-/* Fénêtres étroites */
-@media screen and (max-width: 449.9px) {
+/* Fenêtres étroites */
+@media screen and (max-width: 449.9px) {}
+
+@media screen and (max-width: 444449.9px) {
   .bandeau-haut * {
     font-size: 16px;
   }
+
+  www.logo-haut,
+  .recherche-haut,
+  .menu-liste>span,
+  www.menu-haut .menu-large,
+  www.menu-bouton P,
+  www.headerbar,
+  www body:not(#phpbb) .menu-titre span {
+    display: none;
+  }
+
 }
 
 /********** FAIT **********/
@@ -149,9 +166,15 @@ body {
 
   /* Masquages des zones des bandeaux larges */
   .recherche-haut,
+  .menu-liste>span,
   ww.menu-haut .menu-large,
   ww.menu-bouton p,
   ww body:not(#phpbb) .menu-titre span {
+    display: none;
+  }
+
+  ww .menu-titre,
+  ww .menu-recherche {
     display: none;
   }
 
@@ -210,7 +233,7 @@ body {
     background: var(--couleur_fond);
     white-space: nowrap;
     opacity: 0;
-    z-index: -10;
+    z-index: -2000;
   }
 
   /* Sous menu connexion */
@@ -225,9 +248,8 @@ body {
   .menu-liste.menu-hover>ul,
   .menu-recherche.menu-touch>ul,
   .menu-recherche.menu-hover>ul {
-    /* //TODO BUG les contrôles de la carte passent au dessus */
     opacity: 1;
-    z-index: 1000;
+    z-index: 2000;
   }
 
   /* Lignes des blocs rétractables */
@@ -284,12 +306,6 @@ body {
     font-size: 18px;
   }
 
-  .menu-liste>span,
-  .menu-titre,
-  .menu-recherche {
-    display: none;
-  }
-
   /* Ligne de menus */
   .menu-liste>ul {
     display: flex;
@@ -341,7 +357,7 @@ body {
     background: var(--couleur_fond);
     padding: 0 4px;
     opacity: 0;
-    z-index: -10;
+    z-index: -2000;
   }
 
   .menu-touch:not(.menu-liste)>ul,
@@ -349,7 +365,6 @@ body {
   .menu-hover:not(.menu-liste)>p,
   .menu-hover:not(.menu-liste)>a {
     opacity: 1;
-    z-index: 1000;
   }
 
   /* Lignes des blocs rétractables */
@@ -376,13 +391,10 @@ body {
   .menu-titre span {
     display: none;
   }
-
-  /********** FAIT **********/
 }
 
 /********** Bandeau info **********/
 .bandeau-info {
-  width: 100%;
   border: 1px solid red;
   border-radius: 5px;
   margin: 0 0.5%;
