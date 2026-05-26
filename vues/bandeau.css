@@ -16,7 +16,7 @@ body {
 /* Styles communs à toutes les tailles de fenêtres */
 .bandeau-haut * {
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-  font-size: 18px;
+  font-size: min(3vw, 20px);
 }
 
 .bandeau-haut a {
@@ -31,14 +31,6 @@ body {
   color: orange;
 }
 
-/* Lignes des blocs rétractables */
-.menu-bouton:not(.menu-liste) li,
-.menu-liste li,
-.menu-connexion li {
-  max-height: 0;
-  transition: max-height 0.2s ease-in;
-}
-
 .menu-bouton:not(.menu-liste) hr {
   border-color: grey;
 }
@@ -46,7 +38,7 @@ body {
 /* Fenêtres larges, tablettes, PC */
 @media screen and (min-width: 500px) {
 
-  .menu-liste>span,
+  .menu-liste>div,
   .menu-bouton>ul>li:first-child,
   .menu-titre,
   .menu-recherche {
@@ -92,13 +84,6 @@ body {
   }
 
   /* Ligne de menus */
-  /* //TODO elipsis */
-  .menu-liste>ul {
-    display: flex;
-    justify-content: space-between;
-    padding: 0;
-  }
-
   .menu-touch:not(.menu-liste)>ul,
   .menu-hover:not(.menu-liste)>ul,
   .menu-hover:not(.menu-liste)>p,
@@ -114,9 +99,21 @@ body {
     padding: 2px;
   }
 
+  /* Lignes des blocs rétractables */
+  .menu-bouton:not(.menu-liste) li {
+    max-height: 0;
+    transition: max-height 0.2s ease-in;
+  }
+
   .menu-touch:not(.menu-liste) li,
   .menu-hover:not(.menu-liste) li {
     max-height: 2.2em;
+  }
+
+  .menu-liste>ul {
+    display: flex;
+    justify-content: space-between;
+    padding: 0;
   }
 
   .menu-connexion {
@@ -136,14 +133,16 @@ body {
 
 /* Fenêtres étroites */
 @media screen and (max-width: 499.9px) {
-  .bandeau-haut * {
-    font-size: 16px;
-  }
 
   .recherche-haut,
+  .menu-connexion>span,
   .menu-liste>span,
   .menu-bouton p {
     display: none;
+  }
+
+  .bandeau-haut * {
+    font-size: 16px;
   }
 
   .menu-haut {
@@ -154,21 +153,19 @@ body {
     color: var(--couleur_texte);
   }
 
+  .menu-haut>.menu-bouton,
+  .menu-haut>.menu-bouton div {
+    font-size: 20px;
+  }
+
   /* Boutons */
   div.menu-bouton>span,
   .menu-titre {
-    display: block;
     padding: 0 8px 2px 8px;
     font-size: 20px;
     font-weight: 700;
     color: var(--couleur_titre);
     cursor: pointer;
-  }
-
-  .menu-titre * {
-    padding-top: 4px;
-    font-size: 18px;
-    color: var(--couleur_titre) !important;
   }
 
   /* Blocs rétractables en dessous des boutons */
@@ -185,11 +182,12 @@ body {
     opacity: 0;
   }
 
-  /*
-.menu-liste>ul {
-    padding-top: 3px;
+  /* Lignes des blocs rétractables */
+  .menu-liste li,
+  .menu-connexion li {
+    max-height: 0;
+    transition: max-height 0.2s ease-in;
   }
-*/
 
   .menu-liste.menu-touch>ul,
   .menu-liste.menu-hover>ul,
@@ -199,6 +197,12 @@ body {
   .menu-connexion.menu-hover>ul {
     opacity: 1;
     z-index: 1000;
+  }
+
+  .menu-titre * {
+    padding-top: 4px;
+    font-size: 18px;
+    color: var(--couleur_titre) !important;
   }
 
   .menu-recherche ul,
@@ -232,14 +236,15 @@ body {
 
 /* On enlève le bandeau pour les fenêtres de faible hauteur quelle que soit la largeur */
 @media screen and (max-height: 600px) {
-  .bandeau-haut {
-    background-image: none;
-  }
 
   .logo-haut,
   .recherche-haut,
   .menu-titre span {
     display: none;
+  }
+
+  .bandeau-haut {
+    background-image: none;
   }
 }
 

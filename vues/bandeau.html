@@ -19,7 +19,7 @@
   <div class="menu-haut">
     <div class="menu-connexion menu-bouton">
       <?php if (est_connecte() && $infos_identification->username) { ?>
-        👨 <?=$infos_identification->username??''?>
+        👨<span><?=$infos_identification->username??''?></span>
           <?php if ( est_moderateur()) {
             if( $vue->demande_correction) { ?>
               <span title="Commentaires à corriger">⭐</span>
@@ -132,7 +132,7 @@
     </ul>
     <?php }
     elseif ($_SERVER['REQUEST_SCHEME'] == 'http') { ?>
-      👤Connexion
+      👤<span>Connexion</span>
       <ul>
         <li>Pour vous connecter,</li>
         <li>
@@ -143,7 +143,7 @@
         </li>
       </ul>
     <?php } else { ?>
-      👤Connexion
+      👤<span>Connexion</span>
       <ul>
       <form method="post" action="<?=$config_wri['lien_forum']?>ucp.php?mode=login">
         <li>
@@ -192,7 +192,7 @@
 
     <!-- Sous menu recherche pour fenêtre étroites -->
     <div class="menu-recherche menu-bouton">
-      <span>🔍</span>
+      🔍
       <ul>
         <li>
           <form method="get" action="/point_recherche">
@@ -217,7 +217,7 @@
     </div>
 
     <div class="menu-liste menu-bouton">
-      <span>☰</span>
+      <div>☰</div>
       <ul>
         <li class="menu-bouton" style="order:1">
           <a href="/nouvelles">
