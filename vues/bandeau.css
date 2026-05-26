@@ -33,7 +33,6 @@ body {
 
 /* Lignes des blocs rétractables */
 .menu-bouton:not(.menu-liste) li,
-/* //TODO va pour étroites ? */
 .menu-liste li,
 .menu-connexion li {
   max-height: 0;
@@ -76,10 +75,6 @@ body {
 
   .menu-haut {
     clear: both;
-  }
-
-  .menu-haut ul {
-    /* list-style-type: none; //TODO EN TEST large */
   }
 
   /* Blocs rétractables en dessous des boutons */
@@ -137,7 +132,6 @@ body {
     vertical-align: super;
     font-size: 12px;
   }
-
 }
 
 /* Fenêtres étroites */
@@ -146,13 +140,9 @@ body {
     font-size: 16px;
   }
 
-  www.logo-haut,
   .recherche-haut,
   .menu-liste>span,
-  www.menu-haut .menu-large,
-  www.menu-bouton p,
-  www.headerbar,
-  www body:not(#phpbb) .menu-titre span {
+  .menu-bouton p {
     display: none;
   }
 
@@ -171,7 +161,7 @@ body {
     padding: 0 8px 2px 8px;
     font-size: 20px;
     font-weight: 700;
-    color: var(--couleur_titre) !important;
+    color: var(--couleur_titre);
     cursor: pointer;
   }
 
@@ -179,6 +169,41 @@ body {
     padding-top: 4px;
     font-size: 18px;
     color: var(--couleur_titre) !important;
+  }
+
+  /* Blocs rétractables en dessous des boutons */
+  .menu-liste>ul,
+  .menu-recherche ul,
+  .menu-connexion ul {
+    position: absolute;
+    border-radius: 0 0 10px 10px;
+    border: 2px solid var(--couleur_decoration_titres);
+    padding: 0 4px;
+    background: var(--couleur_fond);
+    white-space: nowrap;
+    z-index: -10;
+    opacity: 0;
+  }
+
+  /*
+.menu-liste>ul {
+    padding-top: 3px;
+  }
+*/
+
+  .menu-liste.menu-touch>ul,
+  .menu-liste.menu-hover>ul,
+  .menu-recherche.menu-touch>ul,
+  .menu-recherche.menu-hover>ul,
+  .menu-connexion.menu-touch>ul,
+  .menu-connexion.menu-hover>ul {
+    opacity: 1;
+    z-index: 1000;
+  }
+
+  .menu-recherche ul,
+  .menu-connexion ul {
+    right: 0;
   }
 
   .menu-connexion.menu-touch>ul,
