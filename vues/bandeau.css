@@ -31,22 +31,11 @@ body {
   color: orange;
 }
 
-/* Blocs rétractables en dessous des boutons */
-.menu-bouton:not(.menu-liste)>p,
-.menu-bouton:not(.menu-liste)>ul {
-  position: absolute;
-  margin: 2px 0 0 -4px;
-  border-radius: 0 10px 10px 10px;
-  border: 2px solid var(--couleur_decoration_titres);
-  background: var(--couleur_fond);
-  padding: 0 4px;
-  opacity: 0;
-  z-index: -2000;
-  /* Les controles de cartes leaflet sont z-index 1000 */
-}
-
 /* Lignes des blocs rétractables */
-.menu-bouton:not(.menu-liste) li {
+.menu-bouton:not(.menu-liste) li,
+/* //TODO va pour étroites ? */
+.menu-liste li,
+.menu-connexion li {
   max-height: 0;
   transition: max-height 0.2s ease-in;
 }
@@ -90,7 +79,21 @@ body {
   }
 
   .menu-haut ul {
-    list-style-type: none;
+    /* list-style-type: none; //TODO EN TEST large */
+  }
+
+  /* Blocs rétractables en dessous des boutons */
+  .menu-bouton:not(.menu-liste)>p,
+  .menu-bouton:not(.menu-liste)>ul {
+    position: absolute;
+    margin: 2px 0 0 -4px;
+    border-radius: 0 10px 10px 10px;
+    border: 2px solid var(--couleur_decoration_titres);
+    background: var(--couleur_fond);
+    padding: 0 4px;
+    opacity: 0;
+    z-index: -2000;
+    /* Les controles de cartes leaflet sont z-index 1000 */
   }
 
   /* Ligne de menus */
