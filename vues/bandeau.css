@@ -10,7 +10,7 @@ body {
 }
 
 .scrolable {
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 /* Styles communs à toutes les tailles de fenêtres */
