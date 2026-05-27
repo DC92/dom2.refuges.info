@@ -82,7 +82,7 @@ class listener implements EventSubscriberInterface
     // pour qu'ils soient insérés aux bons endroits
     ob_start();
     include(fichier_vue('bandeau.html'));
-    include(fichier_vue('infos.html'));
+    include(fichier_vue('bandeau_infos.html'));
     $template->assign_var('BANDEAU', ob_get_clean());
 
     ob_start();
