@@ -70,7 +70,7 @@ else // le point est valide
     $conditions->limite=10;
 
     // On défini le cercle (centre et rayon) dont on veut les points à proximité
-    $conditions->rayon_du_cercle=5000;
+    $conditions->rayon_du_cercle=1000;
     $conditions->centre_du_cercle=$point->geom;
 
     $points_proches=infos_points($conditions);
@@ -117,11 +117,7 @@ else // le point est valide
   $conditions_commentaires->ids_points = $id_point;
   $vue->commentaires = infos_commentaires ($conditions_commentaires);
 
-  $vue->commentaires_avec_photo=[];
   foreach ($vue->commentaires AS $commentaire) {
-    if ($commentaire->photo_existe)
-      $vue->commentaires_avec_photo[] = $commentaire;
-
     // DOM 02/2026 déplacé depuis modele/commentaires sur remarque de Sly
     // Formatage des données et affichage d'un commentaire de la fiche d'un point
     // ici le lien pour modérer ce commentaire si on est modérateur ou auteur du commentaire

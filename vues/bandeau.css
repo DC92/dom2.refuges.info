@@ -263,13 +263,6 @@ body {
   padding: 0 2px 2px 2px;
 }
 
-.bandeau-info,
-.bandeau-info a {
-  font-size: 14px;
-  color: green;
-  cursor: pointer;
-}
-
 .bandeau-info span {
   color: orange;
 }
