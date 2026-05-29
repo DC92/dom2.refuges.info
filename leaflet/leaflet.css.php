@@ -3,12 +3,14 @@
 header('content-type: text/css');
 header('Cache-Control: max-age=86000');
 
+// '<FileName> <original dist file> <after concatenation file>',
 $files = [
   'leaflet/leaflet url(images url(leaflet/images',
   'fullscreen/leaflet.fullscreen url( url(fullscreen/',
   'geocoder/Control.Geocoder',
   'gps/leaflet-gps.src ../images/gps-icon.svg gps/gps-icon.png',
-  'markercluster/MarkerCluster',
+  'compas/dist/leaflet-compass.min ../images ./compas/images',
+  'markercluster/MarkerCluster.min',
   'markercluster/MarkerCluster.Default',
   'src/map',
 ];

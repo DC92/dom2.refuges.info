@@ -16,13 +16,20 @@ function initMap(mapId, serveurAPI, keys) {
     imperial: false,
   }).addTo(map);
 
+  new L.Control.Geocoder({
+    position: 'topleft',
+  }).addTo(map);
+
+  //new L.Control.Gps({
   new GpsCompas({
     autoCenter: true,
   }).addTo(map);
 
-  new L.Control.Geocoder({
+map.addControl( new L.Control.Compass({
+  //TODO n'afficher que quand le GPS et le capteur sont actifs
+  autoActive:true,
     position: 'topleft',
-  }).addTo(map);
+}) );
 
   /*******************
    * Couches tuilées *

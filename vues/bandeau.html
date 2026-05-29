@@ -19,7 +19,7 @@
   <div class="menu-haut">
     <div class="menu-connexion menu-bouton">
       <?php if (est_connecte() && $infos_identification->username) { ?>
-        👨<span><?=$infos_identification->username??''?></span>
+        👨<span class="menu-large"><?=$infos_identification->username??''?></span>
           <?php if ( est_moderateur()) {
             if( $vue->demande_correction) { ?>
               <span title="Commentaires à corriger">⭐</span>
@@ -28,7 +28,7 @@
               <span title="Emails en erreur">🌙</span>
             <?php }
             if( $vue->posts_edit) { ?>
-              <span  title="Posts édités à vérifier" class="edit-posts">☄</span>
+              <span title="Posts édités à vérifier" class="edit-posts">☄</span>
             <?php }
           } ?>
         <ul>
@@ -132,7 +132,7 @@
     </ul>
     <?php }
     elseif ($_SERVER['REQUEST_SCHEME'] == 'http') { ?>
-      👤<span>Connexion</span>
+      👤<span class="menu-large">Connexion</span>
       <ul>
         <li>Pour vous connecter,</li>
         <li>
@@ -143,7 +143,7 @@
         </li>
       </ul>
     <?php } else { ?>
-      👤<span>Connexion</span>
+      👤<span class="menu-large">Connexion</span>
       <ul>
       <form method="post" action="<?=$config_wri['lien_forum']?>ucp.php?mode=login">
         <li>
@@ -244,7 +244,7 @@
           <p>Forum de discussion</p>
         </li>
         <li class="menu-bouton" style="order:0">
-          ☰ Refuges.info
+          <span class="menu-large">☰ Refuges.info</span>
           <ul>
             <li><hr></li>
             <li>
@@ -335,4 +335,4 @@
   </div>
 </div>
 
-<div class="scrolable">
+<div id="scrolable">

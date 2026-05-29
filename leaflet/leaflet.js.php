@@ -9,6 +9,7 @@ $files = [
   'geocoder/Control.Geocoder',
   'gps/leaflet-gps.src enableHighAccuracy timeout:300000,enableHighAccuracy',
   'Gps.Compas/leaflet-gps-compas.src',
+  'compas/dist/leaflet-compass.min',
   'EdgeBuffer/leaflet.edgebuffer',
   'markercluster/leaflet.markercluster',
   'FeatureGroup.SubGroup/subgroup',
