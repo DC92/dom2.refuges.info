@@ -25,11 +25,11 @@ function initMap(mapId, serveurAPI, keys) {
     autoCenter: true,
   }).addTo(map);
 
-map.addControl( new L.Control.Compass({
-  //TODO n'afficher que quand le GPS et le capteur sont actifs
-  autoActive:true,
+  map.addControl(new L.Control.Compass({
+    //TODO n'afficher que quand le GPS et le capteur sont actifs
+    autoActive: true,
     position: 'topleft',
-}) );
+  }));
 
   /*******************
    * Couches tuilées *

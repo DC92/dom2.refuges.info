@@ -1,9 +1,9 @@
 <div class="bandeau-haut noprint">
-  <a class="logo-haut" href="/"
+  <!-- <a class="logo-haut" href="/"
     title="Revenir à l'accueil">
   </a>
 
-  <!-- Menu recherche pour fenêtre larges -->
+  < !-- Menu recherche pour fenêtre larges -- >
   <form class="recherche-haut" method="get" action="/point_recherche">
     <input type="text" name="nom" class="input-text" placeholder="Recherche de point">
     <input type="hidden" name="limite" value="40">
@@ -15,6 +15,7 @@
       🔭
     </a>
   </form>
+  -->
 
   <div class="menu-haut">
     <div class="menu-connexion menu-bouton">
@@ -210,11 +211,11 @@
       </ul>
     </div>
 
-    <div class="menu-titre">
+    <!--div class="menu-titre">
       <a href="/" title="Revenir à l'accueil">
         Refuges.info
       </a>
-    </div>
+    </div-->
 
     <div class="menu-liste menu-bouton">
       <div>☰</div>
@@ -243,10 +244,26 @@
           </a>
           <p>Forum de discussion</p>
         </li>
+
+        <li class="menu-bouton" style="order:5">
+          <!--span class="menu-large">🔍Recherche</span-->
+          <form method="get" action="/point_recherche">
+            <input type="text" name="nom" class="input-text" placeholder="Recherche de point">
+            <input type="hidden" name="limite" value="40">
+            <button type="submit" title="Lancer la recherche" style="border:none">
+              🔍
+            </button>
+            <a href="/point_formulaire_recherche"
+              title="Recherche avancée">
+              🔭
+            </a>
+          </form>
+        </li>
+
         <li class="menu-bouton" style="order:0">
-          <span class="menu-large">☰ Refuges.info</span>
+          <span class="menu-large">☰ <b><u>Refuges.info</u></b></span>
           <ul>
-            <li><hr></li>
+            <li><hr></li><!-- //TODO ne pas afficher en menu large -->
             <li>
               <a href="/"
                 title="Retour à l'entrée du site">
