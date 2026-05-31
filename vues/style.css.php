@@ -76,6 +76,7 @@ if ($date_maintenant > $debut_automne and $date_maintenant < $debut_hiver) {
     --couleur_lien: #<?=$couleur_lien_clair?>;
     --couleur_fond: #161210;
     --couleur_fond_amplifiee: #333;
+    --couleur_legende: #333;
   }
 }
 

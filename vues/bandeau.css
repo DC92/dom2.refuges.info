@@ -14,20 +14,19 @@ body {
 }
 
 /* Styles communs à toutes les tailles de fenêtres */
-.bandeau-haut * {
+.menu-haut {
   font-family: Verdana, Arial, Helvetica, sans-serif;
-  font-size: min(3vw, 20px);
-  /* //TODO ??? */
+  /*font-size: min(3vw, 20px); //TODO ??? */
   font-size: 14px;
 }
 
-.bandeau-haut a {
+/*.menu-haut a {
   color: var(--couleur_lien);
 }
 
 .menu-haut form li {
   margin: 5px 2px 10px 2px;
-}
+}*/
 
 .menu-haut ul {
   /* Pour les pages forum */
@@ -35,45 +34,24 @@ body {
 }
 
 .menu-haut .edit-posts {
+  /* Pour les fontes qui ont un caractère commète en noir & blanc */
   color: orange;
 }
 
 .menu-bouton:not(.menu-liste) hr {
+  margin: 0;
   border-color: grey;
 }
 
 /* Fenêtres larges, tablettes, PC */
 @media screen and (min-width: 500px) {
 
-  .menu-liste>div,
-  .menu-titre,
-  .menu-recherche {
+  /* Masquage des éléments de menus etroits inutiles */
+  .menu-etroit {
     display: none;
   }
 
-  /*.bandeau-haut {
-    background-image: var(--image_bandeau);
-    background-repeat: no-repeat;
-  }
-
-  .recherche-haut {
-    float: right;
-    padding: 11px 0;
-    font-size: 16px;
-  }
-
-  .recherche-haut input {
-    font-size: 16px;
-  }
-
-  .recherche-haut a {
-    padding-right: 2px;
-    font-size: 18px;
-  }
-
-  .menu-haut {
-    clear: both;
-  }*/
+  /* //TODO FAIT */
 
   /* Blocs rétractables en dessous des boutons */
   .menu-bouton:not(.menu-liste)>p,
@@ -81,7 +59,7 @@ body {
   .menu-bouton:not(.menu-liste)>form {
     position: absolute;
     margin: 2px 0 0 -4px;
-    border-radius: 0 10px 10px 10px;
+    border-radius: 10px;
     border: 2px solid var(--couleur_decoration_titres);
     background: var(--couleur_fond);
     padding: 0 4px;
@@ -91,6 +69,16 @@ body {
     overflow-y: auto;
     z-index: -2000;
     /* Les controles de cartes leaflet sont z-index 1000 */
+  }
+
+  .menu-bouton button {
+    padding: 0;
+    background-color: var(--couleur_fond);
+  }
+
+  .menu-bouton form a {
+    display: block;
+    padding: 5px;
   }
 
   /* Ligne de menus */
@@ -129,33 +117,46 @@ body {
     padding: 0;
   }
 
+  .titre-menu-large {
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  li:has(.titre-menu-large) {
+    padding: 0;
+    margin: 0;
+  }
+
   .menu-connexion {
     float: right;
   }
 
   .menu-connexion ul {
     right: 0;
-    border-radius: 10px 0 10px 10px !important;
+    border-radius: 10px !important;
   }
 
   .menu-connexion span span {
     vertical-align: super;
-    font-size: 12px;
+    /*font-size: 12px;*/
   }
 }
 
 /* Fenêtres étroites */
 @media screen and (max-width: 499.9px) {
 
-  wwwwwwwwwwwwwwwwww .recherche-haut,
+  /* Masquage des éléments de menus larges inutiles */
+  /*.recherche-haut, //TODO */
   .menu-large,
   .menu-bouton p {
     display: none;
   }
 
-  .bandeau-haut * {
+  /* //TODO FAIT */
+
+  /*.menu-haut * {
     font-size: 16px;
-  }
+  }*/
 
   .menu-haut {
     display: flex;
@@ -165,17 +166,19 @@ body {
     color: var(--couleur_texte);
   }
 
-  .menu-haut>.menu-bouton,
+  /*.menu-haut>.menu-bouton,
   .menu-haut>.menu-bouton div {
     font-size: 20px;
-  }
+  }*/
 
   /* Boutons */
   div.menu-bouton>span,
   .menu-titre {
     padding: 0 8px 2px 8px;
-    font-size: 20px;
+    font-size: 16px;
     font-weight: 700;
+    /*font-size: 20px;*/
+    /*font-weight: 700;*/
     color: var(--couleur_titre);
     cursor: pointer;
   }
@@ -185,12 +188,12 @@ body {
   .menu-recherche ul,
   .menu-connexion ul {
     position: absolute;
-    border-radius: 0 0 10px 10px;
+    border-radius: 10px;
     border: 2px solid var(--couleur_decoration_titres);
     padding: 0 4px;
     background: var(--couleur_fond);
     white-space: nowrap;
-    z-index: -10;
+    z-index: -1000;
     opacity: 0;
     max-height: calc(100vh - 30px);
     overflow-y: auto;
@@ -214,8 +217,7 @@ body {
   }
 
   .menu-titre * {
-    padding-top: 4px;
-    font-size: 18px;
+    /*padding-top: 4px;*/
     color: var(--couleur_titre) !important;
   }
 
@@ -247,25 +249,6 @@ body {
     max-height: 1.2em;
   }
 }
-
-/* On enlève la ligne haute du bandeau pour les fenêtres de faible hauteur quelle que soit la largeur */
-/*@media screen and (max-height: 500000px) { //TODO DELETE
-  .logo-haut,
-  .recherche-haut,
-  .menu-titre span {
-    display: none;
-  }
-
-  .bandeau-haut {
-    background-image: none;
-  }
-
-#scrolable ,
-  .menu-bouton:not(.menu-liste)>p,
-  .menu-bouton:not(.menu-liste)>ul {
-  overflow-y: initial;
-   }
-} */
 
 /********** Bandeau info **********/
 /* Placé ici pour ne pas ajouter un fichier spécifique */
