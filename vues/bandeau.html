@@ -1,22 +1,3 @@
-<!-- div class="bandeau-haut noprint">
-<<a class="logo-haut" href="/"
-  title="Revenir à l'accueil">
-</a>
-
-< !-- Menu recherche pour fenêtre larges -- >
-<form class="recherche-haut" method="get" action="/point_recherche">
-  <input type="text" name="nom" class="input-text" placeholder="Recherche de point">
-  <input type="hidden" name="limite" value="40">
-  <button type="submit" title="Lancer la recherche" style="border:none">
-    🔍
-  </button>
-  <a href="/point_formulaire_recherche"
-    title="Recherche avancée">
-    🔭
-  </a>
-</form>
--->
-
 <div class="menu-haut noprint">
   <div class="menu-connexion menu-bouton">
     <?php if (est_connecte() && $infos_identification->username) { ?>
@@ -35,11 +16,11 @@
       <ul>
         <li>
           <?php if (!est_moderateur()) { ?>
-          Utilisateur
+            Utilisateur
           <?php } elseif (est_administrateur()) { ?>
-          Administrateur
+            Administrateur
           <?php } else { ?>
-          Modérateur
+            Modérateur
           <?php } ?>
           <?=$infos_identification->username??''?>
         </li>
@@ -204,7 +185,7 @@
             🔍
           </button>
           <a href="/point_formulaire_recherche" title="Recherche avancée">
-            🔭
+            Recherche avancée
           </a>
         </form>
       </li>
@@ -245,7 +226,7 @@
         </a>
         <p>Forum de discussion</p>
       </li>
-      <li class="menu-bouton" style="order:5">
+      <li class="menu-bouton menu-large" style="order:5">
         <a>🔍Recherche</a>
         <form method="get" action="/point_recherche">
         <div style="text-wrap: nowrap;">
@@ -262,7 +243,7 @@
       </li>
       <li class="menu-bouton" style="order:0">
         <span class="menu-large">☰</span>
-        <span class="titre-menu-large">Refuges.info</span>
+        <span class="menu-large class="titre-menu-large">Refuges.info</span>
 
         <ul>
           <li><hr></li><!-- //TODO ne pas afficher en menu large -->
