@@ -54,7 +54,6 @@ body {
     padding: 0 4px;
     /* Position de départ pour les transitions */
     opacity: 0;
-    overflow-y: auto;
     /* Les controles de cartes leaflet sont z-index 1000 */
     z-index: -2000;
   }
