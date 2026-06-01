@@ -35,14 +35,12 @@ body {
 }
 
 /* Fenêtres larges, tablettes, PC */
-@media screen and (min-width: 500px) {
+@media screen and (min-width: 600px) {
 
   /* Masquage des éléments de menus etroits inutiles */
   .menu-etroit {
     display: none;
   }
-
-  /* //TODO FAIT */
 
   /* Blocs rétractables en dessous des boutons */
   .menu-bouton:not(.menu-liste)>p,
@@ -107,6 +105,18 @@ body {
     padding: 0;
   }
 
+  .menu-liste>ul li:has(>a) {
+    min-width: 0;
+  }
+
+  .menu-liste>ul li>a {
+    display: inline-block;
+    width: 110%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
 
   li:has(.titre-menu-large) {
     margin: 0;
@@ -127,16 +137,20 @@ body {
   }
 }
 
+@media screen and (max-width: 700px) {
+  .menu-moyen {
+    display: none;
+  }
+}
+
 /* Fenêtres étroites */
-@media screen and (max-width: 499.9px) {
+@media screen and (max-width: 599.9px) {
 
   /* Masquage des éléments de menus larges inutiles */
   .menu-large,
   .menu-bouton p {
     display: none;
   }
-
-  /* //TODO FAIT */
 
   .menu-haut {
     display: flex;

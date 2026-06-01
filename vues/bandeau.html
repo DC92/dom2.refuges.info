@@ -181,9 +181,7 @@
           <input type="text" name="nom" class="input-text" placeholder="Recherche de point">
           <input type="hidden" name="limite" value="40">
           <input type="hidden" name="marqueur_stats_utilisation_recherche_haute" value="1">
-          <button type="submit" title="Lancer la recherche" style="border:none">
-            🔍
-          </button>
+          <button type="submit" title="Lancer la recherche" style="border:none">🔍</button>
           <a href="/point_formulaire_recherche" title="Recherche avancée">
             Recherche avancée
           </a>
@@ -203,50 +201,38 @@
     <div class="menu-etroit">☰</div>
     <ul>
       <li class="menu-bouton" style="order:1">
-        <a href="/nouvelles">
-          🔔Nouvelles
-        </a>
+        <a href="/nouvelles">🔔Nouvelles</a>
         <p>Les entrées les plus récentes</p>
       </li>
       <li class="menu-bouton" style="order:2">
-        <a href="/point_ajout">
-          📌Ajouter
-        </a>
+        <a href="/point_ajout">📌Ajouter</a>
         <p>Ajouter une nouvelle cabane ou refuge</p>
       </li>
       <li class="menu-bouton" style="order:3">
-        <a href="/nav">
-          🌍Cartes
-        </a>
+        <a href="/nav">🌍Cartes</a>
         <p>Afficher les points sur divers fonds de cartes</p>
       </li>
       <li class="menu-bouton" style="order:4">
-        <a href="<?=$config_wri['lien_forum']?>">
-          💬Forum
-        </a>
+        <a href="<?=$config_wri['lien_forum']?>">💬Forum</a>
         <p>Forum de discussion</p>
       </li>
       <li class="menu-bouton menu-large" style="order:5">
-        <a>🔍Recherche</a>
-        <form method="get" action="/point_recherche">
-        <div style="text-wrap: nowrap;">
-          <input type="text" name="nom" class="input-text" placeholder="Recherche de point">
-          <input type="hidden" name="limite" value="40">
-          <button type="submit" title="Lancer la recherche" style="border:none">
-            🔍
-          </button>
-        </div>
+        <a>🔍<span class="menu-moyen">Recherche</span></a>
+        <form method="get" action="/point_recherche" style="right:115px">
+          <div style="text-wrap: nowrap;">
+            <input type="text" name="nom" class="input-text" placeholder="Recherche de point">
+            <input type="hidden" name="limite" value="40">
+            <button type="submit" title="Lancer la recherche" style="border:none">🔍</button>
+          </div>
           <a href="/point_formulaire_recherche" title="Recherche avancée">
             Recherche avancée
           </a>
         </form>
       </li>
-      <li class="menu-bouton" style="order:0">
-        <span class="menu-large">☰</span>
-        <span class="menu-large class="titre-menu-large">Refuges.info</span>
-
+      <li class="menu-bouton menu-large" style="order:0">
+        <div>☰&nbsp;Refuges.info</div>
         <ul>
-          <li><hr></li><!-- //TODO ne pas afficher en menu large -->
+          <li><hr></li>
           <li>
             <a href="/" title="Retour à l'entrée du site">
               Accueil
