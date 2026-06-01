@@ -13,20 +13,19 @@ body {
   overflow-y: auto;
 }
 
-/* Styles communs à toutes les tailles de fenêtres */
+/* Modifié par le forum */
 .menu-haut {
-  font-family: Verdana, Arial, Helvetica, sans-serif;
-  font-size: 14px;
-  /* //TODO trop petit pour bandeau mobile (pb de px / em) */
+  line-height: normal;
+  font-family: Verdana, Helvetica, Arial, sans-serif;
+  font-size: 16px;
 }
 
 .menu-haut ul {
-  /* Pour les pages forum */
   list-style-type: none;
 }
 
+/* Pour les fontes qui ont un caractère commète en noir & blanc */
 .menu-haut .edit-posts {
-  /* Pour les fontes qui ont un caractère commète en noir & blanc */
   color: orange;
 }
 
@@ -55,12 +54,11 @@ body {
     border: 2px solid var(--couleur_decoration_titres);
     background: var(--couleur_fond);
     padding: 0 4px;
+    /* Position de départ pour les transitions */
     opacity: 0;
-    max-height: 110%;
-    /* //TODO KESAKO ? */
     overflow-y: auto;
-    z-index: -2000;
     /* Les controles de cartes leaflet sont z-index 1000 */
+    z-index: -2000;
   }
 
   .menu-bouton button {
@@ -109,14 +107,10 @@ body {
     padding: 0;
   }
 
-  .titre-menu-large {
-    font-size: 16px;
-    font-weight: 700;
-  }
 
   li:has(.titre-menu-large) {
-    padding: 0;
     margin: 0;
+    padding: 0;
   }
 
   .menu-connexion {
@@ -156,8 +150,6 @@ body {
   div.menu-bouton>span,
   .menu-titre {
     padding: 0 8px 2px 8px;
-    font-size: 16px;
-    font-weight: 700;
     color: var(--couleur_titre);
     cursor: pointer;
   }
@@ -167,15 +159,15 @@ body {
   .menu-recherche ul,
   .menu-connexion ul {
     position: absolute;
+    max-height: calc(100vh - 30px);
     border-radius: 10px;
     border: 2px solid var(--couleur_decoration_titres);
     padding: 0 4px;
     background: var(--couleur_fond);
     white-space: nowrap;
-    z-index: -1000;
-    opacity: 0;
-    max-height: calc(100vh - 30px);
     overflow-y: auto;
+    opacity: 0;
+    z-index: -1000;
   }
 
   /* Lignes des blocs rétractables */
@@ -228,18 +220,22 @@ body {
   .menu-liste.menu-hover ul ul li,
   .menu-connexion.menu-touch li,
   .menu-connexion.menu-hover li {
-    padding: 1.5px 0;
     max-height: 1.2em;
+    padding: 1.5px 0;
   }
 }
 
 /********** Bandeau info **********/
 /* Placé ici pour ne pas ajouter un fichier spécifique */
 .bandeau-info {
+  margin: 0 0.5%;
   border: 1px solid red;
   border-radius: 5px;
-  margin: 0 0.5%;
   padding: 0 2px 2px 2px;
+  /* Modifié par le forum */
+  line-height: normal;
+  font-family: Verdana, Helvetica, Arial, sans-serif;
+  font-size: 16px;
 }
 
 .bandeau-info span {
