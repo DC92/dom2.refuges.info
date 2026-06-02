@@ -29,212 +29,106 @@ body {
   color: orange;
 }
 
+/* Blocs rétractables en dessous des boutons */
+.menu-bouton:not(.menu-liste)>p,
+.menu-bouton:not(.menu-liste)>ul,
+.menu-bouton:not(.menu-liste)>form {
+  position: absolute;
+  margin: 2px 0 0 -4px;
+  border-radius: 10px;
+  border: 2px solid var(--couleur_decoration_titres);
+  background: var(--couleur_fond);
+  padding: 0 4px;
+  /* Position de départ pour les transitions */
+  opacity: 0;
+  /* Les controles de cartes leaflet sont z-index 1000 */
+  z-index: -2000;
+}
+
+.menu-bouton button {
+  padding: 0;
+  background-color: var(--couleur_fond);
+}
+
+.menu-bouton form a {
+  display: block;
+  padding: 5px;
+}
+
+/* Ligne de menus */
+.menu-touch:not(.menu-liste)>ul,
+.menu-hover:not(.menu-liste)>ul,
+.menu-touch:not(.menu-liste)>form,
+.menu-hover:not(.menu-liste)>form,
+.menu-hover:not(.menu-liste)>p,
+.menu-hover:not(.menu-liste)>a {
+  opacity: 1;
+  z-index: 2000;
+}
+
+/* Boutons */
+.menu-bouton:not(.menu-liste) {
+  border: 2px solid transparent;
+  border-radius: 10px;
+  padding: 2px;
+}
+
+/* Lignes des blocs rétractables */
+.menu-bouton:not(.menu-liste) li {
+  max-height: 0;
+  transition: max-height 0.2s ease-in;
+}
+
+.menu-touch:not(.menu-liste) li,
+.menu-hover:not(.menu-liste) li {
+  /* Pour transition */
+  max-height: 2.2em;
+}
+
 .menu-bouton:not(.menu-liste) hr {
   margin: 0;
   border-color: grey;
 }
 
-/* Fenêtres larges, tablettes, PC */
-@media screen and (min-width: 600px) {
+.menu-liste>ul {
+  display: flex;
+  justify-content: space-between;
+  padding: 0;
+}
 
-  /* Masquage des éléments de menus etroits inutiles */
-  .menu-etroit {
+.menu-liste>ul li:has(>a) {
+  min-width: 0;
+}
+
+.menu-liste>ul li>a {
+  display: inline-block;
+  width: 110%;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.menu-connexion {
+  float: right;
+}
+
+.menu-connexion ul {
+  right: 0;
+  border-radius: 10px !important;
+}
+
+.menu-connexion span span {
+  vertical-align: super;
+}
+
+@media screen and (min-width: 700px) {
+  .menu-large {
     display: none;
-  }
-
-  /* Blocs rétractables en dessous des boutons */
-  .menu-bouton:not(.menu-liste)>p,
-  .menu-bouton:not(.menu-liste)>ul,
-  .menu-bouton:not(.menu-liste)>form {
-    position: absolute;
-    margin: 2px 0 0 -4px;
-    border-radius: 10px;
-    border: 2px solid var(--couleur_decoration_titres);
-    background: var(--couleur_fond);
-    padding: 0 4px;
-    /* Position de départ pour les transitions */
-    opacity: 0;
-    /* Les controles de cartes leaflet sont z-index 1000 */
-    z-index: -2000;
-  }
-
-  .menu-bouton button {
-    padding: 0;
-    background-color: var(--couleur_fond);
-  }
-
-  .menu-bouton form a {
-    display: block;
-    padding: 5px;
-  }
-
-  /* Ligne de menus */
-  .menu-touch:not(.menu-liste)>ul,
-  .menu-hover:not(.menu-liste)>ul,
-  .menu-touch:not(.menu-liste)>form,
-  .menu-hover:not(.menu-liste)>form,
-  .menu-hover:not(.menu-liste)>p,
-  .menu-hover:not(.menu-liste)>a {
-    opacity: 1;
-    z-index: 2000;
-  }
-
-  /* Boutons */
-  .menu-bouton:not(.menu-liste) {
-    border: 2px solid transparent;
-    border-radius: 10px;
-    padding: 2px;
-  }
-
-  /* Lignes des blocs rétractables */
-  .menu-bouton:not(.menu-liste) li {
-    max-height: 0;
-    transition: max-height 0.2s ease-in;
-  }
-
-  .menu-touch:not(.menu-liste) li,
-  .menu-hover:not(.menu-liste) li {
-    /* Pour transition */
-    max-height: 2.2em;
-  }
-
-  .menu-liste>ul {
-    display: flex;
-    justify-content: space-between;
-    padding: 0;
-  }
-
-  .menu-liste>ul li:has(>a) {
-    min-width: 0;
-  }
-
-  .menu-liste>ul li>a {
-    display: inline-block;
-    width: 110%;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-  }
-
-
-  li:has(.titre-menu-large) {
-    margin: 0;
-    padding: 0;
-  }
-
-  .menu-connexion {
-    float: right;
-  }
-
-  .menu-connexion ul {
-    right: 0;
-    border-radius: 10px !important;
-  }
-
-  .menu-connexion span span {
-    vertical-align: super;
   }
 }
 
 @media screen and (max-width: 700px) {
-  .menu-moyen {
+  .menu-etroit {
     display: none;
-  }
-}
-
-/* Fenêtres étroites */
-@media screen and (max-width: 599.9px) {
-
-  /* Masquage des éléments de menus larges inutiles */
-  .menu-large,
-  .menu-bouton p {
-    display: none;
-  }
-
-  .menu-haut {
-    display: flex;
-    flex-direction: row-reverse;
-    justify-content: space-between;
-    background: var(--couleur_fond_titre);
-    color: var(--couleur_texte);
-  }
-
-  /* Boutons */
-  div.menu-bouton>span,
-  .menu-titre {
-    padding: 0 8px 2px 8px;
-    color: var(--couleur_titre);
-    cursor: pointer;
-  }
-
-  /* Blocs rétractables en dessous des boutons */
-  .menu-liste>ul,
-  .menu-recherche ul,
-  .menu-connexion ul {
-    position: absolute;
-    max-height: calc(100vh - 30px);
-    border-radius: 10px;
-    border: 2px solid var(--couleur_decoration_titres);
-    padding: 0 4px;
-    background: var(--couleur_fond);
-    white-space: nowrap;
-    overflow-y: auto;
-    opacity: 0;
-    z-index: -1000;
-  }
-
-  /* Lignes des blocs rétractables */
-  .menu-liste li,
-  .menu-connexion li {
-    max-height: 0;
-    transition: max-height 0.2s ease-in;
-  }
-
-  .menu-liste.menu-touch>ul,
-  .menu-liste.menu-hover>ul,
-  .menu-recherche.menu-touch>ul,
-  .menu-recherche.menu-hover>ul,
-  .menu-connexion.menu-touch>ul,
-  .menu-connexion.menu-hover>ul {
-    opacity: 1;
-    z-index: 1000;
-  }
-
-  .menu-titre * {
-    color: var(--couleur_titre) !important;
-  }
-
-  .menu-recherche ul,
-  .menu-connexion ul {
-    right: 0;
-  }
-
-  .menu-connexion.menu-touch>ul,
-  .menu-connexion.menu-hover>ul,
-  .menu-liste.menu-touch>ul,
-  .menu-liste.menu-hover>ul,
-  .menu-recherche.menu-touch>ul,
-  .menu-recherche.menu-hover>ul {
-    opacity: 1;
-    z-index: 2000;
-  }
-
-  .menu-bouton form a {
-    display: block;
-    padding: 5px;
-  }
-
-  .menu-liste.menu-touch li,
-  .menu-liste.menu-hover li {
-    max-height: initial;
-  }
-
-  .menu-liste.menu-touch ul ul li,
-  .menu-liste.menu-hover ul ul li,
-  .menu-connexion.menu-touch li,
-  .menu-connexion.menu-hover li {
-    max-height: 1.2em;
-    padding: 1.5px 0;
   }
 }
 
