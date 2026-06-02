@@ -1,16 +1,16 @@
-<?php if ($config_wri['debug']) { ?>
-  <div class="basdepage noprint">
-    <a href="https://validator.w3.org/check?uri=<?=(empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"?>">
-      <img src="<?=$config_wri['url_chemin_images']?>valide/xhtml10-blue.png" alt="Valid XHTML 1.0 Strict">
-    </a>
-    <a href="https://jigsaw.w3.org/css-validator/validator?uri=<?=(empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"?>">
-      <img src="<?=$config_wri['url_chemin_images']?>valide/css21-blue.gif" alt="Valid CSS niveau 2.1">
-    </a>
-    <?=(temps_execution()."s")?>
-  </div>
-<?php } ?>
+  <?php if ($config_wri['debug']) { ?>
+    <div class="basdepage noprint">
+      <a href="https://validator.w3.org/check?uri=<?=(empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"?>">
+        <img src="<?=$config_wri['url_chemin_images']?>valide/xhtml10-blue.png" alt="Valid XHTML 1.0 Strict">
+      </a>
+      <a href="https://jigsaw.w3.org/css-validator/validator?uri=<?=(empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"?>">
+        <img src="<?=$config_wri['url_chemin_images']?>valide/css21-blue.gif" alt="Valid CSS niveau 2.1">
+      </a>
+      <?=(temps_execution()."s")?>
+    </div>
+  <?php } ?>
 
-<!-- Fin de zone scrolable -->
+  <!-- Fin de zone scrolable -->
 </div>
 
 <?php
@@ -19,7 +19,7 @@
 if (isset ($vue->java_lib_foot))
   foreach ($vue->java_lib_foot as $js_lib) { ?>
     <script src="<?=$js_lib?>"></script>
-<?php } ?>
+  <?php } ?>
 
 <script>
 //<![CDATA[

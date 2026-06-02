@@ -13,7 +13,7 @@ body {
   overflow-y: auto;
 }
 
-/* Modifié par le forum */
+/* Styles modifié par le forum */
 .menu-haut {
   line-height: normal;
   font-family: Verdana, Helvetica, Arial, sans-serif;
@@ -129,6 +129,16 @@ body {
 @media screen and (max-width: 700px) {
   .menu-etroit {
     display: none;
+  }
+
+  .menu-liste div,
+  .menu-connexion span {
+    color: var(--couleur_titre) !important;
+  }
+
+  .menu-haut {
+    background: var(--couleur_fond_titre);
+    wcolor: var(--couleur_texte);
   }
 }
 
