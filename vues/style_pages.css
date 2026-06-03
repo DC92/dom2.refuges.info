@@ -165,14 +165,6 @@ li {
   /* dernière, 100% invisible */
 }
 
-form {
-  background-color: var(--couleur_fond_amplifiee);
-}
-
-form#cree_point {
-  padding-bottom: 1px;
-}
-
 form#form_point fieldset {
   border: thin solid transparent;
   /* pour les allergiques aux barrieres ;) */

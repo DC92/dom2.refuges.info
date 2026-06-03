@@ -37,7 +37,7 @@ body {
   margin: 2px 0 0 -4px;
   border-radius: 10px;
   border: 2px solid var(--couleur_decoration_titres);
-  background-color: var(--couleur_fond_amplifiee);
+  background-color: var(--couleur_fond);
   padding: 0 4px;
   /* Position de départ pour les transitions */
   opacity: 0;
@@ -50,9 +50,9 @@ body {
   background-color: var(--couleur_fond);
 }
 
-.menu-bouton form a {
-  display: block;
-  padding: 5px;
+.menu-bouton form a,
+.menu-bouton form input {
+  margin: 3px;
 }
 
 /* Ligne de menus */
