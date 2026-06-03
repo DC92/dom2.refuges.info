@@ -16,8 +16,8 @@ body {
 /* Styles modifié par le forum */
 .menu-haut {
   line-height: normal;
-  font-family: Verdana, Helvetica, Arial, sans-serif;
-  font-size: 16px;
+  font-family: Verdana, Helvetica, Arial, sans-serif !important;
+  font-size: 16px !important;
 }
 
 .menu-haut ul {
@@ -37,7 +37,7 @@ body {
   margin: 2px 0 0 -4px;
   border-radius: 10px;
   border: 2px solid var(--couleur_decoration_titres);
-  background: var(--couleur_fond);
+  background-color: var(--couleur_fond_amplifiee);
   padding: 0 4px;
   /* Position de départ pour les transitions */
   opacity: 0;
@@ -102,9 +102,14 @@ body {
 
 .menu-liste>ul li>a {
   display: inline-block;
-  width: 110%;
   overflow: hidden;
   white-space: nowrap;
+}
+
+.menu-liste>ul li>a:hover,
+.menu-liste>ul form a:hover,
+.menu-connexion>ul form a:hover {
+  background-color: var(--couleur_fond);
 }
 
 .menu-connexion {
@@ -137,13 +142,11 @@ body {
   }
 
   .menu-haut {
-    background: var(--couleur_fond_titre);
-    wcolor: var(--couleur_texte);
+    background-color: var(--couleur_fond_titre);
   }
 }
 
 /********** Bandeau info **********/
-/* Placé ici pour ne pas ajouter un fichier spécifique */
 .bandeau-info {
   margin: 0 0.5%;
   border: 1px solid red;

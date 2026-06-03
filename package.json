@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "lint": "npx eslint *.js mobile/*.js mobile/src/*.js *.js leaflet/src/*.js leaflet/Gps.Compas/*.js",
-    "beautify": "js-beautify -s=2 vues/bandeau.css *.js* mobile/*.[chj]* mobile/src/*.[chj]* leaflet/src/*.[chj]* leaflet/Gps.Compas/*.[chj]*"
+    "beautify": "js-beautify -s=2 vues/bandeau.css vues/style_pages.css vues/style_forum.css *.js* mobile/*.[chj]* mobile/src/*.[chj]* leaflet/src/*.[chj]* leaflet/Gps.Compas/*.[chj]*"
   },
   "dependencies": {
     "eslint": "latest",
