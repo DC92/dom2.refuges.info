@@ -169,6 +169,10 @@ form {
   background-color: var(--couleur_fond_amplifiee);
 }
 
+form#cree_point {
+  padding-bottom: 1px;
+}
+
 form#form_point fieldset {
   border: thin solid transparent;
   /* pour les allergiques aux barrieres ;) */
@@ -180,6 +184,10 @@ input,
 textarea {
   color: var(--couleur_texte);
   background-color: var(--couleur_titre);
+}
+
+*[type=submit] {
+  cursor: pointer;
 }
 
 form#form_point .textarea {

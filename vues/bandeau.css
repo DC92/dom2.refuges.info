@@ -121,8 +121,16 @@ body {
   border-radius: 10px !important;
 }
 
+.icone-recherche form {
+  right: 50px;
+}
+
 .menu-connexion span span {
   vertical-align: super;
+}
+
+.menu-haut *[type=submit] {
+  cursor: pointer;
 }
 
 @media screen and (min-width: 700px) {
