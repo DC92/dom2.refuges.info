@@ -122,7 +122,7 @@ body {
 }
 
 .icone-recherche form {
-  right: 50px;
+  right: calc(100vw / 8);
 }
 
 .menu-connexion span span {
