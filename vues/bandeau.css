@@ -13,7 +13,7 @@ body {
   overflow-y: auto;
 }
 
-/* Styles modifié par le forum */
+/* Styles modifiés par le forum */
 .menu-haut {
   line-height: normal;
   font-family: Verdana, Helvetica, Arial, sans-serif !important;
@@ -133,27 +133,6 @@ body {
   cursor: pointer;
 }
 
-@media screen and (min-width: 700px) {
-  .menu-large {
-    display: none;
-  }
-}
-
-@media screen and (max-width: 700px) {
-  .menu-etroit {
-    display: none;
-  }
-
-  .menu-liste div,
-  .menu-connexion span {
-    color: var(--couleur_titre) !important;
-  }
-
-  .menu-haut {
-    background-color: var(--couleur_fond_titre);
-  }
-}
-
 /********** Bandeau info **********/
 .bandeau-info {
   margin: 0 0.5%;
@@ -172,4 +151,21 @@ body {
 
 .bandeau-info .edit-info {
   text-decoration: line-through;
+}
+
+/* Les deux styles d'affichage */
+@media screen and (min-width: 700px) {
+  .menu-etroit {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 699.99px) {
+  .menu-large {
+    display: none;
+  }
+
+  .menu-haut {
+    background-color: var(--couleur_fond_titre);
+  }
 }
