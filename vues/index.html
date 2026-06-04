@@ -1,49 +1,26 @@
-<style>
-/*@media (min-aspect-ratio: 1.6) {
-  .bandeau-haut,
-  .wiki-accueil {
-    width: 50%;
-    background-image: none;
-  }
-
-  #carte-accueil {
-    position: absolute;
-    top: 0;
-    right: 0;
-    height: 100%;
-    width: 50%;
-    margin: 0;
-  }
-
-  .logo-haut,
-  .recherche-haut,
-  .basdepage {
-    display: none;
-  }
-}*/
-</style>
-
 <div class="contenu">
-  <!-- PRESENTATION -->
-  <?=wiki_page_html("contenu_accueil")?>
-  <?=wiki_page_html("nouvelles_generales")?>
+  <!-- PRESENTATION   -->
 
-  <!-- CARTE -->
-  <div id="carte-accueil"></div>
+  <p style="margin-top:0">
+    <?=wiki_page_html("contenu_accueil")?>
+    <?=wiki_page_html("nouvelles_generales")?>
+  </p>
 
-    <!-- MASSIFS -->
-    <h4><?=$vue->stat->nbmassifs?> massifs</h4>
+  <!-- CARTE DES MASSIFS -->
+  <div class="tablo" style="padding-right:1em;">
+    <h4><?=$vue->stat->nbpoints?> points, <?=$vue->stat->nbmassifs?> massifs</h4>
+    <div class="carte" id="carte-accueil"></div>
+    <h5>Et encore...</h5>
     <ul class="liste-massifs">
-      <?php
-        if (isset($vue->zones_couvertes))
-          foreach ($vue->zones_couvertes AS $nom_zone => $lien) { ?>
-            <li>
-              <a href="<?=$lien?>"><?=$nom_zone?></a>
-            </li>
+      <?php if (isset($vue->zones_couvertes)) foreach ($vue->zones_couvertes AS $nom_zone => $lien) { ?>
+        <li>
+          <a href="<?=$lien?>"><?=$nom_zone?></a>
+        </li>
       <? } ?>
     </ul>
+  </div>
 
-    <!-- PHOTOS -->
+  <div class="tablo" style="float:none;">
     <h4><?=$vue->stat->nbphotos?> photos. Les dernières :</h4>
     <br/>
       <?php if (isset($vue->nouveaux_commentaires))
@@ -58,7 +35,6 @@
         } ?>
     <br/>
 
-    <!-- POINTS -->
     <h4><?=$vue->stat->nbpoints?> points dans la base. Les <?=$config_wri['defaut_max_ajouts_recents']?> derniers ajoutés :</h4>
     <ul>
       <?php if (isset($vue->nouveaux_points)) foreach ($vue->nouveaux_points as $nouveau_point) { ?>
@@ -84,7 +60,6 @@
     </ul>
     <br/>
 
-    <!-- COMMENTAIRES -->
     <h4><?=$vue->stat->nbcomm?> commentaires. Les <?=$config_wri['defaut_max_commentaires_recents']?> derniers :</h4>
     <ul>
       <?php foreach ($vue->nouveaux_commentaires as $nouveau_commentaire) { ?>
@@ -112,5 +87,6 @@
         </a>
       </li>
     </ul>
+    <br/>
+  </div>
 </div>
- 

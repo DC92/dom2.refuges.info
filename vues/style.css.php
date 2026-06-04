@@ -31,26 +31,26 @@ $debut_hiver = new DateTime("21 December");
 $debut_printemps = new DateTime("21 March");
 $date_maintenant = new DateTime();
 
-if ($date_maintenant >= $debut_printemps and $date_maintenant < $debut_automne) {
+if ($date_maintenant > $debut_hiver or $date_maintenant < $debut_printemps) {
+  $couleur_fond="f2f2f2";
+  $couleur_lien="006699";
+  $couleur_lien_clair="00aaff"; /* Pour mode sombre, on reste en dominante verte */
+  $couleur_decoration_titres="a6cee7";
+  $couleur_legende="eef";
+}
+if ($date_maintenant > $debut_printemps and $date_maintenant < $debut_automne) {
   $couleur_fond="f5fde8";
   $couleur_lien="5f8c11";
   $couleur_lien_clair="9ae31c";
   $couleur_decoration_titres="77dc63";
   $couleur_legende="d1f0d0";
 }
-elseif ($date_maintenant >= $debut_automne and $date_maintenant < $debut_hiver) {
+if ($date_maintenant > $debut_automne and $date_maintenant < $debut_hiver) {
   $couleur_fond="f6e8c2";
   $couleur_lien="cf5d32";
   $couleur_lien_clair="d36b45";
   $couleur_decoration_titres="bd742c";
   $couleur_legende="c1ac96";
-}
-else {
-  $couleur_fond="f2f2f2";
-  $couleur_lien="006699";
-  $couleur_lien_clair="00aaff"; /* Pour mode sombre, on reste en dominante verte */
-  $couleur_decoration_titres="a6cee7";
-  $couleur_legende="eef";
 }
 
 ?>
@@ -76,7 +76,6 @@ else {
     --couleur_lien: #<?=$couleur_lien_clair?>;
     --couleur_fond: #161210;
     --couleur_fond_amplifiee: #333;
-    --couleur_legende: #333;
   }
 }
 

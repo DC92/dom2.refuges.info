@@ -18,6 +18,7 @@ body {
   line-height: normal;
   font-family: Verdana, Helvetica, Arial, sans-serif !important;
   font-size: 16px !important;
+  color: white;
 }
 
 .menu-haut ul {
@@ -163,12 +164,18 @@ body {
   }
 }
 
-@media screen and (max-width: 699.99px) {
+@media screen and (max-width: 699.9px) {
   .menu-large {
     display: none;
   }
 
   .menu-haut {
     background-color: var(--couleur_fond_titre);
+  }
+}
+
+@media screen and (max-width: 399px) {
+  .icone-lien {
+    display: none;
   }
 }

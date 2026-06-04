@@ -46,30 +46,7 @@ a:hover {
 }
 
 /* Icones de la couleur du forum */
-.pagination li.active span,
-.pagination li a:hover,
-.global_unread:before,
-.global_unread_mine:before,
-.global_unread_locked:before,
-.global_unread_locked_mine:before,
-.announce_unread:before,
-.announce_unread_mine:before,
-.announce_unread_locked:before,
-.announce_unread_locked_mine:before,
-.forum_unread:before,
-.forum_unread_locked:before,
-.forum_unread_subforum:before,
-.sticky_unread:before,
-.sticky_unread_mine:before,
-.sticky_unread_locked:before,
-.sticky_unread_locked_mine:before,
-.pm_unread:before,
-.topic_unread:before,
-.topic_unread_mine:before,
-.topic_unread_hot:before,
-.topic_unread_hot_mine:before,
-.topic_unread_locked:before,
-.topic_unread_locked_mine:before {
+.pagination li.active span, .pagination li a:hover, .global_unread:before, .global_unread_mine:before, .global_unread_locked:before, .global_unread_locked_mine:before, .announce_unread:before, .announce_unread_mine:before, .announce_unread_locked:before, .announce_unread_locked_mine:before, .forum_unread:before, .forum_unread_locked:before, .forum_unread_subforum:before, .sticky_unread:before, .sticky_unread_mine:before, .sticky_unread_locked:before, .sticky_unread_locked_mine:before, .pm_unread:before, .topic_unread:before, .topic_unread_mine:before, .topic_unread_hot:before, .topic_unread_hot_mine:before, .topic_unread_locked:before, .topic_unread_locked_mine:before {
   background-color: var(--couleur_lien) !important;
 }
 
@@ -83,7 +60,7 @@ span[style="color: #000000;"] {
 #phpbb input,
 #phpbb textarea {
   color: var(--couleur_texte);
-  background-color: var(--couleur_titre);
+  background: var(--couleur_titre);
 }
 
 /* Masquages */
