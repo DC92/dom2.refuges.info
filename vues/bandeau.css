@@ -39,6 +39,9 @@ body {
   border: 2px solid var(--couleur_decoration_titres);
   background-color: var(--couleur_fond);
   padding: 0 4px;
+  /* Scroll individuel si ne tient pas dans la fenêtre */
+  max-height: calc(100vh - 33px);
+  overflow-y: auto;
   /* Position de départ pour les transitions */
   opacity: 0;
   /* Les controles de cartes leaflet sont z-index 1000 */
