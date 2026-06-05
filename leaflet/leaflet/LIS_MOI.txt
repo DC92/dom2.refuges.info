@@ -1,2 +1,2 @@
-https://leafletjs.com/download.html
-Leaflet 1.9.4
+https://github.com/Leaflet/Leaflet/releases/tag/v1.9.4
+Download leaflet.zip

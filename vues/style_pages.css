@@ -318,7 +318,7 @@ a:hover {
 /* La pages des massifs (accueil)                                   */
 /*==================================================================*/
 
-.tablo {
+wwwwwwwwwwwwwwwwwwww.tablo {
   /* div imite une table */
   display: table-cell;
   /* En dessous de 400 pixels, c'est trop tassé/pas lisible, en mettant ça, on force un affichage en dessous de la carte de l'accueil */
@@ -445,9 +445,17 @@ a:hover {
 /* Carte de l'accueil */
 #carte-accueil {
   margin-top: 5px;
-  width: 750px;
+  wwidth: min(100%, 750px);
   height: 600px;
 }
+
+@media screen and (max-width: 750px) {
+}
+  #carte-accueil {
+    wwidth: calc(100vw - 22px);
+    height: 90vw;
+    wwidth:500px;
+  }
 
 .accueil-switcher {
   float: right !important;
@@ -456,13 +464,6 @@ a:hover {
 
 .accueil-switcher:not(.myol-button-selected) button {
   opacity: 0.5;
-}
-
-@media screen and (max-width: 750px) {
-  #carte-accueil {
-    width: calc(100vw - 22px);
-    height: 90vw;
-  }
 }
 
 /* Carte NAV présentation mobile verticale */

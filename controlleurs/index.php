@@ -13,8 +13,14 @@ require_once ("polygone.php");
 $vue->titre = 'Carte et informations sur les refuges, cabanes et abris de montagne';
 $vue->stat = stat_site ();
 
-add_lib('leaflet.css.php', 'chemin_leaflet');
-add_lib('leaflet.js.php', 'chemin_leaflet');
+add_lib('leaflet/dist/leaflet.css', 'chemin_leaflet');
+add_lib('fullscreen/dist/leaflet.fullscreen.css', 'chemin_leaflet');
+add_lib('geocoder/Control.Geocoder.css', 'chemin_leaflet');
+add_lib('gps/dist/leaflet-gps.src.css', 'chemin_leaflet');
+add_lib('compas/leaflet-compass.src.css', 'chemin_leaflet');
+add_lib('markercluster/dist/MarkerCluster.css', 'chemin_leaflet');
+add_lib('markercluster/dist/MarkerCluster.Default.css', 'chemin_leaflet');
+add_lib('src/map.css', 'chemin_leaflet');
 
 // Préparation de la liste des photos et commentaires récent(e)s
 $conditions_nouveaux_commentaires = new stdclass();
