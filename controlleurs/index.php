@@ -14,13 +14,24 @@ $vue->titre = 'Carte et informations sur les refuges, cabanes et abris de montag
 $vue->stat = stat_site ();
 
 add_lib('leaflet/dist/leaflet.css', 'chemin_leaflet');
+add_lib('leaflet/dist/leaflet-src.js', 'chemin_leaflet');
 add_lib('fullscreen/dist/leaflet.fullscreen.css', 'chemin_leaflet');
+add_lib('fullscreen/dist/Leaflet.fullscreen.js', 'chemin_leaflet');
 add_lib('geocoder/Control.Geocoder.css', 'chemin_leaflet');
+add_lib('geocoder/Control.Geocoder.js', 'chemin_leaflet');
 add_lib('gps/dist/leaflet-gps.src.css', 'chemin_leaflet');
-add_lib('compas/leaflet-compass.src.css', 'chemin_leaflet');
+add_lib('gps/dist/leaflet-gps.src.js', 'chemin_leaflet');
+add_lib('Gps.Compas/leaflet-gps-compas.src.js', 'chemin_leaflet'); /*  Dom*/
+add_lib('compas/dist/leaflet-compass.src.css', 'chemin_leaflet');
+add_lib('compas/dist/leaflet-compass.src.js', 'chemin_leaflet');
 add_lib('markercluster/dist/MarkerCluster.css', 'chemin_leaflet');
 add_lib('markercluster/dist/MarkerCluster.Default.css', 'chemin_leaflet');
+add_lib('markercluster/dist/leaflet.markercluster-src.js', 'chemin_leaflet');
+add_lib('FeatureGroup.SubGroup/src/subgroup.js', 'chemin_leaflet');
 add_lib('src/map.css', 'chemin_leaflet');
+add_lib('src/tileLayers.js', 'chemin_leaflet');
+add_lib('src/vectorLayers.js', 'chemin_leaflet');
+add_lib('src/map.js', 'chemin_leaflet');
 
 // Préparation de la liste des photos et commentaires récent(e)s
 $conditions_nouveaux_commentaires = new stdclass();

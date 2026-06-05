@@ -1,3 +1,1 @@
-https://github.com/ghybs/Leaflet.FeatureGroup.SubGroup/releases/tag/v1.0.2
-
-De : https://stackoverflow.com/questions/35949424/leaflet-clustering-with-multiple-layers-use-markercluster-layersupport
+https://github.com/Leaflet/Leaflet.fullscreen/releases/tag/v1.0.2
