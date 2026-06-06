@@ -1,5 +1,6 @@
 .leaflet-tooltip {
-  top: -18px;
+  top: -12px;
+  left: 12px;
   padding: 4px;
   line-height: 12px;
   border-radius: 5px;

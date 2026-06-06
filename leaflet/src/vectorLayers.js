@@ -37,7 +37,7 @@ function wriPOILayer(serveurAPI, type) {
 
         layer.on({
           click: () => {
-            location.hash = feature.id;
+            window.location.href = '/point/' + feature.id;
           },
         });
       },
