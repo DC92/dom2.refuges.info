@@ -1,1 +1,0 @@
-https://github.com/stefanocudini/leaflet-compass/releases/tag/v1.5.6

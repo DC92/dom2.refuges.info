@@ -445,17 +445,9 @@ wwwwwwwwwwwwwwwwwwww.tablo {
 /* Carte de l'accueil */
 #carte-accueil {
   margin-top: 5px;
-  wwidth: min(100%, 750px);
   height: 600px;
+  height: 90vw;
 }
-
-@media screen and (max-width: 750px) {
-}
-  #carte-accueil {
-    wwidth: calc(100vw - 22px);
-    height: 90vw;
-    wwidth:500px;
-  }
 
 .accueil-switcher {
   float: right !important;
