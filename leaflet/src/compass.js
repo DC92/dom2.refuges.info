@@ -39,11 +39,18 @@ class GpsCompas extends L.Control.Gps {
       ...options,
     });
 
-    gpsMarker.rotateIcon = () => {
+    gpsMarker.rotateIcon = () => { // This must be an inline function
       gpsMarker._icon.style.transform =
         gpsMarker._icon.style.transform.match(/translate3d\([^)]+\)/u) +
         ' rotateZ(' + (45 - parseInt(this.heading, 10)) + 'deg)';
     }
+
+    // Prevents zoom from affecting the marker's direction.
+    gpsMarker._setPos = function(pos) { // This must be a function
+      L.Marker.prototype._setPos.call(this, pos);
+
+      this.rotateIcon();
+    };
 
     // Rotate the marker following the magnetic sensor
     window.addEventListener('deviceorientationabsolute', (evt) => {
@@ -57,12 +64,5 @@ class GpsCompas extends L.Control.Gps {
         this.rotateIcon();
       }
     });
-
-    // Prevents zoom from affecting the marker's direction.
-    gpsMarker._setPos = function(pos) { // This must be a function
-      L.Marker.prototype._setPos.call(this, pos);
-
-      this.rotateIcon();
-    };
   }
 };
