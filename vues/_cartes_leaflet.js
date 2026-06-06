@@ -1,4 +1,4 @@
-/* global L, GpsCompas, wriPOILayer, wriMassifsLayer */
+/* global L, MarkerCompass, wriPOILayer, wriMassifsLayer */
 
 /*******************
  * Couches tuilées *
@@ -31,7 +31,6 @@ function tileLayerIGN(url, paramsIGN, paramsLayer) {
     });
 }
 
-/* eslint-disable-next-line no-unused-vars */
 function tileLayersCollection(keys) {
   return {
     // Pour tests, à enlever à la fin
@@ -140,8 +139,8 @@ function initMap(mapId, serveurAPI, keys) {
     position: 'topleft',
   }).addTo(map);
 
-  //new L.Control.Gps({
-  new GpsCompas({
+  new L.Control.Gps({
+    marker: new MarkerCompass(),
     autoCenter: true,
   }).addTo(map);
 
