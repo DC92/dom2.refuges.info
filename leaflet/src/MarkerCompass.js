@@ -49,12 +49,15 @@ class MarkerCompass extends L.Marker {
   // Prevents zoom from affecting the marker's direction.
   _setPos(pos) {
     super._setPos(pos);
-    this.rotateIcon();
+
+    if (this.heading)
+      this.rotateIcon();
   }
 
+  // Add or replace the icon rotation style
   rotateIcon() {
     this._icon.style.transform =
-      this._icon.style.transform.match(/translate3d\([^)]+\)/u) +
+      this._icon.style.transform.replace(/rotateZ\([^)]+\)/u, '') +
       ' rotateZ(' + (45 - parseInt(this.heading, 10)) + 'deg)';
   }
 };

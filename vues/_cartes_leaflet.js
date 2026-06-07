@@ -241,5 +241,8 @@ function initMap(mapId, serveurAPI, keys) {
   // Lance le chargement de la carte
   map.setView([permalink[1], permalink[2]], permalink[0]);
 
+  // Prevent Leaflet on Chome from focusing the map when using a Control
+  map.getContainer().focus();
+
   return map;
 }
