@@ -24,9 +24,7 @@ function tileLayerIGN(url, paramsIGN, paramsLayer) {
         [-75, -180],
         [81, 180]
       ],
-      attribution: '<a target="_blank" href="https://www.geoportail.gouv.fr/">IGN Geoportail</a>',
-      maxNativeZoom: 19,
-      maxZoom: 21,
+      attribution: '<a href="https://www.geoportail.gouv.fr/">IGN Geoportail</a>',
       ...paramsLayer,
     });
 }
@@ -39,48 +37,41 @@ function tileLayersCollection(keys) {
     // Cartes lbres
     OpenHikingMap: L.tileLayer(
       'https://tile.openmaps.fr/openhikingmap/{z}/{x}/{y}.png', {
-        maxNativeZoom: 18,
+        maxZoom: 18,
         edgeBufferTiles: 3,
-        attribution: '<a href="https://wiki.openstreetmap.org/wiki/OpenHikingMap">© OpenHikingMap</a>|' +
-          '<a href="https://openmaps.fr/donate">❤️ Donation</a>|' +
-          '<a href="https://www.openstreetmap.org/copyright">© OpenStreetMap</a>|' +
-          '<a target="_blank" href="https://wiki.openstreetmap.org/wiki/OpenHikingMap#Map_Legend">Légende</a>',
+        attribution: '<a href="https://wiki.openstreetmap.org/wiki/OpenHikingMap"> OpenHikingMap</a> | ' +
+          '<a href="https://openmaps.fr/map-legend/openhikingmap-legend.html">Légende</a>',
       }),
     OpenStreetMap: L.tileLayer(
       'https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxNativeZoom: 19, //TODO revoir zoomS
-        attribution: '&copy;<a target="_blank" href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>|' +
-          '<a target="_blank" href="https://www.openstreetmap.org/panes/legend">Légende</a>'
+        maxZoom: 19,
+        attribution: '<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | ' +
+          '<a href="https://www.openstreetmap.org/panes/legend">Légende</a>'
       }),
     OpenTopoMap: L.tileLayer(
       'https://tile.openmaps.fr/opentopomap/{z}/{x}/{y}.png', {
-        maxNativeZoom: 19,
-        attribution: '<a href="https://github.com/sletuffe/OpenTopoMap">&copy; OTM-R</a> ' +
-          '<a href="https://openmaps.fr/donate">❤️ Donation</a> ' +
-          '<a href="https://www.openstreetmap.org/copyright">&copy; OpenStreetMap</a> ' +
-          '<a target="_blank" href="https://openmaps.fr/map-legend/opentopomap-legend.html">Légende</a>',
+        maxZoom: 18,
+        attribution: '<a href="https://github.com/sletuffe/OpenTopoMap">OTM-R</a> | ' +
+          '<a href="https://openmaps.fr/map-legend/opentopomap-legend.html">Légende</a>',
       }),
-    'ISO-Maps Topo': L.tileLayer(
+    "ISO-maps": L.tileLayer(
       'https://api.iso-maps.com/v1/tiles/{z}/{x}/{y}.webp?api_key=' + keys.isomaps, {
-        maxZoom: 20,
-        attribution: '©<a target="_blank" href="https://www.iso-maps.com/">Isomaps</a> | ' +
-          '©<a target="_blank" href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        maxZoom: 16,
+        attribution: '<a href="https://www.iso-maps.com/">Isomaps</a>',
       }),
 
     // Thunderforest
     Outdoors: L.tileLayer(
       'https://api.thunderforest.com/outdoors/{z}/{x}/{y}{r}.png?apikey=' + keys.thunderforest, {
-        attribution: '&copy; <a href="https://www.thunderforest.com/">Thunderforest</a>, ' +
-          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        maxNativeZoom: 22,
+        attribution: ' <a href="https://www.thunderforest.com/">Thunderforest</a> |' +
+          ' <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        maxZoom: 22,
       }),
 
     TOP25: tileLayerIGN(
       'https://data.geopf.fr/private/wmts?', {
         layer: 'GEOGRAPHICALGRIDSYSTEMS.MAPS',
         apikey: 'ign_scan_ws',
-      }, {
-        maxNativeZoom: 18,
       }),
     'IGN plan': tileLayerIGN(
       'https://data.geopf.fr/wmts?', {
@@ -92,6 +83,9 @@ function tileLayersCollection(keys) {
       'https://wms.geo.admin.ch/?', {
         layers: 'ch.swisstopo.pixelkarte-farbe',
         format: 'image/jpeg',
+        attribution: ' <a href="https://map.geo.admin.ch/">SwissTopo</a> | ' +
+          '<a href="https://prod-swishop-s3.s3.eu-central-1.amazonaws.com/2022-04/symbols_fr_0.pdf">Légende</a>',
+        maxZoom: 18,
       }),
     Espagne: tileLayerIGN(
       'https://www.ign.es/wmts/mapa-raster?', {
@@ -99,19 +93,19 @@ function tileLayersCollection(keys) {
         style: 'default',
         tilematrixset: 'GoogleMapsCompatible',
       }, {
-        attribution: '&Copy; <a target="_blank" href="https://www.ign.es/">Instituto Geográfico Nacional</a> | '
+        attribution: ' <a href="https://www.ign.es/">Instituto Geográfico Nacional</a>'
       }),
 
     'Photo Maxar': L.tileLayer.wms(
       'https://api.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}@2x.webp?access_token=' + keys.mapbox, {
-        maxZoom: 20,
-        attribution: '<a href="https://www.mapbox.com/">&copy; Mapbox</a>',
+        maxZoom: 22,
+        attribution: '<a href="https://www.mapbox.com/"> Mapbox</a>',
       }),
     'Photo Google': L.tileLayer(
       'https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
         subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
         maxZoom: 22,
-        attribution: '<a href="https://www.google.com/maps">&copy; Google</a>',
+        attribution: '<a href="https://www.google.com/maps"> Google</a>',
       }),
   };
 };
@@ -128,6 +122,11 @@ function initMap(mapId, serveurAPI, keys) {
    ******************************/
   const map = L.map(mapId),
     permalink = localStorage.permalink.split('/');
+
+  // Prevent Leaflet on Chome from focusing the map when using a Control
+  map.getContainer().focus({
+    preventScroll: true,
+  });
 
   new L.Control.Fullscreen().addTo(map);
 
@@ -243,9 +242,6 @@ function initMap(mapId, serveurAPI, keys) {
 
   // Lance le chargement de la carte
   map.setView([permalink[1], permalink[2]], permalink[0]);
-
-  // Prevent Leaflet on Chome from focusing the map when using a Control
-  map.getContainer().focus();
 
   return map;
 }
