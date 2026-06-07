@@ -141,8 +141,11 @@ function initMap(mapId, serveurAPI, keys) {
 
   new L.Control.Gps({
     marker: new MarkerCompass(),
-    autoCenter: true,
   }).addTo(map);
+
+  map.on('locationfound', (evt) => {
+    map.setView(evt.latlng, map.getZoom());
+  });
 
   /*******************
    * Couches tuilées *
