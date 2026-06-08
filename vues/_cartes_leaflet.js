@@ -38,7 +38,7 @@ function tileLayersCollection(keys) {
     OpenHikingMap: L.tileLayer(
       'https://tile.openmaps.fr/openhikingmap/{z}/{x}/{y}.png', {
         maxZoom: 18,
-        edgeBufferTiles: 3,
+        //TODO edgeBufferTiles: 3,
         attribution: '<a href="https://wiki.openstreetmap.org/wiki/OpenHikingMap"> OpenHikingMap</a> | ' +
           '<a href="https://openmaps.fr/map-legend/openhikingmap-legend.html">Légende</a>',
       }),
@@ -54,19 +54,26 @@ function tileLayersCollection(keys) {
         attribution: '<a href="https://github.com/sletuffe/OpenTopoMap">OTM-R</a> | ' +
           '<a href="https://openmaps.fr/map-legend/opentopomap-legend.html">Légende</a>',
       }),
-    "ISO-maps": L.tileLayer(
+    'ISO-maps': L.tileLayer(
       'https://api.iso-maps.com/v1/tiles/{z}/{x}/{y}.webp?api_key=' + keys.isomaps, {
         maxZoom: 16,
         attribution: '<a href="https://www.iso-maps.com/">Isomaps</a>',
       }),
 
+    //TODO https://leaflet-extras.github.io/leaflet-providers/preview/
     // Thunderforest
     Outdoors: L.tileLayer(
       'https://api.thunderforest.com/outdoors/{z}/{x}/{y}{r}.png?apikey=' + keys.thunderforest, {
-        attribution: ' <a href="https://www.thunderforest.com/">Thunderforest</a> |' +
-          ' <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
         maxZoom: 22,
+        attribution: '<a href="https://www.thunderforest.com/">Thunderforest</a> | ' +
+          '<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
       }),
+    /*OpenCycleMap: L.tileLayer(
+      'https://api.thunderforest.com/cycle/{z}/{x}/{y}{r}.png?apikey=' + keys.thunderforest, {
+        maxZoom: 22,
+        attribution: '<a href="https://www.thunderforest.com/">Thunderforest</a> | ' +
+          '<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      }),*/
 
     TOP25: tileLayerIGN(
       'https://data.geopf.fr/private/wmts?', {
@@ -78,12 +85,22 @@ function tileLayersCollection(keys) {
         layer: 'GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2',
         format: 'image/png',
       }),
+    /*'IGN photo': tileLayerIGN(
+      'https://data.geopf.fr/wmts?', {
+        layer: 'ORTHOIMAGERY.ORTHOPHOTOS',
+      }),
+    Cadastre: tileLayerIGN(
+      'https://data.geopf.fr/wmts?', {
+        layer: 'CADASTRALPARCELS.PARCELLAIRE_EXPRESS',
+        style: 'PCI vecteur',
+        format: 'image/png',
+      // }),*/
 
     SwissTopo: L.tileLayer.wms(
       'https://wms.geo.admin.ch/?', {
         layers: 'ch.swisstopo.pixelkarte-farbe',
         format: 'image/jpeg',
-        attribution: ' <a href="https://map.geo.admin.ch/">SwissTopo</a> | ' +
+        attribution: '<a href="https://map.geo.admin.ch/">SwissTopo</a> | ' +
           '<a href="https://prod-swishop-s3.s3.eu-central-1.amazonaws.com/2022-04/symbols_fr_0.pdf">Légende</a>',
         maxZoom: 18,
       }),
@@ -93,8 +110,10 @@ function tileLayersCollection(keys) {
         style: 'default',
         tilematrixset: 'GoogleMapsCompatible',
       }, {
-        attribution: ' <a href="https://www.ign.es/">Instituto Geográfico Nacional</a>'
+        attribution: '<a href="https://www.ign.es/">Instituto Geográfico Nacional</a>'
       }),
+
+    //TODO Autriche
 
     'Photo Maxar': L.tileLayer.wms(
       'https://api.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}@2x.webp?access_token=' + keys.mapbox, {
@@ -107,6 +126,8 @@ function tileLayersCollection(keys) {
         maxZoom: 22,
         attribution: '<a href="https://www.google.com/maps"> Google</a>',
       }),
+
+    //TODO https://github.com/plepe/overpass-frontend/blob/master/example-bbox.js
   };
 };
 
