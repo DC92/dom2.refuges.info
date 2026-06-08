@@ -155,6 +155,10 @@ function initMap(mapId, serveurAPI, keys) {
     imperial: false,
   }).addTo(map);
 
+  L.control.coordinates({
+    position: 'bottomleft',
+  }).addTo(map);
+
   new L.Control.Geocoder({
     position: 'topleft',
   }).addTo(map);

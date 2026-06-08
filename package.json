@@ -4,8 +4,8 @@
   "author": "Dominique Cavailhez",
   "type": "module",
   "scripts": {
-    "lint": "npx eslint *.js vues/_cartes*.js *.js leaflet/src/*.js",
-    "beautify": "js-beautify -s=2 vues/bandeau.css vues/_cartes*.js *.js* leaflet/src/*.[chj]*"
+    "lint": "npx eslint *.js leaflet/src/*.js *.js vues/_cartes*.js",
+    "beautify": "js-beautify -s=2 *.js* leaflet/src/*.[chj]* vues/bandeau.css vues/_cartes*.js"
   },
   "dependencies": {
     "eslint": "latest",
