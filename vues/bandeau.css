@@ -120,6 +120,10 @@ body {
   font-size: 24px;
 }
 
+.icone-recherche form {
+  right: 50px;
+}
+
 .menu-connexion {
   float: right;
 }
@@ -127,10 +131,6 @@ body {
 .menu-connexion ul {
   right: 0;
   border-radius: 10px !important;
-}
-
-.icone-recherche form {
-  right: calc(100vw / 8);
 }
 
 .menu-connexion span span {
