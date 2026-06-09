@@ -155,6 +155,7 @@ function initMap(mapId, serveurAPI, keys) {
     imperial: false,
   }).addTo(map);
 
+  //TODO Effacer zone coordonnées quand pas de coordonnées
   L.control.coordinates({
     position: 'bottomleft',
   }).addTo(map);

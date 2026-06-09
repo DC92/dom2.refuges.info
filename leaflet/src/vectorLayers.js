@@ -12,6 +12,7 @@
   geoJson sa représentation en string
 */
 
+//TODO Délai cache api / depuis
 // Points d'intérêt refuges.info
 /* eslint-disable-next-line no-unused-vars */
 function wriPOILayer(serveurAPI, type) {
