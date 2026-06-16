@@ -1,34 +1,8 @@
-/* global L, MarkerCompass, wriPOILayer, wriMassifsLayer */
+/* global L, MarkerCompass, tileLayerIGN, wriPOILayer, wriPolygonLayer */
 
 /*******************
  * Couches tuilées *
  *******************/
-// Remplace avantageusement 663 Ko de lib IGN
-function tileLayerIGN(url, paramsIGN, paramsLayer) {
-  const params = {
-    request: 'GetTile',
-    service: 'WMTS',
-    version: '1.0.0',
-    tilematrixset: 'PM',
-    style: 'normal',
-    format: 'image/jpeg',
-    tilematrix: '{z}',
-    tilerow: '{y}',
-    tilecol: '{x}',
-    ...paramsIGN,
-  };
-
-  return L.tileLayer(
-    url + Object.entries(params).map(e => e.join('=')).join('&'), {
-      bounds: [
-        [-75, -180],
-        [81, 180]
-      ],
-      attribution: '<a href="https://www.geoportail.gouv.fr/">IGN Geoportail</a>',
-      ...paramsLayer,
-    });
-}
-
 function tileLayersCollection(keys) {
   return {
     // Pour tests, à enlever à la fin
@@ -170,14 +144,6 @@ function initMap(mapId, serveurAPI, keys) {
     map.setView(evt.latlng, map.getZoom());
   });
 
-  new L.OverPassLayer({
-    'query': '(nwr["natural"="spring"]({{bbox}});nwr["amenity"="drinking_water"]({{bbox}}););out center;',
-    markerIcon: L.icon({
-      iconUrl: serveurAPI + '/images/icones/pointdeau.svg',
-    }),
-    minZoomIndicatorEnabled: false,
-  }).addTo(map);
-
   /*******************
    * Couches tuilées *
    *******************/
@@ -189,10 +155,7 @@ function initMap(mapId, serveurAPI, keys) {
   /***********************
    * Couches vectorielle *
    ***********************/
-  const vectorLayers = {
-      'Massifs': wriMassifsLayer(serveurAPI),
-    },
-    clusteredOverlays = {
+  const clusteredOverlays = {
       'Cabane non gardée': 7,
       'Refuge gardé': 10,
       'Gîte d\'étape': 9,
@@ -201,6 +164,7 @@ function initMap(mapId, serveurAPI, keys) {
       'Passage délicat': 3,
       'Bâtiment en montagne': 28,
     },
+    vectorLayers = {},
     memCheckedLayers = typeof localStorage.checkedLayers === 'string' ?
     localStorage.checkedLayers.split(',') : ['Cabane non gardée', 'Refuge gardé', 'Gîte d\'étape'], // Par défaut
 
@@ -212,6 +176,18 @@ function initMap(mapId, serveurAPI, keys) {
     L.featureGroup.subGroup(vectorCluster).addLayer(
       wriPOILayer(serveurAPI, typeId)
     );
+
+  vectorLayers.OSM = new L.OverPassLayer({
+    'query': '(nwr["natural"="spring"]({{bbox}});nwr["amenity"="drinking_water"]({{bbox}}););out center;',
+    markerIcon: L.icon({
+      iconUrl: serveurAPI + '/images/icones/pointdeau.svg',
+    }),
+    minZoom: 12, //TODO BUG display layer only when zoom < 12
+    minZoomIndicatorEnabled: false,
+  });
+
+  vectorLayers.Zones = wriPolygonLayer(serveurAPI, 11);
+  vectorLayers.Massifs = wriPolygonLayer(serveurAPI, 1);
 
   /******************
    * Layer switcher *
