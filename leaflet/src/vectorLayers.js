@@ -23,8 +23,7 @@ function wriPOILayer(serveurAPI, type) {
         L.marker(latlng, {
           icon: L.icon({
             iconUrl: serveurAPI + '/images/icones/' + feature.properties.type.icone + '.svg',
-            size: 24,
-          }),
+           }),
         }),
 
       onEachFeature: (feature, layer) => {

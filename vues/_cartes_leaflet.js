@@ -126,8 +126,6 @@ function tileLayersCollection(keys) {
         maxZoom: 22,
         attribution: '<a href="https://www.google.com/maps"> Google</a>',
       }),
-
-    //TODO https://github.com/plepe/overpass-frontend/blob/master/example-bbox.js
   };
 };
 
@@ -171,6 +169,14 @@ function initMap(mapId, serveurAPI, keys) {
   map.on('locationfound', (evt) => {
     map.setView(evt.latlng, map.getZoom());
   });
+
+  new L.OverPassLayer({
+    'query': '(nwr["natural"="spring"]({{bbox}});nwr["amenity"="drinking_water"]({{bbox}}););out center;',
+    markerIcon: L.icon({
+      iconUrl: serveurAPI + '/images/icones/pointdeau.svg',
+    }),
+    minZoomIndicatorEnabled: false,
+  }).addTo(map);
 
   /*******************
    * Couches tuilées *
