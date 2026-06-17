@@ -127,7 +127,6 @@ function initMap(mapId, serveurAPI, keys) {
     imperial: false,
   }).addTo(map);
 
-  //TODO Effacer zone coordonnées quand pas de coordonnées
   L.control.coordinates({
     position: 'bottomleft',
   }).addTo(map);
@@ -141,7 +140,7 @@ function initMap(mapId, serveurAPI, keys) {
   }).addTo(map);
 
   map.on('locationfound', (evt) => {
-    map.setView(evt.latlng, map.getZoom());
+    map.setView(evt.latlng, Math.max(15, map.getZoom()));
   });
 
   /*******************
@@ -181,6 +180,7 @@ function initMap(mapId, serveurAPI, keys) {
   vectorLayers.Massifs = wriPolygonLayer(serveurAPI, 1);
 
   // Pour plus tard, les couches OSM
+  /*
   vectorLayers.EauOSM = new L.OverPassLayer({
     'query': '(nwr["natural"="spring"]({{bbox}});nwr["amenity"="drinking_water"]({{bbox}}););out center;',
     markerIcon: L.icon({
@@ -207,6 +207,7 @@ function initMap(mapId, serveurAPI, keys) {
     minZoom: 12,
     minZoomIndicatorEnabled: false,
   });
+  */
 
   /******************
    * Layer switcher *

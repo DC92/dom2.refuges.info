@@ -1,3 +1,4 @@
+/* Etiquettes icones et polygones */
 .leaflet-tooltip {
   top: -8px;
   left: 12px;
@@ -21,5 +22,10 @@
 }
 
 .leaflet-popup-content>div>a {
+  display: none;
+}
+
+/* Inhibe l'affichage du pavé coordonnées quand il n'y a rien dedans */
+.leaflet-control-coordinates:has(span:empty) {
   display: none;
 }
