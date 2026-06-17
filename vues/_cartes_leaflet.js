@@ -177,7 +177,11 @@ function initMap(mapId, serveurAPI, keys) {
       wriPOILayer(serveurAPI, typeId)
     );
 
-  vectorLayers.OSM = new L.OverPassLayer({
+  vectorLayers.Zones = wriPolygonLayer(serveurAPI, 11);
+  vectorLayers.Massifs = wriPolygonLayer(serveurAPI, 1);
+
+  // Pour plus tard, les couches OSM
+  vectorLayers.EauOSM = new L.OverPassLayer({
     'query': '(nwr["natural"="spring"]({{bbox}});nwr["amenity"="drinking_water"]({{bbox}}););out center;',
     markerIcon: L.icon({
       iconUrl: serveurAPI + '/images/icones/pointdeau.svg',
@@ -186,8 +190,23 @@ function initMap(mapId, serveurAPI, keys) {
     minZoomIndicatorEnabled: false,
   });
 
-  vectorLayers.Zones = wriPolygonLayer(serveurAPI, 11);
-  vectorLayers.Massifs = wriPolygonLayer(serveurAPI, 1);
+  vectorLayers.ParkOSM = new L.OverPassLayer({
+    'query': '(nwr["amenity"="parking"]["access"!="private"]({{bbox}}););out center;',
+    markerIcon: L.icon({
+      iconUrl: serveurAPI + '/images/icones/parking.svg',
+    }),
+    minZoom: 12,
+    minZoomIndicatorEnabled: false,
+  });
+
+  vectorLayers.BusOSM = new L.OverPassLayer({
+    'query': '(nwr["highway"="bus_stop"]({{bbox}}););out center;',
+    markerIcon: L.icon({
+      iconUrl: serveurAPI + '/images/icones/bus.svg',
+    }),
+    minZoom: 12,
+    minZoomIndicatorEnabled: false,
+  });
 
   /******************
    * Layer switcher *
