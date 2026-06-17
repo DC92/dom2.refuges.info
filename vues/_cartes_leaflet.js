@@ -176,7 +176,7 @@ function initMap(mapId, serveurAPI, keys) {
       wriPOILayer(serveurAPI, typeId)
     );
 
-  vectorLayers.Zones = wriPolygonLayer(serveurAPI, 11);
+  vectorLayers['Régions'] = wriPolygonLayer(serveurAPI, 11);
   vectorLayers.Massifs = wriPolygonLayer(serveurAPI, 1);
 
   // Pour plus tard, les couches OSM
