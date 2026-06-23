@@ -318,7 +318,7 @@ a:hover {
 /* La pages des massifs (accueil)                                   */
 /*==================================================================*/
 
-wwwwwwwwwwwwwwwwwwww.tablo {
+.tablo {
   /* div imite une table */
   display: table-cell;
   /* En dessous de 400 pixels, c'est trop tassé/pas lisible, en mettant ça, on force un affichage en dessous de la carte de l'accueil */
@@ -445,10 +445,8 @@ wwwwwwwwwwwwwwwwwwww.tablo {
 /* Carte de l'accueil */
 #carte-accueil {
   margin-top: 5px;
-  /* Ne pas spécifier de width: permet de cadrer à la place disponible en tenant compte de l'ascenseur */
-  max-width: 700px;
-  max-height: 90vh; /* Evite d'avoir une carte recouvrant l'écran et empêchant de récupérer le scrool */
-  aspect-ratio: 4/3;
+  width: 750px;
+  height: 600px;
 }
 
 .accueil-switcher {
@@ -458,6 +456,13 @@ wwwwwwwwwwwwwwwwwwww.tablo {
 
 .accueil-switcher:not(.myol-button-selected) button {
   opacity: 0.5;
+}
+
+@media screen and (max-width: 750px) {
+  #carte-accueil {
+    width: calc(100vw - 22px);
+    height: 90vw;
+  }
 }
 
 /* Carte NAV présentation mobile verticale */
