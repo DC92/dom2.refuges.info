@@ -1,270 +1,88 @@
-<style>
-  #point-titre::after,
-  #accueil-point-commentaires"::before {
-    clear: both;
-  }
+<div class="contenu">
+  <!-- PRESENTATION   -->
 
-  #accueil-intro,
-  #accueil-stats,
-  #accueil-massifs,
-  #accueil-photos,
-  #accueil-points {
-    www.display: none;
-  }
+  <p>
+    <?=wiki_page_html("contenu_accueil")?>
+    <?=wiki_page_html("nouvelles_generales")?>
+  </p>
 
-  #accueil-point-titre,
-  #accueil-point-infos,
-  #accueil-point-commentaires {
-    display: none;
-  }
-  
-  #accueil-carte {
-    margin-top: 5px;
-    max-width: 700px; /* Ne pas spécifier de width permet de cadrer à la place disponible en tenant compte de l'ascenseur */
-    max-height: 90vh; /* Evite d'avoir une carte recouvrant l'écran et empêchant de récupérer le scrool */
-    aspect-ratio: 4/3; /* La carte prendra le meilleur des précédents */
-  }
+  <div class="tablo">
+    <h4><?=$vue->stat->nbpoints?> points, <?=$vue->stat->nbmassifs?> massifs</h4>
+    <div id="carte-accueil" class="carte"></div>
 
-  www#scrolable>* {
-    border: 2px dashed yellow;
-    margin: 5px;
-  }
-</style>
+    <h5>Et encore...</h5>
+    <ul class="liste-massifs">
+      <?php if (isset($vue->zones_couvertes)) foreach ($vue->zones_couvertes AS $nom_zone => $lien) { ?>
+        <li>
+          <a href="<?=$lien?>"><?=$nom_zone?></a>
+        </li>
+      <? } ?>
+    </ul>
+  </div>
 
-<p id="accueil-intro">
-  <?=wiki_page_html("contenu_accueil")?>
-  <?=wiki_page_html("nouvelles_generales")?>
-</p>
+  <div class="tablo">
+    <h4><?=$vue->stat->nbphotos?> photos. Les dernières :</h4>
+    <?php if (isset($vue->nouveaux_commentaires))
+      foreach ($vue->nouveaux_commentaires as $nouveau_commentaire) {
+        if (isset ($nouveau_commentaire->photo_existe) &&
+          isset ($nouveau_commentaire->lien_photo)) { ?>
+          <a href="<?=lien_point($nouveau_commentaire,true)?>#C<?=$nouveau_commentaire->id_commentaire?>"
+            title="<?=$nouveau_commentaire->nom?>">
+            <img alt="photo" src="<?=$nouveau_commentaire->lien_photo['vignette']?>">
+          </a>
+        <? }
+      } ?>
 
-<h1 id="accueil-point-titre">
-  Source Éléonore (758m), <a href="/wiki/fiche-point-d-eau">point d'eau</a>
-  <strong>(Débit intermittent)</strong>
-</h1>
-
-<h4 id="accueil-stats"><?=$vue->stat->nbpoints?> points, <?=$vue->stat->nbmassifs?> massifs</h4>
-
-<div id="accueil-carte" class="carte"></div>
-
-<div id="accueil-massifs">
-  <h5>Et encore...</h5>
-
-  <ul class="liste-massifs">
-    <?php if (isset($vue->zones_couvertes)) foreach ($vue->zones_couvertes AS $nom_zone => $lien) { ?>
+    <h4><?=$vue->stat->nbpoints?> points dans la base. Les <?=$config_wri['defaut_max_ajouts_recents']?> derniers ajoutés :</h4>
+    <ul>
+      <?php if (isset($vue->nouveaux_points)) foreach ($vue->nouveaux_points as $nouveau_point) { ?>
+        <li>
+          <b><?=date("d/m/y",$nouveau_point->date_creation_timestamp)?></b>
+          &nbsp;Ajout <?=$nouveau_point->article_partitif_point_type?> <?=$nouveau_point->nom_type?>
+          <?php if ($nouveau_point->nom_createur!="") {
+            if ($nouveau_point->id_createur==0) { ?>
+              par <?=$nouveau_point->nom_createur?>
+            <?php } else { ?>
+              par <a href="<?=$config_wri['fiche_utilisateur'].$nouveau_point->id_createur?>"><?=$nouveau_point->nom_createur?></a>
+            <? } ?>
+          <? } ?>
+            : <a href="<?=lien_point($nouveau_point,true)?>"><?=mb_ucfirst($nouveau_point->nom)?></a>
+        </li>
+      <? } ?>
       <li>
-        <a href="<?=$lien?>"><?=$nom_zone?></a>
-      </li>
-    <? } ?>
-  </ul>
-</div>
-
-<div id="accueil-photos">
-  <h4><?=$vue->stat->nbphotos?> photos. Les dernières :</h4>
-
-  <?php if (isset($vue->nouveaux_commentaires))
-    foreach ($vue->nouveaux_commentaires as $nouveau_commentaire) {
-      if (isset ($nouveau_commentaire->photo_existe) &&
-        isset ($nouveau_commentaire->lien_photo)) { ?>
-        <a href="<?=lien_point($nouveau_commentaire,true)?>#C<?=$nouveau_commentaire->id_commentaire?>"
-          title="<?=$nouveau_commentaire->nom?>">
-          <img alt="photo" src="<?=$nouveau_commentaire->lien_photo['vignette']?>">
+        <a href="/nouvelles/?nombre=<?=$config_wri['defaut_nombre_nouvelles_page_nouvelles']?>&amp;quoi=points"
+          title="Voir les <?=$config_wri['defaut_nombre_nouvelles_page_nouvelles']?> derniers points ajoutés sur le site">
+          <b>Plus...</b>
         </a>
-      <? }
-    } ?>
-</div>
-
-<div id="accueil-points">
-  <h4>
-    <?=$vue->stat->nbpoints?> points dans la base.
-    Les <?=$config_wri['defaut_max_ajouts_recents']?> derniers ajoutés :
-  </h4>
-
-  <ul>
-    <?php if (isset($vue->nouveaux_points)) foreach ($vue->nouveaux_points as $nouveau_point) { ?>
-      <li>
-        <b><?=date("d/m/y",$nouveau_point->date_creation_timestamp)?></b>
-        &nbsp;Ajout <?=$nouveau_point->article_partitif_point_type?> <?=$nouveau_point->nom_type?>
-        <?php if ($nouveau_point->nom_createur!="") {
-          if ($nouveau_point->id_createur==0) { ?>
-            par <?=$nouveau_point->nom_createur?>
-          <?php } else { ?>
-            par <a href="<?=$config_wri['fiche_utilisateur'].$nouveau_point->id_createur?>"><?=$nouveau_point->nom_createur?></a>
-          <? } ?>
-        <? } ?>
-        : <a href="<?=lien_point($nouveau_point,true)?>"><?=mb_ucfirst($nouveau_point->nom)?></a>
       </li>
-    <? } ?>
-    <li>
-      <a href="/nouvelles/?nombre=<?=$config_wri['defaut_nombre_nouvelles_page_nouvelles']?>&amp;quoi=points"
-        title="Voir les <?=$config_wri['defaut_nombre_nouvelles_page_nouvelles']?> derniers points ajoutés sur le site">
-        <b>Plus...</b>
-      </a>
-    </li>
-  </ul>
-</div>
+    </ul>
 
-<dl id="accueil-point-infos" class="liste-wri">
-  <dt>Auprès de qui se renseigner / accessibilité: <a class="onhover" href="/wiki/informations_proprietaires"><i><span>Vous êtes le gestionnaire ?</span><sup>?</sup></i></a></dt>
-  <dd></dd>
-  <!--============================================ ACCÈS ============================================-->
-  <dt style="clear: left;">Accès:</dt>
-  <dd>Franchement, vous voulez y aller ?</dd>
-  <!--========================================== REMARQUES ==========================================-->
-  <dt>Remarques:</dt>
-  <dd>Que dire ? Tout d'abord que la forêt séparant les communes de Bévenais et Longechenal est malade, d'où des coupes rases prenant malheureusement de plus en plus d'ampleur... Et que parmi ces ilots de désespoir, se dresse encore fièrement (du moins en mars 2026) une bien solitaire cabane en bois. <br>
-  Les forestiers n'ont pas voulu la détruire par sentimentalisme ou en accord avec les chasseurs et promeneurs locaux ? Mystère... Mais si elle a toujours ses 4 murs, sa porte et surtout son toit, l'isolation laisse franchement à désirer avec des fenêtres sans vitres dont les morceaux sont bien visibles dans les environs proches.<br>
-  L'intérieur est acceptable si l'on n'est pas trop regardant sur la saleté, avec une table et deux bancs en bon état. Et quid du poêle présent ?<br>
-  Bref, longue vie à cette cabane en ce milieu hostile, même si les plus réalistes diront que c'est un vœu pieux.<br>
-  PS : la dénomination de cette cabane sur cette fiche est purement personnelle... vu l'ambiance.</dd>
-  <!--================================= INFORMATIONS COMPLÉMENTAIRES ================================-->
-  <dt style="clear: left;">Informations complémentaires:</dt>
-  <dd>Places prévues pour dormir: <b>0</b></dd>
-  <dd>Places sur Matelas: <b>0</b></dd>
-  <dd>Couvertures: <b>Non</b></dd>
-  <dd>Manque un mur: <b>Non</b></dd>
-  <dd>Eau à moins de 100m: <b>Non</b></dd>
-  <dd>Latrines: <b>Non</b></dd>
-  <dd>Poêle: <b>Oui</b></dd>
-  <dd>Cheminée: <b>Non</b></dd>
-  <dd>Forêt à moins de 100m: <b>Oui</b></dd>
-  <!--===================================== POINTS À PROXIMITÉ ======================================-->
-  <!--================================= Si message d'information à afficher =======================================-->
-  <!--========================================= Informations technique sur la fiche =========================================-->
-  <dt>Coordonnées:</dt>
-  <dd class="noprint">
-  Provenance:
-  <strong>Coordonnées approximatives</strong>
-  </dd>
-  <dd>
-  <input type="hidden" id="cadre-json" value="{&quot;type&quot;:&quot;Point&quot;,&quot;coordinates&quot;:[5.4048,45.412]}">
-  <span id="cadre-string">Lon: 5.4048, Lat: 45.412</span>
-  <select id="cadre-select">
-  <option value="dec" selected="selected">Degrés décimaux</option>
-  <option value="dms">Deg Min Sec</option>
-  <option class="xy" value="swiss" style="display: none;">Suisse</option>
-  <option value="utm">UTM</option>
-  </select>
-  </dd>
-  <dd class="noprint">
-  Export:
-  <a href="/api/point?id=11352&amp;format=gpx">GPX</a>,
-  <a href="/api/point?id=11352&amp;format=gpx_garmin">Garmin</a>,
-  <a href="/api/point?id=11352&amp;format=kml">KML</a>,
-  <a href="geo:45.412,5.4048">Géoloc</a><a href="/wiki/geo-uri"><sup>?</sup></a>
-  </dd>
-</dl>
-
-<div id="accueil-point-commentaires">
-  <h4>
-    <?=$vue->stat->nbcomm?> commentaires.
-    Les <?=$config_wri['defaut_max_commentaires_recents']?> derniers :
-  </h4>
-
-  <ul>
-    <?php foreach ($vue->nouveaux_commentaires as $nouveau_commentaire) { ?>
+    <h4><?=$vue->stat->nbcomm?> commentaires. Les <?=$config_wri['defaut_max_commentaires_recents']?> derniers :</h4>
+    <ul>
+      <?php foreach ($vue->nouveaux_commentaires as $nouveau_commentaire) { ?>
+        <li>
+          <b><?=date("d/m/y",$nouveau_commentaire->ts_unix_commentaire)?></b>
+          &nbsp;Commentaire
+          <?php if ($nouveau_commentaire->auteur_commentaire!="") {
+            if ($nouveau_commentaire->id_createur_commentaire==0) { ?>
+              par <?=$nouveau_commentaire->auteur_commentaire?>
+            <?php } else { ?>
+              par <a href="<?=$config_wri['fiche_utilisateur'].$nouveau_commentaire->id_createur_commentaire?>"><?=$nouveau_commentaire->auteur_commentaire?></a>
+            <? } ?>
+          <? } ?>
+            sur <a href="<?=lien_point($nouveau_commentaire,true)?>#C<?=$nouveau_commentaire->id_commentaire?>"><?=$nouveau_commentaire->nom?></a>
+            <?php if (isset($nouveau_commentaire->id_polygone)) { ?>
+              dans le
+              <a href="<?=lien_polygone($nouveau_commentaire,True)?>">massif <?=$nouveau_commentaire->article_partitif?> <?=$nouveau_commentaire->nom_polygone?></a>
+            <? } ?>
+        </li>
+      <? } ?>
       <li>
-        <b><?=date("d/m/y",$nouveau_commentaire->ts_unix_commentaire)?></b>
-        &nbsp;Commentaire
-        <?php if ($nouveau_commentaire->auteur_commentaire!="") {
-          if ($nouveau_commentaire->id_createur_commentaire==0) { ?>
-            par <?=$nouveau_commentaire->auteur_commentaire?>
-          <?php } else { ?>
-            par <a href="<?=$config_wri['fiche_utilisateur'].$nouveau_commentaire->id_createur_commentaire?>"><?=$nouveau_commentaire->auteur_commentaire?></a>
-          <? } ?>
-        <? } ?>
-          sur <a href="<?=lien_point($nouveau_commentaire,true)?>#C<?=$nouveau_commentaire->id_commentaire?>"><?=$nouveau_commentaire->nom?></a>
-          <?php if (isset($nouveau_commentaire->id_polygone)) { ?>
-            dans le
-            <a href="<?=lien_polygone($nouveau_commentaire,True)?>">massif <?=$nouveau_commentaire->article_partitif?> <?=$nouveau_commentaire->nom_polygone?></a>
-          <? } ?>
+        <a href="/nouvelles/?nombre=<?=$config_wri['defaut_nombre_nouvelles_page_nouvelles']?>&quoi=commentaires"
+          title="Les <?=$config_wri['defaut_nombre_nouvelles_page_nouvelles']?>derniers commentaires dans refuges.info">
+          <b>Plus...</b>
+        </a>
       </li>
-    <? } ?>
-    <li>
-      <a href="/nouvelles/?nombre=<?=$config_wri['defaut_nombre_nouvelles_page_nouvelles']?>&quoi=commentaires"
-        title="Les <?=$config_wri['defaut_nombre_nouvelles_page_nouvelles']?>derniers commentaires dans refuges.info">
-        <b>Plus...</b>
-      </a>
-    </li>
-  </ul>
-
-  <ul class="noprint">
-    <li>
-    <a id="C53281"></a><!-- ici l'id pour l'anchor des petites vignettes du haut -->
-    <div class="bloc_commentaire">
-    <div class="commentaire_metainfo">Mercredi 18 mars 2026 à 13h22                          par
-    <a href="/forum/memberlist.php?mode=viewprofile&amp;u=10552">
-    AS DILL                </a>
-    </div>
-    <div class="bloc_liens_haut_droit">
-    <a class="liens_avec_decoration" href="/gestion/moderation?id_point_retour=104&amp;id_commentaire=53281">
-    Modifier</a>
-    <a class="liens_avec_decoration" href="/forum/mcp.php?i=-RefugesInfo-trace-mcp-main_module&amp;id_commentaire=53281" title="Trace de la création du commentaire">
-    i
-    </a>
-    </div>
-
-    <hr class="spacer">
-    <div class="photos">
-    <a href="/photos_points/53281-originale.jpeg?1778225867">
-    <img src="/photos_points/53281-reduite.jpeg?1778225867" alt="Photo" style="max-width:100%;">
-    </a>
-    <div class="texte_sur_image"></div>
-    </div>
-
-    <blockquote><p>
-    Nous y avons séjourné la nuit du 13 au 14 mars 2026 : cabane en trés bon état. Poele fonctionnel (mais fumant au départ de feu) qui chauffe pas trés fort mais rechauffe un peu lorsque l'on est a coté ! <br>
-    L'etage vaste et permet d'y dormir a plusieurs. <br>
-    Nous etions 4 donc pas du tout serré. <br>
-    A disposition : scie / bois / Balais / Un duvet (oublie ? Mais trés utile si trés grand froid)<br>
-    Nous y avons laissé des bougies et des allumes feu (peut être necessaire).<br>
-    <br>
-    Nous avons utilisé du bois coupé et en avons coupé en retour et laisser secher afin que les prochains randonneurs puissent en profiter aussi !            </p></blockquote>
-    <hr class="spacer"><!-- pour ne pas avoir la foto qui depasse -->
-    </div>
-    </li>
-    <li>
-    <a id="C53151"></a><!-- ici l'id pour l'anchor des petites vignettes du haut -->
-    <div class="bloc_commentaire">
-    <div class="commentaire_metainfo">Mardi 3 mars 2026 à 08h35                          par
-    <a href="/forum/memberlist.php?mode=viewprofile&amp;u=10486">
-    Pauline.C                </a>
-    </div>
-    <div class="bloc_liens_haut_droit">
-    <a class="liens_avec_decoration" href="/gestion/moderation?id_point_retour=104&amp;id_commentaire=53151">
-    Modifier</a>
-    <a class="liens_avec_decoration" href="/forum/mcp.php?i=-RefugesInfo-trace-mcp-main_module&amp;id_commentaire=53151" title="Trace de la création du commentaire">
-    i
-    </a>
-    </div>
-
-    <hr class="spacer">
-
-    <blockquote><p>
-    toujours propre et fontionnelle<br>
-    la lame de la scie est cassée (taille 53 cm si quelqu'un se sent l'âme d'en apporter une nouvelle ...)            </p></blockquote>
-    <hr class="spacer"><!-- pour ne pas avoir la foto qui depasse -->
-    </div>
-    </li>
-    <li>
-    <a id="C52623"></a><!-- ici l'id pour l'anchor des petites vignettes du haut -->
-    <div class="bloc_commentaire">
-    <div class="commentaire_metainfo">Dimanche 28 décembre 2025 à 09h57                          par
-    <a href="/forum/memberlist.php?mode=viewprofile&amp;u=4268">
-    jeremyl                </a>
-    </div>
-    <div class="bloc_liens_haut_droit">
-    <a class="liens_avec_decoration" href="/gestion/moderation?id_point_retour=104&amp;id_commentaire=52623">
-    Modifier</a>
-    <a class="liens_avec_decoration" href="/forum/mcp.php?i=-RefugesInfo-trace-mcp-main_module&amp;id_commentaire=52623" title="Trace de la création du commentaire">
-    i
-    </a>
-    </div>
-
-    <hr class="spacer">
-
-    <blockquote><p>
-    Passé avant hier, toujours bien propre. Quelques offrandes de café soluble.            </p></blockquote>
-    <hr class="spacer"><!-- pour ne pas avoir la foto qui depasse -->
-    </div>
-    </li>
-  </ul>
+    </ul>
+  </div>
 </div>
