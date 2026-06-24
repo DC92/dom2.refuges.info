@@ -5,6 +5,25 @@
  *******************/
 function tileLayersCollection(keys) {
   return {
+    //DCMM pour développements ultérieurs
+    //TODO https://leaflet-extras.github.io/leaflet-providers/preview/
+    /*OpenCycleMap: L.tileLayer(
+      'https://api.thunderforest.com/cycle/{z}/{x}/{y}{r}.png?apikey=' + keys.thunderforest, {
+        maxZoom: 22,
+        attribution: '<a href="https://www.thunderforest.com/">Thunderforest</a> | ' +
+          '<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      }),*/
+    /*'IGN photo': tileLayerIGN(
+      'https://data.geopf.fr/wmts?', {
+        layer: 'ORTHOIMAGERY.ORTHOPHOTOS',
+      }),
+    Cadastre: tileLayerIGN(
+      'https://data.geopf.fr/wmts?', {
+        layer: 'CADASTRALPARCELS.PARCELLAIRE_EXPRESS',
+        style: 'PCI vecteur',
+        format: 'image/png',
+      // }),*/
+    //TODO Autriche
     //DCMM Pour tests, à enlever à la fin
     'Google': L.tileLayer('https://mt0.google.com/vt/lyrs=r&x={x}&y={y}&z={z}'),
 
@@ -81,26 +100,6 @@ function tileLayersCollection(keys) {
         maxZoom: 22,
         attribution: '<a href="https://www.google.com/maps"> Google</a>',
       }),
-
-    //DCMM pour développements ultérieurs
-    //TODO https://leaflet-extras.github.io/leaflet-providers/preview/
-    /*OpenCycleMap: L.tileLayer(
-      'https://api.thunderforest.com/cycle/{z}/{x}/{y}{r}.png?apikey=' + keys.thunderforest, {
-        maxZoom: 22,
-        attribution: '<a href="https://www.thunderforest.com/">Thunderforest</a> | ' +
-          '<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-      }),*/
-    /*'IGN photo': tileLayerIGN(
-      'https://data.geopf.fr/wmts?', {
-        layer: 'ORTHOIMAGERY.ORTHOPHOTOS',
-      }),
-    Cadastre: tileLayerIGN(
-      'https://data.geopf.fr/wmts?', {
-        layer: 'CADASTRALPARCELS.PARCELLAIRE_EXPRESS',
-        style: 'PCI vecteur',
-        format: 'image/png',
-      // }),*/
-    //TODO Autriche
   };
 };
 
