@@ -108,7 +108,7 @@ function tileLayersCollection(keys) {
  ***************************/
 /* eslint-disable-next-line no-unused-vars */
 function initLeafletMap(mapId, serveurAPI, versionPoints, keys) {
-  console.info('MAP init '+versionPoints);
+  console.info('MAP init');
 
   /******************************
    * Initialisation de la carte *

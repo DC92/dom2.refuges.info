@@ -10,6 +10,10 @@
 
   json est une structure contenant des définitions de points
   geoJson sa représentation en string
+
+  MISE EN CACHE :
+  Le résultat est mis en cache pendant 1 semaine par l'explorateur
+  La date de dernière modification (création, édition, suppression) de point (sans compter les commentaires) est envoyé à la page qui l'ajoute à l'API pour que la base soit rechargée tout de suite.
 */
 
 //TODO Délai cache api / depuis
