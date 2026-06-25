@@ -231,7 +231,8 @@ function initLeafletMap(mapId, serveurAPI, versionFeatures, keys) {
             vectorLayers[titre].eachLayer((layer) => {
               layer.on('adddata', () => lsInputEl.click());
             });
-          else lsInputEl.click();
+          else
+            lsInputEl.click();
         }
 
         // Mémorise les couches actuelles

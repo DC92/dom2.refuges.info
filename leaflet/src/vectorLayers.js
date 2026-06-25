@@ -11,9 +11,9 @@
   json est une structure contenant des définitions de points
   geoJson sa représentation en string
 
-  Le résultat des requettes API est mis en cache pendant 1 semaine par l'explorateur
+  Le résultat des requêtes API est mis en cache pendant 1 semaine par l'explorateur
   La date de dernière création, édition, suppression de polygone ou point (hors commentaires)
-  est fournie à la page HTML qui la passe en argument de l'API pour recharger si nécéssaire.
+  est fournie à la page HTML qui la passe en argument de l'API pour recharger si nécessaire.
 */
 
 // Points d'intérêt refuges.info
