@@ -31,7 +31,7 @@ function tileLayersCollection(keys) {
     OpenHikingMap: L.tileLayer(
       'https://tile.openmaps.fr/openhikingmap/{z}/{x}/{y}.png', {
         maxZoom: 18,
-        //DCMM edgeBufferTiles: 3, //TODO bufferisation de 3 fois les tuiles affichées
+        //DCMM edgeBufferTiles: 3,
         attribution: '<a href="https://wiki.openstreetmap.org/wiki/OpenHikingMap"> OpenHikingMap</a> | ' +
           '<a href="https://openmaps.fr/map-legend/openhikingmap-legend.html">Légende</a>',
       }),
@@ -107,7 +107,7 @@ function tileLayersCollection(keys) {
  * Déclaration de la carte *
  ***************************/
 /* eslint-disable-next-line no-unused-vars */
-function initLeafletMap(mapId, serveurAPI, versionPoints, keys) {
+function initMap(mapId, serveurAPI, keys) {
   console.info('MAP init');
 
   /******************************
@@ -173,7 +173,7 @@ function initLeafletMap(mapId, serveurAPI, versionPoints, keys) {
   for (const [titre, typeId] of Object.entries(clusteredOverlays))
     vectorLayers[titre] =
     L.featureGroup.subGroup(vectorCluster).addLayer(
-      wriPOILayer(serveurAPI, typeId, versionPoints)
+      wriPOILayer(serveurAPI, typeId)
     );
 
   vectorLayers['Régions'] = wriPolygonLayer(serveurAPI, 11);

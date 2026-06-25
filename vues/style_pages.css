@@ -464,6 +464,7 @@ a:hover {
   opacity: 0.5;
 }
 
+@media screen and (max-width: 750px) {
 /* Carte NAV présentation mobile verticale */
 #carte-nav {
   height: 96vw;
