@@ -10,14 +10,16 @@
 
   json est une structure contenant des définitions de points
   geoJson sa représentation en string
+
+  Le résultat des requettes API est mis en cache pendant 1 semaine par l'explorateur
+  La date de dernière création, édition, suppression de polygone ou point (hors commentaires)
+  est fournie à la page HTML qui la passe en argument de l'API pour recharger si nécéssaire.
 */
 
-//TODO Délai cache api / depuis
 // Points d'intérêt refuges.info
 /* eslint-disable-next-line no-unused-vars */
-function wriPOILayer(serveurAPI, type) {
-  const url = serveurAPI + '/api/bbox?nb_points=all&type_points=' + type,
-    poiLayer = L.geoJson(null, {
+function wriPOILayer(serveurAPI, type, version) {
+  const poiLayer = L.geoJson(null, {
       // Icônes
       pointToLayer: (feature, latlng) =>
         L.marker(latlng, {
@@ -33,8 +35,7 @@ function wriPOILayer(serveurAPI, type) {
           feature.properties.nom, {
             permanent: true,
             direction: 'center',
-          }
-        ).openTooltip();
+          }).openTooltip();
 
         layer.on({
           click: () => {
@@ -42,7 +43,11 @@ function wriPOILayer(serveurAPI, type) {
           },
         });
       },
-    });
+    }),
+    url = serveurAPI + '/api/bbox?' +
+    'nb_points=all&type_points=' + type +
+    '&version=' + version + '&cache=' + (7 * 24 * 3600);
+  //TODO Délai cache api / depuis
 
   // Fetch remote data
   fetch(url)
@@ -60,40 +65,43 @@ function wriPOILayer(serveurAPI, type) {
 
 // Polygones de massifs de refuges.info
 /* eslint-disable-next-line no-unused-vars */
-function wriPolygonLayer(serveurAPI, typeId) {
+function wriPolygonLayer(serveurAPI, typeId, version) {
   const polygonLayer = L.geoJson(null, {
-    style: function(feature) {
-      return {
-        stroke: false,
-        color: feature.properties.couleur,
-      };
-    },
-    onEachFeature: (feature, layer) => {
-      // Etiquettes
-      layer.bindTooltip(
-        feature.properties.nom
-        .replace(/ ([a-z]?[a-z]?[a-z]) /gui, ' $1&nbsp;')
-        .replace(/ /gu, '<br/>'), {
-          permanent: true,
-          direction: 'center',
-        }).openTooltip();
+      style: function(feature) {
+        return {
+          stroke: false,
+          color: feature.properties.couleur,
+        };
+      },
+      onEachFeature: (feature, layer) => {
+        // Etiquettes
+        layer.bindTooltip(
+          feature.properties.nom
+          .replace(/ ([a-z]?[a-z]?[a-z]) /gui, ' $1&nbsp;')
+          .replace(/ /gu, '<br/>'), {
+            permanent: true,
+            direction: 'center',
+          }).openTooltip();
 
-      layer.on('mouseover mouseout', (evt) => {
-        evt.target.setStyle({
-          stroke: evt.type === 'mouseover',
+        layer.on('mouseover mouseout', (evt) => {
+          evt.target.setStyle({
+            stroke: evt.type === 'mouseover',
+          });
         });
-      });
 
-      layer.on({
-        click: (evt) => {
-          window.location.href = '/nav/' + evt.sourceTarget.feature.id;
-        },
-      });
-    },
-  });
+        layer.on({
+          click: (evt) => {
+            window.location.href = '/nav/' + evt.sourceTarget.feature.id;
+          },
+        });
+      },
+    }),
+    url = serveurAPI + '/api/polygones?' +
+    'type_polygon=' + typeId +
+    '&version=' + version + '&cache=' + (7 * 24 * 3600); // version tient compte des polygones
 
-  fetch(serveurAPI + '/api/polygones?type_polygon=' + typeId)
-    .catch((er) => console.error(er + ' fetching ' + serveurAPI + '/api/polygones?type_polygon=1'))
+  fetch(url)
+    .catch((er) => console.error(er + ' fetching ' + url))
     .then((response) => response.json())
     .then((json) => {
       if (json.features.length)

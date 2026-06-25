@@ -27,7 +27,7 @@ function tileLayersCollection(keys) {
     //DCMM Pour tests, à enlever à la fin
     'Google': L.tileLayer('https://mt0.google.com/vt/lyrs=r&x={x}&y={y}&z={z}'),
 
-    // Cartes lbres
+    // Cartes libres
     OpenHikingMap: L.tileLayer(
       'https://tile.openmaps.fr/openhikingmap/{z}/{x}/{y}.png', {
         maxZoom: 18,
@@ -107,7 +107,7 @@ function tileLayersCollection(keys) {
  * Déclaration de la carte *
  ***************************/
 /* eslint-disable-next-line no-unused-vars */
-function initMap(mapId, serveurAPI, keys) {
+function initLeafletMap(mapId, serveurAPI, versionFeatures, keys) {
   console.info('MAP init');
 
   /******************************
@@ -173,14 +173,14 @@ function initMap(mapId, serveurAPI, keys) {
   for (const [titre, typeId] of Object.entries(clusteredOverlays))
     vectorLayers[titre] =
     L.featureGroup.subGroup(vectorCluster).addLayer(
-      wriPOILayer(serveurAPI, typeId)
+      wriPOILayer(serveurAPI, typeId, versionFeatures)
     );
 
-  vectorLayers['Régions'] = wriPolygonLayer(serveurAPI, 11);
-  vectorLayers.Massifs = wriPolygonLayer(serveurAPI, 1);
+  vectorLayers['Régions'] = wriPolygonLayer(serveurAPI, 11, versionFeatures);
+  vectorLayers.Massifs = wriPolygonLayer(serveurAPI, 1, versionFeatures);
 
-  // Pour plus tard, les couches OSM
-  /*
+  //TODO Pour plus tard, les couches OSM
+  /*DCMM
   vectorLayers.EauOSM = new L.OverPassLayer({
     'query': '(nwr["natural"="spring"]({{bbox}});nwr["amenity"="drinking_water"]({{bbox}}););out center;',
     markerIcon: L.icon({
@@ -231,8 +231,7 @@ function initMap(mapId, serveurAPI, keys) {
             vectorLayers[titre].eachLayer((layer) => {
               layer.on('adddata', () => lsInputEl.click());
             });
-          else
-            lsInputEl.click();
+          else lsInputEl.click();
         }
 
         // Mémorise les couches actuelles
