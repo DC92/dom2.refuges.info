@@ -6,58 +6,49 @@
  * https://korben.info/pwa-cache-cauchemar-solution.html
  */
 
-//TODO service-worker.php avec derniere date de modif d'un fichier /mobile/...
+const nomCache = 'myWRICache';
+//TODO cache séparé pour les programmes et les données
 
-const cacheName = 'refuges.info';
+// Le service worker se réinstalle s'il y a des modifs dans son code (un marqueur de version par exemple)
+self.addEventListener('install', evt => {
+  console.info('PWA install');
 
-console.info('Service worker loaded');
-
-// Active immédiatement le service worker et déclenche le changement de contrôleur s'il y a un update
-self.skipWaiting();
-
-// Le service worker se réinstalle s'il y a des modifs dans sa source (un marqueur de version par exemple)
-self.addEventListener('install', (evt) => {
-  console.info('PWA installed');
+  // Déclenche immédiatement son upgrade et le réactive
+  self.skipWaiting();
 
   // Alors on supprime le cache de l'appli pour recharger tous les autres fichiers (code, icônes, ...)
-  caches.delete(cacheName)
-    .then(console.info('Cache ' + cacheName + ' deleted'))
-    .catch(error => console.error('PWA delete cache ' + cacheName + ' ' + error));
+  caches.delete(nomCache)
+    .catch(erreur => console.error('PWA delete cache ' + nomCache + ' ' + erreur))
+    .then(console.info('Cache ' + nomCache + ' deleted'));
 
-  // Puis on recrée ce cache et on charge les fichiers indispensables
+  // Puis on recrée ce cache et on charge les fichiers qui ne seront pas appelés ensuite
   evt.waitUntil(
-    caches.open(cacheName)
-    .catch(error => console.error('PWA create cache ' + cacheName + ' ' + error))
+    caches.open(nomCache)
+    .catch(erreur => console.error('PWA create cache ' + nomCache + ' ' + erreur))
     .then(cache => {
-      console.info('PWA cache ' + cacheName + ' created');
+      console.info('PWA create cache ' + nomCache);
 
       cache.addAll([
-          //'index.php',
+          './', // Le point d'entrée
           'manifest.json',
           'service-worker.js',
         ])
-        .then(console.info('PWA files added to cache'))
-        .catch(error => console.error('Add PWA files to cache' + error));
+        .catch(erreur => console.error('Add PWA files to cache ' + erreur))
+        .then(console.info('PWA files added to cache'));
     })
   );
 });
 
-self.addEventListener('fetch', (event) =>
-  // Ouvre le cache ou le crée
-  caches.open(cacheName).then(cache =>
-    // Cherche l'url dans le cache
-    cache.match(event.request).then(responseCache =>
-      // On l'a trouvé dans le cache
-      responseCache ||
-      // Sinon, on le cherche via le réseau
-      fetch(event.request).then(externFetch => {
-        // On met en cache uniquement les resources du même serveur
-        if (event.request.url.includes(location.host) ||
-          event.request.url.includes('openhikingmap'))
-          cache.put(event.request, externFetch.clone());
-        return externFetch;
-      })
-      .catch(error => console.error(error + ' ' + event.request.url))
+// Sert les fichiers requis
+// Cache en priorité, puis cache du navigateur, puis réseau
+self.addEventListener('fetch', evt => {
+  console.info('PWA fetch ' + evt.request.url);
+  evt.respondWith(
+    caches.match(evt.request) // Cherche dans tous les caches du domaine
+    .catch(erreur => console.error('Fetch ' + evt.request.url + ' ' + erreur))
+    .then(trouveEnCache =>
+      trouveEnCache ||
+      fetch(evt.request)
     )
   )
-);
+});
