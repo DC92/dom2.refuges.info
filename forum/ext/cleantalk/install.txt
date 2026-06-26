@@ -1,2 +1,0 @@
-https://github.com/CleanTalk/phpbb3.1-3.2-antispam/releases
-5.8.0 - Mar 19, 2025
