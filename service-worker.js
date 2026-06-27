@@ -1,23 +1,24 @@
 /********************
  * PWA service worker
  * S'installe avant tout autre chargement à partir des fichiers de son cache
+ * Permet de consulter hors réseau les pages consultées récemment
  *
  * https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/Caching
  */
 
 const nomCachePWA = 'myWRICache';
 
-// En tâche de fond, le service worker raffraichi son cache si son source de service-worker.js est modifié 
-// Si le code du service-worker.js  est mofifié (un marqueur de version par exemple)
-// il exécute l'évènement 'install' qui permet à l'utilisateur de mettre à jour d'autres fichiers, e, tâche de fond
-// Ces nouveaux codes ne seront mis en service que lors du prochain redémarrage du PWA
-self.addEventListener('install', evt => {
+// En tâche de fond, le service worker raffraichi son cache si son source est modifié
+// (marqueur de version par exemple)
+// il exécute l'évènement 'install' qui permet à l'utilisateur de mettre à jour d'autres fichiers
+// Cette nouvelle version sera mise en service lors du prochain redémarrage du PWA
+self.addEventListener('install', (event) => {
   console.info('PWA install');
 
-  evt.waitUntil(
+  event.waitUntil(
     caches.open(nomCachePWA)
-    .catch(erreur => console.error('PWA open cache ' + nomCachePWA + ' ' + erreur))
-    .then(cache => {
+    .catch((erreur) => console.error('PWA open cache ' + nomCachePWA + ' ' + erreur))
+    .then((cache) => {
       console.info('PWA open cache ' + nomCachePWA);
 
       // Ces fichiers sont mis en cache PWA car ils ne sont pas appelés par le navigateur, donc pas mis en cache navigateur
@@ -27,44 +28,35 @@ self.addEventListener('install', evt => {
           'service-worker.js',
           'images/icones/favicon.png',
         ])
-        .catch(erreur => console.error('Add PWA files to cache ' + erreur))
+        .catch((erreur) => console.error('Add PWA files to cache ' + erreur))
         .then(console.info('PWA files added to cache'));
     })
   );
 });
 
-// Intercepte les chargements d'url 'primaires' du domaine (fichier .html constituant une page affichable) qui sont mis en cache PWA
-// Les fichiers appelés par les pages (css, js, images, XMLHttpRequest, ...) sont mis en cache par l'explorateur
-
-// Stratégie cache navigateur, puis réseau, puis cache PWA
-// Toujours suivi, en tâche de fond, par le rafraichissement du cache PWA qui ne sera utilisé qu'en cas de hors réseau
-
-async function networkFirst(evt) {
-  //console.log('networkFirst '+evt.request.url);//DCMM
+// Cache type network then cache, intercepte les chargements
+// En tâche de fond, rafraichit le cache qui sera utilisé en cas de hors réseau
+async function networkFirst(request) {
   try {
-    const networkResponse = await fetch(evt.request);
+    const networkResponse = await fetch(request);
 
     if (networkResponse.ok) {
-      //console.log('cache.put 1111 '+evt.request.url);//DCMM
-
       const cache = await caches.open(nomCachePWA);
-      cache.put(evt.request, networkResponse.clone());
+      cache.put(request, networkResponse.clone());
     }
     return networkResponse;
-  } catch (error) {
-    //console.log('cache.put 2222 '+evt.request.url);//DCMM
-
-    const cachedResponse = await caches.match(evt.request);
-    return cachedResponse || error;
+  }
+  /* eslint-disable-next-line no-unused-vars */
+  catch (error) {
+    const cachedResponse = await caches.match(request);
+    return cachedResponse;
   }
 }
 
-self.addEventListener('fetch', (evt) => {
-  if (evt.request.redirect === 'manual' && // url appelé par une page (clic)
-    evt.request.url.includes(location.host)) { // url appartenant au site
-
-    //console.log('cache.put 0000 '+evt.request.url);//DCMM
-    evt.respondWith(networkFirst(evt));
-    //console.log('cache.put 9999 '+evt.request.url);//DCMM
-  }
+// Seuls sont mis en cache les url du domaine (fichier .html constituant une page affichable)
+// Les fichiers éléments des pages (css, js, images, XMLHttpRequest, ...) sont mis en cache par l'explorateur
+self.addEventListener('fetch', (event) => {
+  if (event.request.redirect === 'manual' && // url appelé par une page (clic)
+    event.request.url.includes(location.host)) // url appartenant au site
+    event.respondWith(networkFirst(event.request));
 });
