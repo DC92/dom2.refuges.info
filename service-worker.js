@@ -1,75 +1,26 @@
 /********************
  * PWA service worker
- * S'installe avant tout autre chargement
+ * S'installe avant tout autre chargement à partir des fichiers de son cache
  *
  * https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/Caching
- * https://korben.info/pwa-cache-cauchemar-solution.html
  */
 
-//TODO mode debug sans cache
+const nomCachePWA = 'myWRICache';
 
-const nomCache = 'myWRICache';
-//TODO cache séparé pour les programmes et les données
-
-// Le service-worker intercepte toutes les demandes de fichiers
-// Stratégie cache PWA, puis navigateur, puis réseau
-self.addEventListener('fetch', evt => {
-  //console.info('PWA fetch ' + evt.request.url);
-
-  evt.respondWith(
-    // Cherche dans tous les caches du domaine
-    caches.match(evt.request)
-    .catch(erreur => console.error('Fetch cache ' + evt.request.url + ' ' + erreur))
-    .then(trouveEnCachePWA =>
-
-      // Retourne le fichier est dans le cache de la PWA
-      trouveEnCachePWA ||
-
-      // Sinon, on le cherche via le cache du navigateur puis le réseau
-      fetch(evt.request)
-      .catch(erreur => console.error('Fetch network ' + evt.request.url + ' ' + erreur))
-      .then(trouveEnCacheNavigateurOuReseau => {
-
-        // Mémorise dans le cache PWA les urls du site pour pouvoir les appeler hors réseau
-        if (evt.request.redirect === 'manual' && // url appelé par une page (clic)
-          evt.request.url.includes(location.host)) { // url appartenant au site
-          const trc = trouveEnCacheNavigateurOuReseau.clone();
-
-          caches.open(nomCache)
-            .catch(erreur => console.error('PWA ouvre cache ' + nomCache + ' ' + erreur))
-            .then(cache => cache.put(evt.request, trc));
-        }
-        // Les fichiers appelés par une page (du site ou externes) resteront dans le navigateur
-
-        // Retourne la trouvaille
-        return trouveEnCacheNavigateurOuReseau;
-      })
-    )
-  );
-});
-
-// Le service worker mémorisé en cache PWA s'initialise
-// puis regarde s'il y a des modifs dans son code (un marqueur de version par exemple)
+// En tâche de fond, le service worker raffraichi son cache si son source de service-worker.js est modifié 
+// Si le code du service-worker.js  est mofifié (un marqueur de version par exemple)
+// il exécute l'évènement 'install' qui permet à l'utilisateur de mettre à jour d'autres fichiers, e, tâche de fond
+// Ces nouveaux codes ne seront mis en service que lors du prochain redémarrage du PWA
 self.addEventListener('install', evt => {
   console.info('PWA install');
 
-  // Déclenche immédiatement son upgrade et le réactive
-  //TODO NECESSAIRE ? self.skipWaiting();
-
-  // Alors supprime le cache de l'appli pour recharger tous les autres fichiers (code, icônes, ...)
-  caches.delete(nomCache)
-    .catch(erreur => console.error('PWA delete cache ' + nomCache + ' ' + erreur))
-    .then(console.info('Cache ' + nomCache + ' deleted'));
-  //TODO stratégie update if modif
-
-  // Puis recrée ce cache
   evt.waitUntil(
-    caches.open(nomCache)
-    .catch(erreur => console.error('PWA create cache ' + nomCache + ' ' + erreur))
+    caches.open(nomCachePWA)
+    .catch(erreur => console.error('PWA open cache ' + nomCachePWA + ' ' + erreur))
     .then(cache => {
-      console.info('PWA cree cache ' + nomCache);
+      console.info('PWA open cache ' + nomCachePWA);
 
-      // et charge les fichiers qui ne seront pas appelés par une page
+      // Ces fichiers sont mis en cache PWA car ils ne sont pas appelés par le navigateur, donc pas mis en cache navigateur
       cache.addAll([
           './', // Le point d'entrée
           'manifest.json',
@@ -80,4 +31,40 @@ self.addEventListener('install', evt => {
         .then(console.info('PWA files added to cache'));
     })
   );
+});
+
+// Intercepte les chargements d'url 'primaires' du domaine (fichier .html constituant une page affichable) qui sont mis en cache PWA
+// Les fichiers appelés par les pages (css, js, images, XMLHttpRequest, ...) sont mis en cache par l'explorateur
+
+// Stratégie cache navigateur, puis réseau, puis cache PWA
+// Toujours suivi, en tâche de fond, par le rafraichissement du cache PWA qui ne sera utilisé qu'en cas de hors réseau
+
+async function networkFirst(evt) {
+  //console.log('networkFirst '+evt.request.url);//DCMM
+  try {
+    const networkResponse = await fetch(evt.request);
+
+    if (networkResponse.ok) {
+      //console.log('cache.put 1111 '+evt.request.url);//DCMM
+
+      const cache = await caches.open(nomCachePWA);
+      cache.put(evt.request, networkResponse.clone());
+    }
+    return networkResponse;
+  } catch (error) {
+    //console.log('cache.put 2222 '+evt.request.url);//DCMM
+
+    const cachedResponse = await caches.match(evt.request);
+    return cachedResponse || error;
+  }
+}
+
+self.addEventListener('fetch', (evt) => {
+  if (evt.request.redirect === 'manual' && // url appelé par une page (clic)
+    evt.request.url.includes(location.host)) { // url appartenant au site
+
+    //console.log('cache.put 0000 '+evt.request.url);//DCMM
+    evt.respondWith(networkFirst(evt));
+    //console.log('cache.put 9999 '+evt.request.url);//DCMM
+  }
 });
