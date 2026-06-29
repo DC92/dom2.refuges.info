@@ -12,8 +12,8 @@
   opacity: 0 !important;
 }
 
-/* DCMM pour développements ultérieurs */
 /* Overpass popups */
+/* DCMM pour développements ultérieurs
 .leaflet-popup-content {
   margin: 3px;
 }
@@ -24,4 +24,4 @@
 
 .leaflet-popup-content>div>a {
   display: none;
-}
+} */

@@ -5,7 +5,7 @@
  *
  * https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/Caching
  */
-//TODO BUG bloquer installation en dehors de la racine
+//TODO l'update du SW ne le recharge pas
 
 const nomCachePWA = 'myWRICache';
 
@@ -13,10 +13,10 @@ const nomCachePWA = 'myWRICache';
 // (marqueur de version par exemple)
 // il exécute l'évènement 'install' qui permet à l'utilisateur de mettre à jour d'autres fichiers
 // Cette nouvelle version sera mise en service lors du prochain redémarrage du PWA
-self.addEventListener('install', (event) => {
+self.addEventListener('install', (evt) => {
   console.info('PWA install');
 
-  event.waitUntil(
+  evt.waitUntil(
     caches.open(nomCachePWA)
     .catch((erreur) => console.error('PWA open cache ' + nomCachePWA + ' ' + erreur))
     .then((cache) => {
@@ -27,7 +27,7 @@ self.addEventListener('install', (event) => {
           '/', // Le point d'entrée
           '/manifest.json',
           '/service-worker.js',
-          '/images/icones/favicon.png',
+          '/images/icones/favicon.svg',
         ])
         .catch((erreur) => console.error('Add PWA files to cache ' + erreur))
         .then(console.info('PWA files added to cache'));
@@ -56,9 +56,12 @@ async function networkFirst(request) {
 
 // Seuls sont mis en cache les url du domaine (fichier .html constituant une page affichable)
 // Les fichiers éléments des pages (css, js, images, XMLHttpRequest, ...) sont mis en cache par l'explorateur
-self.addEventListener('fetch', (event) => {
-  if (event.request.redirect === 'manual' && // url appelé par une page (clic)
-    event.request.url.includes(location.host)) // url appartenant au site
-    //TODO n'archiver que certaines url point, nouvelles, nav
-    event.respondWith(networkFirst(event.request));
+self.addEventListener('fetch', (evt) => {
+const conditions = ['accueil','nouvelles','nav','point','wiki' ],
+  input=(evt.request.url+'/accueil/').replaceAll('//','/');
+  
+  if (evt.request.redirect === 'manual' && // url appelé par une page (clic)
+    conditions.some(el =>input  .includes(location.host+'/'+el+'/'))){ // url accessible hors ligne
+     evt.respondWith(networkFirst(evt.request));
+    }
 });
