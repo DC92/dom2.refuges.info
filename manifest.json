@@ -8,8 +8,8 @@
     "type": "image/svg+xml",
     "purpose": "any"
   }],
-  "start_url": "./",
-  "scope": "./",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#333",
   "theme_color": "brown"

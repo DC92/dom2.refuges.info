@@ -5,6 +5,7 @@
  *
  * https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/Caching
  */
+//TODO BUG bloquer installation en dehors de la racine
 
 const nomCachePWA = 'myWRICache';
 
@@ -23,10 +24,10 @@ self.addEventListener('install', (event) => {
 
       // Ces fichiers sont mis en cache PWA car ils ne sont pas appelés par le navigateur, donc pas mis en cache navigateur
       cache.addAll([
-          './', // Le point d'entrée
-          'manifest.json',
-          'service-worker.js',
-          'images/icones/favicon.png',
+          '/', // Le point d'entrée
+          '/manifest.json',
+          '/service-worker.js',
+          '/images/icones/favicon.png',
         ])
         .catch((erreur) => console.error('Add PWA files to cache ' + erreur))
         .then(console.info('PWA files added to cache'));
@@ -58,5 +59,6 @@ async function networkFirst(request) {
 self.addEventListener('fetch', (event) => {
   if (event.request.redirect === 'manual' && // url appelé par une page (clic)
     event.request.url.includes(location.host)) // url appartenant au site
+    //TODO n'archiver que certaines url point, nouvelles, nav
     event.respondWith(networkFirst(event.request));
 });
