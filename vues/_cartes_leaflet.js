@@ -1,4 +1,4 @@
-/* global L, MarkerCompass, tileLayerIGN, wriPOILayer, wriPolygonLayer */
+/* global L, MarkerCompass, tileLayerIGN, controlPreload, wriPOILayer, wriPolygonLayer */
 
 /*******************
  * Couches tuilées *
@@ -267,6 +267,8 @@ function initLeafletMap(mapId, serveurAPI, versionFeatures, keys) {
         '/' + encodeURI(baseLayerName);
     });
   });
+
+  controlPreload.addTo(map);
 
   // Lance le chargement de la carte
   map.setView([permalink[1], permalink[2]], permalink[0]);

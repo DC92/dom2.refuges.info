@@ -12,3 +12,12 @@
 .leaflet-control-coordinates:has(span:empty) {
   display: none;
 }
+
+/* Préchargement des tuiles */
+.leaflet-control-preload button {
+  margin-right: 8px;
+  padding: 0;
+  aspect-ratio: 1;
+  font-size: 20px;
+  cursor: pointer;
+}
