@@ -57,11 +57,13 @@ async function networkFirst(request) {
 // Seuls sont mis en cache les url du domaine (fichier .html constituant une page affichable)
 // Les fichiers éléments des pages (css, js, images, XMLHttpRequest, ...) sont mis en cache par l'explorateur
 self.addEventListener('fetch', (evt) => {
-const conditions = ['accueil','nouvelles','nav','point','wiki' ],
-  input=(evt.request.url+'/accueil/').replaceAll('//','/');
-  
+  const conditions = [
+      'accueil', 'nouvelles', 'nav', 'point', 'wiki',
+      'forum/accueil', 'forum/viewforum', 'forum/viewtopic',
+    ],
+    input = (evt.request.url + '/accueil.').replaceAll('//', '/');
+
   if (evt.request.redirect === 'manual' && // url appelé par une page (clic)
-    conditions.some(el =>input  .includes(location.host+'/'+el+'/'))){ // url accessible hors ligne
-     evt.respondWith(networkFirst(evt.request));
-    }
+    conditions.some(el => input.includes(location.host + '/' + el + '.'))) // url accessible hors ligne
+    evt.respondWith(networkFirst(evt.request));
 });
