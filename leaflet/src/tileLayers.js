@@ -1,4 +1,4 @@
-/* global L, confirm, map, setInterval, clearInterval */
+/* global L, confirm, map, setInterval */
 
 // Remplace avantageusement 663 Ko de lib IGN
 /* eslint-disable-next-line no-unused-vars */
@@ -20,7 +20,7 @@ function tileLayerIGN(url, paramsIGN, paramsLayer) {
     url + Object.entries(params).map(e => e.join('=')).join('&'), {
       bounds: [
         [-75, -180],
-        [81, 180]
+        [81, 180],
       ],
       attribution: '<a href="https://www.geoportail.gouv.fr/">IGN Geoportail</a>',
       ...paramsLayer,
@@ -33,14 +33,16 @@ const controlPreload = L.control({
 });
 
 controlPreload.onAdd = () => {
-  const minZoom = 11,
-    maxZoom = 12,
+  const minZoom = 10,
+    maxZoom = 16,
+    edgeBuffer = 4,
     buttonDiv = L.DomUtil.create('div', 'button-wrapper leaflet-control-preload'),
-    avertissement = 'Vous ètes sur le point de télécharger ' +
-    'les tuiles du fond de carte OpenHickingMap jusqu\'à 30 km autour de la position médiane de la carte.\n' +
+    avertissement = 'Vous êtes sur le point de télécharger le fond de carte OpenHickingMap ' +
+    'autour de la position médiane de la carte dans un rayon de ' + edgeBuffer + ' largeurs de la carte ' +
+    'pour les zooms ' + minZoom + ' à ' + maxZoom + '.\n' +
     'Cela peut générer une importante consommation réseau et mémoire.\n\n' +
-    'Vous pouvez recommencer ou charger plusieurs zones, ne seront rechargées que celles qui manquent.\n' +
-    'Elles seront conservée 30 jours, vous pouvez les supprimer en vidant le cache de votre explorateur.\n\n' +
+    'Vous pouvez recommencer s\'il en manque ou charger plusieurs zones, ne seront rechargées que les images manquantes.\n' +
+    'Elles seront conservée 30 jours et vous pouvez les supprimer en vidant les données du site dans l\'explorateur.\n\n' +
     'Voulez-vous continuer ?';
 
   buttonDiv.innerHTML = '<button title="Précharger le fond de carte OpenHickingMap">&#127760;</button>';
@@ -48,17 +50,20 @@ controlPreload.onAdd = () => {
     if (confirm(avertissement)) {
       const loadingLayer = L.tileLayer(
         'https://tile.openmaps.fr/openhikingmap/{z}/{x}/{y}.png', {
-          edgeBufferTiles: Math.ceil(1000 / Math.min(map.getSize().x, map.getSize().y)),
+          edgeBufferTiles: edgeBuffer,
         });
 
-      loadingLayer.addTo(map);
       map.setZoom(minZoom);
+      loadingLayer.addTo(map);
 
-      const timer = setInterval(() => {
+      setInterval(() => {
         if (!loadingLayer.isLoading()) {
           map.setZoom(map.getZoom() + 1);
-          if (map.getZoom() > maxZoom)
-            clearInterval(timer);
+
+          if (map.getZoom() > maxZoom) {
+            alert('Téléchargement terminé, réinitialisation de la page.');
+            location.reload();
+          }
         }
       }, 100);
     };
