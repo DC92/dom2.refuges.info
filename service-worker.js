@@ -1,18 +1,19 @@
-/********************
- * PWA service worker
- * S'installe avant tout autre chargement à partir des fichiers de son cache
- * Permet de consulter hors réseau les pages consultées récemment
+/*************************************************
+ * Service worker avec stratégie réseau puis cache
+ *
+ * Une fois installé, permet d'utiliser hors réseau les pages mises en cache
+ * y compris le html des pages et les fichiers de max-age écoulés en attendant de pouvoir les recharger
+ *
+ * Il raffraichi son cache si les sources sont modifiés ou les dates expirées.
+ * Seules sont mises en cache les url du domaine qui ne font pas appel 
+ * à des fonctions d'identification, recherche ou modification du site.
  *
  * https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/Caching
  */
-//TODO l'update du SW ne le recharge pas
 
 const nomCachePWA = 'myWRICache';
 
-// En tâche de fond, le service worker raffraichi son cache si son source est modifié
-// (marqueur de version par exemple)
-// il exécute l'évènement 'install' qui permet à l'utilisateur de mettre à jour d'autres fichiers
-// Cette nouvelle version sera mise en service lors du prochain redémarrage du PWA
+// Exécuté au changement de source du service worker
 self.addEventListener('install', (evt) => {
   console.info('PWA install');
 
@@ -22,7 +23,8 @@ self.addEventListener('install', (evt) => {
     .then((cache) => {
       console.info('PWA open cache ' + nomCachePWA);
 
-      // Ces fichiers sont mis en cache PWA car ils ne sont pas appelés par le navigateur, donc pas mis en cache navigateur
+      // Les fichiers utilisés par le service worker sont mis en cache
+      // au moment de l'install car ils ne sont pas appelés par le navigateur
       cache.addAll([
           '/', // Le point d'entrée
           '/manifest.json',
@@ -35,8 +37,7 @@ self.addEventListener('install', (evt) => {
   );
 });
 
-// Cache type network then cache, intercepte les chargements
-// En tâche de fond, rafraichit le cache qui sera utilisé en cas de hors réseau
+// Recherche d'un fichier sur le réseau ou dans le cache
 async function networkFirst(request) {
   try {
     const networkResponse = await fetch(request);
@@ -54,8 +55,7 @@ async function networkFirst(request) {
   }
 }
 
-// Seuls sont mis en cache les url du domaine (fichier .html constituant une page affichable)
-// Les fichiers éléments des pages (css, js, images, XMLHttpRequest, ...) sont mis en cache par l'explorateur
+// Interception des appels au réseau
 self.addEventListener('fetch', (evt) => {
   const conditions = [
       'accueil', 'nouvelles', 'nav', 'point', 'wiki',
@@ -63,7 +63,7 @@ self.addEventListener('fetch', (evt) => {
     ],
     input = (evt.request.url + '/accueil.').replaceAll('//', '/');
 
-  if (evt.request.redirect === 'manual' && // url appelé par une page (clic)
-    conditions.some(el => input.includes(location.host + '/' + el + '.'))) // url accessible hors ligne
+  if (evt.request.redirect !== 'manual' || // Ressource appemée dans une une page (clic)
+    conditions.some(el => input.includes(location.host + '/' + el + '.'))) // url de refuges.info et autoriése en ligne
     evt.respondWith(networkFirst(evt.request));
 });
