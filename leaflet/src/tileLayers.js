@@ -1,4 +1,4 @@
-/* global L, confirm, map, setInterval */
+/* global L, confirm, map, setInterval, clearInterval */
 
 // Remplace avantageusement 663 Ko de lib IGN
 /* eslint-disable-next-line no-unused-vars */
@@ -42,8 +42,8 @@ controlPreload.onAdd = () => {
     'pour les zooms ' + minZoom + ' à ' + maxZoom + '.\n' +
     //'Cela peut générer une importante consommation '+((45.3+38.2)/2*7*9*9)+' réseau et mémoire.\n\n' +
     'Cela peut générer une consommation réseau et mémoire de l\'ordre de 15 Mo.\n\n' +
-    'Vous pourrez recommencer s\'il en manque ou charger plusieurs zones, ne seront rechargées que les images manquantes.\n' +
-    'Elles seront conservée 30 jours et vous pouvez les supprimer en vidant les données du site dans l\'explorateur.';
+    'Vous pourrez recommencer s\'il manque des tuiles ou charger plusieurs zones : ne seront rechargées que les images manquantes.\n' +
+    'Elles seront conservées 30 jours et vous pouvez les supprimer en vidant les données du site dans l\'explorateur.';
 
   buttonDiv.innerHTML = '<button title="Précharger le fond de carte OpenHickingMap">&#127760;</button>';
   buttonDiv.addEventListener('click', () => {
@@ -56,11 +56,12 @@ controlPreload.onAdd = () => {
       map.setZoom(minZoom);
       loadingLayer.addTo(map);
 
-      setInterval(() => {
+      const timer = setInterval(() => {
         if (!loadingLayer.isLoading()) {
           map.setZoom(map.getZoom() + 1);
 
           if (map.getZoom() > maxZoom) {
+            clearInterval(timer);
             alert('Téléchargement terminé.\nRéinitialisation de la page.');
             location.reload();
           }

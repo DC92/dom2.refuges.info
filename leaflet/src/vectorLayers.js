@@ -5,7 +5,7 @@
  * du site refuges.info *
  ************************
   Une icône est une image .png représentant un type de point
-  Un point est défini par un position, un nom et une icône destinée à être affiché sur une carte
+  Un point est défini par une position, un nom et une icône destinée à être affiché sur une carte
   Une fiche contient toutes les informations concernant un point, y compris les commentaires
 
   json est une structure contenant des définitions de points
@@ -25,6 +25,7 @@ function wriPOILayer(serveurAPI, type, version) {
         L.marker(latlng, {
           icon: L.icon({
             iconUrl: serveurAPI + '/images/icones/' + feature.properties.type.icone + '.svg',
+            //TODO précharger toutes les icônes
           }),
         }),
 
