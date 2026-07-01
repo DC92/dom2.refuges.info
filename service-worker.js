@@ -63,7 +63,7 @@ self.addEventListener('fetch', (evt) => {
     ],
     input = (evt.request.url + '/accueil.').replaceAll('//', '/');
 
-  if (evt.request.redirect !== 'manual' || // Ressource appemée dans une une page (clic)
-    conditions.some(el => input.includes(location.host + '/' + el + '.'))) // url de refuges.info et autoriése en ligne
+  if (evt.request.redirect !== 'manual' || // Ressource appelée dans une une page (clic)
+    conditions.some(el => input.includes(location.host + '/' + el + '.'))) // url de refuges.info et autorisée en ligne
     evt.respondWith(networkFirst(evt.request));
 });
