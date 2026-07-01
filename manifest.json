@@ -1,7 +1,7 @@
 {
   "name": "Refuges.info",
   "short_name": "wri",
-  "id": "MyWRI",
+  "id": "refuges.info",
   "icons": [{
     "src": "/images/icones/favicon.svg",
     "sizes": "48x48 72x72 96x96 128x128 256x256",

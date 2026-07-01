@@ -4,24 +4,28 @@
  * Une fois installé, permet d'utiliser hors réseau les pages mises en cache
  * y compris le html des pages et les fichiers de max-age écoulés en attendant de pouvoir les recharger
  *
- * Il raffraichi son cache si les sources sont modifiés ou les dates expirées.
+ * Il rafraichi son cache si les sources sont modifiées ou les dates expirées.
  * Seules sont mises en cache les url du domaine qui ne font pas appel 
  * à des fonctions d'identification, recherche ou modification du site.
  *
  * https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/Caching
  */
 
-const nomCachePWA = 'myWRICache';
+const nomCache = 'myWRICache',
+  cacheConditions = [
+    'accueil', 'nouvelles', 'nav', 'point/', 'wiki',
+    'forum/accueil', 'forum/viewforum', 'forum/viewtopic',
+  ];
 
 // Exécuté au changement de source du service worker
 self.addEventListener('install', (evt) => {
-  console.info('PWA install');
+  console.info('Service worker installed');
 
   evt.waitUntil(
-    caches.open(nomCachePWA)
-    .catch((erreur) => console.error('PWA open cache ' + nomCachePWA + ' ' + erreur))
+    caches.open(nomCache)
+    .catch((erreur) => console.error('Open cache ' + nomCache + ' ' + erreur))
     .then((cache) => {
-      console.info('PWA open cache ' + nomCachePWA);
+      console.info('Open cache ' + nomCache);
 
       // Les fichiers utilisés par le service worker sont mis en cache
       // au moment de l'install car ils ne sont pas appelés par le navigateur
@@ -43,13 +47,14 @@ async function networkFirst(request) {
     const networkResponse = await fetch(request);
 
     if (networkResponse.ok) {
-      const cache = await caches.open(nomCachePWA);
+      const cache = await caches.open(nomCache);
       cache.put(request, networkResponse.clone());
     }
     return networkResponse;
   }
+  /* Échec de la récupération réseau */
   /* eslint-disable-next-line no-unused-vars */
-  catch (error) {
+  catch (code) {
     const cachedResponse = await caches.match(request);
     return cachedResponse;
   }
@@ -57,13 +62,10 @@ async function networkFirst(request) {
 
 // Interception des appels au réseau
 self.addEventListener('fetch', (evt) => {
-  const conditions = [
-      'accueil', 'nouvelles', 'nav', 'point', 'wiki',
-      'forum/accueil', 'forum/viewforum', 'forum/viewtopic',
-    ],
-    input = (evt.request.url + '/accueil.').replaceAll('//', '/');
+  const okHorsReseau = cacheConditions.some(el =>
+    (evt.request.url + '/accueil/').replaceAll('//', '/')
+    .includes('refuges.info/' + el));
 
-  if (evt.request.redirect !== 'manual' || // Ressource appelée dans une une page (clic)
-    conditions.some(el => input.includes(location.host + '/' + el + '.'))) // url de refuges.info et autorisée en ligne
+  if (evt.request.redirect === 'manual' && okHorsReseau)
     evt.respondWith(networkFirst(evt.request));
 });
