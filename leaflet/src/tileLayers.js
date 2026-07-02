@@ -37,13 +37,12 @@ controlPreload.onAdd = () => {
     maxZoom = 16,
     edgeBuffer = 3,
     buttonDiv = L.DomUtil.create('div', 'button-wrapper leaflet-control-preload'),
-    avertissement = 'Vous êtes sur le point de télécharger le fond de carte OpenHickingMap ' +
-    'autour de la position médiane de la carte dans un rayon de ' + edgeBuffer + ' largeurs de la carte ' +
+    avertissement = 'Vous êtes sur le point de précharger le fond de carte OpenHickingMap ' +
+    'dans un rayon de ' + (edgeBuffer + 1) + ' largeurs de la carte autour de sa position médiane ' +
     'pour les zooms ' + minZoom + ' à ' + maxZoom + '.\n' +
-    //'Cela peut générer une importante consommation '+((45.3+38.2)/2*7*9*9)+' réseau et mémoire.\n\n' +
-    'Cela peut générer une consommation réseau et mémoire de l\'ordre de 15 Mo.\n\n' +
-    'Vous pourrez recommencer s\'il manque des tuiles ou charger plusieurs zones : ne seront rechargées que les images manquantes.\n' +
-    'Elles seront conservées 30 jours et vous pouvez les supprimer en vidant les données du site dans l\'explorateur.';
+    'Cela peut engendrer une consommation réseau et mémoire de l\'ordre de 15 Mo.\n\n' +
+    'Vous pourrez recommencer s\'il manque des tuiles ou charger plusieurs zones, seules seront rechargées  les manquantes.\n' +
+    'Elles seront conservées 30 jours, vous pouvez les supprimer en vidant les données du site dans l\'explorateur.';
 
   buttonDiv.innerHTML = '<button title="Précharger le fond de carte OpenHickingMap">&#127760;</button>';
   buttonDiv.addEventListener('click', () => {
@@ -54,6 +53,7 @@ controlPreload.onAdd = () => {
         });
 
       map.setZoom(minZoom);
+      //TODO set permalink to openhikingmap
       loadingLayer.addTo(map);
 
       const timer = setInterval(() => {
@@ -68,7 +68,7 @@ controlPreload.onAdd = () => {
         }
       }, 100);
     };
-  })
+  });
 
   return buttonDiv;
 };

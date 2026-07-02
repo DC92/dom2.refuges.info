@@ -46,6 +46,9 @@ async function networkFirst(request) {
   try {
     const networkResponse = await fetch(request);
 
+    /* if(evt.request.redirect === 'manual' &&
+      evt.request.url.includes('refuges.info'))*/
+
     if (networkResponse.ok) {
       const cache = await caches.open(nomCache);
       cache.put(request, networkResponse.clone());
@@ -62,6 +65,25 @@ async function networkFirst(request) {
 
 // Interception des appels au réseau
 self.addEventListener('fetch', (evt) => {
+  /*if(evt.request.redirect === 'manual' ){
+  const input = (evt.request.url + '/accueil/').replaceAll('//', '/');
+//  const input = evt.request.url ;
+//console.log(input);//DCMM
+
+//console.log(rr);//DCMM 
+const rr = cacheConditions.some(el =>  input.includes(  'refuges.info/' + el  ) );
+console.log(rr);//DCMM 
+  }*/
+
+  /*const rr = cacheConditions.some(el => {
+  //console.log('refuges.info/' + el + '/');//DCMM
+    return input.includes(  'refuges.info/' + el  );
+  });*/
+  //console.log( evt.request.url +!!evt.request.url.includes('refuges.info'));//DCMM
+
+  /* if (evt.request.redirect !== 'manual' || // Ressource appelée dans une une page (clic)
+     cacheConditions.some(el => input.includes(location.host + '/' + el + '.'))) // url de refuges.info et autorisée en ligne */
+
   const okHorsReseau = cacheConditions.some(el =>
     (evt.request.url + '/accueil/').replaceAll('//', '/')
     .includes('refuges.info/' + el));
