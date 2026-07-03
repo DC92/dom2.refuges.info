@@ -47,14 +47,16 @@ controlPreload.onAdd = () => {
   buttonDiv.innerHTML = '<button title="Précharger le fond de carte OpenHickingMap">&#127760;</button>';
   buttonDiv.addEventListener('click', () => {
     if (confirm(avertissement)) {
-      const loadingLayer = L.tileLayer(
-        'https://tile.openmaps.fr/openhikingmap/{z}/{x}/{y}.png', {
-          edgeBufferTiles: edgeBuffer,
-        });
+      const pos = map.getCenter(),
+        loadingLayer = L.tileLayer(
+          'https://tile.openmaps.fr/openhikingmap/{z}/{x}/{y}.png', {
+            edgeBufferTiles: edgeBuffer,
+          });
 
       map.setZoom(minZoom);
-      //TODO set permalink to openhikingmap
       loadingLayer.addTo(map);
+      // Set permalink to openhikingmap
+      localStorage.permalink = minZoom + '/' + pos.lat + '/' + pos.lng + '/OpenHikingMap';
 
       const timer = setInterval(() => {
         if (!loadingLayer.isLoading()) {
