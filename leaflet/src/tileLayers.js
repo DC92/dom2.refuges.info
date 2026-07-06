@@ -55,12 +55,11 @@ controlPreload.onAdd = () => {
 
       map.setZoom(minZoom);
       loadingLayer.addTo(map);
-      // Set permalink to openhikingmap
-      localStorage.permalink = minZoom + '/' + pos.lat + '/' + pos.lng + '/OpenHikingMap';
 
       const timer = setInterval(() => {
         if (!loadingLayer.isLoading()) {
           map.setZoom(map.getZoom() + 1);
+          localStorage.permalink = minZoom + '/' + pos.lat + '/' + pos.lng + '/OpenHikingMap';
 
           if (map.getZoom() > maxZoom) {
             clearInterval(timer);
