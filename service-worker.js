@@ -11,13 +11,18 @@
  * https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/Caching
  */
 
-const nomCache = 'myWRICache',
-  cacheConditions = [
-    'accueil', 'nouvelles', 'nav', 'point/', 'wiki',
-    'forum/accueil', 'forum/viewforum', 'forum/viewtopic',
-  ];
+const nomCache = 'refuges.info';
+
+// Est-ce une page utilisable hors réseau ?
+function urlToMem(url) {
+  return [
+    '$', '/$', '/nouvelles', '/nav', '/point/', '/wiki',
+    '/forum/$', '/forum/viewforum', '/forum/viewtopic',
+  ].some(el => (url + '$').includes(location.host + el));
+}
 
 // Exécuté au changement de source du service worker
+//TODO ne se réinstalla pas quand changement de source
 self.addEventListener('install', (evt) => {
   console.info('Service worker installed');
 
@@ -41,13 +46,10 @@ self.addEventListener('install', (evt) => {
   );
 });
 
-// Recherche d'un fichier sur le réseau ou dans le cache
+// Chargement d'un fichier priorité réseau sinon cache
 async function networkFirst(request) {
   try {
     const networkResponse = await fetch(request);
-
-    /* if(evt.request.redirect === 'manual' &&
-      evt.request.url.includes('refuges.info'))*/
 
     if (networkResponse.ok) {
       const cache = await caches.open(nomCache);
@@ -63,31 +65,9 @@ async function networkFirst(request) {
   }
 }
 
-// Interception des appels au réseau
+// Intercepte le chargement d'un fichier
 self.addEventListener('fetch', (evt) => {
-  /*if(evt.request.redirect === 'manual' ){
-  const input = (evt.request.url + '/accueil/').replaceAll('//', '/');
-//  const input = evt.request.url ;
-//console.log(input);//DCMM
-
-//console.log(rr);//DCMM 
-const rr = cacheConditions.some(el =>  input.includes(  'refuges.info/' + el  ) );
-console.log(rr);//DCMM 
-  }*/
-
-  /*const rr = cacheConditions.some(el => {
-  //console.log('refuges.info/' + el + '/');//DCMM
-    return input.includes(  'refuges.info/' + el  );
-  });*/
-  //console.log( evt.request.url +!!evt.request.url.includes('refuges.info'));//DCMM
-
-  /* if (evt.request.redirect !== 'manual' || // Ressource appelée dans une une page (clic)
-     cacheConditions.some(el => input.includes(location.host + '/' + el + '.'))) // url de refuges.info et autorisée en ligne */
-
-  const okHorsReseau = cacheConditions.some(el =>
-    (evt.request.url + '/accueil/').replaceAll('//', '/')
-    .includes('refuges.info/' + el));
-
-  if (evt.request.redirect === 'manual' && okHorsReseau)
+  if ((evt.request.redirect === 'manual' && urlToMem(evt.request.url)) || // Fichier .html d'une page chargeable
+    urlToMem(evt.request.referrer)) // Fichier inclus dans une page chargeable
     evt.respondWith(networkFirst(evt.request));
 });
