@@ -181,7 +181,7 @@ function infos_commentaires ($conditions)
             // Les 6 caractères ajoutés ont pour but, après une modification sur la photo, d'éviter que les caches navigateurs ne s'activent
             $commentaire->lien_photo[$taille]=
             $commentaire->lien_photo_reduite=
-              $config_wri['rep_web_photos_points'].$nom_fichier_photo."?"
+              $config_wri['rep_web_photos_points'].$nom_fichier_photo."?md="
               .substr(md5_file($chemin_photo), 6, 6);
             break; // pas besoin de tester toute les extensions, on en a trouvé une
           }

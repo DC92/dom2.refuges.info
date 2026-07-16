@@ -40,9 +40,7 @@ controlPreload.onAdd = () => {
     avertissement = 'Vous êtes sur le point de précharger le fond de carte OpenHickingMap ' +
     'dans un rayon de ' + (edgeBuffer + 1) + ' largeurs de la carte autour de sa position médiane ' +
     'pour les zooms ' + minZoom + ' à ' + maxZoom + '.\n' +
-    'Cela peut engendrer une consommation réseau et mémoire de l\'ordre de 15 Mo.\n\n' +
-    'Vous pourrez recommencer s\'il manque des tuiles ou charger plusieurs zones, seules seront rechargées  les manquantes.\n' +
-    'Elles seront conservées 30 jours, vous pouvez les supprimer en vidant les données du site dans l\'explorateur.';
+    'Cela peut engendrer une consommation réseau et mémoire de l\'ordre de 15 Mo.';
 
   buttonDiv.innerHTML = '<button title="Précharger le fond de carte OpenHickingMap">&#127760;</button>';
   buttonDiv.addEventListener('click', () => {
