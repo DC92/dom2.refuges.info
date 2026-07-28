@@ -7,7 +7,7 @@
    phpbb3_ext WHERE ext_name = '%trace%'
 */
 
-/* Tests à faire
+/* Plan de tests
 Création point
 Création commentaire
 Création topic
@@ -33,8 +33,7 @@ user
 
 namespace RefugesInfo\trace\event;
 
-include __DIR__.'/../geoip2/geoip2.phar';
-use GeoIp2\Database\Reader;
+include __DIR__.'/geodata.php';
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class listener implements EventSubscriberInterface
@@ -107,31 +106,12 @@ class listener implements EventSubscriberInterface
       isset($_POST['preview']))
       return; // Post preview is not traced
 
-    $ip = $_SERVER['REMOTE_ADDR'];
-    $reader_asn = new Reader(__DIR__.'/../geoip2/GeoLite2-ASN.mmdb');
-    $geodata_asn = $reader_asn->asn($ip);
-    $reader_city = new Reader(__DIR__.'/../geoip2/GeoLite2-City.mmdb');
-    $geodata_city = $reader_city->city($ip);
-
     // Except when load the registration page
     if($eventName === 'core.ucp_register_modify_template_data' && empty($_POST['new_password']))
       return;
 
-    // Exclusion de certains ASN
-    if(isset($geodata_asn->autonomousSystemNumber) &&
-      in_array(
-        $geodata_asn->autonomousSystemNumber,
-        $config_wri['trace_block_asn'] ?? [])
-      ) {
-      $error[] = 'Forbiden origin';
-      return;
-    }
-
     // Cherche les infos à logguer
-    $data = array_merge([
-        'ip' => $ip ?? '0.0.0.0',
-        'uri' => $_SERVER['REQUEST_URI'] ?? '',
-      ],
+    $data = array_merge(
       array_filter((array) $event),
       array_filter($event['point'] ?? []),
       array_filter($event['commentaire'] ?? []),
@@ -146,11 +126,8 @@ class listener implements EventSubscriberInterface
     if(isset($data['post_visibility']) && $data['post_visibility'] === ITEM_UNAPPROVED)
       $error[] = 'Post mis en approbation par CleanTalk';
 
-    date_default_timezone_set('UTC');
-    $trace_data = [
-      // 'trace_id' => autoincrement,
+    $trace_data = array_merge(geodata(), [
       'ext_error' => count($error) ? json_encode($error) : null,
-      'date' => date('r'),
       'to_check' => !$auth->acl_get('m_'), // Quand le post est édité par un non modo
       'appel' => str_replace(['core.', 'refugesinfo.'], [$event['mode'].' ',''], $eventName),
 
@@ -166,18 +143,7 @@ class listener implements EventSubscriberInterface
         256
       ),
 
-      // Serveur
-      'uri' => isset($_SERVER['HTTP_HOST']) ?
-        (
-          ($_SERVER['REQUEST_SCHEME'] ?? '').'://'.
-          ($_SERVER['HTTP_HOST'] ?? '').
-          ($_SERVER['REQUEST_URI'] ?? '')
-        ) : '',
-      'referer' => $_SERVER['HTTP_REFERER'] ?? '',
-
-      // Navigateur
-      'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? '',
-      'language' => $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '',
+      // Pièges au navigateur
       'browser_locale' => $data['mrk_browser_locale'] ?? '',
       'browser_timezone' => $data['mrk_browser_timezone'] ?? '',
       'browser_operator' => $data['mrk_browser_operator'] ?? '',
@@ -194,15 +160,17 @@ class listener implements EventSubscriberInterface
       'host_enregistrement' => gethostbyaddr($data['user_ip'] ?? $data['session_ip'] ?? $_SERVER['REMOTE_ADDR'] ?? ''),
       'creator_name' => ($data['poster_id'] ?? 0) > 1 ? $event['username'] : 'Anonymous',
       'creator_id' => intval($data['poster_id'] ?? 0),
+    ]);
 
-      // ASN / FAI
-      'ip' => $ip,
-      'host' => gethostbyaddr($ip),
-      'asn_id' => 'AS'.$geodata_asn->autonomousSystemNumber,
-      'asn_name' => $geodata_asn->autonomousSystemOrganization,
-      'country_name' => $geodata_city->country->name,
-      'city' => $geodata_city->city->name,
-    ];
+    // Exclusion de certains ASN
+    if(isset($trace_data['asn_id']) &&
+      in_array(
+        $trace_data['asn_id'],
+        $config_wri['trace_block_asn'] ?? [])
+      ) {
+      $error[] = 'Forbiden origin';
+      return;
+    }
 
     // Enregistrement de la trace
     $sql = 'INSERT INTO trace_requettes'.$db->sql_build_array('INSERT', $trace_data);
@@ -211,7 +179,7 @@ class listener implements EventSubscriberInterface
     $event['error'] = $error;
   }
 
-  // Mettre à jour la trace du forum avec id_point
+  // Mettre à jour la trace du forum avec id_point aprés la création du forum d'un point
   public function ajout_point($event)
   {
     global $db;
