@@ -304,7 +304,7 @@ a {
 
 a:hover {
   /*met en valeur les liens qd on est dessus */
-  background-color: var(--couleur_legende);
+  background-color: var(--couleur_hover);
 }
 
 /*========= Erreurs ==========*/
@@ -387,6 +387,11 @@ a:hover {
   display: inline;
   margin: 1px 5px 1px 0px;
 }
+
+a img {
+  vertical-align: bottom;
+}
+
 
 .photos {
   float: left;

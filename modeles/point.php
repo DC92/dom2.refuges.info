@@ -738,8 +738,8 @@ function modification_ajout_point($point,$id_utilisateur_qui_modifie=0)
     $q="SELECT id_point, nom
       FROM points
       WHERE cache = true AND
-        id_point <> ".($point->id_point??0)." AND
-        ST_DWithin(geom, ST_GeomFromGeoJSON('{$point->geojson}'), $distance, false)
+        id_point <> ".(int)($point->id_point??0)." AND
+        ST_DWithin(geom, ST_GeomFromGeoJSON(".$pdo->quote($point->geojson)."), $distance, false)
       LIMIT 1";
 
     $r = $pdo->query($q);
@@ -785,7 +785,7 @@ function modification_ajout_point($point,$id_utilisateur_qui_modifie=0)
     return erreur($point->altitude."m comme altitude du point, c'est plus que l'Everest, vous avez dû vous tromper ?");
 
   if (!empty($point->geojson))
-    $champs_sql['geom']="ST_SetSRID(ST_GeomFromGeoJSON('$point->geojson'), 4326)";
+    $champs_sql['geom']="ST_SetSRID(ST_GeomFromGeoJSON(".$pdo->quote($point->geojson)."), 4326)";
 
   foreach ($config_wri['champs_entier_ou_sait_pas_points'] as $a_tester)
     if (!empty($point->$a_tester))
@@ -818,7 +818,7 @@ function modification_ajout_point($point,$id_utilisateur_qui_modifie=0)
     if (isset($point_avant->erreur) and $point_avant->erreur) // oulla on nous demande une modif mais il n'existe pas ?
       return erreur("Erreur de modification du point : $point_avant->message");
 
-    $query_finale=requete_modification_ou_ajout_generique('points',$champs_sql,'update',"id_point=$point->id_point");
+    $query_finale=requete_modification_ou_ajout_generique('points',$champs_sql,'update','id_point',$point->id_point);
 
     if (!$pdo->exec($query_finale))
       return erreur("La requête SQL est en erreur, mais nous ne savons pas pourquoi, prévenez nous sur le forum, vous avez trouvé un bug !",$query_finale);
