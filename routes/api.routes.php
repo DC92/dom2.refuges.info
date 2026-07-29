@@ -43,3 +43,19 @@ switch ($cible) {
     break;
 }
 
+// Trace des appels API exploitables dans "Menu" -> "Historique des traces"
+require_once ('bdd.php');
+require_once ($config_wri['rep_forum'].'ext/RefugesInfo/trace/geoip2/geodata.php');
+
+$geodata = geodata();
+$geodata['appel'] = 'API';
+$geodata['text'] = 'Durée PHP : '.round((microtime(true) - $__time_start) * 1000).' ms' . PHP_EOL .$geodata['uri'];
+
+function pdo_quote($str)
+{
+  global $pdo;
+  return $pdo->quote($str);
+}
+
+$query = requete_modification_ou_ajout_generique('trace_requettes', array_map('pdo_quote', $geodata), 'insert');
+$res=$pdo->query($query);

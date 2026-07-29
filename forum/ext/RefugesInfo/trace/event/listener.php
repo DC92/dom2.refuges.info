@@ -33,7 +33,7 @@ user
 
 namespace RefugesInfo\trace\event;
 
-include __DIR__.'/geodata.php';
+include __DIR__.'/../geoip2/geodata.php';
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class listener implements EventSubscriberInterface

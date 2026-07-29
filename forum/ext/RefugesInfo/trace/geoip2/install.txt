@@ -8,3 +8,5 @@ GeoLite2-City Download GZIP, extract GeoLite2-City.mmdb
 
 Doc:
 https://support.maxmind.com/hc/en-us/articles/4408216129947-Download-and-Update-Databases#h_01FM56FTVAWJQK3XBQVAJGWY66
+
+geodata.php : fichier source (C)refuges.info
