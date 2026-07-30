@@ -9,14 +9,14 @@
   <!-- ELSEIF TRACE_ID -->
     <h4>Trace {TRACE_ID}</h4>
   <!-- ELSE -->
-    <p><a href="{U_MCP_ACTION}&ext_error=null">
+    <p><a href="{U_MCP_ACTION}&ext_error=null&browser_operator=!api">
       {LIMIT} dernières contributions acceptées
     </a></p>
     <p><a href="{U_MCP_ACTION}&ext_error=null&uri=edit&group_id=!201.!202&to_check=1">
       éditions de posts par un utilisateur non vérifiées
     </a></p>
-    <p><a href="{U_MCP_ACTION}&browser_operator=!serve">
-      {LIMIT} dernières contributions (sauf bots)
+    <p><a href="{U_MCP_ACTION}&browser_operator=!serve.!api">
+      {LIMIT} dernières contributions (sauf bots & api)
     </a></p>
     <p><a href="{U_MCP_ACTION}">
       {LIMIT} dernières contributions (sans filtre)
@@ -24,7 +24,7 @@
     <p><a href="{U_MCP_ACTION}&ext_error=!CleanTalk.!No%20soup&browser_operator=!serve">
       {LIMIT} dernières contributions rejetées pour motif interne
     </a></p>
-    <p><a href="{U_MCP_ACTION}&ext_error=CleanTalk&browser_operator=!serve">
+    <p><a href="{U_MCP_ACTION}&ext_error=CleanTalk&browser_operator=!serve.!api">
       {LIMIT} dernières contributions rejetées par CleanTalk (sauf bots)
     </a></p>
     <p><a href="{U_MCP_ACTION}&browser_operator=serve&!AS209155">
@@ -33,7 +33,7 @@
     <p><a href="{U_MCP_ACTION}&browser_operator=serve">
       {LIMIT} dernières contributions rejetées (tous bots)
     </a></p>
-    <p><a href="{U_MCP_ACTION}&appel=api">
+    <p><a href="{U_MCP_ACTION}&browser_operator=api">
       {LIMIT} dernières traces API
     </a></p>
     <hr/>

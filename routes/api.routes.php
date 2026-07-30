@@ -49,6 +49,7 @@ if (isset($pdo)) { // Sauf /api/doc
 
   $geodata = geodata();
   $geodata['appel'] = 'Requête API';
+  $geodata['browser_operator'] = 'api';
   $geodata['text'] = $geodata['uri'];
   $geodata['ext_error'] = null;
 
