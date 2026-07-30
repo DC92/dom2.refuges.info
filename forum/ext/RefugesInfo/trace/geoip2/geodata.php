@@ -10,6 +10,8 @@ function geodata( ) {
   $geodata_city = $reader_city->city($ip);
 
   date_default_timezone_set('UTC');
+  global $__time_start;
+
   return [
     // 'trace_id' => autoincrement,
    'date' => date('r'),
@@ -30,6 +32,9 @@ function geodata( ) {
         ($_SERVER['REQUEST_URI'] ?? '')
       ) : '',
     'referer' => $_SERVER['HTTP_REFERER'] ?? '',
+    'post' => implode(',',array_keys($_POST)),
+    'files' => serialize($_FILES),
+    'duree' => isset($__time_start) ? round((microtime(true) - $__time_start) * 1000) : 0,
 
     // Navigateur
     'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? '',

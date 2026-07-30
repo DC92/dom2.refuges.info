@@ -62,6 +62,8 @@ class listener implements EventSubscriberInterface
       'asn_id' => 'text',
       'ip' => 'text',
       'uri' => 'text', // Pour profile user
+      'appel' => 'text',
+      'duree' => 'number',
       'to_check' => 'number',
       'topic_id' => 'number',
       'post_id' => 'number',
@@ -344,8 +346,11 @@ class listener implements EventSubscriberInterface
     // Calcul du statut
     $colonne_statut = [];
 
-    if(empty($row['ext_error']))
+    if(empty($row['ext_error'])) {
       $colonne_statut[] = ucfirst($appel);
+      if (!empty($row['duree']))
+        $colonne_statut[] .= PHP_EOL.$row['duree'].' ms';
+    }
     else {
       $ext_error = str_replace('Cr\u00e9ation d\'un compte rejet\u00e9e sans erreur document\u00e9e', '', $row['ext_error']??'');
       $colonne_statut[] = ucfirst('REJET '.$appel);
@@ -484,7 +489,7 @@ class listener implements EventSubscriberInterface
             elseif($vs[0] === 'null')
               $conditions_ou[] = "$name IS$rnot NULL";
             else
-              $conditions_ou[] = "$name$rnot LIKE '%{$vs[0]}%'";
+              $conditions_ou[] = "$name$rnot ILIKE '%{$vs[0]}%'";
           }
 
           if(sizeof($conditions_ou) < 2)

@@ -44,18 +44,23 @@ switch ($cible) {
 }
 
 // Trace des appels API exploitables dans "Menu" -> "Historique des traces"
-require_once ('bdd.php');
-require_once ($config_wri['rep_forum'].'ext/RefugesInfo/trace/geoip2/geodata.php');
+if (isset($pdo)) { // Sauf /api/doc
+  require_once ($config_wri['rep_forum'].'ext/RefugesInfo/trace/geoip2/geodata.php');
 
-$geodata = geodata();
-$geodata['appel'] = 'API';
-$geodata['text'] = 'Durée PHP : '.round((microtime(true) - $__time_start) * 1000).' ms' . PHP_EOL .$geodata['uri'];
+  $geodata = geodata();
+  $geodata['appel'] = 'Requête API';
+  $geodata['text'] = $geodata['uri'];
+  $geodata['ext_error'] = null;
 
-function pdo_quote($str)
-{
-  global $pdo;
-  return $pdo->quote($str);
+  $query = requete_modification_ou_ajout_generique(
+    'trace_requettes',
+     array_map (fn($str) => $pdo->quote($str), $geodata),
+    'insert'
+  );
+  $pdo->query($query);
 }
 
-$query = requete_modification_ou_ajout_generique('trace_requettes', array_map('pdo_quote', $geodata), 'insert');
-$res=$pdo->query($query);
+//TODO Affichage > valeur de durée
+//TODO TEST SQL pour ajouter des lignes à table_requettes
+//TODO Import derniers fichiers geoip
+//TODO Vérification que traces API n'apparaisent pas dans les autres
