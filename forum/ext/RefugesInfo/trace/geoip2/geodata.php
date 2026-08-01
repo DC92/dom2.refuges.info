@@ -2,7 +2,7 @@
 use GeoIp2\Database\Reader;
 include __DIR__.'/../geoip2/geoip2.phar';
 
-function geodata( ) {
+function geodata() {
   $ip = $_SERVER['REMOTE_ADDR'];
   $reader_asn = new Reader(__DIR__.'/../geoip2/GeoLite2-ASN.mmdb');
   $geodata_asn = $reader_asn->asn($ip);

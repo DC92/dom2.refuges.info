@@ -60,8 +60,3 @@ if (isset($pdo)) { // Sauf /api/doc
   );
   $pdo->query($query);
 }
-
-//TODO Affichage > valeur de durée
-//TODO TEST SQL pour ajouter des lignes à table_requettes
-//TODO Import derniers fichiers geoip
-//TODO Vérification que traces API n'apparaisent pas dans les autres

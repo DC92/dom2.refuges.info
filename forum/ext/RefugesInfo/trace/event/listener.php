@@ -480,16 +480,25 @@ class listener implements EventSubscriberInterface
           $conditions_ou = [];
 
           foreach(explode('|', $v) as $k => $vv) {
-            $vs = array_reverse(explode('!', $vv ?? '')); // Separate the ! at the beginning
-            $requ = isset($vs[1]) ? ' != ' : ' = ';
-            $rnot = isset($vs[1]) ? ' NOT' : '';
+            $requ = ' = ';
+            $rnot = '';
+            switch($vv[0]) {
+              case '!':
+                $requ = ' != ';
+                $rnot = ' NOT';
+                $vv = substr($vv, 1);
+                break;
+              case '>':
+                $requ = ' > ';
+                $vv = substr($vv, 1);
+            }
 
             if($type === 'number')
-              $conditions_ou[] = $name.$requ.intval($vs[0]);
-            elseif($vs[0] === 'null')
+              $conditions_ou[] = $name.$requ.intval($vv);
+            elseif($vv === 'null')
               $conditions_ou[] = "$name IS$rnot NULL";
             else
-              $conditions_ou[] = "$name$rnot ILIKE '%{$vs[0]}%'";
+              $conditions_ou[] = "$name$rnot ILIKE '%{$vv}%'";
           }
 
           if(sizeof($conditions_ou) < 2)
