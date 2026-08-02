@@ -366,7 +366,7 @@ class listener implements EventSubscriberInterface
     $this->affiche_une_ligne([
       isset($row['trace_id']) ? [ // Trace
         'Trace n° <a href="'.$this->u_action.'&trace_id='.$row['trace_id'].'">'.$row['trace_id'].'</a>',
-        preg_replace('/\+[0-9]+/i', '', $row['trace_date']??''),
+        preg_replace('/\+[0-9]+/i', '', $row['trace_date']??'').' GMT',
       ] : [],
       $colonne_statut,
       array_merge(
