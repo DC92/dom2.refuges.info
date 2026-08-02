@@ -10,14 +10,14 @@
     <h4>Trace {TRACE_ID}</h4>
   <!-- ELSE -->
     <p>{LIMIT} dernières contributions:
-      <a href="{U_MCP_ACTION}&ext_error=null&browser_operator=!api">acceptées</a> *
-      <a href="{U_MCP_ACTION}&browser_operator=!serve.!api">acceptées sauf bots & api</a> *
+      <a href="{U_MCP_ACTION}&ext_error=null&browser_operator=!api">acceptées</a> |
+      <a href="{U_MCP_ACTION}&browser_operator=!serve.!api">acceptées sauf bots & api</a> |
       <a href="{U_MCP_ACTION}">sans filtre</a>
     </p>
     <p>{LIMIT} dernières contributions rejetées
-      <a href="{U_MCP_ACTION}&ext_error=!CleanTalk.!No%20soup&browser_operator=!serve.!api">pour motif interne</a> *
-      <a href="{U_MCP_ACTION}&ext_error=CleanTalk&browser_operator=!serve.!api">par CleanTalk, sauf bots</a> *
-      <a href="{U_MCP_ACTION}&browser_operator=serve&!AS209155.!api">bots sauf Onehostplanet</a> *
+      <a href="{U_MCP_ACTION}&ext_error=!CleanTalk.!No%20soup&browser_operator=!serve.!api">pour motif interne</a> |
+      <a href="{U_MCP_ACTION}&ext_error=CleanTalk&browser_operator=!serve.!api">par CleanTalk, sauf bots</a> |
+      <a href="{U_MCP_ACTION}&browser_operator=serve&!AS209155.!api">bots sauf Onehostplanet</a> |
       <a href="{U_MCP_ACTION}&browser_operator=serve.!api">tous bots</a>
     </p>
     <p>Dernières
@@ -25,8 +25,9 @@
         éditions de posts par un utilisateur non vérifiées</a>
     </p>
     <p>{LIMIT} dernières traces API:
-      <a href="{U_MCP_ACTION}&browser_operator=api">toutes</a> *
-      <a href="{U_MCP_ACTION}&browser_operator=api&duree=>1000">&gt; 1 seconde</a> *
+      <a href="{U_MCP_ACTION}&browser_operator=api">toutes</a> |
+      <a href="{U_MCP_ACTION}&browser_operator=api&duree=>500">&gt; 0,5 seconde</a> |
+      <a href="{U_MCP_ACTION}&browser_operator=api&duree=>2000">&gt; 2 secondes</a>
       <a href="{U_MCP_ACTION}&browser_operator=api&duree=>5000">&gt; 5 secondes</a>
     </p>
     <hr/>

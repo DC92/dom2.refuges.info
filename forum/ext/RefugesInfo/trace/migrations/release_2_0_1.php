@@ -27,7 +27,7 @@ class release_2_0_1 extends \phpbb\db\migration\migration
           'host' => ['CHAR:255', NULL],
           'appel' => ['CHAR:128', NULL],
           'post' => ['TEXT', NULL],
-          'files' => ['CHAR:512', NULL],
+          'files' => ['TEXT', NULL],
           'duree' => ['UINT', NULL],
           'user_agent' => ['CHAR:255', NULL],
           'language' => ['CHAR:128', NULL],
