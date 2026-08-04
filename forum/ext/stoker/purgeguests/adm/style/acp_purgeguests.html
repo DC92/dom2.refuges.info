@@ -1,0 +1,98 @@
+{% include 'overall_header.html' %}
+
+{% INCLUDECSS '@stoker_purgeguests/acp_purgeguests.css' %}
+
+<p><img src="https://img.shields.io/badge/{{ lang('ACP_PURGEGUESTS_BADGE') }}-green.svg?style=plastic" height="28" /></p>
+
+<p class="font-size">{{ lang('ACP_PURGEGUESTS_SETTINGS_EXPLAIN') ~ lang('COLON') }}<br>
+<a class="font-weight" href="https://phpbb3bbcodes.com/donate" target="_blank" rel="noopener noreferrer"><i class="fa fa-paypal" aria-hidden="true"></i> {{ lang('ACP_PURGEGUESTS_DONATION') }}</a><br>
+<a class="font-weight" href="https://phpbb3bbcodes.com/home" target="_blank" rel="noopener noreferrer"><i class="fa fa-link" aria-hidden="true"></i> {{ lang('ACP_PURGEGUESTS_MEMBER') }}</a><br>
+<a class="font-weight" href="https://phpbb3bbcodes.com/viewtopic.php?t=3475" target="_blank" rel="noopener noreferrer"><i class="fa fa-ticket" aria-hidden="true"></i> {{ lang('ACP_PURGEGUESTS_SUPPORT') }}</a></p>
+
+<p>{{ lang('ACP_PURGEGUESTS_EXPLAIN') }}</p>
+
+<form id="action_purge_guest_sessions_form" method="post" action="{{ U_ACTION }}">
+	<fieldset class="ts-fieldset">
+		<legend class="ts-legend"><i class="fa fa-trash fa-lg" aria-hidden="true"></i> {{ lang('PURGE_GUEST_SESSIONS') }}</legend>
+		<dl>
+			<dt><label>{{ lang('PURGEGUESTS_ACTIVE_COUNT') }}</label><br /><span>{{ lang('PURGEGUESTS_ACTIVE_COUNT_EXPLAIN') }}</span></dt>
+			<dd><strong>{{ ACTIVE_GUEST_COUNT }}</strong></dd>
+		</dl>
+		<dl>
+			<dt><label>{{ lang('PURGEGUESTS_TOTAL_COUNT') }}</label><br /><span>{{ lang('PURGEGUESTS_TOTAL_COUNT_EXPLAIN') }}</span></dt>
+			<dd><strong>{{ TOTAL_GUEST_COUNT }}</strong></dd>
+		</dl>
+		<dl>
+			<dt><label for="action_purge_guest_sessions">{{ lang('PURGE_GUEST_SESSIONS') }}</label><br /><span>{{ lang('PURGE_GUEST_SESSIONS_EXPLAIN') }}</span></dt>
+			<dd><input type="hidden" name="action" value="purge_guest_sessions" /><input class="button2" type="submit" id="action_purge_guest_sessions" name="action_purge_guest_sessions" value="{{ lang('RUN') }}" /></dd>
+		</dl>
+	</fieldset>
+</form>
+
+<form id="acp_purgeguests" method="post" action="{{ U_ACTION }}">
+	<fieldset class="ts-fieldset">
+		<legend class="ts-legend"><i class="fa fa-magic fa-lg" aria-hidden="true"></i> {{ lang('ACP_PURGEGUESTS_AUTO_SETTINGS') }}</legend>
+		<dl>
+			<dt><label>{{ lang('PURGEGUESTS_AUTO_ENABLED') }}</label><br /><span>{{ lang('PURGEGUESTS_AUTO_ENABLED_EXPLAIN') }}</span></dt>
+			<dd class="dd-toggle">
+				<a href="{{ U_TOGGLE_ENABLED }}" class="text-deco" data-ajax="purgeguests_toggle">
+					<label class="toggle-switch">
+						<input type="checkbox"{% if PURGEGUESTS_AUTO_ENABLED %} checked="checked"{% endif %} />
+						<span class="toggle-slider"></span>
+					</label>
+				</a>
+			</dd>
+		</dl>
+		<dl>
+			<dt><label>{{ lang('PURGEGUESTS_STAT_AUTO_COUNT') }}</label><br /><span>{{ lang('PURGEGUESTS_STAT_AUTO_COUNT_EXPLAIN') }}</span></dt>
+			<dd><strong>{{ PURGEGUESTS_STAT_AUTO_COUNT }}</strong></dd>
+		</dl>
+		<dl>
+			<dt><label>{{ lang('PURGEGUESTS_EXCLUDE_REGISTER') }}</label><br /><span>{{ lang('PURGEGUESTS_EXCLUDE_REGISTER_EXPLAIN') }}</span></dt>
+			<dd class="dd-toggle">
+				<a href="{{ U_TOGGLE_REGISTER }}" class="text-deco" data-ajax="purgeguests_toggle">
+					<label class="toggle-switch">
+						<input type="checkbox"{% if PURGEGUESTS_EXCLUDE_REGISTER %} checked="checked"{% endif %} />
+						<span class="toggle-slider"></span>
+					</label>
+				</a>
+			</dd>
+		</dl>
+		<dl>
+			<dt><label>{{ lang('PURGEGUESTS_LOG_ENABLED') }}</label><br /><span>{{ lang('PURGEGUESTS_LOG_ENABLED_EXPLAIN') }}</span></dt>
+			<dd class="dd-toggle">
+				<a href="{{ U_TOGGLE_LOG }}" class="text-deco" data-ajax="purgeguests_toggle">
+					<label class="toggle-switch">
+						<input type="checkbox"{% if PURGEGUESTS_LOG_ENABLED %} checked="checked"{% endif %} />
+						<span class="toggle-slider"></span>
+					</label>
+				</a>
+			</dd>
+		</dl>
+		<dl>
+			<dt><label for="purgeguests_auto_threshold">{{ lang('PURGEGUESTS_AUTO_THRESHOLD') }}</label><br /><span>{{ lang('PURGEGUESTS_AUTO_THRESHOLD_EXPLAIN') }}</span></dt>
+			<dd><input type="number" id="purgeguests_auto_threshold" name="purgeguests_auto_threshold" value="{{ PURGEGUESTS_AUTO_THRESHOLD }}" min="0" max="99999" /> {{ lang('PURGEGUESTS_GUESTS') }}</dd>
+		</dl>
+		<dl>
+			<dt><label for="purgeguests_threshold_rows">{{ lang('PURGEGUESTS_THRESHOLD_ROWS') }}</label><br /><span>{{ lang('PURGEGUESTS_THRESHOLD_ROWS_EXPLAIN') }}</span></dt>
+			<dd><input type="number" id="purgeguests_threshold_rows" name="purgeguests_threshold_rows" value="{{ PURGEGUESTS_THRESHOLD_ROWS }}" min="0" max="99999" /> {{ lang('PURGEGUESTS_ROWS') }}</dd>
+		</dl>
+		<dl>
+			<dt><label for="purgeguests_auto_interval">{{ lang('PURGEGUESTS_AUTO_INTERVAL') }}</label><br /><span>{{ lang('PURGEGUESTS_AUTO_INTERVAL_EXPLAIN') }}</span></dt>
+			<dd><input type="number" id="purgeguests_auto_interval" name="purgeguests_auto_interval" value="{{ PURGEGUESTS_AUTO_INTERVAL }}" min="10" max="86400" /> {{ lang('PURGEGUESTS_SECONDS') }}</dd>
+		</dl>
+	</fieldset>
+	
+	<fieldset class="ts-fieldset">
+		<legend class="ts-legend"><i class="fa fa-share-square-o fa-lg" aria-hidden="true"></i> {{ lang('ACP_SUBMIT_CHANGES') }}</legend>
+		<p class="submit-buttons">
+			<input type="submit" name="submit" value="{{ lang('SUBMIT') }}" class="button1" />&nbsp;
+			<input type="reset" value="{{ lang('RESET') }}" class="button2" />
+		</p>
+	</fieldset>
+	{{ S_FORM_TOKEN }}
+</form>
+
+{% INCLUDEJS '@stoker_purgeguests/acp_purgeguests.js' %}
+
+{% include 'overall_footer.html' %}

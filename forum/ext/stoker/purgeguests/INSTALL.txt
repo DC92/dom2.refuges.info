@@ -1,0 +1,4 @@
+https://www.phpbb.com/customise/db/extension/auto_purge_guest_sessions/
+
+// DOMINIQUE : Cast nécéssaire pour PGSQL event/listener.php ligne 78
+AND CAST (config_value AS INTEGER) <= " . ($now - $interval);

@@ -1,0 +1,31 @@
+{
+    "name": "stoker/purgeguests",
+    "type": "phpbb-extension",
+    "description": "Manual and automatic purging of guest sessions to protect against botnet-driven session table floods.",
+    "homepage": "https://phpbb3bbcodes.com/",
+    "version": "1.0.5",
+    "license": "GPL-2.0-only",
+    "authors": [
+        {
+            "name": "Stoker",
+            "homepage": "https://phpbb3bbcodes.com/"
+        }
+    ],
+    "require": {
+        "php": ">=7.4",
+        "composer/installers": "~1.0||~2.0",
+        "phpbb/phpbb": ">=3.3.0,<4.0.0@dev"
+    },
+    "extra": {
+        "display-name": "Auto Purge Guest Sessions",
+        "soft-require": {
+            "phpbb/phpbb": ">=3.3.0,<4.0.0@dev"
+        },
+        "version-check": {
+            "host": "www.phpbb.com",
+            "directory": "/customise/db/extension/auto_purge_guest_sessions",
+            "filename": "version_check",
+            "ssl": true
+        }
+    }
+}

@@ -1,0 +1,19 @@
+services:
+    stoker.purgeguests.listener:
+        class: stoker\purgeguests\event\listener
+        arguments:
+            - '@config'
+            - '@dbal.conn'
+            - '@log'
+        tags:
+            - { name: event.listener }
+
+    stoker.purgeguests.admin_controller:
+        class: stoker\purgeguests\controller\admin_controller
+        arguments:
+            - '@config'
+            - '@dbal.conn'
+            - '@log'
+            - '@request'
+            - '@template'
+            - '@user'
