@@ -76,11 +76,8 @@ class listener implements EventSubscriberInterface
 			SET config_value = '" . $now . "'
 			WHERE config_name = 'purgeguests_last_check'
 				AND CAST (config_value AS INTEGER) <= " . ($now - $interval);
-				// DOMINIQUE : Cast nécéssaire pour PGSQL // AND config_value <= " . ($now - $interval);
+				//DOM 08/26 : Cast nécéssaire pour PGSQL // AND config_value <= " . ($now - $interval);
 		$this->db->sql_query($sql);
-
-
-//CAST (config_value AS INTEGER)
 
 		if (!$this->db->sql_affectedrows())
 		{
