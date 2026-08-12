@@ -93,17 +93,24 @@ else
     // Secondes depuis 1/1/1970
     intval($req->depuis);
 
-// On vérifie que les types de points sont ok, sinon on met all comme valeur
-if($req->page!="point") {
+// On filtre les types de points ok
+if(isset($req->type_points)) {
   $temp = explode(",", $req->type_points);
-  foreach ($temp as $type_point) {
-    if (!in_array($type_point,$val->type_points) &&
-      !in_array($type_point,$val->type_points_id)) {
-      $req->type_points = "all"; break;
-    }
-  }
+  $temp = array_filter($temp,
+    function($type_point) {
+      global $val;
+      if (in_array($type_point, $val->type_points) ||
+        in_array($type_point, $val->type_points_id))
+        return $type_point;
+    }, ARRAY_FILTER_USE_BOTH
+  );
+
+  if (count($temp))
+    $req->type_points = implode(",", $temp);
+  else
+    exit ("Error : no valid type");
 }
-else {
+else { // Par défaut, tous
   $req->type_points = "all";
 }
 
