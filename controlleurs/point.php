@@ -97,7 +97,7 @@ else // le point est valide
     }
 
     /*********** Détermination de la carte à afficher ***/
-    $vue->carte='myol';
+    $vue->carte='leaflet';
   }
 
   /***********  détermination si le point se situe dans une réserve naturelle / zone réglementée *******/

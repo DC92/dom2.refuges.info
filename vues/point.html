@@ -166,13 +166,10 @@
         <strong><?=$vue->point->nom_precision_gps?></strong>
       <?php } else { ?>
         <input type="hidden" id="cadre-json" value='{"type":"Point","coordinates":[<?=$vue->point->longitude?>,<?=$vue->point->latitude?>]}'>
-        <span id="cadre-string"></span>
-        <select id="cadre-select">
-          <option value="dec" selected="selected">Degrés décimaux</option>
-          <option value="dms">Deg Min Sec</option>
-          <option class="xy" value="swiss">Suisse</option>
-          <option value="utm">UTM</option>
-        </select>
+        <span id="cadre-string">
+          Lon: <?=round($vue->point->longitude,5)?>,
+          Lat: <?=round($vue->point->latitude,5)?>
+        </span>
     </dd>
     <dd class="noprint">
       Export:
