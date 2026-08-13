@@ -144,6 +144,8 @@ function initLeafletMap(mapId, serveurAPI, versionFeatures, layerKeys) {
     'query': '(nwr["natural"="spring"]({{bbox}});nwr["amenity"="drinking_water"]({{bbox}}););out center;',
     markerIcon: L.icon({
       iconUrl: serveurAPI + '/images/icones/pointdeau.svg',
+      iconSize: [24, 24],  
+      iconAnchor: [12, 12],  
     }),
     minZoom: 12, //TODO BUG display layer only when zoom < 12
     minZoomIndicatorEnabled: false,
@@ -153,6 +155,8 @@ function initLeafletMap(mapId, serveurAPI, versionFeatures, layerKeys) {
     'query': '(nwr["amenity"="parking"]["access"!="private"]({{bbox}}););out center;',
     markerIcon: L.icon({
       iconUrl: serveurAPI + '/images/icones/parking.svg',
+      iconSize: [24, 24],  
+      iconAnchor: [12, 12],  
     }),
     minZoom: 12,
     minZoomIndicatorEnabled: false,
@@ -162,6 +166,8 @@ function initLeafletMap(mapId, serveurAPI, versionFeatures, layerKeys) {
     'query': '(nwr["highway"="bus_stop"]({{bbox}}););out center;',
     markerIcon: L.icon({
       iconUrl: serveurAPI + '/images/icones/bus.svg',
+      iconSize: [24, 24],  
+      iconAnchor: [12, 12],  
     }),
     minZoom: 12,
     minZoomIndicatorEnabled: false,
@@ -264,6 +270,32 @@ function initLeafletMap(mapId, serveurAPI, versionFeatures, layerKeys) {
 
   // Lance le chargement de la carte
   map.setView([permalink[1], permalink[2]], permalink[0]);
+
+  // Marqueur ou édition de position de cabane
+  L.marker([46, 5], {
+      icon: L.icon({
+        iconUrl: '/images/viseur.svg',
+        iconSize: [32, 32],
+        iconAnchor: [16, 16],
+      }),
+      zIndexOffset: 1000,
+      draggable: true,
+    })
+    .on('drag', (evt) => {
+      const position = evt.target.getLatLng();
+      console.log(position); //DCMM
+    })
+    .addTo(map);
+
+  // Marqueur ou édition de position de cabane
+  L.marker([45, 5], {
+      icon: L.icon({
+        iconUrl: '/images/cadre.svg',
+        iconSize: [32, 44],
+        iconAnchor: [16, 22],
+      }),
+    })
+    .addTo(map);
 
   return map;
 }

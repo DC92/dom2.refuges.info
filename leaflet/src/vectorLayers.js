@@ -18,7 +18,7 @@
 
 // Points d'intérêt refuges.info
 /* eslint-disable-next-line no-unused-vars */
-function wriPOILayer(serveurAPI, type, versionFeatures) {
+function wriPOILayer(serveurAPI, type, versionFeatures, hideTooltip) {
   //TODO BUG ne s'affiche que pour les zooms faibles et ne raffraichi pas après
   const iconList = [],
     poiLayer = L.geoJson(null, {
@@ -27,16 +27,19 @@ function wriPOILayer(serveurAPI, type, versionFeatures) {
         L.marker(latlng, {
           icon: L.icon({
             iconUrl: serveurAPI + '/images/icones/' + feature.properties.type.icone + '.svg',
+            iconSize: [24, 24],
+            iconAnchor: [12, 12],
           }),
         }),
 
       onEachFeature: (feature, layer) => {
         // Etiquettes
-        layer.bindTooltip(
-          feature.properties.nom, {
-            permanent: true,
-            direction: 'center',
-          }).openTooltip();
+        if (!hideTooltip)
+          layer.bindTooltip(
+            feature.properties.nom, {
+              permanent: true,
+              direction: 'center',
+            }).openTooltip();
 
         layer.on({
           click: () => {
