@@ -4,7 +4,7 @@
  * Déclaration de la carte *
  ***************************/
 /* eslint-disable-next-line no-unused-vars */
-function initLeafletMap(mapId, serveurAPI, versionFeatures, keys) {
+function initLeafletMap(mapId, serveurAPI, versionFeatures, layerKeys) {
   console.info('MAP init');
 
   /*******************
@@ -14,7 +14,7 @@ function initLeafletMap(mapId, serveurAPI, versionFeatures, keys) {
       //DCMM pour développements ultérieurs
       //TODO https://leaflet-extras.github.io/leaflet-providers/preview/
       /*OpenCycleMap: L.tileLayer(
-        'https://api.thunderforest.com/cycle/{z}/{x}/{y}{r}.png?apikey=' + keys.thunderforest, {
+        'https://api.thunderforest.com/cycle/{z}/{x}/{y}{r}.png?apikey=' + layerKeys.thunderforest, {
           maxZoom: 22,
           attribution: '<a href="https://www.thunderforest.com/">Thunderforest</a> | ' +
             '<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
@@ -54,14 +54,14 @@ function initLeafletMap(mapId, serveurAPI, versionFeatures, keys) {
             '<a href="https://openmaps.fr/map-legend/opentopomap-legend.html">Légende</a>',
         }),
       'ISO-maps': L.tileLayer(
-        'https://api.iso-maps.com/v1/tiles/{z}/{x}/{y}.webp?api_key=' + keys.isomaps, {
+        'https://api.iso-maps.com/v1/tiles/{z}/{x}/{y}.webp?api_key=' + layerKeys.isomaps, {
           maxZoom: 16,
           attribution: '<a href="https://www.iso-maps.com/">Isomaps</a>',
         }),
 
       // Thunderforest
       Outdoors: L.tileLayer(
-        'https://api.thunderforest.com/outdoors/{z}/{x}/{y}{r}.png?apikey=' + keys.thunderforest, {
+        'https://api.thunderforest.com/outdoors/{z}/{x}/{y}{r}.png?apikey=' + layerKeys.thunderforest, {
           maxZoom: 22,
           attribution: '<a href="https://www.thunderforest.com/">Thunderforest</a> | ' +
             '<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
@@ -96,7 +96,7 @@ function initLeafletMap(mapId, serveurAPI, versionFeatures, keys) {
         }),
 
       'Photo Maxar': L.tileLayer.wms(
-        'https://api.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}@2x.webp?access_token=' + keys.mapbox, {
+        'https://api.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}@2x.webp?access_token=' + layerKeys.mapbox, {
           maxZoom: 22,
           attribution: '<a href="https://www.mapbox.com/"> Mapbox</a>',
         }),

@@ -18,7 +18,7 @@
 
 // Points d'intérêt refuges.info
 /* eslint-disable-next-line no-unused-vars */
-function wriPOILayer(serveurAPI, type, version) {
+function wriPOILayer(serveurAPI, type, versionFeatures) {
   //TODO BUG ne s'affiche que pour les zooms faibles et ne raffraichi pas après
   const iconList = [],
     poiLayer = L.geoJson(null, {
@@ -49,7 +49,7 @@ function wriPOILayer(serveurAPI, type, version) {
     }),
     url = serveurAPI + '/api/bbox?' +
     'nb_points=all&type_points=' + type +
-    '&version=' + version + '&cache=' + (7 * 24 * 3600);
+    '&version=' + versionFeatures + '&cache=' + (7 * 24 * 3600);
   //TODO Délai cache api / depuis
 
   // Fetch remote data
@@ -72,7 +72,7 @@ function wriPOILayer(serveurAPI, type, version) {
 
 // Polygones de massifs de refuges.info
 /* eslint-disable-next-line no-unused-vars */
-function wriPolygonLayer(serveurAPI, typeId, version) {
+function wriPolygonLayer(serveurAPI, typeId, versionFeatures) {
   const polygonLayer = L.geoJson(null, {
       style: function(feature) {
         return {
@@ -105,7 +105,7 @@ function wriPolygonLayer(serveurAPI, typeId, version) {
     }),
     url = serveurAPI + '/api/polygones?' +
     'type_polygon=' + typeId +
-    '&version=' + version + '&cache=' + (7 * 24 * 3600); // version tient compte des polygones
+    '&version=' + versionFeatures + '&cache=' + (7 * 24 * 3600); // version tient compte des polygones
 
   fetch(url)
     .catch((er) => console.error(er + ' fetching ' + url))
