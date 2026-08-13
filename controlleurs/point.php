@@ -7,6 +7,7 @@ require_once ("polygone.php");
 require_once ("point.php");
 require_once ("utilisateur.php");
 require_once ("mise_en_forme_texte.php");
+require_once ("SwisstopoConverter.php");
 
 $condition = new stdClass();
 
@@ -49,6 +50,13 @@ else // le point est valide
   $vue->lien_wiki_explication_geo=lien_wiki("geo-uri");
   $vue->lien_wiki_explication_proprio=lien_wiki("informations_proprietaires");
   $vue->titre = "$vue->nom_debut_majuscule $point->altitude m ($point->nom_type)";
+
+  // Conversion en XY mn03 Swisstopo
+  $swiss_converter = new Antistatique\Swisstopo\SwisstopoConverter();
+  $vue->point->XY = $swiss_converter->fromWGSToMN03($vue->point->latitude, $vue->point->longitude);
+  $vue->point->XY['inMN03'] =
+    $vue->point->XY['x'] >=  70000 && $vue->point->XY['x'] <= 300000 &&
+    $vue->point->XY['y'] >= 480000 && $vue->point->XY['y'] <= 850000;
 
   $vue->localisation_point = array();
   foreach ($point->polygones as $polygone)
