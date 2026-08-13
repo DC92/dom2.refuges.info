@@ -127,7 +127,10 @@ function initLeafletMap(mapId, serveurAPI, versionFeatures, layerKeys) {
     localStorage.checkedLayers.split(',') : ['Cabane non gardée', 'Refuge gardé', 'Gîte d\'étape'], // Par défaut
 
     // Groupement des couches qui doivent être clustérisées ensembles
-    vectorCluster = L.markerClusterGroup();
+    vectorCluster = L.markerClusterGroup({
+      spiderfyOnMaxZoom: true, // Overlapping markers will spiderfy when clicked
+      showCoverageOnHover: false, // Optional: hides the cluster bounds polygon
+    });
 
   for (const [titre, typeId] of Object.entries(clusteredOverlays))
     vectorLayers[titre] =
