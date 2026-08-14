@@ -169,10 +169,7 @@
         <span id="cadre-string">
           Lon: <?=round($vue->point->longitude,5)?>,
           Lat: <?=round($vue->point->latitude,5)?>
-          <?php if ($vue->point->XY['inMN03']) { ?></br
-            >X: <?=round($vue->point->XY['x'])?>,
-            Y: <?=round($vue->point->XY['y'])?>
-          <?php } ?>
+          <?=$vue->point->XY??''?>
         </span>
     </dd>
     <dd class="noprint">

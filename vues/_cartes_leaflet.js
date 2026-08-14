@@ -274,21 +274,5 @@ function initLeafletMap(mapId, serveurAPI, versionFeatures, layerKeys) {
   // Lance le chargement de la carte
   map.setView([permalink[1], permalink[2]], permalink[0]);
 
-  // Édition de position de cabane
-  /*L.marker([46, 5], {
-      icon: L.icon({
-        iconUrl: '/images/viseur.svg',
-        iconSize: [32, 32],
-        iconAnchor: [16, 16],
-      }),
-      zIndexOffset: 1000,
-      draggable: true,
-    })
-    .on('drag', (evt) => {
-      const position = evt.target.getLatLng();
-      console.log(position); //DCMM
-    })
-    .addTo(map);*/
-
   return map;
 }
