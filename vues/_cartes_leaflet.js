@@ -113,6 +113,7 @@ function initLeafletMap(mapId, serveurAPI, versionFeatures, layerKeys) {
   /************************
    * Couches vectorielles *
    ************************/
+  // Couches refuges.info
   const clusteredOverlays = {
       'Cabane non gardée': 7,
       'Refuge gardé': 10,
@@ -121,6 +122,15 @@ function initLeafletMap(mapId, serveurAPI, versionFeatures, layerKeys) {
       'Point d\'eau': 23,
       'Passage délicat': 3,
       'Bâtiment en montagne': 28,
+    },
+    // Couches extérieures
+    OverpassOverlays = {
+      'hôtel': '["tourism"~"hotel|guest_house|chalet|hostel|apartment"]',
+      'camping': '["tourism"="camp_site"]',
+      'point d\'eau': '["natural"="spring"]({{bbox}});nwr["amenity"="drinking_water"]',
+      'alimentation': '["shop"~"supermarket|convenience"]',
+      'parking': '["amenity"="parking"]["access"!="private"]',
+      'bus': '["highway"="bus_stop"]',
     },
     vectorLayers = {},
     memCheckedLayers = typeof localStorage.checkedLayers === 'string' ?
@@ -141,41 +151,24 @@ function initLeafletMap(mapId, serveurAPI, versionFeatures, layerKeys) {
   vectorLayers['Régions'] = wriPolygonLayer(serveurAPI, 11, versionFeatures);
   vectorLayers.Massifs = wriPolygonLayer(serveurAPI, 1, versionFeatures);
 
-  //TODO Pour plus tard, les couches OSM
-  /*DCMM
-  vectorLayers.EauOSM = new L.OverPassLayer({
-    'query': '(nwr["natural"="spring"]({{bbox}});nwr["amenity"="drinking_water"]({{bbox}}););out center;',
-    markerIcon: L.icon({
-      iconUrl: serveurAPI + '/images/icones/pointdeau.svg',
-      iconSize: [24, 24],  
-      iconAnchor: [12, 12],  
-    }),
-    minZoom: 12, //TODO BUG display layer only when zoom < 12
-    minZoomIndicatorEnabled: false,
-  });
+  // Couche externe d'itinéraires
+  vectorLayers['Itinéraires'] = L.tileLayer(
+    'https://tile.waymarkedtrails.org/hiking/{z}/{x}/{y}.png', {
+      maxZoom: 18,
+    });
 
-  vectorLayers.ParkOSM = new L.OverPassLayer({
-    'query': '(nwr["amenity"="parking"]["access"!="private"]({{bbox}}););out center;',
-    markerIcon: L.icon({
-      iconUrl: serveurAPI + '/images/icones/parking.svg',
-      iconSize: [24, 24],  
-      iconAnchor: [12, 12],  
-    }),
-    minZoom: 12,
-    minZoomIndicatorEnabled: false,
-  });
-
-  vectorLayers.BusOSM = new L.OverPassLayer({
-    'query': '(nwr["highway"="bus_stop"]({{bbox}}););out center;',
-    markerIcon: L.icon({
-      iconUrl: serveurAPI + '/images/icones/bus.svg',
-      iconSize: [24, 24],  
-      iconAnchor: [12, 12],  
-    }),
-    minZoom: 12,
-    minZoomIndicatorEnabled: false,
-  });
-  */
+  // Couches OSM OverPass
+  for (const [titre, query] of Object.entries(OverpassOverlays))
+    vectorLayers['OSM ' + titre] = new L.OverPassLayer({
+      query: '(nwr' + query + '({{bbox}}););out center;',
+      markerIcon: L.icon({
+        iconUrl: serveurAPI + '/images/icones/' + titre.replace('ô', 'o').replace(/[^a-z]/gu, '') + '.svg',
+        iconSize: [24, 24],
+        iconAnchor: [12, 12],
+      }),
+      minZoom: 12,
+      minZoomIndicatorEnabled: false,
+    });
 
   /******************************
    * Initialisation de la carte *

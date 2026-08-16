@@ -27,5 +27,6 @@ L.marker(
   }
 ).on('drag', (evt) => {
   const position = evt.target.getLatLng();
-  console.log(position); //DCMM
+  document.getElementById('marker-lon').value = Math.round(position['lng'] * 100000) / 100000;
+  document.getElementById('marker-lat').value = Math.round(position['lat'] * 100000) / 100000;
 }).addTo(map);
