@@ -128,7 +128,7 @@ function initLeafletMap(mapId, serveurAPI, versionFeatures, layerKeys) {
       'hôtel': '["tourism"~"hotel|guest_house|chalet|hostel|apartment"]',
       'camping': '["tourism"="camp_site"]',
       'point d\'eau': '["natural"="spring"]({{bbox}});nwr["amenity"="drinking_water"]',
-      'alimentation': '["shop"~"supermarket|convenience"]',
+      'ravitaillement': '["shop"~"supermarket|convenience"]',
       'parking': '["amenity"="parking"]["access"!="private"]',
       'bus': '["highway"="bus_stop"]',
     },

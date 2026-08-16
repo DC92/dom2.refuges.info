@@ -5,7 +5,7 @@ function affiche_et_set(el, affiche, valeur) {
   return false;
 }
 
-// Affichage de la cartes
+// Affichage de la carte
 const map = initLeafletMap(
   'carte-saisie',
   'https://<?=$_SERVER["SERVER_NAME"]?>',
