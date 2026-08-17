@@ -29,7 +29,7 @@ function tileLayerIGN(url, paramsIGN, paramsLayer) {
 
 // Bouton de préchargement des tuiles OpenHickingMap
 const controlPreload = L.control({
-  position: 'topright',
+  position: 'topleft',
 });
 
 controlPreload.onAdd = () => {

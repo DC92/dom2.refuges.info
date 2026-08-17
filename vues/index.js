@@ -12,3 +12,6 @@ const map = initLeafletMap(
   <?=$vue->version_features?>,
   <?=json_encode($config_wri['mapKeys'])?>
 );
+
+controlPreload.addTo(map);
+
