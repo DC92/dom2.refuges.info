@@ -8,6 +8,20 @@
 
   <div class="tablo">
     <h4><?=$vue->stat->nbpoints?> points, <?=$vue->stat->nbmassifs?> massifs</h4>
+    <p id="export-carte">
+      <a href="aaa">Export des points refuges.info</a> sélectionnés sur la carte
+      <select name="format" onchange="makeExportLink()">
+        <option value="gpx">gpx (Complet, pour logiciel type osmand, marble, ...)</option>
+        <option value="gpx_garmin">gpx (compatible basecamp/mapsource/viking/...)</option>
+        <option value="gpx_simple">gpx simplifié (sans remarques et accès)</option>
+        <option value="kml">kml (googlearth et plusieurs applications smartphone )</option>
+        <option value="gml">Geography Markup Language</option>
+        <option value="csv">csv (tableurs)</option>
+        <option value="xml">xml Spécifique à notre base, exhaustif</option>
+        <option value="json">JSON</option>
+        <option value="geojson">GeoJSON</option>
+      </select>
+    </p>
     <div id="conteneur-selecteur-points"></div>
     <div id="carte-accueil" class="carte"></div>
 

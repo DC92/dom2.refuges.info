@@ -135,7 +135,8 @@ function initLeafletMap(mapId, serveurAPI, versionFeatures, layerKeys) {
     },
     overlayLayers = {},
     memCheckedLayers = typeof localStorage.checkedLayers === 'string' ?
-    localStorage.checkedLayers.split(',') : ['Cabane non gardée', 'Refuge gardé', 'Gîte d\'étape'], // Par défaut
+    localStorage.checkedLayers.split(',') :
+    ['Cabane non gardée', 'Refuge gardé', 'Gîte d\'étape'], // Par défaut
 
     // Groupement des couches qui doivent être clustérisées ensembles
     vectorCluster = L.markerClusterGroup({
