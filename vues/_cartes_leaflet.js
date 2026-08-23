@@ -115,16 +115,15 @@ function initLeafletMap(mapId, serveurAPI, versionFeatures, layerKeys) {
    ************************/
   // Couches refuges.info
   const clusteredVectorlayers = {
-      '<img src="/images/icones/cabane.svg"/> Cabane non gardée': 7,
-      '<img src="/images/icones/cabane_red.svg"/> Refuge gardé': 10,
-      '<img src="/images/icones/cabane_green.svg"/> Gîte d\'étape': 9,
-      '<img src="/images/icones/grotte.svg"/> Grotte': 29,
-      '<img src="/images/icones/pointdeau.svg"/> Point d\'eau': 23,
-      '<img src="/images/icones/triangle_a33.10.svg"/> Passage délicat': 3,
-      '<img src="/images/icones/cabane_white_black_a63.svg"/> Bâtiment en montagne': 28,
+      'Cabane non gardée': [7, 'cabane'],
+      'Refuge gardé': [10, 'cabane_red'],
+      'Gîte d\'étape': [9, 'cabane_green'],
+      'Grotte': [29, 'grotte'],
+      'Point d\'eau': [23, 'pointdeau'],
+      'Passage délicat': [3, 'triangle_a33.10'],
+      'Bâtiment en montagne': [28, 'cabane_white_black_a63'],
     },
-    clusteredVectorlayersByName = {},
-    // Couches extérieures
+    // Couches OSM overpass
     OverpassVectorlayers = {
       'hôtel': '["tourism"~"hotel|guest_house|chalet|hostel|apartment"]',
       'camping': '["tourism"="camp_site"]',
@@ -133,10 +132,10 @@ function initLeafletMap(mapId, serveurAPI, versionFeatures, layerKeys) {
       'parking': '["amenity"="parking"]["access"!="private"]',
       'bus': '["highway"="bus_stop"]',
     },
+    // Toutes les couches overlay
     overlayLayers = {},
     memCheckedLayers = typeof localStorage.checkedLayers === 'string' ?
-    localStorage.checkedLayers.split(',') :
-    ['Cabane non gardée', 'Refuge gardé', 'Gîte d\'étape'], // Par défaut
+    localStorage.checkedLayers.split(',') : ['Cabane non gardée', 'Refuge gardé', 'Gîte d\'étape'], // Par défaut
 
     // Groupement des couches qui doivent être clustérisées ensembles
     vectorCluster = L.markerClusterGroup({
@@ -144,14 +143,14 @@ function initLeafletMap(mapId, serveurAPI, versionFeatures, layerKeys) {
       showCoverageOnHover: false, // Optional: hides the cluster bounds polygon
     });
 
-  for (const [titre, typeId] of Object.entries(clusteredVectorlayers)) {
-    const poiLayer = wriPOILayer(serveurAPI, typeId, versionFeatures);
-
-    // Remove icons from name & get the poi layer (not the cluster)
-    clusteredVectorlayersByName[titre.replace(/<[^>]+> /gu, '')] = poiLayer;
+  for (const [nom, args] of Object.entries(clusteredVectorlayers)) {
+    args.push(
+      '<img src="/images/icones/' + args[1] + '.svg"/> ' + nom, // Libellé de la ligne sélecteur
+      wriPOILayer(serveurAPI, args[0], versionFeatures), // Couche affichable
+    );
 
     // Display as overlay
-    overlayLayers[titre] = L.featureGroup.subGroup(vectorCluster).addLayer(poiLayer);
+    overlayLayers[args[2]] = L.featureGroup.subGroup(vectorCluster).addLayer(args[3]);
   }
 
   overlayLayers['Régions'] = wriPolygonLayer(serveurAPI, 11, versionFeatures);
@@ -164,11 +163,11 @@ function initLeafletMap(mapId, serveurAPI, versionFeatures, layerKeys) {
     });
 
   // Couches OSM OverPass
-  for (const [titre, query] of Object.entries(OverpassVectorlayers))
-    overlayLayers['OSM ' + titre] = new L.OverPassLayer({
+  for (const [nom, query] of Object.entries(OverpassVectorlayers))
+    overlayLayers['OSM ' + nom] = new L.OverPassLayer({
       query: '(nwr' + query + '({{bbox}}););out center;',
       markerIcon: L.icon({
-        iconUrl: serveurAPI + '/images/icones/' + titre.replace('ô', 'o').replace(/[^a-z]/gu, '') + '.svg',
+        iconUrl: serveurAPI + '/images/icones/' + nom.replace('ô', 'o').replace(/[^a-z]/gu, '') + '.svg',
         iconSize: [24, 24],
         iconAnchor: [12, 12],
       }),
@@ -194,19 +193,19 @@ function initLeafletMap(mapId, serveurAPI, versionFeatures, layerKeys) {
         checkedLayers = [];
 
       for (const lsInputEl of overlaySelectors) {
-        const titre = lsInputEl.parentElement.lastChild.innerText.trim();
+        const nom = lsInputEl.parentElement.lastChild.innerText.trim();
 
         // Restaure les couches overlays précédentes
-        if (evt.type === 'load' && memCheckedLayers.includes(titre)) {
-          if (clusteredVectorlayersByName[titre])
-            clusteredVectorlayersByName[titre].on('adddata', () => lsInputEl.click()); // Overlays vector
+        if (evt.type === 'load' && memCheckedLayers.includes(nom)) {
+          if (clusteredVectorlayers[nom])
+            clusteredVectorlayers[nom][3].on('adddata', () => lsInputEl.click()); // Overlays vector
           else
             lsInputEl.click(); // Overlays tiles
         }
 
         // Mémorise les couches actuelles
         if (lsInputEl.checked)
-          checkedLayers.push(titre);
+          checkedLayers.push(nom);
       }
 
       // Mémorisé dans la mémoire permanente de l'explorateur localStorage
