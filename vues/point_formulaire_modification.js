@@ -25,8 +25,11 @@ L.marker(
     zIndexOffset: 1000,
     draggable: true,
   }
-).on('drag', (evt) => {
+).setLatLng(map.getCenter())
+.on('drag', (evt) => {
   const position = evt.target.getLatLng();
   document.getElementById('marker-lon').value = Math.round(position['lng'] * 100000) / 100000;
   document.getElementById('marker-lat').value = Math.round(position['lat'] * 100000) / 100000;
 }).addTo(map);
+
+//TODO DCMM WRI ne prend pas les modifs de position dans les inputs
