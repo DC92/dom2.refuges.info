@@ -13,9 +13,8 @@ const map = initLeafletMap(
   <?=json_encode($config_wri['mapKeys'])?>
 );
 
-//DCMM FUTUR HORS RESEAU
 // Ajoute de controle pre-load OpenHikingMap
-controlPreload.addTo(map);
+//DCMM FUTUR HORS RESEAU controlPreload.addTo(map);
 
 // Externalise le sélecteur de points pour les grandes largeurs de fenêtre
 const conteneurSelecteurExterneEl = document.getElementById('conteneur-selecteur-points'),
