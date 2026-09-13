@@ -1,5 +1,10 @@
 /* global L, confirm, map, setInterval, clearInterval */
 
+/************************************************
+ * Fonctions diverses liées aux couches tuilées *
+ * © Dominique cavailhez 2026                   *
+ ************************************************/
+
 // Remplace avantageusement 663 Ko de lib IGN
 /* eslint-disable-next-line no-unused-vars */
 function tileLayerIGN(url, paramsIGN, paramsLayer) {
@@ -28,7 +33,7 @@ function tileLayerIGN(url, paramsIGN, paramsLayer) {
 }
 
 //DCMM FUTUR HORS RESEAU
-// Bouton de préchargement des tuiles OpenHickingMap
+// Bouton de préchargement des tuiles OpenHikingMap
 const controlPreload = L.control({
   position: 'topleft',
 });
@@ -38,12 +43,12 @@ controlPreload.onAdd = () => {
     maxZoom = 16,
     edgeBuffer = 3,
     buttonDiv = L.DomUtil.create('div', 'button-wrapper leaflet-control-preload'),
-    avertissement = 'Vous êtes sur le point de précharger le fond de carte OpenHickingMap ' +
+    avertissement = 'Vous êtes sur le point de précharger le fond de carte OpenHikingMap ' +
     'dans un rayon de ' + (edgeBuffer + 1) + ' largeurs de la carte autour de sa position médiane ' +
     'pour les zooms ' + minZoom + ' à ' + maxZoom + '.\n' +
     'Cela peut engendrer une consommation réseau et mémoire de l\'ordre de 15 Mo.';
 
-  buttonDiv.innerHTML = '<button title="Précharger le fond de carte OpenHickingMap">&#127760;</button>';
+  buttonDiv.innerHTML = '<button title="Précharger le fond de carte OpenHikingMap">&#127760;</button>';
   buttonDiv.addEventListener('click', () => {
     if (confirm(avertissement)) {
       const pos = map.getCenter(),

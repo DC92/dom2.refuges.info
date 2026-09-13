@@ -1,9 +1,10 @@
 /* global L */
 
-/************************
- * Couches vectorielles *
- * du site refuges.info *
- ************************
+/*********************************************
+ * Couches vectorielles du site refuges.info *
+ * © Dominique cavailhez 2026                *
+ *********************************************
+
   Une icône est une image .png représentant un type de point
   Un point est défini par une position, un nom et une icône destinée à être affiché sur une carte
   Une fiche contient toutes les informations concernant un point, y compris les commentaires

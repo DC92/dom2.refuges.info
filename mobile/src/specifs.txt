@@ -45,9 +45,9 @@ Cette mise en cache est obligatoire et automatique
 - Les photos des fiches sont mémorisées par le cache de l’explorateur lors de la visualisation de chaque fiche.
 Cette mise en cache est implicite et automatique
 
-A VENIR - Les dalles OpenHickingMaps sur un zoom 6 (navigation dans les continents) à 16 (le zoom de la carte des pages point) et sur 3 fois le nombre de dalles visibles sur la carte dans toutes les directions, soit environ 450 dalles. Ces dalles ne sont mises à jour qu’en effaçant complétement le cache.
+A VENIR - Les dalles OpenHikingMap sur un zoom 6 (navigation dans les continents) à 16 (le zoom de la carte des pages point) et sur 3 fois le nombre de dalles visibles sur la carte dans toutes les directions, soit environ 450 dalles. Ces dalles ne sont mises à jour qu’en effaçant complétement le cache.
 Chaque dalle n’est mémorisée qu’une fois sans limite de validité
-Cette mise en cache est optionnelle et proposée par un bouton « mémoriser la carte OpenHickingMaps autour du point »
+Cette mise en cache est optionnelle et proposée par un bouton « mémoriser la carte OpenHikingMap autour du point »
 
 - Les autres fonds de cartes sont mis en cache par l’explorateur pour les dalles visualisées sur la carte
 Elles y restent dans un délai max_age défini par le fournisseur

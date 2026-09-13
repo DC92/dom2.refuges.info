@@ -3,7 +3,9 @@
 /*********************************************************
  * Rotating marker to be used in L.Control.Gps           *
  * which indicates the direction in which we are looking *
+ * © Dominique cavailhez 2026                            *
  *********************************************************/
+
 /* eslint-disable-next-line no-unused-vars */
 class MarkerCompass extends L.Marker {
   constructor() {

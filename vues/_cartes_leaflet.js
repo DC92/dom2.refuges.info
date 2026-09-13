@@ -235,10 +235,12 @@ function initLeafletMap(mapId, serveurAPI, versionFeatures, layerKeys) {
         if (lsInputEl.checked)
           baseLayerName = lsInputEl.parentElement.lastChild.innerText.trim();
 
-      localStorage.permalink = [evt.target.getZoom(), pos.lat, pos.lng]
-        .map(f => Math.round(f * 10000) / 10000)
-        .join('/') +
-        '/' + encodeURI(baseLayerName);
+      localStorage.permalink = [
+        map.getZoom().toFixed(1),
+        pos.lat.toFixed(5),
+        pos.lng.toFixed(5),
+        encodeURI(baseLayerName),
+      ].join('/');
     });
   });
 
