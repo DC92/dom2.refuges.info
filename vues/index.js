@@ -1,5 +1,3 @@
-// Carte leaflet
-
 const permalinkInit = (localStorage.permalink || '5/46.5/5').split('/');
 // Défaut : zoom/latitude/longitude
 

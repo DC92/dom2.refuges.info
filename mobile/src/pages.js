@@ -77,7 +77,6 @@ function vueFiche(json) {
       //BEST format de Léo
       complements: properties.info_comp,
     };
-  console.log(properties); //DCMM
 
   // Positionne la carte et les coordonnées
   map.setView([donnees.lng, donnees.lat], 15);
@@ -122,12 +121,10 @@ function controleurFiche(idFiche) {
   const apiUneFicheUrl = serveurAPI + '/api/point?detail=fiche&format_texte=html&id=' + idFiche;
 
   // Récupère les infos de la fiche dans indexDB
-  console.log(idbKeyval); //DCMM
   idbKeyval.get(parseInt(idFiche, 10))
     .catch((er) => console.error(er))
     //TODO BUG quand il n'y a pas de base keyval
     .then((jsonFiche) => {
-      console.log(jsonFiche); //DCMM
       if (jsonFiche)
         vueFiche(jsonFiche);
       else

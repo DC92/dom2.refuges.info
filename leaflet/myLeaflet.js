@@ -155,55 +155,6 @@ function tileLayerIGN(url, paramsIGN, paramsLayer) {
     });
 }
 
-//DCMM FUTUR HORS RESEAU
-/****************************************************
- * Bouton de préchargement des tuiles OpenHikingMap *
- ****************************************************/
-const controlPreload = L.control({
-  position: 'topleft',
-});
-
-controlPreload.onAdd = () => {
-  //TODO DCMM BUG map n'est pas défini
-  const minZoom = 10,
-    maxZoom = 16,
-    edgeBuffer = 3,
-    buttonDiv = L.DomUtil.create('div', 'button-wrapper leaflet-control-preload'),
-    avertissement = 'Vous êtes sur le point de précharger le fond de carte OpenHikingMap ' +
-    'dans un rayon de ' + (edgeBuffer + 1) + ' largeurs de la carte autour de sa position médiane ' +
-    'pour les zooms ' + minZoom + ' à ' + maxZoom + '.\n' +
-    'Cela peut engendrer une consommation réseau et mémoire de l\'ordre de 15 Mo.';
-
-  buttonDiv.innerHTML = '<button title="Précharger le fond de carte OpenHikingMap">&#127760;</button>';
-  buttonDiv.addEventListener('click', () => {
-    if (confirm(avertissement)) {
-      const pos = map.getCenter(), //TODO DCMM BUG map n'est pas défini
-        loadingLayer = L.tileLayer(
-          'https://tile.openmaps.fr/openhikingmap/{z}/{x}/{y}.png', {
-            edgeBufferTiles: edgeBuffer,
-          });
-
-      map.setZoom(minZoom); //TODO DCMM BUG map n'est pas défini
-      loadingLayer.addTo(map); //TODO DCMM BUG map n'est pas défini
-
-      const timer = setInterval(() => {
-        if (!loadingLayer.isLoading()) {
-          map.setZoom(map.getZoom() + 1); //TODO DCMM BUG map n'est pas défini
-          localStorage.permalink = minZoom + '/' + pos.lat + '/' + pos.lng + '/OpenHikingMap';
-
-          if (map.getZoom() > maxZoom) { //TODO DCMM BUG map n'est pas défini
-            clearInterval(timer);
-            alert('Téléchargement terminé.\nRéinitialisation de la page.');
-            location.reload();
-          }
-        }
-      }, 100);
-    };
-  });
-
-  return buttonDiv;
-};
-
 /*********************************************************
  * Rotating marker to be used in L.Control.Gps           *
  * which indicates the direction in which we are looking *
@@ -263,4 +214,52 @@ class MarkerCompass extends L.Marker {
       this._icon.style.transform.replace(/rotateZ\([^)]+\)/u, '') +
       ' rotateZ(' + (45 - parseInt(this.heading, 10)) + 'deg)';
   }
-};
+}
+
+//DCMM FUTUR HORS RESEAU
+/****************************************************
+ * Bouton de préchargement des tuiles OpenHikingMap *
+ ****************************************************/
+const controlPreload = L.control({
+  position: 'topleft',
+});
+
+controlPreload.onAdd = (map) => {
+  const minZoom = 10,
+    maxZoom = 16,
+    edgeBuffer = 3,
+    buttonDiv = L.DomUtil.create('div', 'button-wrapper leaflet-control-preload'),
+    avertissement = 'Vous êtes sur le point de précharger le fond de carte OpenHikingMap ' +
+    'dans un rayon de ' + (edgeBuffer + 1) + ' largeurs de la carte autour de sa position médiane ' +
+    'pour les zooms ' + minZoom + ' à ' + maxZoom + '.\n' +
+    'Cela peut engendrer une consommation réseau et mémoire de l\'ordre de 15 Mo.';
+
+  buttonDiv.innerHTML = '<button title="Précharger le fond de carte OpenHikingMap">&#127760;</button>';
+  buttonDiv.addEventListener('click', () => {
+    if (confirm(avertissement)) {
+      const pos = map.getCenter(),
+        loadingLayer = L.tileLayer(
+          'https://tile.openmaps.fr/openhikingmap/{z}/{x}/{y}.png', {
+            edgeBufferTiles: edgeBuffer,
+          });
+
+      map.setZoom(minZoom);
+      loadingLayer.addTo(map);
+
+      const timer = setInterval(() => {
+        if (!loadingLayer.isLoading()) {
+          map.setZoom(map.getZoom() + 1);
+          localStorage.permalink = minZoom + '/' + pos.lat + '/' + pos.lng + '/OpenHikingMap';
+
+          if (map.getZoom() > maxZoom) {
+            clearInterval(timer);
+            alert('Téléchargement terminé.\nRéinitialisation de la page.');
+            location.reload();
+          }
+        }
+      }, 100);
+    };
+  });
+
+  return buttonDiv;
+};;

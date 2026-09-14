@@ -473,6 +473,7 @@ a img {
 
 /* Sélecteur externe au delà d'une certaine largeur de fenêtre */
 #conteneur-selecteur-points {
+  display: none;
   float: left;
   margin: 5px;
 }

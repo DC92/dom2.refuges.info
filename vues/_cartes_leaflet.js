@@ -52,6 +52,7 @@ function initLeafletMap(mapId, serveurAPI, versionFeatures, layerKeys) {
         // }),*/
       //TODO Autriche
       //DCMM Pour tests, à enlever à la fin
+
       'Google': L.tileLayer('https://mt0.google.com/vt/lyrs=r&x={x}&y={y}&z={z}'),
       //DCMM FIN pour développements ultérieurs
 
