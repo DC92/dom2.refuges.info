@@ -8,7 +8,7 @@ const map = initLeafletMap(
 
 // Marqueur de position de cabane
 L.marker(
-  [<?=$vue->point->latitude?>,<?=$vue->point->longitude?>],
+  [<?=$vue->point->latitude?>, <?=$vue->point->longitude?>],
   {
     icon: L.icon({
       iconUrl: '/images/cadre.svg',
@@ -17,3 +17,5 @@ L.marker(
     }),
   }
 ).addTo(map);
+
+map.setView([<?=$vue->point->latitude?>, <?=$vue->point->longitude?>], 15);

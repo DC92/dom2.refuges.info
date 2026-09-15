@@ -145,6 +145,7 @@ function initLeafletMap(mapId, serveurAPI, versionFeatures, layerKeys) {
     vectorCluster = L.markerClusterGroup({
       spiderfyOnMaxZoom: true, // Overlapping markers will spiderfy when clicked
       showCoverageOnHover: false, // Optional: hides the cluster bounds polygon
+      maxClusterRadius: 30, // Less clusters
     });
 
   for (const [nom, args] of Object.entries(clusteredVectorlayers)) {

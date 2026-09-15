@@ -42,6 +42,3 @@ function inputsAuCentreCarte() {
 }
 
 marqueur.on('drag', inputsAuCentreCarte);
-
-//TODO DCMM bug quand modif point
-inputsAuCentreCarte(); // Init
