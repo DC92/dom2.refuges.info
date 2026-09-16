@@ -59,7 +59,7 @@ else // le point est valide
   $vue->lien_wiki_explication_proprio=lien_wiki("informations_proprietaires");
   $vue->titre = "$vue->nom_debut_majuscule $point->altitude m ($point->nom_type)";
 
-  // Conversion en XY CH1903 Swisstopo
+  /*//DCMM // Conversion en XY CH1903 Swisstopo
   $swiss_converter = new Antistatique\Swisstopo\SwisstopoConverter();
   $swiss_XY = $swiss_converter->fromWGSToMN03($vue->point->latitude, $vue->point->longitude);
   if($swiss_XY['x'] >=  70000 && $swiss_XY['x'] <= 300000 &&
@@ -67,6 +67,7 @@ else // le point est valide
     $vue->point->XY =
       '</br>X: '.number_format($swiss_XY['x'],0,'',' ').
       ', Y: '.number_format($swiss_XY['y'],0,'',' ');
+  */
 
   $vue->localisation_point = array();
   foreach ($point->polygones as $polygone)

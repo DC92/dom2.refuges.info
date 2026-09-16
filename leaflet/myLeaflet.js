@@ -23,7 +23,7 @@
 // POINTS D'INTÉRÊT REFUGES.INFO
 /* eslint-disable-next-line no-unused-vars */
 function wriPOILayer(serveurAPI, type, versionFeatures, hideTooltip) {
-  //TODO BUG ne s'affiche que pour les zooms faibles et ne rafraîchit pas après
+  //TODO BUG l'étiquette ne s'affiche que pour les zooms faibles et ne rafraîchit pas après
   const iconList = [],
     poiLayer = L.geoJson(null, {
       // Icônes
