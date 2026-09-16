@@ -60,7 +60,7 @@
       <div id="container-carte-point">
         <div id="carte-point"></div>
         <div class="noprint texte-tout-petit">
-          <div class="hide-touch-screen">Ctrl+click: nouvel onglet ; Maj+click: nouvelle fenêtre</div>
+          <span class="hide-touch-screen">Ctrl+click : nouvel onglet ; Maj+click : nouvelle fenêtre</span>
           <a href="/nav" title="'Shift + Click gauche' pour ouvrir la carte dans une nouvelle fenêtre">Grande carte</a>
         </div>
       </div>
@@ -165,10 +165,9 @@
       <?php if (empty($vue->carte)) { ?>
         <strong><?=$vue->point->nom_precision_gps?></strong>
       <?php } else { ?>
-        <input type="hidden" id="cadre-json" value='{"type":"Point","coordinates":[<?=$vue->point->longitude?>,<?=$vue->point->latitude?>]}'>
         <span id="cadre-string">
-          Lon: <?=round($vue->point->longitude,5)?>,
-          Lat: <?=round($vue->point->latitude,5)?>
+          Lon: <?=round($vue->point->longitude,5)?>°,
+          Lat: <?=round($vue->point->latitude,5)?>°
           <?=$vue->point->XY??''?>
         </span>
     </dd>

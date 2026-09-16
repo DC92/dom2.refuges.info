@@ -661,6 +661,7 @@ a img {
 }
 
 .texte-tout-petit {
+  margin-top: 6px;
   font-size: x-small;
 }
 
