@@ -41,7 +41,8 @@
         <?php foreach ($vue->types_point_affichables AS $type_affichable) {
           // Un type absent du mapping produisait un src vide (".svg") : on n'affiche
           // alors pas d'icône plutôt qu'une image cassée. Même garde que point_ajout.html
-          $icone = $type_affichable->icone;
+          $icone = $config_wri['correspondance_type_icone'][replace_url($type_affichable->nom_type)] ?? null;
+          //DCMM NOM ICONE DANS LA TABLE $icone = $type_affichable->icone;
         ?>
           <li>
             <input type="checkbox"

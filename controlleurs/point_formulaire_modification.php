@@ -91,10 +91,6 @@ elseif ( !empty($_REQUEST["id_point_type"]))
   else
     $point=reset($points_modele);
 
-  // on force les latitude à ce qui a été cliqué sur la carte (si existe, sinon vide)
-  $point->longitude=6;
-  $point->latitude=47;
-
   // on force l'id du point à vide histoire de ne pas modifier le modèle
   unset($point->id_point);
   // et pareil pour le modérateur actuel du point qui sera alors choisi directement car l'utilisateur est authentifié (ou pas, mais alors ça sera 0)

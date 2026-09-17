@@ -1,4 +1,4 @@
-// Force la sélection du type de point concerné
+// Force la sélection du type de point concerné dans le sélecteur de couches de la carte
 const nom_type="<?=$vue->point->nom_type?>";
 
 if(localStorage.checkedLayers)
@@ -6,7 +6,7 @@ if(localStorage.checkedLayers)
 
 localStorage.checkedLayers += nom_type.charAt(0).toUpperCase() + nom_type.slice(1);
 
-// Affichage de la cartes
+// Affichage de la carte
 const map = initLeafletMap(
   'carte-point',
   'https://<?=$_SERVER["SERVER_NAME"]?>',
