@@ -26,12 +26,11 @@
     </div>
 
     <!-- Edition de la position -->
-    <input type="hidden" id="marker-json" name="geojson" value='<?=!empty($vue->point->id_point)?$vue->point->geojson:''?>'>
-
     <fieldset>
       <legend>Coordonnées</legend>
       <div id="markers-lon-lat">
         <label>
+          <input DCMMtype="hidden" name="geojson" value='<?=!empty($vue->point->id_point)?$vue->point->geojson:''?>'>
           Longitude :
           <input type="text" name="lon" size="12" maxlength="12"
             value="<?=$vue->point->longitude?>" onchange="centrecCarteAuxInputs()">

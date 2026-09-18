@@ -1,4 +1,4 @@
-// Utilitaire de saisie
+// Utilitaire de saisie des boutons du formulaire
 function affiche_et_set(el, affiche, valeur) {
   document.getElementById(el).style.visibility = affiche;
   document.getElementById(el).value = valeur;
@@ -28,17 +28,22 @@ const markersLLinputEls = document.querySelectorAll('#markers-lon-lat input'),
   ).addTo(map);
 
 function centrecCarteAuxInputs() {
-  const ll = L.latLng(markersLLinputEls[1].value, markersLLinputEls[0].value);
+  const ll = L.latLng(markersLLinputEls[2].value, markersLLinputEls[1].value);
 
   marqueur.setLatLng(ll);
   map.panTo(ll);
 }
 
-function inputsAuCentreCarte() {
-  const position =marqueur.getLatLng();
+function inputsAuMarqueur() {
+  const position = marqueur.getLatLng();
 
-  markersLLinputEls[0].value =  position.lng.toFixed(5);
-  markersLLinputEls[1].value =  position.lat.toFixed(5);
+  markersLLinputEls[0].value = '{"type":"Point","coordinates":[' +
+    position.lng.toFixed(5) + ',' + position.lat.toFixed(5) +
+    ']}"';
+
+  markersLLinputEls[1].value = position.lng.toFixed(5);
+  markersLLinputEls[2].value = position.lat.toFixed(5);
 }
 
-marqueur.on('drag', inputsAuCentreCarte);
+inputsAuMarqueur();
+marqueur.on('drag', inputsAuMarqueur);
