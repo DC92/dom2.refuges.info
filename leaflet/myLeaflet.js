@@ -1,9 +1,11 @@
 /* global L, confirm, setInterval, clearInterval */
 
-/***************************************************
- * Personnal adaptations & turn around for leaflet *
- * © Dominique Cavailhez 2026                      *
- ***************************************************/
+/*************************************************
+ * Personnal adaptations & addOns for leaflet    *
+ * This file contains all the generic comon code *
+ * related to leaflet functions                  *
+ * © Dominique Cavailhez 2026                    *
+ *************************************************/
 
 /*********************************************
  * Couches vectorielles du site refuges.info *
@@ -262,4 +264,4 @@ controlPreload.onAdd = (map) => {
   });
 
   return buttonDiv;
-};;
+};

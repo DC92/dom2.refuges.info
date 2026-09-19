@@ -1,8 +1,14 @@
 /* global L, MarkerCompass, tileLayerIGN, wriPOILayer, wriPolygonLayer */
 
+/*********************************************************************************
+ * Ce fichier contient les paramètrages spécifiques et visibles sur refuges.info *
+ *********************************************************************************/
+
+// Position par défaut
+localStorage.permalink ||= '5/46.5/5';
+
 // Couches refuges.info
-const clusteredVectorlayers = {
-    //TODO gérer dans la table point_type ?
+const couchesIconesWRI = {
     'Cabane non gardée': [7, 'cabane'],
     'Refuge gardé': [10, 'cabane_red'],
     'Gîte d\'étape': [9, 'cabane_green'],
@@ -12,7 +18,7 @@ const clusteredVectorlayers = {
     'Bâtiment à investiguer': [28, 'cabane_white_black_a63'],
   },
   // Couches OSM overpass
-  OverpassVectorlayers = {
+  couchesOverpass = {
     'hôtel': '["tourism"~"hotel|guest_house|chalet|hostel|apartment"]',
     'camping': '["tourism"="camp_site"]',
     'point d\'eau': '["natural"="spring"]({{bbox}});nwr["amenity"="drinking_water"]',
@@ -21,7 +27,7 @@ const clusteredVectorlayers = {
     'bus': '["highway"="bus_stop"]',
   };
 
-function tileLayersCollection(layerKeys) {
+function couchesDeFond(layerKeys) {
   return {
     //DCMM pour développements ultérieurs
     //TODO https://leaflet-extras.github.io/leaflet-providers/preview/
@@ -123,24 +129,23 @@ function tileLayersCollection(layerKeys) {
   };
 }
 
-/***************************
- * Déclaration de la carte *
- ***************************/
+/******************************
+ * Initialisation de la carte *
+ ******************************/
 /* eslint-disable-next-line no-unused-vars */
 function initLeafletMap(mapId, serveurAPI, versionFeatures, layerKeys) {
   console.info('MAP init ' + mapId);
 
-  /*******************
-   * Couches tuilées *
-   *******************/
-  const tileLayers = tileLayersCollection(layerKeys),
-    permalink = (localStorage.permalink || '').split('/'),
-    baselayer = tileLayers[decodeURI(permalink[3])] || Object.values(tileLayers)[0];
+  // Création de la carte
+  const map = L.map(mapId);
 
-  /************************
-   * Couches vectorielles *
-   ************************/
-  // Toutes les couches vectorielles overlays
+  // Couches tuilées
+  const tileLayers = couchesDeFond(layerKeys),
+    permalink = localStorage.permalink.split('/');
+
+  (tileLayers[decodeURI(permalink[3])] || Object.values(tileLayers)[0]).addTo(map); // Fond de carte par défaut
+
+  // Couches vectorielles overlays
   const defaultWriLalers = ['Cabane non gardée', 'Refuge gardé', 'Gîte d\'étape'],
     overlayLayers = {},
     memCheckedLayers = typeof localStorage.checkedLayers === 'string' ?
@@ -152,13 +157,15 @@ function initLeafletMap(mapId, serveurAPI, versionFeatures, layerKeys) {
       maxClusterRadius: 30, // Less clusters
     });
 
-  for (const [nom, args] of Object.entries(clusteredVectorlayers)) {
+  vectorCluster.addTo(map);
+
+  for (const [nom, args] of Object.entries(couchesIconesWRI)) {
     args.push(
       '<img src="/images/icones/' + args[1] + '.svg"/> ' + nom, // Libellé de la ligne sélecteur
       wriPOILayer(serveurAPI, args[0], versionFeatures), // Couche affichable
     );
 
-    // Display as overlay
+    // Display as overlay clusters
     overlayLayers[args[2]] = L.featureGroup.subGroup(vectorCluster).addLayer(args[3]);
   }
 
@@ -172,7 +179,7 @@ function initLeafletMap(mapId, serveurAPI, versionFeatures, layerKeys) {
     });
 
   // Couches OSM OverPass
-  for (const [nom, query] of Object.entries(OverpassVectorlayers))
+  for (const [nom, query] of Object.entries(couchesOverpass))
     overlayLayers['OSM ' + nom] = new L.OverPassLayer({
       query: '(nwr' + query + '({{bbox}}););out center;',
       markerIcon: L.icon({
@@ -183,72 +190,6 @@ function initLeafletMap(mapId, serveurAPI, versionFeatures, layerKeys) {
       minZoom: 12,
       minZoomIndicatorEnabled: false,
     });
-
-  /******************************
-   * Initialisation de la carte *
-   ******************************/
-  const map = L.map(mapId);
-
-  baselayer.addTo(map); // Fond de carte par défaut
-  vectorCluster.addTo(map);
-
-  /*************
-   * Permalink *
-   *************/
-  //TODO reprendre et en faire un module
-  ['load', 'overlayadd', 'overlayremove'].forEach((type) => {
-    map.on(type, (evt) => {
-      const overlaySelectors = document.querySelectorAll('.leaflet-control-layers-overlays input'),
-        checkedLayersnames = [],
-        checkedLayersTypes = [];
-
-      for (const lsInputEl of overlaySelectors) {
-        const nom = lsInputEl.parentElement.lastChild.innerText.trim();
-
-        // Restaure les couches overlays précédentes
-        if (evt.type === 'load' && memCheckedLayers.includes(nom)) {
-          if (clusteredVectorlayers[nom])
-            clusteredVectorlayers[nom][3].on('adddata', () => lsInputEl.click()); // Overlays vector
-          else
-            lsInputEl.click(); // Overlays tiles
-        }
-
-        // Mémorise les couches actuelles
-        if (lsInputEl.checked) {
-          checkedLayersnames.push(nom);
-
-          if (typeof clusteredVectorlayers[nom] === 'object')
-            checkedLayersTypes.push(clusteredVectorlayers[nom][0]);
-        }
-      }
-
-      // Mémorisé dans la mémoire permanente de l'explorateur localStorage
-      localStorage.checkedLayers = checkedLayersnames.join(',');
-      localStorage.checkedLayersTypes = checkedLayersTypes.join(',');
-
-      // Cache les étiquettes pour les grandes échèles
-      map.getContainer().classList[map.getZoom() < 8 ? 'add' : 'remove']('hide-tooltips');
-    });
-  });
-
-  ['moveend', 'baselayerchange'].forEach((type) => {
-    map.on(type, (evt) => {
-      const baselayerSelector = document.querySelectorAll('.leaflet-control-layers-base input'),
-        pos = evt.target.getCenter();
-      let baseLayerName = Object.keys(tileLayers)[0];
-
-      for (const lsInputEl of baselayerSelector)
-        if (lsInputEl.checked)
-          baseLayerName = lsInputEl.parentElement.lastChild.innerText.trim();
-
-      localStorage.permalink = [
-        map.getZoom().toFixed(1),
-        pos.lat.toFixed(5),
-        pos.lng.toFixed(5),
-        encodeURI(baseLayerName),
-      ].join('/');
-    });
-  });
 
   /*************
    * Contrôles *
@@ -285,6 +226,61 @@ function initLeafletMap(mapId, serveurAPI, versionFeatures, layerKeys) {
 
   // Lance le chargement de la carte
   map.setView([permalink[1], permalink[2]], permalink[0]);
+
+  // Permalink //TODO remonter dans MyLeaflet
+  ['load', 'overlayadd', 'overlayremove'].forEach((type) => {
+    map.on(type, (evt) => {
+      const overlaySelectors = document.querySelectorAll('.leaflet-control-layers-overlays input'),
+        checkedLayersnames = [],
+        checkedLayersTypes = [];
+
+      for (const lsInputEl of overlaySelectors) {
+        const nom = lsInputEl.parentElement.lastChild.innerText.trim();
+
+        // Restaure les couches overlays précédentes
+        if (evt.type === 'load' && memCheckedLayers.includes(nom)) {
+          if (couchesIconesWRI[nom])
+            couchesIconesWRI[nom][3].on('adddata', () => lsInputEl.click()); // Overlays vector
+          else
+            lsInputEl.click(); // Overlays tiles
+        }
+
+        // Mémorise les couches actuelles
+        if (lsInputEl.checked) {
+          checkedLayersnames.push(nom);
+
+          if (typeof couchesIconesWRI[nom] === 'object')
+            checkedLayersTypes.push(couchesIconesWRI[nom][0]);
+        }
+      }
+
+      // Mémorisé dans la mémoire permanente de l'explorateur localStorage
+      localStorage.checkedLayers = checkedLayersnames.join(',');
+      localStorage.checkedLayersTypes = checkedLayersTypes.join(',');
+
+      // Cache les étiquettes pour les grandes échèles
+      map.getContainer().classList[map.getZoom() < 8 ? 'add' : 'remove']('hide-tooltips');
+    });
+  });
+
+  ['moveend', 'baselayerchange'].forEach((type) => {
+    map.on(type, (evt) => {
+      const baselayerSelector = document.querySelectorAll('.leaflet-control-layers-base input'),
+        pos = evt.target.getCenter();
+      let baseLayerName = Object.keys(tileLayers)[0]; // Par défaut, la première couche
+
+      for (const lsInputEl of baselayerSelector)
+        if (lsInputEl.checked)
+          baseLayerName = lsInputEl.parentElement.lastChild.innerText.trim();
+
+      localStorage.permalink = [
+        map.getZoom().toFixed(1),
+        pos.lat.toFixed(5),
+        pos.lng.toFixed(5),
+        encodeURI(baseLayerName),
+      ].join('/');
+    });
+  });
 
   return map;
 }

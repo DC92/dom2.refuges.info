@@ -7,8 +7,8 @@
   idPolygoneType: <?=$vue->polygone->id_polygone_type??0?>,
 });*/
 
-  const tileLayers = tileLayersCollection(   <?=json_encode($config_wri['mapKeys'])?>),
-    permalink = (localStorage.permalink || '').split('/'),
+  const tileLayers = couchesDeFond(   <?=json_encode($config_wri['mapKeys'])?>),
+    permalink = localStorage.permalink.split('/'),
     baselayer = tileLayers[decodeURI(permalink[3])] || Object.values(tileLayers)[0],
       map = L.map('carte-edit', {editable: true});
 
