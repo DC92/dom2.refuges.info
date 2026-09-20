@@ -4,7 +4,7 @@
  * Ce fichier contient les paramètrages spécifiques et visibles sur refuges.info *
  *********************************************************************************/
 
-// Position par défaut
+// Position et couches par défaut
 localStorage.permalink ||= '5/46.5/5';
 if (typeof localStorage.checkedLayers !== 'string')
   localStorage.checkedLayers = 'Cabane non gardée,Refuge gardé,Gîte d\'étape';
@@ -135,11 +135,11 @@ function couchesDeFond(layerKeys) {
  * Initialisation de la carte *
  ******************************/
 /* eslint-disable-next-line no-unused-vars */
-function initLeafletMap(mapId, serveurAPI, versionFeatures, layerKeys) {
+function initLeafletMap(mapId, serveurAPI, versionFeatures, layerKeys, options) {
   console.info('MAP init ' + mapId);
 
   // Création de la carte
-  const map = L.map(mapId);
+  const map = L.map(mapId, options);
 
   // Couches tuilées
   const tileLayers = couchesDeFond(layerKeys),
@@ -226,7 +226,7 @@ function initLeafletMap(mapId, serveurAPI, versionFeatures, layerKeys) {
   L.control.layers(null, overlayLayers).addTo(map);
 
   // Permalink
-  ['load', 'overlayadd', 'overlayremove'].forEach((type) => {
+  ['load', 'overlayadd', 'overlayremove', 'zoom'].forEach((type) => {
     map.on(type, (evt) => {
       const overlaySelectors = document.querySelectorAll('.leaflet-control-layers-overlays input'),
         checkedLayersnames = [],
@@ -252,7 +252,7 @@ function initLeafletMap(mapId, serveurAPI, versionFeatures, layerKeys) {
         }
       }
 
-      // Mémorisé dans la mémoire permanente de l'explorateur localStorage
+      // Mémorise dans la mémoire permanente de l'explorateur localStorage
       localStorage.checkedLayers = checkedLayersnames.join(',');
       localStorage.checkedLayersTypes = checkedLayersTypes.join(',');
 
