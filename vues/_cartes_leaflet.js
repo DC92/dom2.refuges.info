@@ -6,6 +6,8 @@
 
 // Position par défaut
 localStorage.permalink ||= '5/46.5/5';
+if (typeof localStorage.checkedLayers !== 'string')
+  localStorage.checkedLayers = 'Cabane non gardée,Refuge gardé,Gîte d\'étape';
 
 // Couches refuges.info
 const couchesIconesWRI = {
@@ -48,8 +50,8 @@ function couchesDeFond(layerKeys) {
         format: 'image/png',
       // }),*/
     //TODO Autriche
-    //DCMM Pour tests, à enlever à la fin
 
+    //DCMM Pour tests, à enlever à la fin
     'Google': L.tileLayer('https://mt0.google.com/vt/lyrs=r&x={x}&y={y}&z={z}'),
     //DCMM FIN pour développements ultérieurs
 
@@ -143,13 +145,12 @@ function initLeafletMap(mapId, serveurAPI, versionFeatures, layerKeys) {
   const tileLayers = couchesDeFond(layerKeys),
     permalink = localStorage.permalink.split('/');
 
-  (tileLayers[decodeURI(permalink[3])] || Object.values(tileLayers)[0]).addTo(map); // Fond de carte par défaut
+  // Fond de carte par défaut
+  (tileLayers[decodeURI(permalink[3])] || Object.values(tileLayers)[0]).addTo(map);
 
   // Couches vectorielles overlays
-  const defaultWriLalers = ['Cabane non gardée', 'Refuge gardé', 'Gîte d\'étape'],
-    overlayLayers = {},
-    memCheckedLayers = typeof localStorage.checkedLayers === 'string' ?
-    localStorage.checkedLayers.split(',') : defaultWriLalers,
+  const overlayLayers = {},
+    memCheckedLayers = localStorage.checkedLayers.split(','),
     // Groupement des couches qui doivent être clustérisées ensembles
     vectorCluster = L.markerClusterGroup({
       spiderfyOnMaxZoom: true, // Overlapping markers will spiderfy when clicked
@@ -224,10 +225,7 @@ function initLeafletMap(mapId, serveurAPI, versionFeatures, layerKeys) {
   L.control.layers(tileLayers).addTo(map);
   L.control.layers(null, overlayLayers).addTo(map);
 
-  // Lance le chargement de la carte
-  map.setView([permalink[1], permalink[2]], permalink[0]);
-
-  // Permalink //TODO remonter dans MyLeaflet
+  // Permalink
   ['load', 'overlayadd', 'overlayremove'].forEach((type) => {
     map.on(type, (evt) => {
       const overlaySelectors = document.querySelectorAll('.leaflet-control-layers-overlays input'),
@@ -281,6 +279,9 @@ function initLeafletMap(mapId, serveurAPI, versionFeatures, layerKeys) {
       ].join('/');
     });
   });
+
+  // Lance le chargement de la carte
+  map.setView([permalink[1], permalink[2]], permalink[0]);
 
   return map;
 }
