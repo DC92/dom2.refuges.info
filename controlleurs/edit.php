@@ -11,7 +11,8 @@ if (!est_moderateur()) {
 // Bon, on triche un peu ici: on factorise un max avec /nav
 require_once ("nav.php");
 require_once ("polygone.php");
-$vue->carte='leaflet'; // Mais pas avec la même carte
+require_once ("leaflet_libs.php");
+add_lib('Editable/Leaflet.Editable.js', 'chemin_leaflet');
 
 // Quelques trucs spécifiques
 if(!isset($vue->polygone) && isset($vue->contenu))
@@ -27,6 +28,3 @@ else
   $vue->titre="Création d'un polygone";
 
 $vue->liste_type_polygone=liste_type_polygone();
-
-      add_lib('Editable/Leaflet.Editable.js', 'chemin_leaflet');
-

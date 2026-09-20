@@ -8,6 +8,7 @@ require_once ("point.php");
 require_once ("utilisateur.php");
 require_once ("mise_en_forme_texte.php");
 require_once ("SwisstopoConverter.php");
+require_once ("leaflet_libs.php");
 
 $condition = new stdClass();
 
@@ -21,7 +22,6 @@ else
   $meme_si_cache=$meme_si_modele=False;
 
 $point=infos_point($id_point,$meme_si_cache,True,$meme_si_modele);
-
 
 
 // Partie spécifique de la page
@@ -115,8 +115,8 @@ else // le point est valide
       }
     }
 
-    /*********** Détermination de la carte à afficher ***/
-    $vue->carte='leaflet';
+    /*** affichage de la carte ***/
+    $vue->carte=true;
   }
 
   /***********  détermination si le point se situe dans une réserve naturelle / zone réglementée *******/
