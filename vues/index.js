@@ -1,7 +1,7 @@
 // Remonte le zoom à un minimum de 12
-const permalinkInit = localStorage.permalink.split('/');
+const permalinkInit = sessionStorage.permalink.split('/');
 permalinkInit[0] = Math.min(parseInt(permalinkInit[0]), 12);
-localStorage.permalink = permalinkInit.join('/');
+sessionStorage.permalink = permalinkInit.join('/');
 
 // Initialise la carte
 const map = initLeafletMap(
@@ -42,13 +42,13 @@ function setExportLink() {
     cc = (coord) => Math.ceil(coord * 10000) / 10000;
 
   exportCarteEl.children[1].href = '/api/bbox' +
-    '?type_points=' + localStorage.checkedLayersTypes +
+    '?type_points=' + sessionStorage.checkedLayersTypes +
     '&nb_points=all' +
     '&bbox=' + fc(bsw.lng) + ',' + fc(bsw.lat) + ',' + cc(bne.lng) + ',' + cc(bne.lat) +
     '&format=' + exportCarteEl.firstElementChild.value;
 
   // Affiche seulement quand il y a quelque chose à exporter
-  exportCarteEl.style.display = localStorage.checkedLayersTypes ? 'block' : 'none';
+  exportCarteEl.style.display = sessionStorage.checkedLayersTypes ? 'block' : 'none';
 }
 
 map.on('overlayadd', () => setExportLink()); // Also for init

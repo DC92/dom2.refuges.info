@@ -7,7 +7,7 @@ function affiche_et_set(el, affiche, valeur) {
 
 // Positionne la carte à l'emplacement du point à modifier
 <?php if(!empty($vue->point->id_point)) { ?>
-  localStorage.permalink = '15/<?=$vue->point->latitude?>/<?=$vue->point->longitude?>/' + localStorage.permalink.split('/')[3];
+  sessionStorage.permalink = '15/<?=$vue->point->latitude?>/<?=$vue->point->longitude?>/' + sessionStorage.permalink.split('/')[3];
 <? } ?>
 
 // Affichage de la carte

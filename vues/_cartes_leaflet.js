@@ -5,9 +5,9 @@
  *********************************************************************************/
 
 // Position et couches par défaut
-localStorage.permalink ||= '5/46.5/5';
-if (typeof localStorage.checkedLayers !== 'string')
-  localStorage.checkedLayers = 'Cabane non gardée,Refuge gardé,Gîte d\'étape';
+sessionStorage.permalink ||= '5/46.5/5';
+if (typeof sessionStorage.checkedLayers !== 'string')
+  sessionStorage.checkedLayers = 'Cabane non gardée,Refuge gardé,Gîte d\'étape';
 
 // Couches refuges.info
 const couchesIconesWRI = {
@@ -143,14 +143,14 @@ function initLeafletMap(mapId, serveurAPI, versionFeatures, layerKeys, options) 
 
   // Couches tuilées
   const tileLayers = couchesDeFond(layerKeys),
-    permalink = localStorage.permalink.split('/');
+    permalink = sessionStorage.permalink.split('/');
 
   // Fond de carte par défaut
   (tileLayers[decodeURI(permalink[3])] || Object.values(tileLayers)[0]).addTo(map);
 
   // Couches vectorielles overlays
   const overlayLayers = {},
-    memCheckedLayers = localStorage.checkedLayers.split(','),
+    memCheckedLayers = sessionStorage.checkedLayers.split(','),
     // Groupement des couches qui doivent être clustérisées ensembles
     vectorCluster = L.markerClusterGroup({
       spiderfyOnMaxZoom: true, // Overlapping markers will spiderfy when clicked
@@ -252,9 +252,9 @@ function initLeafletMap(mapId, serveurAPI, versionFeatures, layerKeys, options) 
         }
       }
 
-      // Mémorise dans la mémoire permanente de l'explorateur localStorage
-      localStorage.checkedLayers = checkedLayersnames.join(',');
-      localStorage.checkedLayersTypes = checkedLayersTypes.join(',');
+      // Mémorise dans la mémoire permanente de l'explorateur sessionStorage
+      sessionStorage.checkedLayers = checkedLayersnames.join(',');
+      sessionStorage.checkedLayersTypes = checkedLayersTypes.join(',');
 
       // Cache les étiquettes pour les grandes échèles
       map.getContainer().classList[map.getZoom() < 8 ? 'add' : 'remove']('hide-tooltips');
@@ -271,7 +271,7 @@ function initLeafletMap(mapId, serveurAPI, versionFeatures, layerKeys, options) 
         if (lsInputEl.checked)
           baseLayerName = lsInputEl.parentElement.lastChild.innerText.trim();
 
-      localStorage.permalink = [
+      sessionStorage.permalink = [
         map.getZoom().toFixed(1),
         pos.lat.toFixed(5),
         pos.lng.toFixed(5),

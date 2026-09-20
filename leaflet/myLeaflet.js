@@ -250,7 +250,7 @@ controlPreload.onAdd = (map) => {
       const timer = setInterval(() => {
         if (!loadingLayer.isLoading()) {
           map.setZoom(map.getZoom() + 1);
-          localStorage.permalink = minZoom + '/' + pos.lat + '/' + pos.lng + '/OpenHikingMap';
+          sessionStorage.permalink = minZoom + '/' + pos.lat + '/' + pos.lng + '/OpenHikingMap';
 
           if (map.getZoom() > maxZoom) {
             clearInterval(timer);
@@ -264,3 +264,42 @@ controlPreload.onAdd = (map) => {
 
   return buttonDiv;
 };
+
+// Inverse les lat & lng entre geoJson et Leaflet
+/* eslint-disable-next-line no-unused-vars */
+function flipLonLatRecursive(data) {
+  if (Array.isArray(data) && typeof data[0] === 'number')
+    return [data[1], data[0]];
+
+  return data.map(item => flipLonLatRecursive(item));
+}
+
+// Contrôle permettant l'ajout d'un ploygone dans Leaflet.Editable
+L.NewPolygonControl = L.Control.extend({
+  options: {
+    position: 'topleft',
+  },
+
+  onAdd: function(map) {
+    // Création du conteneur HTML pour le bouton
+    const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-custom-control');
+
+    // Création du bouton lui-même
+    const button = L.DomUtil.create('a', 'leaflet-draw-draw-polygon', container);
+    button.innerHTML = '<span style="font-size:30px">⬡</span>'; // Icône ou texte de votre choix
+    button.href = '#';
+    button.title = 'Dessiner un nouveau polygone';
+
+    // Gestion de l'événement clic
+    L.DomEvent.on(button, 'click', (e) => {
+      L.DomEvent.stopPropagation(e);
+      L.DomEvent.preventDefault(e);
+
+      // Déclenchement de l'outil de dessin de polygone Leaflet.Editable
+      if (map.editTools)
+        map.editTools.startPolygon();
+    });
+
+    return container;
+  }
+});
