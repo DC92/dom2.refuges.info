@@ -1,4 +1,4 @@
-//DCMM NOM ICONE DANS LA TABLE
+//DCMM FUTUR NOM ICONE DANS LA TABLE
 ALTER TABLE "point_type"
 ADD "icone" character varying(50) NULL;
 UPDATE "point_type" SET "icone" = 'triangle_a33.10' WHERE "id_point_type" = '3';

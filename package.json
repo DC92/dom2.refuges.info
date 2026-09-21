@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "lint": "npx eslint *.js leaflet/myLeaflet.js *.js vues/_cartes*.js",
-    "beautify": "js-beautify -s=2 *.js* leaflet/myLeaflet.[chj]* vues/_cartes_*.js"
+    "beautify": "js-beautify -s=2 *.js* leaflet/*.[chj]* vues/_cartes*.js"
   },
   "dependencies": {
     "eslint": "latest",
