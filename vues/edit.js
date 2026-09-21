@@ -17,6 +17,7 @@ polygons    .addTo(map).enableEdit();
     map.addControl(new L.NewPolygonControl());
  map.doubleClickZoom.disable();
 
+//DCMM FUTUR HORS RESEAU
  console.log(polygons.getBounds());//DCMM
 
  

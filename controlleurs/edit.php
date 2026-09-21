@@ -14,6 +14,7 @@ require_once ("polygone.php");
 require_once ("leaflet_libs.php");
 add_lib('Editable/Leaflet.Editable.js', 'chemin_leaflet');
 //add_lib('Editable/leaflet.snap.js', 'chemin_leaflet');
+//DCMM FUTUR EDIT MASSIF
 
 // Quelques trucs spécifiques
 if(!isset($vue->polygone) && isset($vue->contenu))

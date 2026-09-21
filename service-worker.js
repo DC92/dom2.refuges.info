@@ -53,7 +53,7 @@ function archivable(url) {
 
 // Intercepte les appels réseau, stratégie réseau puis cache
 self.addEventListener('fetch', (evt) => {
-  //console.log('addEventListener fetch');//DCMM  
+  //console.log('addEventListener fetch');//DCMM FUTUR HORS RESEAU
   if (!evt.request.url.includes(location.host)) return;
   if (evt.request.redirect === 'manual' && !archivable(evt.request.url)) return;
 
