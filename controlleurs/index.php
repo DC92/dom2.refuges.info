@@ -11,6 +11,9 @@ Les variables sont passées dans l'objet $vue->...
 require_once ("nouvelle.php");
 require_once ("polygone.php");
 require_once ("leaflet_libs.php");
+add_lib('overpass/dist/OverPassLayer.bundle.js', 'chemin_leaflet');
+add_lib('overpass/dist/OverPassLayer.css', 'chemin_leaflet');
+//DCMM FUTUR HORS RESEAU add_lib('EdgeBuffer/src/leaflet.edgebuffer.js', 'chemin_leaflet');
 
 $vue->titre = 'Carte et informations sur les refuges, cabanes et abris de montagne';
 $vue->stat = stat_site ();

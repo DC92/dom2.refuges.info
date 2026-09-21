@@ -9,7 +9,7 @@ sessionStorage.permalink ||= '5/46.5/5';
 if (typeof sessionStorage.checkedLayers !== 'string')
   sessionStorage.checkedLayers = 'Cabane non gardée,Refuge gardé,Gîte d\'étape';
 
-// Couches refuges.info
+// Déclaration des couches
 const couchesIconesWRI = {
     'Cabane non gardée': [7, 'cabane'],
     'Refuge gardé': [10, 'cabane_red'],
@@ -19,7 +19,7 @@ const couchesIconesWRI = {
     'Passage délicat': [3, 'triangle_a33.10'],
     'Bâtiment à investiguer': [28, 'cabane_white_black_a63'],
   },
-  // Couches OSM overpass
+
   couchesOverpass = {
     'hôtel': '["tourism"~"hotel|guest_house|chalet|hostel|apartment"]',
     'camping': '["tourism"="camp_site"]',
@@ -131,6 +131,29 @@ function couchesDeFond(layerKeys) {
   };
 }
 
+// Contrôles communs à toutes les cartes
+function controlesComuns() {
+  return [
+    new L.Control.Fullscreen(),
+
+    L.control.scale({
+      imperial: false,
+    }),
+
+    L.control.coordinates({
+      position: 'bottomleft',
+    }),
+
+    new L.Control.Geocoder({
+      position: 'topleft',
+    }),
+
+    new L.Control.Gps({
+      marker: new MarkerCompass(),
+    }),
+  ];
+}
+
 /******************************
  * Initialisation de la carte *
  ******************************/
@@ -147,50 +170,51 @@ function initLeafletMap(mapId, serveurAPI, versionFeatures, layerKeys, options) 
 
   // Fond de carte par défaut
   (tileLayers[decodeURI(permalink[3])] || Object.values(tileLayers)[0]).addTo(map);
-
   // Couches vectorielles overlays
-  const overlayLayers = {},
-    memCheckedLayers = sessionStorage.checkedLayers.split(','),
-    // Groupement des couches qui doivent être clustérisées ensembles
-    vectorCluster = L.markerClusterGroup({
-      spiderfyOnMaxZoom: true, // Overlapping markers will spiderfy when clicked
-      showCoverageOnHover: false, // Optional: hides the cluster bounds polygon
-      maxClusterRadius: 30, // Less clusters
-    });
+  const overlayLayers = {};
+  /*
+      memCheckedLayers = sessionStorage.checkedLayers.split(','),
+      // Groupement des couches qui doivent être clustérisées ensembles
+      vectorCluster = L.markerClusterGroup({
+        spiderfyOnMaxZoom: true, // Overlapping markers will spiderfy when clicked
+        showCoverageOnHover: false, // Optional: hides the cluster bounds polygon
+        maxClusterRadius: 30, // Less clusters
+      });
 
-  vectorCluster.addTo(map);
+    vectorCluster.addTo(map);
 
-  for (const [nom, args] of Object.entries(couchesIconesWRI)) {
-    args.push(
-      '<img src="/images/icones/' + args[1] + '.svg"/> ' + nom, // Libellé de la ligne sélecteur
-      wriPOILayer(serveurAPI, args[0], versionFeatures), // Couche affichable
-    );
+    for (const [nom, args] of Object.entries(couchesIconesWRI)) {
+      args.push(
+        '<img src="/images/icones/' + args[1] + '.svg"/> ' + nom, // Libellé de la ligne sélecteur
+        wriPOILayer(serveurAPI, args[0], versionFeatures), // Couche affichable
+      );
 
-    // Display as overlay clusters
-    overlayLayers[args[2]] = L.featureGroup.subGroup(vectorCluster).addLayer(args[3]);
-  }
+      // Display as overlay clusters
+      overlayLayers[args[2]] = L.featureGroup.subGroup(vectorCluster).addLayer(args[3]);
+    }
 
-  overlayLayers['Régions'] = wriPolygonLayer(serveurAPI, 11, versionFeatures);
-  overlayLayers.Massifs = wriPolygonLayer(serveurAPI, 1, versionFeatures);
+    overlayLayers['Régions'] = wriPolygonLayer(serveurAPI, 11, versionFeatures);
+    overlayLayers.Massifs = wriPolygonLayer(serveurAPI, 1, versionFeatures);
 
-  // Couche externe d'itinéraires
-  overlayLayers['Itinéraires'] = L.tileLayer(
-    'https://tile.waymarkedtrails.org/hiking/{z}/{x}/{y}.png', {
-      maxZoom: 18,
-    });
+    // Couche externe d'itinéraires
+    overlayLayers['Itinéraires'] = L.tileLayer(
+      'https://tile.waymarkedtrails.org/hiking/{z}/{x}/{y}.png', {
+        maxZoom: 18,
+      });
 
-  // Couches OSM OverPass
-  for (const [nom, query] of Object.entries(couchesOverpass))
-    overlayLayers['OSM ' + nom] = new L.OverPassLayer({
-      query: '(nwr' + query + '({{bbox}}););out center;',
-      markerIcon: L.icon({
-        iconUrl: serveurAPI + '/images/icones/' + nom.replace('ô', 'o').replace(/[^a-z]/gu, '') + '.svg',
-        iconSize: [24, 24],
-        iconAnchor: [12, 12],
-      }),
-      minZoom: 12,
-      minZoomIndicatorEnabled: false,
-    });
+    // Couches OSM OverPass
+    for (const [nom, query] of Object.entries(couchesOverpass))
+      overlayLayers['OSM ' + nom] = new L.OverPassLayer({
+        query: '(nwr' + query + '({{bbox}}););out center;',
+        markerIcon: L.icon({
+          iconUrl: serveurAPI + '/images/icones/' + nom.replace('ô', 'o').replace(/[^a-z]/gu, '') + '.svg',
+          iconSize: [24, 24],
+          iconAnchor: [12, 12],
+        }),
+        minZoom: 12,
+        minZoomIndicatorEnabled: false,
+      });
+  */
 
   /*************
    * Contrôles *
@@ -200,61 +224,44 @@ function initLeafletMap(mapId, serveurAPI, versionFeatures, layerKeys, options) 
     preventScroll: true,
   });
 
-  new L.Control.Fullscreen().addTo(map);
-
-  L.control.scale({
-    imperial: false,
-  }).addTo(map);
-
-  L.control.coordinates({
-    position: 'bottomleft',
-  }).addTo(map);
-
-  new L.Control.Geocoder({
-    position: 'topleft',
-  }).addTo(map);
-
-  new L.Control.Gps({
-    marker: new MarkerCompass(),
-  }).addTo(map);
-
-  map.on('locationfound', (evt) => {
-    map.setView(evt.latlng, Math.max(15, map.getZoom()));
-  });
+  controlesComuns().forEach((c) => c.addTo(map));
+  map.on('locationfound', (evt) => map.setView(evt.latlng, Math.max(15, map.getZoom()))); // Listener for GPS
 
   L.control.layers(tileLayers).addTo(map);
-  L.control.layers(null, overlayLayers).addTo(map);
+  //  L.control.layers(null, overlayLayers).addTo(map);
 
   // Permalink
   ['load', 'overlayadd', 'overlayremove', 'zoom'].forEach((type) => {
     map.on(type, (evt) => {
-      const overlaySelectors = document.querySelectorAll('.leaflet-control-layers-overlays input'),
-        checkedLayersnames = [],
-        checkedLayersTypes = [];
+      /*
+            const overlaySelectors = document.querySelectorAll('.leaflet-control-layers-overlays input'),
+              checkedLayersnames = [],
+              checkedLayersTypes = [];
 
-      for (const lsInputEl of overlaySelectors) {
-        const nom = lsInputEl.parentElement.lastChild.innerText.trim();
+            for (const lsInputEl of overlaySelectors) {
+              const nom = lsInputEl.parentElement.lastChild.innerText.trim();
 
-        // Restaure les couches overlays précédentes
-        if (evt.type === 'load' && memCheckedLayers.includes(nom)) {
-          if (couchesIconesWRI[nom])
-            couchesIconesWRI[nom][3].on('adddata', () => lsInputEl.click()); // Overlays vector
-          else
-            lsInputEl.click(); // Overlays tiles
-        }
+              // Restaure les couches overlays précédentes
+              if (evt.type === 'load' && memCheckedLayers.includes(nom)) {
+                if (couchesIconesWRI[nom])
+                  couchesIconesWRI[nom][3].on('adddata', () => lsInputEl.click()); // Overlays vector
+                else
+                  lsInputEl.click(); // Overlays tiles
+              }
 
-        // Mémorise les couches actuelles
-        if (lsInputEl.checked) {
-          checkedLayersnames.push(nom);
+              // Mémorise les couches actuelles
+              if (lsInputEl.checked) {
+                checkedLayersnames.push(nom);
 
-          if (typeof couchesIconesWRI[nom] === 'object')
-            checkedLayersTypes.push(couchesIconesWRI[nom][0]);
-        }
-      }
+                if (typeof couchesIconesWRI[nom] === 'object')
+                  checkedLayersTypes.push(couchesIconesWRI[nom][0]);
+              }
+            }
 
-      // Mémorise dans la mémoire permanente de l'explorateur sessionStorage
-      sessionStorage.checkedLayers = checkedLayersnames.join(',');
-      sessionStorage.checkedLayersTypes = checkedLayersTypes.join(',');
+            // Mémorise dans la mémoire permanente de l'explorateur sessionStorage
+            sessionStorage.checkedLayers = checkedLayersnames.join(',');
+            sessionStorage.checkedLayersTypes = checkedLayersTypes.join(',');
+      */
 
       // Cache les étiquettes pour les grandes échèles
       map.getContainer().classList[map.getZoom() < 8 ? 'add' : 'remove']('hide-tooltips');
