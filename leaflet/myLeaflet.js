@@ -22,7 +22,9 @@
   est fournie à la page HTML qui la passe en argument de l'API pour recharger si nécessaire.
 */
 
-// POINTS D'INTÉRÊT REFUGES.INFO
+/*********************************
+ * Points d'intérêt refuges.info *
+ *********************************/
 /* eslint-disable-next-line no-unused-vars */
 function wriPOILayer(serveurAPI, type, versionFeatures, hideTooltip) {
   const iconList = [],
@@ -78,7 +80,9 @@ function wriPOILayer(serveurAPI, type, versionFeatures, hideTooltip) {
   return poiLayer;
 }
 
-// POLYGONES DE MASSIFS DE REFUGES.INFO
+/*****************************
+ * Polygones de refuges.info *
+ *****************************/
 /* eslint-disable-next-line no-unused-vars */
 function wriPolygonLayer(serveurAPI, typeId, versionFeatures) {
   const polygonLayer = L.geoJson(null, {
@@ -217,6 +221,79 @@ class MarkerCompass extends L.Marker {
   }
 }
 
+/**************
+ * PERMALINKS *
+ **************/
+// Store lon/lat/zoom/baselayer in sessionStorage 
+/* eslint-disable-next-line no-unused-vars */
+function permalinkControl(map) {
+  // Permalink
+  ['baselayerchange', 'zoom', 'moveend'].forEach((evtName) => {
+    map.on(evtName, () => {
+      const baselayerSelector = document.querySelectorAll('.leaflet-control-layers-base input'),
+        pos = map.getCenter();
+      let baseLayerName = null;
+
+      for (const lsInputEl of baselayerSelector)
+        if (lsInputEl.checked || !baseLayerName)
+          baseLayerName = lsInputEl.parentElement.lastChild.innerText.trim();
+
+      sessionStorage.permalink = [
+        map.getZoom().toFixed(1),
+        pos.lat.toFixed(5),
+        pos.lng.toFixed(5),
+        encodeURI(baseLayerName),
+      ].join('/');
+
+      // Cache les étiquettes pour les grandes échèles
+      map.getContainer().classList[map.getZoom() < 8 ? 'add' : 'remove']('hide-tooltips');
+    });
+  });
+}
+
+//DCMM FUTUR EDIT MASSIF
+/**********************
+ * Editeur de massifs *
+ **********************/
+// Inverse les lat & lng entre geoJson et Leaflet
+/* eslint-disable-next-line no-unused-vars */
+function flipLonLatRecursive(data) {
+  if (Array.isArray(data) && typeof data[0] === 'number')
+    return [data[1], data[0]];
+
+  return data.map(item => flipLonLatRecursive(item));
+}
+
+// Contrôle permettant l'ajout d'un ploygone dans Leaflet.Editable
+L.NewPolygonControl = L.Control.extend({
+  options: {
+    position: 'topleft',
+  },
+
+  onAdd: function(map) {
+    // Création du conteneur HTML pour le bouton
+    const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-custom-control');
+
+    // Création du bouton lui-même
+    const button = L.DomUtil.create('a', 'leaflet-draw-draw-polygon', container);
+    button.innerHTML = '<span style="font-size:30px">⬡</span>'; // Icône ou texte de votre choix
+    button.href = '#';
+    button.title = 'Dessiner un nouveau polygone';
+
+    // Gestion de l'événement clic
+    L.DomEvent.on(button, 'click', (e) => {
+      L.DomEvent.stopPropagation(e);
+      L.DomEvent.preventDefault(e);
+
+      // Déclenchement de l'outil de dessin de polygone Leaflet.Editable
+      if (map.editTools)
+        map.editTools.startPolygon();
+    });
+
+    return container;
+  }
+});
+
 //DCMM FUTUR HORS RESEAU
 /****************************************************
  * Bouton de préchargement des tuiles OpenHikingMap *
@@ -264,42 +341,3 @@ controlPreload.onAdd = (map) => {
 
   return buttonDiv;
 };
-
-// Inverse les lat & lng entre geoJson et Leaflet
-/* eslint-disable-next-line no-unused-vars */
-function flipLonLatRecursive(data) {
-  if (Array.isArray(data) && typeof data[0] === 'number')
-    return [data[1], data[0]];
-
-  return data.map(item => flipLonLatRecursive(item));
-}
-
-// Contrôle permettant l'ajout d'un ploygone dans Leaflet.Editable
-L.NewPolygonControl = L.Control.extend({
-  options: {
-    position: 'topleft',
-  },
-
-  onAdd: function(map) {
-    // Création du conteneur HTML pour le bouton
-    const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-custom-control');
-
-    // Création du bouton lui-même
-    const button = L.DomUtil.create('a', 'leaflet-draw-draw-polygon', container);
-    button.innerHTML = '<span style="font-size:30px">⬡</span>'; // Icône ou texte de votre choix
-    button.href = '#';
-    button.title = 'Dessiner un nouveau polygone';
-
-    // Gestion de l'événement clic
-    L.DomEvent.on(button, 'click', (e) => {
-      L.DomEvent.stopPropagation(e);
-      L.DomEvent.preventDefault(e);
-
-      // Déclenchement de l'outil de dessin de polygone Leaflet.Editable
-      if (map.editTools)
-        map.editTools.startPolygon();
-    });
-
-    return container;
-  }
-});

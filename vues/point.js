@@ -16,6 +16,38 @@ const map = initLeafletMap(
   <?=json_encode($config_wri['mapKeys'])?>
 );
 
+/******************************
+ * Initialisation de la carte *
+ ******************************/
+function initLeafletMap(mapId, serveurAPI, versionFeatures, layerKeys, options) {
+  const map = L.map(mapId, options);
+
+  // Couches tuilées
+  const tileLayers = couchesDeFond(layerKeys),
+    permalink = sessionStorage.permalink.split('/');
+
+  // Fond de carte par défaut
+  (tileLayers[decodeURI(permalink[3])] || Object.values(tileLayers)[0]).addTo(map);
+
+  //const overlayLayers =  overlaysSelectables(map,serveurAPI ,versionFeatures );//////////////////////////
+
+  // Couches vectorielles overlays
+
+  /*************
+   * Contrôles *
+   *************/
+  controlesComuns(map).forEach((control) => control.addTo(map));
+  L.control.layers(tileLayers).addTo(map);
+//  L.control.layers(null, overlaysSelectables(map, serveurAPI, versionFeatures)).addTo(map);
+
+  permalinkControl(map) ;
+
+  // Lance le chargement de la carte
+  map.setView([permalink[1], permalink[2]], permalink[0]);
+
+  return map;
+}
+
 // Marqueur de position de cabane
 L.marker(
   [<?=$vue->point->latitude?>, <?=$vue->point->longitude?>],

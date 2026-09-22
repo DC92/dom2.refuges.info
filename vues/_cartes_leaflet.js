@@ -9,7 +9,9 @@ sessionStorage.permalink ||= '5/46.5/5';
 if (typeof sessionStorage.checkedLayers !== 'string')
   sessionStorage.checkedLayers = 'Cabane non gardée,Refuge gardé,Gîte d\'étape';
 
-// Déclaration des couches
+/**************************
+ * Définition des couches *
+ **************************/
 const couchesIconesWRI = {
     'Cabane non gardée': [7, 'cabane'],
     'Refuge gardé': [10, 'cabane_red'],
@@ -29,6 +31,7 @@ const couchesIconesWRI = {
     'bus': '["highway"="bus_stop"]',
   };
 
+/* eslint-disable-next-line no-unused-vars */
 function couchesDeFond(layerKeys) {
   return {
     //DCMM pour développements ultérieurs
@@ -131,7 +134,9 @@ function couchesDeFond(layerKeys) {
   };
 }
 
-// Contrôles communs à toutes les cartes
+/*****************************************
+ * Contrôles communs à toutes les cartes *
+ *****************************************/
 /* eslint-disable-next-line no-unused-vars */
 function controlesComuns(map) {
   // Prevent Leaflet on Chrome from focusing the map when using a Control
@@ -163,10 +168,40 @@ function controlesComuns(map) {
   ];
 }
 
+/********************************************
+ * Overlays de toutes les couches de points *
+ ********************************************/
+/* eslint-disable-next-line no-unused-vars */
+function overlaysPOIs(map, serveurAPI, versionFeatures) {
+  const overlayLayers = {},
+    // Groupement des couches qui doivent être clustérisées ensembles
+    vectorCluster = L.markerClusterGroup({
+      spiderfyOnMaxZoom: true, // Overlapping markers will spiderfy when clicked
+      showCoverageOnHover: false, // Optional: hides the cluster bounds polygon
+      maxClusterRadius: 30, // Less clusters
+    });
+
+  vectorCluster.addTo(map);
+
+  for (const [nom, args] of Object.entries(couchesIconesWRI)) {
+    args.push(
+      '<img src="/images/icones/' + args[1] + '.svg"/> ' + nom, // Libellé de la ligne sélecteur
+      wriPOILayer(serveurAPI, args[0], versionFeatures), // Couche affichable
+    );
+
+    // Display as overlay clusters
+    overlayLayers[args[2]] = L.featureGroup.subGroup(vectorCluster).addLayer(args[3]);
+  }
+
+  return overlayLayers;
+}
+
+/*************************************************
+ * Sélécteur d'overlays (pour la page d'accueil) *
+ *************************************************/
 /* eslint-disable-next-line no-unused-vars */
 function overlaysSelectables(map, serveurAPI, versionFeatures) {
   const overlayLayers = {},
-    //*
     // Groupement des couches qui doivent être clustérisées ensembles
     vectorCluster = L.markerClusterGroup({
       spiderfyOnMaxZoom: true, // Overlapping markers will spiderfy when clicked
@@ -207,104 +242,6 @@ function overlaysSelectables(map, serveurAPI, versionFeatures) {
       minZoom: 12,
       minZoomIndicatorEnabled: false,
     });
-  //*/
 
   return overlayLayers;
-}
-
-/* eslint-disable-next-line no-unused-vars */
-function positionStorage(map, tileLayers) {
-  const baselayerSelector = document.querySelectorAll('.leaflet-control-layers-base input'),
-    pos = map.getCenter();
-  let baseLayerName = Object.keys(tileLayers)[0]; // Par défaut, la première couche
-
-  for (const lsInputEl of baselayerSelector)
-    if (lsInputEl.checked)
-      baseLayerName = lsInputEl.parentElement.lastChild.innerText.trim();
-
-  sessionStorage.permalink = [
-    map.getZoom().toFixed(1),
-    pos.lat.toFixed(5),
-    pos.lng.toFixed(5),
-    encodeURI(baseLayerName),
-  ].join('/');
-}
-
-function overlaysStorage(map, evt) {
-  const overlaySelectors = document.querySelectorAll('.leaflet-control-layers-overlays input'),
-    memCheckedLayers = sessionStorage.checkedLayers.split(','),
-    checkedLayersnames = [],
-    checkedLayersTypes = [];
-
-  for (const lsInputEl of overlaySelectors) {
-    const nom = lsInputEl.parentElement.lastChild.innerText.trim();
-
-    // Restaure les couches overlays précédentes
-    if (evt.type === 'load' && memCheckedLayers.includes(nom)) {
-      if (couchesIconesWRI[nom])
-        couchesIconesWRI[nom][3].on('adddata', () => lsInputEl.click()); // Overlays vector
-      else
-        lsInputEl.click(); // Overlays tiles
-    }
-
-    // Mémorise les couches actuelles
-    if (lsInputEl.checked) {
-      checkedLayersnames.push(nom);
-
-      if (typeof couchesIconesWRI[nom] === 'object')
-        checkedLayersTypes.push(couchesIconesWRI[nom][0]);
-    }
-  }
-
-  // Mémorise dans la mémoire permanente de l'explorateur sessionStorage
-  sessionStorage.checkedLayers = checkedLayersnames.join(',');
-  sessionStorage.checkedLayersTypes = checkedLayersTypes.join(',');
-}
-
-/******************************
- * Initialisation de la carte *
- ******************************/
-function initLeafletMap(mapId, serveurAPI, versionFeatures, layerKeys, options) {
-  const map = L.map(mapId, options);
-
-  // Couches tuilées
-  const tileLayers = couchesDeFond(layerKeys),
-    permalink = sessionStorage.permalink.split('/');
-
-  // Fond de carte par défaut
-  (tileLayers[decodeURI(permalink[3])] || Object.values(tileLayers)[0]).addTo(map);
-
-  //const overlayLayers =  overlaysSelectables(map,serveurAPI ,versionFeatures );//////////////////////////
-
-  // Couches vectorielles overlays
-
-  /*************
-   * Contrôles *
-   *************/
-  controlesComuns(map).forEach((c) => c.addTo(map));
-  L.control.layers(tileLayers).addTo(map);
-  L.control.layers(null, overlaysSelectables(map, serveurAPI, versionFeatures)).addTo(map);
-
-  // Permalink
-  ['load', 'baselayerchange', 'overlayadd', 'overlayremove', 'zoom', 'moveend']
-  .forEach((type) => {
-    map.on(type, (evt) => {
-
-      overlaysStorage(map, evt);
-
-      // Cache les étiquettes pour les grandes échèles
-      map.getContainer().classList[map.getZoom() < 8 ? 'add' : 'remove']('hide-tooltips');
-      /*  });
-      });
-
-      ['moveend', 'baselayerchange'].forEach((type) => {
-        map.on(type, (evt) => {*/
-      positionStorage(map, tileLayers);
-    });
-  });
-
-  // Lance le chargement de la carte
-  map.setView([permalink[1], permalink[2]], permalink[0]);
-
-  return map;
 }
