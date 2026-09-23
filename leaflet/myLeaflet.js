@@ -35,7 +35,7 @@ function wriPOILayer(serveurAPI, type, versionFeatures, hideTooltip) {
           icon: L.icon({
             iconUrl: serveurAPI + '/images/icones/' + feature.properties.type.icone + '.svg',
             iconSize: [24, 24],
-            iconAnchor: [12, 12],
+            iconAnchor: [12, 2],
           }),
         }),
 
