@@ -9,28 +9,43 @@ sessionStorage.permalink ||= '5/46.5/5';
 if (typeof sessionStorage.checkedLayers !== 'string')
   sessionStorage.checkedLayers = 'Cabane non gardée,Refuge gardé,Gîte d\'étape';
 
+/*****************************************
+ * Contrôles communs à toutes les cartes *
+ *****************************************/
+/* eslint-disable-next-line no-unused-vars */
+function controlesComuns(map) {
+  // Prevent Leaflet on Chrome from focusing the map when using a Control
+  map.getContainer().focus({
+    preventScroll: true,
+  });
+
+  // Réponse au contrôle GPS
+  map.on('locationfound', (evt) => map.setView(evt.latlng, Math.max(15, map.getZoom()))); // Listener for GPS
+
+  return [
+    new L.Control.Fullscreen(),
+
+    L.control.scale({
+      imperial: false,
+    }),
+
+    L.control.coordinates({
+      position: 'bottomleft',
+    }),
+
+    new L.Control.Geocoder({
+      position: 'topleft',
+    }),
+
+    new L.Control.Gps({
+      marker: new MarkerCompass(),
+    }),
+  ];
+}
+
 /**************************
  * Définition des couches *
  **************************/
-const couchesIconesWRI = {
-    'Cabane non gardée': [7, 'cabane'],
-    'Refuge gardé': [10, 'cabane_red'],
-    'Gîte d\'étape': [9, 'cabane_green'],
-    'Grotte': [29, 'grotte'],
-    'Point d\'eau': [23, 'pointdeau'],
-    'Passage délicat': [3, 'triangle_a33.10'],
-    'Bâtiment à investiguer': [28, 'cabane_white_black_a63'],
-  },
-
-  couchesOverpass = {
-    'hôtel': '["tourism"~"hotel|guest_house|chalet|hostel|apartment"]',
-    'camping': '["tourism"="camp_site"]',
-    'point d\'eau': '["natural"="spring"]({{bbox}});nwr["amenity"="drinking_water"]',
-    'ravitaillement': '["shop"~"supermarket|convenience"]',
-    'parking': '["amenity"="parking"]["access"!="private"]',
-    'bus': '["highway"="bus_stop"]',
-  };
-
 /* eslint-disable-next-line no-unused-vars */
 function couchesDeFond(layerKeys) {
   return {
@@ -134,71 +149,30 @@ function couchesDeFond(layerKeys) {
   };
 }
 
-/*****************************************
- * Contrôles communs à toutes les cartes *
- *****************************************/
-/* eslint-disable-next-line no-unused-vars */
-function controlesComuns(map) {
-  // Prevent Leaflet on Chrome from focusing the map when using a Control
-  map.getContainer().focus({
-    preventScroll: true,
-  });
+const couchesIconesWRI = {
+    'Cabane non gardée': [7, 'cabane'],
+    'Refuge gardé': [10, 'cabane_red'],
+    'Gîte d\'étape': [9, 'cabane_green'],
+    'Grotte': [29, 'grotte'],
+    'Point d\'eau': [23, 'pointdeau'],
+    'Passage délicat': [3, 'triangle_a33.10'],
+    'Bâtiment à investiguer': [28, 'cabane_white_black_a63'],
+  },
 
-  // Réponse au contrôle GPS
-  map.on('locationfound', (evt) => map.setView(evt.latlng, Math.max(15, map.getZoom()))); // Listener for GPS
+  couchesOverpass = {
+    'hôtel': '["tourism"~"hotel|guest_house|chalet|hostel|apartment"]',
+    'camping': '["tourism"="camp_site"]',
+    'point d\'eau': '["natural"="spring"]({{bbox}});nwr["amenity"="drinking_water"]',
+    'ravitaillement': '["shop"~"supermarket|convenience"]',
+    'parking': '["amenity"="parking"]["access"!="private"]',
+    'bus': '["highway"="bus_stop"]',
+  };
 
-  return [
-    new L.Control.Fullscreen(),
-
-    L.control.scale({
-      imperial: false,
-    }),
-
-    L.control.coordinates({
-      position: 'bottomleft',
-    }),
-
-    new L.Control.Geocoder({
-      position: 'topleft',
-    }),
-
-    new L.Control.Gps({
-      marker: new MarkerCompass(),
-    }),
-  ];
-}
-
-/********************************************
- * Overlays de toutes les couches de points *
- ********************************************/
-/* eslint-disable-next-line no-unused-vars */
-function overlaysPOIs(map, serveurAPI, versionFeatures) {
-  const overlayLayers = {},
-    // Groupement des couches qui doivent être clustérisées ensembles
-    vectorCluster = L.markerClusterGroup({
-      spiderfyOnMaxZoom: true, // Overlapping markers will spiderfy when clicked
-      showCoverageOnHover: false, // Optional: hides the cluster bounds polygon
-      maxClusterRadius: 30, // Less clusters
-    });
-
-  vectorCluster.addTo(map);
-
-  for (const [nom, args] of Object.entries(couchesIconesWRI)) {
-    args.push(
-      '<img src="/images/icones/' + args[1] + '.svg"/> ' + nom, // Libellé de la ligne sélecteur
-      wriPOILayer(serveurAPI, args[0], versionFeatures), // Couche affichable
-    );
-
-    // Display as overlay clusters
-    overlayLayers[args[2]] = L.featureGroup.subGroup(vectorCluster).addLayer(args[3]);
-  }
-
-  return overlayLayers;
-}
-
-/*************************************************
- * Sélécteur d'overlays (pour la page d'accueil) *
- *************************************************/
+/*************************************************************************
+ * Sélécteur d'overlays (pour la page d'accueil)                         *
+ * A inclure dans un control.layers pour les rendre sélectonables        *
+ * ou les overlayLayers[1] dans la carte pour les afficher en permanence *
+ *************************************************************************/
 /* eslint-disable-next-line no-unused-vars */
 function overlaysSelectables(map, serveurAPI, versionFeatures) {
   const overlayLayers = {},
