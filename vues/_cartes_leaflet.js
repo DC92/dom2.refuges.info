@@ -183,18 +183,15 @@ function overlaysSelectables(map, serveurAPI, versionFeatures) {
       maxClusterRadius: 30, // Less clusters
     });
 
-  vectorCluster.addTo(map);
-
+  // points WRI
   for (const [nom, args] of Object.entries(couchesIconesWRI)) {
-    args.push(
-      '<img src="/images/icones/' + args[1] + '.svg"/> ' + nom, // Libellé de la ligne sélecteur
-      wriPOILayer(serveurAPI, args[0], versionFeatures), // Couche affichable
-    );
+    const icone = '<img src="/images/icones/' + args[1] + '.svg"/> ' + nom, // Libellé de la ligne sélecteur
+      layer = wriPOILayer(serveurAPI, args[0], versionFeatures); // Couche affichable
 
-    // Display as overlay clusters
-    overlayLayers[args[2]] = L.featureGroup.subGroup(vectorCluster).addLayer(args[3]);
+    overlayLayers[icone] = L.featureGroup.subGroup(vectorCluster).addLayer(layer);
   }
 
+  // Polygones WRI
   overlayLayers['Régions'] = wriPolygonLayer(serveurAPI, 11, versionFeatures);
   overlayLayers.Massifs = wriPolygonLayer(serveurAPI, 1, versionFeatures);
 
@@ -202,6 +199,7 @@ function overlaysSelectables(map, serveurAPI, versionFeatures) {
   overlayLayers['Itinéraires'] = L.tileLayer(
     'https://tile.waymarkedtrails.org/hiking/{z}/{x}/{y}.png', {
       maxZoom: 18,
+      //TODO BUG ne s'affiche pas sur Espagne, photo maxar & photo Google
     });
 
   // Couches OSM OverPass
@@ -216,6 +214,8 @@ function overlaysSelectables(map, serveurAPI, versionFeatures) {
       minZoom: 12,
       minZoomIndicatorEnabled: false,
     });
+
+  vectorCluster.addTo(map);
 
   return overlayLayers;
 }

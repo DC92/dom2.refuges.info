@@ -75,6 +75,7 @@ function wriPOILayer(serveurAPI, type, versionFeatures, hideTooltip) {
         for (const name in iconList)
           document.body.insertAdjacentHTML('beforeend', '<img style="display:none" src="/images/icones/' + name + '.svg"/>')
       }
+      poiLayer.fire('load');
     });
 
   return poiLayer;
@@ -298,6 +299,7 @@ L.NewPolygonControl = L.Control.extend({
 /****************************************************
  * Bouton de préchargement des tuiles OpenHikingMap *
  ****************************************************/
+/* eslint-disable-next-line no-unused-vars */
 class ControlPreload extends L.control {
   constructor() {
     super({
