@@ -48,7 +48,7 @@ polygons    .addTo(map).enableEdit();
         editable: true,
       } )*/;
 
- // baselayer.addTo(map); // Fond de carte par défaut
+ // baselayer.addTo(map); // Chargement du fond de carte actif
   
  // new L.Control.Fullscreen().addTo(map);
 //console.log(L.Editable);//DCMM

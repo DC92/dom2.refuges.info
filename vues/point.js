@@ -5,12 +5,12 @@ const map = L.map('carte-point');
 const tileLayers = couchesDeFond(<?=json_encode($config_wri['mapKeys'])?>),
   permalink = sessionStorage.permalink.split('/');
 
-// Fond de carte par défaut
+// Chargement du fond de carte actif
 permalinkControl(map);
 (tileLayers[decodeURI(permalink[3])] || Object.values(tileLayers)[0]).addTo(map);
 
 // Points refuges.info
-clusterPOI ('https://<?=$_SERVER["SERVER_NAME"]?>', <?=$vue->version_features?>) .addTo(map);
+clusterPOI('https://<?=$_SERVER["SERVER_NAME"]?>', <?=$vue->version_features?>).addTo(map);
 
 // Contrôles
 controlesComuns(map).forEach((control) => control.addTo(map));

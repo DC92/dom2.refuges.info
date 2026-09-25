@@ -266,6 +266,7 @@ function flipLonLatRecursive(data) {
 }
 
 // Contrôle permettant l'ajout d'un ploygone dans Leaflet.Editable
+/* eslint-disable-next-line no-unused-vars */
 const NewPolygonControl = L.Control.extend({
   options: {
     position: 'topleft',

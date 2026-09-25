@@ -17,7 +17,7 @@ const map = L.map('carte-saisie');
 const tileLayers = couchesDeFond(<?=json_encode($config_wri['mapKeys'])?>),
   permalink = sessionStorage.permalink.split('/');
 
-// Fond de carte par défaut
+// Chargement du fond de carte actif
 permalinkControl(map);
 (tileLayers[decodeURI(permalink[3])] || Object.values(tileLayers)[0]).addTo(map);
 
