@@ -166,7 +166,30 @@ const couchesIconesWRI = {
     'ravitaillement': '["shop"~"supermarket|convenience"]',
     'parking': '["amenity"="parking"]["access"!="private"]',
     'bus': '["highway"="bus_stop"]',
-  };
+  },
+
+  coucheItineraires = L.tileLayer(
+    'https://tile.waymarkedtrails.org/hiking/{z}/{x}/{y}.png', {
+      maxZoom: 18,
+      //TODO BUG ne s'affiche pas sur Espagne, photo maxar & photo Google
+    });
+
+// Cluster contenant tous les types de points
+/* eslint-disable-next-line no-unused-vars */
+function clusterPOI(serveurAPI, versionFeatures) {
+  const cluster = L.markerClusterGroup({
+    spiderfyOnMaxZoom: true, // Overlapping markers will spiderfy when clicked
+    maxClusterRadius: 30, // Less clusters
+  });
+
+  for (const entry of Object.entries(couchesIconesWRI))
+    // On crée les couches pour chaque type de point
+    wriPOILayer(serveurAPI, entry[1][0], versionFeatures)
+    // Attente de la fin de réception pour l'intégrer au cluster
+    .on('load', (evt) => cluster.addLayer(evt.target));
+
+  return cluster;
+}
 
 /*************************************************************************
  * Sélécteur d'overlays (pour la page d'accueil)                         *
@@ -196,11 +219,7 @@ function overlaysSelectables(map, serveurAPI, versionFeatures) {
   overlayLayers.Massifs = wriPolygonLayer(serveurAPI, 1, versionFeatures);
 
   // Couche externe d'itinéraires
-  overlayLayers['Itinéraires'] = L.tileLayer(
-    'https://tile.waymarkedtrails.org/hiking/{z}/{x}/{y}.png', {
-      maxZoom: 18,
-      //TODO BUG ne s'affiche pas sur Espagne, photo maxar & photo Google
-    });
+  overlayLayers['Itinéraires'] = coucheItineraires;
 
   // Couches OSM OverPass
   for (const [nom, query] of Object.entries(couchesOverpass))

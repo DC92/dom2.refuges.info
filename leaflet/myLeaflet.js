@@ -35,7 +35,7 @@ function wriPOILayer(serveurAPI, type, versionFeatures, hideTooltip) {
           icon: L.icon({
             iconUrl: serveurAPI + '/images/icones/' + feature.properties.type.icone + '.svg',
             iconSize: [24, 24],
-            iconAnchor: [12, 2],
+            iconAnchor: [12, 12],
           }),
         }),
 
@@ -266,7 +266,7 @@ function flipLonLatRecursive(data) {
 }
 
 // Contrôle permettant l'ajout d'un ploygone dans Leaflet.Editable
-L.NewPolygonControl = L.Control.extend({
+const NewPolygonControl = L.Control.extend({
   options: {
     position: 'topleft',
   },

@@ -14,7 +14,7 @@ polygons=L.polygon(flipLonLatRecursive(geoJson.coordinates));
 if (geoJson) 
 polygons    .addTo(map).enableEdit();
   
-    map.addControl(new L.NewPolygonControl());
+    map.addControl(new NewPolygonControl());
  map.doubleClickZoom.disable();
 
 //DCMM FUTUR HORS RESEAU

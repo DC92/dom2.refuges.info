@@ -3,33 +3,20 @@ const map = L.map('carte-point');
 
 // Couches tuilées
 const tileLayers = couchesDeFond(<?=json_encode($config_wri['mapKeys'])?>),
-  itineraires = L.tileLayer(
-    'https://tile.waymarkedtrails.org/hiking/{z}/{x}/{y}.png', {
-      maxZoom: 18,
-    }),
   permalink = sessionStorage.permalink.split('/');
 
 // Fond de carte par défaut
 permalinkControl(map);
 (tileLayers[decodeURI(permalink[3])] || Object.values(tileLayers)[0]).addTo(map);
 
-// Overlays points (tous les types de points sont chargés
-const clusterPOI = L.markerClusterGroup({
-  spiderfyOnMaxZoom: true, // Overlapping markers will spiderfy when clicked
-  maxClusterRadius: 30, // Less clusters
-}).addTo(map);
-
-for (const entry of Object.entries(couchesIconesWRI))
-  // On crée les couches pour chaque type de point
-  wriPOILayer('https://<?=$_SERVER["SERVER_NAME"]?>', entry[1][0], <?=$vue->version_features?>)
-  // Attente de la fin de réception pour l'intégrer au cluster
-  .on('load', (evt) => clusterPOI.addLayer(evt.target));
+// Points refuges.info
+clusterPOI ('https://<?=$_SERVER["SERVER_NAME"]?>', <?=$vue->version_features?>) .addTo(map);
 
 // Contrôles
 controlesComuns(map).forEach((control) => control.addTo(map));
 
 L.control.layers(tileLayers, {
-  'Itinéraires': itineraires
+  'Itinéraires': coucheItineraires,
 }).addTo(map);
 
 // Marqueur de position de cabane

@@ -3,8 +3,8 @@ const map = L.map('carte-accueil'),
   overlays = overlaysSelectables(map, 'https://<?=$_SERVER["SERVER_NAME"]?>', <?=$vue->version_features?>),
   permalink = sessionStorage.permalink.split('/');
   
-// Limite le zoom à un maximum de 12
-permalink[0] = Math.min(parseInt(permalink[0]), 12);
+// Limite le zoom à un maximum
+permalink[0] = Math.min(parseInt(permalink[0]), 13);
 
 // Fond de carte par défaut
 (tileLayers[decodeURI(permalink[3])] || Object.values(tileLayers)[0]).addTo(map);
@@ -13,7 +13,7 @@ permalink[0] = Math.min(parseInt(permalink[0]), 12);
 L.control.layers(tileLayers).addTo(map);
 L.control.layers(null, overlays).addTo(map);
 controlesComuns(map).forEach((control) => control.addTo(map));
-//DCMM FUTUR HORS RESEAU controlPreload.addTo(map);// Ajoute de controle pre-load OpenHikingMap
+//DCMM FUTUR HORS RESEAU new ControlPreload( ).addTo(map);// Ajoute de controle pre-load OpenHikingMap
   permalinkControl(map) ;
 
 // Externalise le sélecteur de points pour les grandes largeurs de fenêtre
