@@ -26,9 +26,15 @@
  * Points d'intérêt refuges.info *
  *********************************/
 /* eslint-disable-next-line no-unused-vars */
-function wriPOILayer(serveurAPI, type, versionFeatures, hideTooltip) {
-  const iconList = [],
-    poiLayer = L.geoJson(null, {
+class WriPOILayer extends L.geoJson {
+  constructor(serveurAPI, type, versionFeatures, hideTooltip) {
+    const iconList = [],
+      url = serveurAPI + '/api/bbox?' +
+      'nb_points=all&type_points=' + type +
+      '&version=' + versionFeatures + '&cache=' + (7 * 24 * 3600);
+    //TODO Délai cache api / depuis
+
+    super(null, {
       // Icônes
       pointToLayer: (feature, latlng) =>
         L.marker(latlng, {
@@ -56,43 +62,43 @@ function wriPOILayer(serveurAPI, type, versionFeatures, hideTooltip) {
 
         iconList[feature.properties.type.icone] = true;
       },
-    }),
-    url = serveurAPI + '/api/bbox?' +
-    'nb_points=all&type_points=' + type +
-    '&version=' + versionFeatures + '&cache=' + (7 * 24 * 3600);
-  //TODO Délai cache api / depuis
-
-  // Fetch remote data
-  fetch(url)
-    .catch((er) => console.error(er + ' fetching ' + url))
-    .then((response) => response.json())
-    .then((json) => {
-      if (json.features.length) {
-        poiLayer.addData(json);
-        poiLayer.fire('adddata');
-
-        // Preload icons
-        for (const name in iconList)
-          document.body.insertAdjacentHTML('beforeend', '<img style="display:none" src="/images/icones/' + name + '.svg"/>')
-      }
-      poiLayer.fire('load');
     });
 
-  return poiLayer;
+    // Fetch remote data
+    fetch(url)
+      .catch((er) => console.error(er + ' fetching ' + url))
+      .then((response) => response.json())
+      .then((json) => {
+        if (json.features.length) {
+          this.addData(json);
+          this.fire('adddata');
+
+          // Preload icons
+          for (const name in iconList)
+            document.body.insertAdjacentHTML('beforeend', '<img style="display:none" src="/images/icones/' + name + '.svg"/>')
+        }
+        this.fire('load');
+      });
+  }
 }
 
 /*****************************
  * Polygones de refuges.info *
  *****************************/
 /* eslint-disable-next-line no-unused-vars */
-function wriPolygonLayer(serveurAPI, typeId, versionFeatures) {
-  const polygonLayer = L.geoJson(null, {
-      style: function(feature) {
-        return {
-          stroke: false,
-          color: feature.properties.couleur,
-        };
-      },
+class WriPolygonLayer extends L.geoJson {
+  constructor(serveurAPI, typeId, versionFeatures) {
+    const url = serveurAPI + '/api/polygones?' +
+      'type_polygon=' + typeId +
+      '&version=' + versionFeatures +
+      '&cache=' + (7 * 24 * 3600);
+
+    super(null, {
+      style: (feature) => ({
+        stroke: false,
+        color: feature.properties.couleur,
+      }),
+
       onEachFeature: (feature, layer) => {
         // Etiquettes
         layer.bindTooltip(
@@ -115,20 +121,16 @@ function wriPolygonLayer(serveurAPI, typeId, versionFeatures) {
           },
         });
       },
-    }),
-    url = serveurAPI + '/api/polygones?' +
-    'type_polygon=' + typeId +
-    '&version=' + versionFeatures + '&cache=' + (7 * 24 * 3600); // version tient compte des polygones
-
-  fetch(url)
-    .catch((er) => console.error(er + ' fetching ' + url))
-    .then((response) => response.json())
-    .then((json) => {
-      if (json.features.length)
-        polygonLayer.addData(json);
     });
 
-  return polygonLayer;
+    fetch(url)
+      .catch((er) => console.error(er + ' fetching ' + url))
+      .then((response) => response.json())
+      .then((json) => {
+        if (json.features.length)
+          this.addData(json);
+      });
+  }
 }
 
 /**********************************************
@@ -346,5 +348,14 @@ class ControlPreload extends L.control {
     });
 
     return buttonDiv;
+  }
+}
+
+//DCMM Modèle de classe
+/* eslint-disable-next-line no-unused-vars */
+class Newclass extends L.geoJson {
+  /* eslint-disable-next-line  no-useless-constructor */
+  constructor() {
+    super();
   }
 }

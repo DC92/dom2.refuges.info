@@ -18,7 +18,7 @@ permalink[0] = Math.min(parseInt(permalink[0]), 13);
 // points WRI
 for (const [nom, args] of Object.entries(couchesIconesWRI)) {
   const icone = '<img src="/images/icones/' + args[1] + '.svg"/> ' + nom, // Libellé de la ligne sélecteur
-    layer = wriPOILayer('https://<?=$_SERVER["SERVER_NAME"]?>', args[0], <?=$vue->version_features?>); // Couche affichable
+    layer = new WriPOILayer('https://<?=$_SERVER["SERVER_NAME"]?>', args[0], <?=$vue->version_features?>); // Couche affichable
 
   // Il est nécéssaire de grouper les points de chaque couches dans un groupe pour pouvoir les sélectionner indépendament
   overlays[icone] = L.featureGroup.subGroup(vectorCluster).addLayer(layer);
@@ -38,8 +38,8 @@ for (const [nom, args] of Object.entries(couchesIconesWRI)) {
 }
 
 // Polygones WRI
-overlays['Régions'] = wriPolygonLayer('https://<?=$_SERVER["SERVER_NAME"]?>', 11,<?=$vue->version_features?>);
-overlays.Massifs = wriPolygonLayer('https://<?=$_SERVER["SERVER_NAME"]?>', 1,<?=$vue->version_features?>);
+overlays['Régions'] = new WriPolygonLayer('https://<?=$_SERVER["SERVER_NAME"]?>', 11,<?=$vue->version_features?>);
+overlays.Massifs = new WriPolygonLayer('https://<?=$_SERVER["SERVER_NAME"]?>', 1,<?=$vue->version_features?>);
 
 // Couche externe d'itinéraires
 overlays['Itinéraires'] = coucheItineraires;

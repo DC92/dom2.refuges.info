@@ -1,4 +1,4 @@
-/* global L, MarkerCompass, tileLayerIGN, wriPOILayer, wriPolygonLayer */
+/* global L, MarkerCompass, tileLayerIGN, WriPOILayer */
 
 /*********************************************************************************
  * Ce fichier contient les paramètrages spécifiques et visibles sur refuges.info *
@@ -159,6 +159,7 @@ const couchesIconesWRI = {
     'Bâtiment à investiguer': [28, 'cabane_white_black_a63'],
   },
 
+  /* eslint-disable-next-line no-unused-vars */
   couchesOverpass = {
     'hôtel': '["tourism"~"hotel|guest_house|chalet|hostel|apartment"]',
     'camping': '["tourism"="camp_site"]',
@@ -168,6 +169,7 @@ const couchesIconesWRI = {
     'bus': '["highway"="bus_stop"]',
   },
 
+  /* eslint-disable-next-line no-unused-vars */
   coucheItineraires = L.tileLayer(
     'https://tile.waymarkedtrails.org/hiking/{z}/{x}/{y}.png', {
       maxZoom: 18,
@@ -184,7 +186,7 @@ function clusterPOI(serveurAPI, versionFeatures) {
 
   for (const entry of Object.entries(couchesIconesWRI))
     // On crée les couches pour chaque type de point
-    wriPOILayer(serveurAPI, entry[1][0], versionFeatures)
+    new WriPOILayer(serveurAPI, entry[1][0], versionFeatures)
     // Attente de la fin de réception pour l'intégrer au cluster
     .on('load', (evt) => cluster.addLayer(evt.target));
 
