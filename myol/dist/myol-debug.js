@@ -4,7 +4,7 @@
  * This package adds many features to Openlayer https://openlayers.org/
  * https://github.com/Dominique92/myol#readme
  * Based on https://openlayers.org
- * Built 20/09/2026 20:33:27 using npm run build from the src/... sources
+ * Built 27/09/2026 16:16:25 using npm run build from the src/... sources
  * Please don't modify this file : best is to modify src/... & npm run build !
  */
 (function (global, factory) {
@@ -80345,7 +80345,7 @@
 
     render(evt) {
       const view = evt.map.getView(),
-        permalinks = (sessionStorage.permalink || '6/47/2').split('/'),
+        permalinks = (sessionStorage.permalink || localStorage.permalink || '6/47/2').split('/'),
         //BEST init with res=<resolution> or extent (not zoom, lon, lat)
         urlMod = (typeof this.options.init === 'object' ? // init: [<zoom>, <lon>, <lat>]
           'zoom=' + this.options.init[0] + '&lon=' + this.options.init[1] + '&lat=' + this.options.init[2] + ',' :
@@ -80382,6 +80382,7 @@
           ll4326[1].toFixed(5),
           ll4326[0].toFixed(5),
         ].join('/');
+        localStorage.permalink = sessionStorage.permalink;
 
         if (this.linkEl) {
           const newParams = 'map=' + sessionStorage.permalink + '&baselayer=' + encodeURI(sessionStorage.myolBaselayer);
@@ -93046,7 +93047,7 @@
   /* global map */
 
 
-  const VERSION = '1.1.2.dev 20/09/2026 20:33:27';
+  const VERSION = '1.1.2.dev 27/09/2026 16:16:25';
 
   async function traces(options) {
     const debug = {

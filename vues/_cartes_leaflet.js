@@ -4,12 +4,12 @@
  * Ce fichier contient les paramètrages spécifiques et visibles sur refuges.info *
  *********************************************************************************/
 
-// Position et couches par défaut
-sessionStorage.permalink ||= '5/46.5/5';
-//DCMM FUTUR mémoire entre sessions
-//localStorage.permalink ||= '5/46.5/5';// S'il n'y a aucune donnée enregistrée
-//sessionStorage.permalink ||= localStorage.permalink;// En début de session, on repart de la dernière position
+// Position et couche de fond par défaut
+localStorage.permalink ||= '5/46.5/5';// S'il n'y a aucune donnée enregistrée
+sessionStorage.permalink ||= localStorage.permalink;// En début de session, on repart de la dernière position
+let permalinkArray = sessionStorage.permalink.split('/'); // Pour usage au cours de la durée de vie de la page.
 
+// Couches refuges.info de la page 
 if (typeof sessionStorage.checkedLayers !== 'string')
   sessionStorage.checkedLayers = 'Cabane non gardée,Refuge gardé,Gîte d\'étape';
 

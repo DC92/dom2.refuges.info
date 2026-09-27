@@ -42,7 +42,7 @@ class Permalink extends Control {
 
   render(evt) {
     const view = evt.map.getView(),
-      permalinks = (sessionStorage.permalink || '6/47/2').split('/'),
+      permalinks = (sessionStorage.permalink || localStorage.permalink || '6/47/2').split('/'),
       //BEST init with res=<resolution> or extent (not zoom, lon, lat)
       urlMod = (typeof this.options.init === 'object' ? // init: [<zoom>, <lon>, <lat>]
         'zoom=' + this.options.init[0] + '&lon=' + this.options.init[1] + '&lat=' + this.options.init[2] + ',' :
@@ -79,6 +79,7 @@ class Permalink extends Control {
         ll4326[1].toFixed(5),
         ll4326[0].toFixed(5),
       ].join('/');
+      localStorage.permalink = sessionStorage.permalink;
 
       if (this.linkEl) {
         const newParams = 'map=' + sessionStorage.permalink + '&baselayer=' + encodeURI(sessionStorage.myolBaselayer);

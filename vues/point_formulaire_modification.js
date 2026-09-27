@@ -7,19 +7,19 @@ function affiche_et_set(el, affiche, valeur) {
 
 // Positionne la carte à l'emplacement du point à modifier
 <?php if(!empty($vue->point->id_point)) { ?>
-  sessionStorage.permalink = '15/<?=$vue->point->latitude?>/<?=$vue->point->longitude?>/' + sessionStorage.permalink.split('/')[3];
+  sessionStorage.permalink =
+    '15/<?=$vue->point->latitude?>/<?=$vue->point->longitude?>/' + sessionStorage.permalink.split('/')[3];
 <?php } ?>
 
 // Initialisation de la carte
 const map = L.map('carte-saisie');
 
 // Couches tuilées
-const tileLayers = couchesDeFond(<?=json_encode($config_wri['mapKeys'])?>),
-  permalink = sessionStorage.permalink.split('/');
+const tileLayers = couchesDeFond(<?=json_encode($config_wri['mapKeys'])?>);
 
 // Chargement du fond de carte actif
 permalinkControl(map);
-(tileLayers[decodeURI(permalink[3])] || Object.values(tileLayers)[0]).addTo(map);
+(tileLayers[decodeURI(permalinkArray[3])] || Object.values(tileLayers)[0]).addTo(map);
 
 // Points refuges.info
 clusterPOI('https://<?=$_SERVER["SERVER_NAME"]?>', <?=$vue->version_features?>) .addTo(map);
@@ -29,7 +29,7 @@ controlesComuns(map).forEach((control) => control.addTo(map));
 L.control.layers(tileLayers).addTo(map);
 
 // Lance le chargement de la carte
-map.setView([permalink[1], permalink[2]], 15);
+map.setView([permalinkArray[1], permalinkArray[2]], 15);
 
 // Marqueur déplaçable d'édition de position de cabane
 const champsPositionEls = document.querySelectorAll('#champs-position input'),

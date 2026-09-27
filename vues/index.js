@@ -1,5 +1,4 @@
 const map = L.map('carte-accueil'),
-  permalink = sessionStorage.permalink.split('/'),
   tileLayers = couchesDeFond(<?=json_encode($config_wri['mapKeys'])?>),
   overlays = {},
   // Groupement des couches qui doivent être clustérisées ensembles
@@ -10,10 +9,10 @@ const map = L.map('carte-accueil'),
   });
 
 // Limite le zoom à un maximum
-permalink[0] = Math.min(parseInt(permalink[0]), 13);
+permalinkArray[0] = Math.min(parseInt(permalinkArray[0]), 13);
 
 // Chargement du fond de carte actif
-(tileLayers[decodeURI(permalink[3])] || Object.values(tileLayers)[0]).addTo(map);
+(tileLayers[decodeURI(permalinkArray[3])] || Object.values(tileLayers)[0]).addTo(map);
 
 // points WRI
 for (const [nom, args] of Object.entries(couchesIconesWRI)) {
@@ -80,7 +79,7 @@ permalinkControl(map);
   }));
 
 // Lance le chargement de la carte
-map.setView([permalink[1], permalink[2]], permalink[0]);
+map.setView([permalinkArray[1], permalinkArray[2]], permalinkArray[0]);
 
 // Calcul du lien d'export
 const overlaySelectors = document.querySelectorAll('.leaflet-control-layers-overlays input'), // Lien d'export de la carte

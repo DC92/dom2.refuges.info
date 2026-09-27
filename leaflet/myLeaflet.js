@@ -249,6 +249,8 @@ function permalinkControl(map) {
         pos.lng.toFixed(5),
         encodeURI(baseLayerName),
       ].join('/');
+      localStorage.permalink = sessionStorage.permalink;
+      permalinkArray = sessionStorage.permalink.split('/');
 
       //DCMM FUTUR mémoire entre sessions
       // Pour repartir de la dernière position en début de prochaine session
@@ -342,11 +344,13 @@ class ControlPreload extends L.control {
         const timer = setInterval(() => {
           if (!loadingLayer.isLoading()) {
             map.setZoom(map.getZoom() + 1);
-            sessionStorage.permalink = minZoom + '/' + pos.lat + '/' + pos.lng + '/OpenHikingMap';
 
             if (map.getZoom() > maxZoom) {
               clearInterval(timer);
               alert('Téléchargement terminé.\nRéinitialisation de la page.');
+
+              // On affiche la couche OpenHikingMap pour ne pas qu'il y ait confusion sur quelle couche on a chargé
+              sessionStorage.permalink = minZoom + '/' + pos.lat + '/' + pos.lng + '/OpenHikingMap';
               location.reload();
             }
           }
