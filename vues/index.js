@@ -8,8 +8,9 @@ const map = L.map('carte-accueil'),
     maxClusterRadius: 30, // Less clusters
   });
 
-// Limite le zoom à un maximum
-permalinkArray[0] = Math.min(parseInt(permalinkArray[0]), 13);
+// Couches refuges.info de la page 
+if (typeof sessionStorage.checkedLayers !== 'string')
+  sessionStorage.checkedLayers = 'Cabane non gardée,Refuge gardé,Gîte d\'étape';
 
 // Chargement du fond de carte actif
 (tileLayers[decodeURI(permalinkArray[3])] || Object.values(tileLayers)[0]).addTo(map);
@@ -17,7 +18,7 @@ permalinkArray[0] = Math.min(parseInt(permalinkArray[0]), 13);
 // points WRI
 for (const [nom, args] of Object.entries(couchesIconesWRI)) {
   const icone = '<img src="/images/icones/' + args[1] + '.svg"/> ' + nom, // Libellé de la ligne sélecteur
-    layer = new WriPOILayer('https://<?=$_SERVER["SERVER_NAME"]?>', args[0], <?=$vue->version_features?>); // Couche affichable
+    layer = new WriPOILayer('https://<?=$_SERVER["SERVER_NAME"]?>', args[0], '<?=$vue->version_features?>'); // Couche affichable
 
   // Il est nécéssaire de grouper les points de chaque couches dans un groupe pour pouvoir les sélectionner indépendament
   overlays[icone] = L.featureGroup.subGroup(vectorCluster).addLayer(layer);
@@ -37,8 +38,8 @@ for (const [nom, args] of Object.entries(couchesIconesWRI)) {
 }
 
 // Polygones WRI
-overlays['Régions'] = new WriPolygonLayer('https://<?=$_SERVER["SERVER_NAME"]?>', 11,<?=$vue->version_features?>);
-overlays.Massifs = new WriPolygonLayer('https://<?=$_SERVER["SERVER_NAME"]?>', 1,<?=$vue->version_features?>);
+overlays['Régions'] = new WriPolygonLayer('https://<?=$_SERVER["SERVER_NAME"]?>', 11,'<?=$vue->version_features?>');
+overlays.Massifs = new WriPolygonLayer('https://<?=$_SERVER["SERVER_NAME"]?>', 1,'<?=$vue->version_features?>');
 
 // Couche externe d'itinéraires
 overlays['Itinéraires'] = coucheItineraires;

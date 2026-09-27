@@ -9,7 +9,7 @@ permalinkControl(map);
 (tileLayers[decodeURI(permalinkArray[3])] || Object.values(tileLayers)[0]).addTo(map);
 
 // Points refuges.info
-clusterPOI('https://<?=$_SERVER["SERVER_NAME"]?>', <?=$vue->version_features?>).addTo(map);
+clusterPOI('https://<?=$_SERVER["SERVER_NAME"]?>', '<?=$vue->version_features?>').addTo(map);
 
 // Contrôles
 controlesComuns(map).forEach((control) => control.addTo(map));
@@ -20,7 +20,7 @@ L.control.layers(tileLayers, {
 
 // Marqueur de position de cabane
 L.marker(
-  [<?=$vue->point->latitude?>, <?=$vue->point->longitude?>], {
+  ['<?=$vue->point->latitude?>','<?=$vue->point->longitude?>'], {
     icon: L.icon({
       iconUrl: '/images/cadre.svg',
       iconSize: [32, 44],
@@ -30,4 +30,4 @@ L.marker(
 ).addTo(map);
 
 // Lance le chargement de la carte
-map.setView([<?=$vue->point->latitude?>, <?=$vue->point->longitude?>], 15);
+map.setView(['<?=$vue->point->latitude?>', '<?=$vue->point->longitude?>'], 15);

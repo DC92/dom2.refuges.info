@@ -1,4 +1,4 @@
-/* global L, MarkerCompass, IGNTileLayer, WriPOILayer */
+/* global L, MarkerCompass, IGNTileLayer, WriPOILayer, permalinkArray */
 
 /*********************************************************************************
  * Ce fichier contient les paramètrages spécifiques et visibles sur refuges.info *
@@ -7,15 +7,12 @@
 // Position et couche de fond par défaut
 localStorage.permalink ||= '5/46.5/5';// S'il n'y a aucune donnée enregistrée
 sessionStorage.permalink ||= localStorage.permalink;// En début de session, on repart de la dernière position
-let permalinkArray = sessionStorage.permalink.split('/'); // Pour usage au cours de la durée de vie de la page.
-
-// Couches refuges.info de la page 
-if (typeof sessionStorage.checkedLayers !== 'string')
-  sessionStorage.checkedLayers = 'Cabane non gardée,Refuge gardé,Gîte d\'étape';
+permalinkArray = sessionStorage.permalink.split('/'); // Pour usage au cours de la durée de vie de la page.
 
 /*****************************************
  * Contrôles communs à toutes les cartes *
  *****************************************/
+/* eslint-disable-next-line no-unused-vars */
 /* eslint-disable-next-line no-unused-vars */
 function controlesComuns(map) {
   // Prevent Leaflet on Chrome from focusing the map when using a Control
