@@ -1,4 +1,4 @@
-/* global L, MarkerCompass, tileLayerIGN, WriPOILayer */
+/* global L, MarkerCompass, IGNTileLayer, WriPOILayer */
 
 /*********************************************************************************
  * Ce fichier contient les paramètrages spécifiques et visibles sur refuges.info *
@@ -6,6 +6,10 @@
 
 // Position et couches par défaut
 sessionStorage.permalink ||= '5/46.5/5';
+//DCMM FUTUR mémoire entre sessions
+//localStorage.permalink ||= '5/46.5/5';// S'il n'y a aucune donnée enregistrée
+//sessionStorage.permalink ||= localStorage.permalink;// En début de session, on repart de la dernière position
+
 if (typeof sessionStorage.checkedLayers !== 'string')
   sessionStorage.checkedLayers = 'Cabane non gardée,Refuge gardé,Gîte d\'étape';
 
@@ -57,11 +61,11 @@ function couchesDeFond(layerKeys) {
         attribution: '<a href="https://www.thunderforest.com/">Thunderforest</a> | ' +
           '<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
       }),*/
-    /*'IGN photo': tileLayerIGN(
+    /*'IGN photo': new IGNTileLayer(
       'https://data.geopf.fr/wmts?', {
         layer: 'ORTHOIMAGERY.ORTHOPHOTOS',
       }),
-    Cadastre: tileLayerIGN(
+    Cadastre: new IGNTileLayer(
       'https://data.geopf.fr/wmts?', {
         layer: 'CADASTRALPARCELS.PARCELLAIRE_EXPRESS',
         style: 'PCI vecteur',
@@ -107,12 +111,12 @@ function couchesDeFond(layerKeys) {
           '<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
       }),
 
-    TOP25: tileLayerIGN(
+    TOP25: new IGNTileLayer(
       'https://data.geopf.fr/private/wmts?', {
         layer: 'GEOGRAPHICALGRIDSYSTEMS.MAPS',
         apikey: 'ign_scan_ws',
       }),
-    'IGN plan': tileLayerIGN(
+    'IGN plan': new IGNTileLayer(
       'https://data.geopf.fr/wmts?', {
         layer: 'GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2',
         format: 'image/png',
@@ -126,7 +130,7 @@ function couchesDeFond(layerKeys) {
           '<a href="https://prod-swishop-s3.s3.eu-central-1.amazonaws.com/2022-04/symbols_fr_0.pdf">Légende</a>',
         maxZoom: 18,
       }),
-    Espagne: tileLayerIGN(
+    Espagne: new IGNTileLayer(
       'https://www.ign.es/wmts/mapa-raster?', {
         layer: 'MTN',
         style: 'default',

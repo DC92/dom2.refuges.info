@@ -138,22 +138,22 @@ class WriPolygonLayer extends L.geoJson {
  * Remplace avantageusement 663 Ko de lib IGN *
  **********************************************/
 /* eslint-disable-next-line no-unused-vars */
-function tileLayerIGN(url, paramsIGN, paramsLayer) {
-  const params = {
-    request: 'GetTile',
-    service: 'WMTS',
-    version: '1.0.0',
-    tilematrixset: 'PM',
-    style: 'normal',
-    format: 'image/jpeg',
-    tilematrix: '{z}',
-    tilerow: '{y}',
-    tilecol: '{x}',
-    ...paramsIGN,
-  };
+class IGNTileLayer extends L.tileLayer {
+  constructor(url, paramsIGN, paramsLayer) {
+    const params = {
+      request: 'GetTile',
+      service: 'WMTS',
+      version: '1.0.0',
+      tilematrixset: 'PM',
+      style: 'normal',
+      format: 'image/jpeg',
+      tilematrix: '{z}',
+      tilerow: '{y}',
+      tilecol: '{x}',
+      ...paramsIGN,
+    };
 
-  return L.tileLayer(
-    url + Object.entries(params).map(e => e.join('=')).join('&'), {
+    super(url + Object.entries(params).map(e => e.join('=')).join('&'), {
       bounds: [
         [-75, -180],
         [81, 180],
@@ -161,6 +161,7 @@ function tileLayerIGN(url, paramsIGN, paramsLayer) {
       attribution: '<a href="https://www.geoportail.gouv.fr/">IGN Geoportail</a>',
       ...paramsLayer,
     });
+  }
 }
 
 /*********************************************************
@@ -241,12 +242,17 @@ function permalinkControl(map) {
         if (lsInputEl.checked || !baseLayerName)
           baseLayerName = lsInputEl.parentElement.lastChild.innerText.trim();
 
+      // Pour repartir de cette position au prochain changement de carte
       sessionStorage.permalink = [
         map.getZoom().toFixed(1),
         pos.lat.toFixed(5),
         pos.lng.toFixed(5),
         encodeURI(baseLayerName),
       ].join('/');
+
+      //DCMM FUTUR mémoire entre sessions
+      // Pour repartir de la dernière position en début de prochaine session
+      localStorage.permalink = sessionStorage.permalink;
 
       // Cache les étiquettes pour les grandes échèles
       map.getContainer().classList[map.getZoom() < 8 ? 'add' : 'remove']('hide-tooltips');
@@ -267,6 +273,7 @@ function flipLonLatRecursive(data) {
   return data.map(item => flipLonLatRecursive(item));
 }
 
+//DCMM FUTUR EDIT MASSIF
 // Contrôle permettant l'ajout d'un ploygone dans Leaflet.Editable
 /* eslint-disable-next-line no-unused-vars */
 const NewPolygonControl = L.Control.extend({
@@ -354,8 +361,7 @@ class ControlPreload extends L.control {
 //DCMM Modèle de classe
 /* eslint-disable-next-line no-unused-vars */
 class Newclass extends L.geoJson {
-  /* eslint-disable-next-line  no-useless-constructor */
   constructor() {
-    super();
+    super(123);
   }
 }
