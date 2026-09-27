@@ -228,7 +228,7 @@ class MarkerCompass extends L.Marker {
 /**************
  * PERMALINKS *
  **************/
-let permalinkArray=[]; // For use during the page lifetime.
+let permalinkArray = []; // For use during the page lifetime.
 
 // Store lon/lat/zoom/baselayer in sessionStorage 
 /* eslint-disable-next-line no-unused-vars */
@@ -244,21 +244,21 @@ function permalinkControl(map) {
         if (lsInputEl.checked || !baseLayerName)
           baseLayerName = lsInputEl.parentElement.lastChild.innerText.trim();
 
-// To restart from this position at the next map change
-      permalinkArray =  [
+      // To restart from this position at the next map change
+      permalinkArray = [
         map.getZoom().toFixed(1),
         pos.lat.toFixed(5),
         pos.lng.toFixed(5),
         encodeURI(baseLayerName),
       ];
-      sessionStorage.permalink =permalinkArray.join('/');
+      sessionStorage.permalink = permalinkArray.join('/');
 
-// To resume from the last position at the start of the next session
+      // To resume from the last position at the start of the next session
       const pa2 = Array.from(permalinkArray);
-      pa2[0] = Math.max (5, Math.min (10, pa2[0]));// In zoom limits
-      localStorage.permalink =pa2     .join('/');
+      pa2[0] = Math.max(5, Math.min(10, pa2[0])); // In zoom limits
+      localStorage.permalink = pa2.join('/');
 
-// Hides labels for large scales
+      // Hides labels for large scales
       map.getContainer().classList[map.getZoom() < 8 ? 'add' : 'remove']('hide-tooltips');
     });
   });

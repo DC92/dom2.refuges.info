@@ -5,8 +5,8 @@
  *********************************************************************************/
 
 // Position et couche de fond par défaut
-localStorage.permalink ||= '5/46.5/5';// S'il n'y a aucune donnée enregistrée
-sessionStorage.permalink ||= localStorage.permalink;// En début de session, on repart de la dernière position
+localStorage.permalink ||= '5/46.5/5'; // S'il n'y a aucune donnée enregistrée
+sessionStorage.permalink ||= localStorage.permalink; // En début de session, on repart de la dernière position
 permalinkArray = sessionStorage.permalink.split('/'); // Pour usage au cours de la durée de vie de la page.
 
 /*****************************************

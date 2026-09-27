@@ -20,7 +20,7 @@ L.control.layers(tileLayers, {
 
 // Marqueur de position de cabane
 L.marker(
-  ['<?=$vue->point->latitude?>','<?=$vue->point->longitude?>'], {
+  ['<?=$vue->point->latitude?>', '<?=$vue->point->longitude?>'], {
     icon: L.icon({
       iconUrl: '/images/cadre.svg',
       iconSize: [32, 44],
