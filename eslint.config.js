@@ -203,9 +203,12 @@ export default [{
   },
   languageOptions: {
     globals: {
+      // Windows / debug
       alert: "readonly",
       Blob: "readonly",
       caches: "readonly",
+      clearInterval: "readonly",
+      confirm: "readonly",
       console: "readonly",
       document: "readonly",
       Event: "readonly",
@@ -217,10 +220,14 @@ export default [{
       screen: "readonly",
       self: "readonly",
       sessionStorage: "readonly",
+      setInterval: "readonly",
       setTimeout: "readonly",
       URL: "readonly",
       URLSearchParams: "readonly",
       window: "readonly",
+
+      // Leaflet
+      L: "readonly",
     },
   },
 }];

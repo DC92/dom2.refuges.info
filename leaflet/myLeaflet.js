@@ -1,5 +1,3 @@
-/* global L, confirm, setInterval, clearInterval */
-
 /*************************************************
  * Personnal adaptations & addOns for leaflet    *
  * This file contains all the generic comon code *
@@ -60,6 +58,7 @@ class WriPOILayer extends L.geoJson {
           },
         });
 
+        // For icons prelaod
         iconList[feature.properties.type.icone] = true;
       },
     });
@@ -74,9 +73,12 @@ class WriPOILayer extends L.geoJson {
           this.fire('adddata');
 
           // Preload icons
+          //TODO don't do it twice
           for (const name in iconList)
             document.body.insertAdjacentHTML('beforeend', '<img style="display:none" src="/images/icones/' + name + '.svg"/>')
         }
+
+        // Trigger for who needs it
         this.fire('load');
       });
   }
@@ -225,15 +227,15 @@ class MarkerCompass extends L.Marker {
   }
 }
 
-/**************
- * PERMALINKS *
- **************/
-let permalinkArray = []; // For use during the page lifetime.
+/*****************************
+ * Saving the map position   *
+ * Lon, lat, zoom, baselayer *
+ *****************************/
+let positionMemoryArray = []; // For use during the page lifetime.
 
 // Store lon/lat/zoom/baselayer in sessionStorage 
 /* eslint-disable-next-line no-unused-vars */
-function permalinkControl(map) {
-  // Permalink
+function positionMemoryControl(map) {
   ['baselayerchange', 'zoom', 'moveend'].forEach((evtName) => {
     map.on(evtName, () => {
       const baselayerSelector = document.querySelectorAll('.leaflet-control-layers-base input'),
@@ -245,18 +247,18 @@ function permalinkControl(map) {
           baseLayerName = lsInputEl.parentElement.lastChild.innerText.trim();
 
       // To restart from this position at the next map change
-      permalinkArray = [
+      positionMemoryArray = [
         map.getZoom().toFixed(1),
         pos.lat.toFixed(5),
         pos.lng.toFixed(5),
         encodeURI(baseLayerName),
       ];
-      sessionStorage.permalink = permalinkArray.join('/');
+      sessionStorage.positionMemory = positionMemoryArray.join('/');
 
       // To resume from the last position at the start of the next session
-      const pa2 = Array.from(permalinkArray);
+      const pa2 = Array.from(positionMemoryArray);
       pa2[0] = Math.max(5, Math.min(10, pa2[0])); // In zoom limits
-      localStorage.permalink = pa2.join('/');
+      localStorage.positionMemory = pa2.join('/');
 
       // Hides labels for large scales
       map.getContainer().classList[map.getZoom() < 8 ? 'add' : 'remove']('hide-tooltips');
@@ -352,7 +354,7 @@ class ControlPreload extends L.control {
               alert('Téléchargement terminé.\nRéinitialisation de la page.');
 
               // On affiche la couche OpenHikingMap pour ne pas qu'il y ait confusion sur quelle couche on a chargé
-              sessionStorage.permalink = minZoom + '/' + pos.lat + '/' + pos.lng + '/OpenHikingMap';
+              sessionStorage.positionMemory = minZoom + '/' + pos.lat + '/' + pos.lng + '/OpenHikingMap';
               location.reload();
             }
           }

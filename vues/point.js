@@ -1,12 +1,14 @@
+/* global couchesDeFond, coucheItineraires, clusterPOI, positionMemoryArray, positionMemoryControl, controlesComuns */
+
 // Initialisation de la carte
 const map = L.map('carte-point');
 
 // Couches tuilées
-const tileLayers = couchesDeFond(<?=json_encode($config_wri['mapKeys'])?>);
+const tileLayers = couchesDeFond('<?=json_encode($config_wri["mapKeys"])?>');
 
 // Chargement du fond de carte actif
-permalinkControl(map);
-(tileLayers[decodeURI(permalinkArray[3])] || Object.values(tileLayers)[0]).addTo(map);
+positionMemoryControl(map);
+(tileLayers[decodeURI(positionMemoryArray[3])] || Object.values(tileLayers)[0]).addTo(map);
 
 // Points refuges.info
 clusterPOI('https://<?=$_SERVER["SERVER_NAME"]?>', '<?=$vue->version_features?>').addTo(map);
@@ -19,7 +21,7 @@ L.control.layers(tileLayers, {
 }).addTo(map);
 
 // Marqueur de position de cabane
-L.marker(
+const marqueur = L.marker(
   ['<?=$vue->point->latitude?>', '<?=$vue->point->longitude?>'], {
     icon: L.icon({
       iconUrl: '/images/cadre.svg',
@@ -30,4 +32,4 @@ L.marker(
 ).addTo(map);
 
 // Lance le chargement de la carte
-map.setView(['<?=$vue->point->latitude?>', '<?=$vue->point->longitude?>'], 15);
+map.setView(marqueur.getLatLng(), 15);

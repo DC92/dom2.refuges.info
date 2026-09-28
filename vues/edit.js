@@ -1,10 +1,29 @@
-sessionStorage.checkedLayers = '';
+// Initialisation de la carte
+const map = L.map('carte-edit');
+
+// Couches tuilées
+const tileLayers = couchesDeFond('<?=json_encode($config_wri["mapKeys"])?>');
+ 
+// Chargement du fond de carte actif
+positionMemoryControl(map);
+(tileLayers[decodeURI(positionMemoryArray[3])] || Object.values(tileLayers)[0]).addTo(map);
+
+// Points refuges.info
+//clusterPOI('https://<?=$_SERVER["SERVER_NAME"]?>', '<?=$vue->version_features?>').addTo(map);
+
+// Contrôles
+controlesComuns(map).forEach((control) => control.addTo(map));
+
+
+
+
+/*sessionStorage.checkedLayers = '';
 
 const map = initLeafletMap(
   'carte-edit',
   'https://<?=$_SERVER["SERVER_NAME"]?>',
   <?=$vue->version_features?>,
-  <?=json_encode($config_wri['mapKeys'])?>,
+  '<?=json_encode($config_wri["mapKeys"])?>',
   {editable: true} 
 ),
 geoJson = <?=$vue->json_polygones??''?>,
@@ -29,20 +48,20 @@ polygons    .addTo(map).enableEdit();
 
 //console.log(geojsonCoordinates);//DCMM
 //console.log(poly);//DCMM
-
+*/
 
 /*const map = mapEdit({
   target: ,
   host: '/',
-  mapKeys: <?=json_encode($config_wri['mapKeys'])?>,
+  mapKeys: '<?=json_encode($config_wri["mapKeys"])?>',
   extent: <?=json_encode($vue->polygone->extent??null)?>,
   idPolygone: <?=$vue->polygone->id_polygone??0?>,
   idPolygoneType: <?=$vue->polygone->id_polygone_type??0?>,
 });*/
 
  /* const tileLayers = couchesDeFond( 
-  <?=json_encode($config_wri['mapKeys'])?>),
-    permalink = sessionStorage.permalink.split('/'),
+  '<?=json_encode($config_wri["mapKeys"])?>'),
+    permalink = sessionStorage.positionMemory.split('/'),
     baselayer = tileLayers[decodeURI(permalink[3])] || Object.values(tileLayers)[0],
       map = L.map('carte-edit', {
         editable: true,

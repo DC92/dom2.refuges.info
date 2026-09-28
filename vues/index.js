@@ -1,7 +1,9 @@
+/* global couchesDeFond, couchesIconesWRI, WriPOILayer, WriPolygonLayer, couchesOverpass, coucheItineraires */
+/* global controlesComuns, positionMemoryControl, positionMemoryArray */
+
 const map = L.map('carte-accueil'),
-  tileLayers = couchesDeFond(<?=json_encode($config_wri['mapKeys'])?>),
+  tileLayers = couchesDeFond('<?=json_encode($config_wri["mapKeys"])?>'),
   overlays = {},
-  // Groupement des couches qui doivent être clustérisées ensembles
   vectorCluster = L.markerClusterGroup({
     spiderfyOnMaxZoom: true, // Overlapping markers will spiderfy when clicked
     showCoverageOnHover: false, // Optional: hides the cluster bounds polygon
@@ -13,7 +15,7 @@ if (typeof sessionStorage.checkedLayers !== 'string')
   sessionStorage.checkedLayers = 'Cabane non gardée,Refuge gardé,Gîte d\'étape';
 
 // Chargement du fond de carte actif
-(tileLayers[decodeURI(permalinkArray[3])] || Object.values(tileLayers)[0]).addTo(map);
+(tileLayers[decodeURI(positionMemoryArray[3])] || Object.values(tileLayers)[0]).addTo(map);
 
 // points WRI
 for (const [nom, args] of Object.entries(couchesIconesWRI)) {
@@ -23,7 +25,7 @@ for (const [nom, args] of Object.entries(couchesIconesWRI)) {
   // Il est nécéssaire de grouper les points de chaque couches dans un groupe pour pouvoir les sélectionner indépendament
   overlays[icone] = L.featureGroup.subGroup(vectorCluster).addLayer(layer);
 
-  // Affiche la couche au lancement de la page au cas où elle serait sélectionnée par le permalink
+  // Affiche la couche au lancement de la page au cas où elle serait sélectionnée par le mémoire de la position
   if (sessionStorage.checkedLayers.search(nom) !== -1) {
     // On affiche la couche sur la carte pour que le L.control.layers la considère comme cochée
     overlays[icone].addTo(map);
@@ -64,7 +66,7 @@ L.control.layers(tileLayers).addTo(map);
 L.control.layers(null, overlays).addTo(map);
 controlesComuns(map).forEach((control) => control.addTo(map));
 //DCMM FUTUR HORS RESEAU new ControlPreload( ).addTo(map);// Ajoute de controle pre-load OpenHikingMap
-permalinkControl(map);
+positionMemoryControl(map);
 
 // Externalise le sélecteur de points pour les grandes largeurs de fenêtre
 ['load', 'resize'].forEach(evtName =>
@@ -80,19 +82,20 @@ permalinkControl(map);
   }));
 
 // Lance le chargement de la carte
-map.setView([permalinkArray[1], permalinkArray[2]], permalinkArray[0]);
+map.setView([positionMemoryArray[1], positionMemoryArray[2]], positionMemoryArray[0]);
 
 // Calcul du lien d'export
 const overlaySelectors = document.querySelectorAll('.leaflet-control-layers-overlays input'), // Lien d'export de la carte
   exportCarteEl = document.getElementById('export-carte');
 
+/* eslint-disable-next-line no-unused-vars */
 function copyExportLink() {
   navigator.clipboard.writeText(exportCarteEl.children[1].href)
     .then(() => alert('Lien d\'exportation copié dans le presse-papier :\n\n' +
       exportCarteEl.children[1].href));
 }
 
-// Utilisé pour la mémorisation des couches de points et l'export
+// Mémorisation des couches de points et l'export
 function addRemoveOverlay() {
   const bne = map.getBounds()._northEast,
     bsw = map.getBounds()._southWest,

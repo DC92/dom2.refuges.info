@@ -1,18 +1,21 @@
-/* global L, MarkerCompass, IGNTileLayer, WriPOILayer, permalinkArray */
+/* global WriPOILayer, IGNTileLayer, MarkerCompass */
+/* eslint-disable-next-line no-unused-vars */
+/* global positionMemoryArray:writable */
 
 /*********************************************************************************
  * Ce fichier contient les paramètrages spécifiques et visibles sur refuges.info *
  *********************************************************************************/
 
-// Position et couche de fond par défaut
-localStorage.permalink ||= '5/46.5/5'; // S'il n'y a aucune donnée enregistrée
-sessionStorage.permalink ||= localStorage.permalink; // En début de session, on repart de la dernière position
-permalinkArray = sessionStorage.permalink.split('/'); // Pour usage au cours de la durée de vie de la page.
+/*****************************************
+ * Position et couche de fond par défaut *
+ *****************************************/
+localStorage.positionMemory ||= '5/46.5/5'; // S'il n'y a aucune donnée enregistrée
+sessionStorage.positionMemory ||= localStorage.positionMemory; // En début de session, on repart de la dernière position
+positionMemoryArray = sessionStorage.positionMemory.split('/'); // Pour usage au cours de la durée de vie de la page.
 
 /*****************************************
  * Contrôles communs à toutes les cartes *
  *****************************************/
-/* eslint-disable-next-line no-unused-vars */
 /* eslint-disable-next-line no-unused-vars */
 function controlesComuns(map) {
   // Prevent Leaflet on Chrome from focusing the map when using a Control
