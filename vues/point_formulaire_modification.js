@@ -10,11 +10,11 @@ function afficheEtSet(el, affiche, valeur) {
 
 // Positionne la carte à l'emplacement du point à modifier
 /*//DCMM pendant lint & beautify
+*/
 <?php if(!empty($vue->point->id_point)) { ?>
   sessionStorage.positionMemory =
     '15/<?=$vue->point->latitude?>/<?=$vue->point->longitude?>/' + sessionStorage.positionMemory.split('/')[3];
 <?php } ?>
-*/
 
 // Initialisation de la carte
 const map = L.map('carte-saisie');
