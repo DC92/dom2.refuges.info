@@ -89,7 +89,7 @@ class WriPOILayer extends L.geoJson {
  *****************************/
 /* eslint-disable-next-line no-unused-vars */
 class WriPolygonLayer extends L.geoJson {
-  constructor(serveurAPI, typeId, versionFeatures) {
+  constructor(serveurAPI, typeId, versionFeatures, clickEnabled) {
     const url = serveurAPI + '/api/polygones?' +
       'type_polygon=' + typeId +
       '&version=' + versionFeatures +
@@ -117,6 +117,7 @@ class WriPolygonLayer extends L.geoJson {
           });
         });
 
+if(clickEnabled)
         layer.on({
           click: (evt) => {
             location.href = '/nav/' + evt.sourceTarget.feature.id;
@@ -292,7 +293,7 @@ const NewPolygonControl = L.Control.extend({
     const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-custom-control');
 
     // Création du bouton lui-même
-    const button = L.DomUtil.create('a', 'leaflet-draw-draw-polygon', container);
+    const button = L.DomUtil.create('a', '', container);
     button.innerHTML = '<span style="font-size:30px">⬡</span>'; // Icône ou texte de votre choix
     button.href = '#';
     button.title = 'Dessiner un nouveau polygone';
@@ -305,6 +306,35 @@ const NewPolygonControl = L.Control.extend({
       // Déclenchement de l'outil de dessin de polygone Leaflet.Editable
       if (map.editTools)
         map.editTools.startPolygon();
+    });
+
+    return container;
+  }
+});
+
+// Contrôle permettant de télécharger un GPX externe dans Leaflet.Editable
+/* eslint-disable-next-line no-unused-vars */
+const DownloadPolygonControl = L.Control.extend({
+  options: {
+    position: 'topleft',
+  },
+
+  onAdd: function(map) {
+    // Création du conteneur HTML pour le bouton
+    const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-custom-control');
+
+    // Création du bouton lui-même
+    const button = L.DomUtil.create('a', '', container);
+    button.innerHTML = '<span style="font-size:30px">⇓</span>'; // Icône ou texte de votre choix
+    button.href = '#';
+    button.title = 'Télécharger un fichier GPX';
+
+    // Gestion de l'événement clic
+    L.DomEvent.on(button, 'click', (e) => {
+      L.DomEvent.stopPropagation(e);
+      L.DomEvent.preventDefault(e);
+
+      //TODO DownloadPolygonControl
     });
 
     return container;

@@ -9,6 +9,7 @@ const map = L.map('carte-accueil'),
     showCoverageOnHover: false, // Optional: hides the cluster bounds polygon
     maxClusterRadius: 30, // Less clusters
   });
+  //TODO séparer sélecteur / clusters et faire 2 fonctions générales
 
 // Couches refuges.info de la page 
 if (typeof sessionStorage.checkedLayers !== 'string')
@@ -22,10 +23,10 @@ for (const [nom, args] of Object.entries(couchesIconesWRI)) {
   const icone = '<img src="/images/icones/' + args[1] + '.svg"/> ' + nom, // Libellé de la ligne sélecteur
     layer = new WriPOILayer('https://<?=$_SERVER["SERVER_NAME"]?>', args[0], '<?=$vue->version_features?>'); // Couche affichable
 
-  // Il est nécéssaire de grouper les points de chaque couches dans un groupe pour pouvoir les sélectionner indépendament
+  // Il est nécéssaire de grouper les points de chaque couche pour pouvoir les sélectionner indépendament
   overlays[icone] = L.featureGroup.subGroup(vectorCluster).addLayer(layer);
 
-  // Affiche la couche au lancement de la page au cas où elle serait sélectionnée par le mémoire de la position
+  // Affiche la couche au lancement de la page au cas où sa sélection serait mémorisée
   if (sessionStorage.checkedLayers.search(nom) !== -1) {
     // On affiche la couche sur la carte pour que le L.control.layers la considère comme cochée
     overlays[icone].addTo(map);
@@ -40,11 +41,16 @@ for (const [nom, args] of Object.entries(couchesIconesWRI)) {
 }
 
 // Polygones WRI
-overlays['Régions'] = new WriPolygonLayer('https://<?=$_SERVER["SERVER_NAME"]?>', 11, '<?=$vue->version_features?>');
-overlays.Massifs = new WriPolygonLayer('https://<?=$_SERVER["SERVER_NAME"]?>', 1, '<?=$vue->version_features?>');
+overlays['Régions'] = new WriPolygonLayer('https://<?=$_SERVER["SERVER_NAME"]?>', 11, '<?=$vue->version_features?>', true);
+overlays['Massifs'] = new WriPolygonLayer('https://<?=$_SERVER["SERVER_NAME"]?>', 1, '<?=$vue->version_features?>', true);
 
 // Couche externe d'itinéraires
 overlays['Itinéraires'] = coucheItineraires;
+
+// Restitution de ces 3 couches si elles sont mémorisése
+for (const [nom, layer] of Object.entries(overlays))
+  if (sessionStorage.checkedLayers.search(nom) !== -1) 
+    layer.addTo(map);
 
 // Couches OSM OverPass
 for (const [nom, query] of Object.entries(couchesOverpass))
