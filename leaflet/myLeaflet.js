@@ -8,15 +8,15 @@
 /*********************************************
  * Couches vectorielles du site refuges.info *
  *********************************************
-  Une icône est une image .png représentant un type de point
-  Un point est défini par une position, un nom et une icône destinée à être affiché sur une carte
-  Une fiche contient toutes les informations concernant un point, y compris les commentaires
+  Une icône est une image .png représentant un type de point.
+  Un point est défini par une position, un nom et une icône destinée à être affiché sur une carte.
+  Une fiche contient toutes les informations concernant un point, y compris les commentaires.
 
-  json est une structure contenant des définitions de points
-  geoJson sa représentation en string
+  json est une structure contenant des définitions de points,
+  geoJson sa représentation en string.
 
-  Le résultat des requêtes API est mis en cache pendant 1 semaine par l'explorateur
-  La date de dernière création, édition, suppression de polygone ou point (hors commentaires)
+  Le résultat des requêtes API est mis en cache pendant 1 semaine par l'explorateur.
+  La date de dernière création, édition, suppression de polygone ou point (hors commentaires),
   est fournie à la page HTML qui la passe en argument de l'API pour recharger si nécessaire.
 */
 

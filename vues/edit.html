@@ -49,6 +49,13 @@
     <form method="post" action="/nav/<?=$vue->polygone->id_polygone??0?>" >
       <p><input type="submit" value="Quitter sans enregistrer" /></p>
     </form>
+    <?php if (isset($vue->polygone->id_polygone)) { ?>
+      <p>
+        <a href="/api/polygones?format=json&massif=<?=$vue->polygone->id_polygone?>">
+          Exporter au format GML la dernière version enregistrée
+        </a>
+      </p>
+    <?php } ?>
   </fieldset>
 
   <div id="edit-help-modify">
