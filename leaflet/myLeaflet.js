@@ -84,12 +84,9 @@ class WriPOILayer extends L.geoJson {
   }
 }
 
-/*****************************
- * Polygones de refuges.info *
- *****************************/
 /* eslint-disable-next-line no-unused-vars */
 class WriPolygonLayer extends L.geoJson {
-  constructor(serveurAPI, typeId, versionFeatures, clickEnabled) {
+  constructor(serveurAPI, typeId, versionFeatures, options = {}) {
     const url = serveurAPI + '/api/polygones?' +
       'type_polygon=' + typeId +
       '&version=' + versionFeatures +
@@ -111,19 +108,22 @@ class WriPolygonLayer extends L.geoJson {
             direction: 'center',
           }).openTooltip();
 
-        layer.on('mouseover mouseout', (evt) => {
-          evt.target.setStyle({
-            stroke: evt.type === 'mouseover',
+        //TODO inhibate cursor on hover
+        // Mouse hover & click
+        layer.on(
+          'mouseover mouseout', (evt) => {
+            evt.target.setStyle({
+              stroke: evt.type === 'mouseover',
+            });
           });
-        });
 
-if(clickEnabled)
         layer.on({
           click: (evt) => {
             location.href = '/nav/' + evt.sourceTarget.feature.id;
           },
         });
       },
+      ...options,
     });
 
     fetch(url)
@@ -132,6 +132,9 @@ if(clickEnabled)
       .then((json) => {
         if (json.features.length)
           this.addData(json);
+
+        // Trigger for who needs it
+        this.fire('load');
       });
   }
 }
@@ -319,7 +322,7 @@ const DownloadPolygonControl = L.Control.extend({
     position: 'topleft',
   },
 
-  onAdd: function(map) {
+  onAdd: function() {
     // Création du conteneur HTML pour le bouton
     const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-custom-control');
 

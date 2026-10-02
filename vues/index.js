@@ -9,7 +9,7 @@ const map = L.map('carte-accueil'),
     showCoverageOnHover: false, // Optional: hides the cluster bounds polygon
     maxClusterRadius: 30, // Less clusters
   });
-  //TODO séparer sélecteur / clusters et faire 2 fonctions générales
+//TODO séparer sélecteur / clusters et faire 2 fonctions générales
 
 // Couches refuges.info de la page 
 if (typeof sessionStorage.checkedLayers !== 'string')
@@ -41,15 +41,15 @@ for (const [nom, args] of Object.entries(couchesIconesWRI)) {
 }
 
 // Polygones WRI
-overlays['Régions'] = new WriPolygonLayer('https://<?=$_SERVER["SERVER_NAME"]?>', 11, '<?=$vue->version_features?>', true);
-overlays['Massifs'] = new WriPolygonLayer('https://<?=$_SERVER["SERVER_NAME"]?>', 1, '<?=$vue->version_features?>', true);
+overlays['Régions'] = new WriPolygonLayer('https://<?=$_SERVER["SERVER_NAME"]?>', 11, '<?=$vue->version_features?>');
+overlays['Massifs'] = new WriPolygonLayer('https://<?=$_SERVER["SERVER_NAME"]?>', 1, '<?=$vue->version_features?>');
 
 // Couche externe d'itinéraires
 overlays['Itinéraires'] = coucheItineraires;
 
 // Restitution de ces 3 couches si elles sont mémorisése
 for (const [nom, layer] of Object.entries(overlays))
-  if (sessionStorage.checkedLayers.search(nom) !== -1) 
+  if (sessionStorage.checkedLayers.search(nom) !== -1)
     layer.addTo(map);
 
 // Couches OSM OverPass
