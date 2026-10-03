@@ -1,20 +1,6 @@
 // Initialisation de la carte
-const map = L.map('carte-edit', {
-    editable: true,
-  }),
-   tileLayers = couchesDeFond('<?=json_encode($config_wri["mapKeys"])?>'),
- /* overlays = {
-    'Massifs': new WriPolygonLayer('https://<?=$_SERVER["SERVER_NAME"]?>', 1, '<?=$vue->version_features?>'),
-    'Régions': new WriPolygonLayer('https://<?=$_SERVER["SERVER_NAME"]?>', 11, '<?=$vue->version_features?>'),
-  },*/
-  massifsCoordinates=[],
-    massifsLayer= new WriPolygonLayer('https://<?=$_SERVER["SERVER_NAME"]?>', 1, '<?=$vue->version_features?>',{
-      onEachFeature:(feature, layer)=>{
-massifsCoordinates.push(feature.geometry.coordinates);
-    },
-    });
-
-const massifsPolygons=L.polygon([]);
+const map = L.map('carte-edit' , { pmIgnore: false }),
+   tileLayers = couchesDeFond('<?=json_encode($config_wri["mapKeys"])?>');
 
 //TODO bouton upload
 //TODO bouton download
@@ -23,28 +9,13 @@ const massifsPolygons=L.polygon([]);
 positionMemoryControl(map);
 (tileLayers[decodeURI(positionMemoryArray[3])] || Object.values(tileLayers)[0]).addTo(map);
 
-massifsLayer.addTo(map);
+// Massifs en fond
+new WriPolygonLayer(1, 'https://<?=$_SERVER["SERVER_NAME"]?>', '<?=$vue->version_features?>', { pmIgnore: true }).addTo(map);
 
 // Contrôles
 controlesComuns(map).forEach((control) => control.addTo(map));
 L.control.layers(tileLayers).addTo(map);
-map.addControl(new NewPolygonControl());
-map.addControl(new DownloadPolygonControl());
 map.doubleClickZoom.disable();
-
-// Alt + clic dans le corps du polygone le supprime
-function deleteShape(evt) {
-  if (evt.originalEvent.altKey)
-    this.editor.deleteShapeAt(evt.latlng);
-}
-map.on('layeradd', (evt) => {
-  if (evt.layer instanceof L.Path){
-    evt.layer.on('click', deleteShape, evt.layer);
-  /*    evt.layer.snapediting = new L.Handler.PolylineSnap(map, evt.layer);
-        evt.layer.snapediting.addGuideLayer(massifsPolygons);
-    //    evt.layer.snapediting.enable();
-    */
-  }});
 
 <?php if (!empty($vue->json_polygones)) { ?>
   // Affiche le polygone courant
@@ -52,19 +23,40 @@ map.on('layeradd', (evt) => {
     polygon = L.polygon(flipLonLatRecursive(geoJson.coordinates)).addTo(map);
 
   map.fitBounds(polygon.getBounds());
-  polygon.enableEdit();
- 
-
-  massifsLayer.on('load', (evt) => {
- massifsPolygons.setLatLngs([].concat(...massifsCoordinates));
- 
-            polygon.snapediting = new L.Handler.PolylineSnap(map, polygon);
-        polygon.snapediting.addGuideLayer(massifsPolygons);
-        polygon.snapediting.enable();
-   });
-  
-<?php
-} else { ?>
+  // Delete this polygon don't work
+<?php } else { ?>
   // Position par défaut
   map.setView([positionMemoryArray[1], positionMemoryArray[2]], positionMemoryArray[0]);
 <?php } ?>
+
+ // Editeur
+map.pm.addControls({
+  oneBlock: true,
+  drawMarker: false,
+  drawCircleMarker: false,
+  drawPolyline: false,
+  drawRectangle: false,
+  drawCircle: false,
+  drawText: false,
+  dragMode: false,
+  cutPolygon: false,
+  rotateMode: false,
+});
+map.pm.enableGlobalEditMode({
+  
+});
+/*map.pm.enableGlobalSplitMode({
+  //allowSelfIntersection: true,
+//  allowSelfIntersectionEdit: true,
+});
+map.pm.enableGlobalUnionMode();*/
+
+
+
+
+
+
+
+
+
+

@@ -41,8 +41,14 @@ for (const [nom, args] of Object.entries(couchesIconesWRI)) {
 }
 
 // Polygones WRI
-overlays['Régions'] = new WriPolygonLayer('https://<?=$_SERVER["SERVER_NAME"]?>', 11, '<?=$vue->version_features?>');
-overlays['Massifs'] = new WriPolygonLayer('https://<?=$_SERVER["SERVER_NAME"]?>', 1, '<?=$vue->version_features?>');
+const argsPolygones=[
+  'https://<?=$_SERVER["SERVER_NAME"]?>',
+  '<?=$vue->version_features?>', {
+    labels:true,
+    click:true,
+}];
+overlays['Régions'] = new WriPolygonLayer(11, ...argsPolygones);
+overlays['Massifs'] = new WriPolygonLayer(1, ...argsPolygones);
 
 // Couche externe d'itinéraires
 overlays['Itinéraires'] = coucheItineraires;

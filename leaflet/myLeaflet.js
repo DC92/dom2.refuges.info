@@ -86,7 +86,7 @@ class WriPOILayer extends L.geoJson {
 
 /* eslint-disable-next-line no-unused-vars */
 class WriPolygonLayer extends L.geoJson {
-  constructor(serveurAPI, typeId, versionFeatures, options = {}) {
+  constructor(typeId, serveurAPI, versionFeatures, options = {}) {
     const url = serveurAPI + '/api/polygones?' +
       'type_polygon=' + typeId +
       '&version=' + versionFeatures +
@@ -100,28 +100,31 @@ class WriPolygonLayer extends L.geoJson {
 
       onEachFeature: (feature, layer) => {
         // Etiquettes
-        layer.bindTooltip(
-          feature.properties.nom
-          .replace(/ ([a-z]?[a-z]?[a-z]) /gui, ' $1&nbsp;')
-          .replace(/ /gu, '<br/>'), {
-            permanent: true,
-            direction: 'center',
-          }).openTooltip();
+        if (options.labels)
+          layer.bindTooltip(
+            feature.properties.nom
+            .replace(/ ([a-z]?[a-z]?[a-z]) /gui, ' $1&nbsp;')
+            .replace(/ /gu, '<br/>'), {
+              permanent: true,
+              direction: 'center',
+            }).openTooltip();
 
-        //TODO inhibate cursor on hover
-        // Mouse hover & click
-        layer.on(
-          'mouseover mouseout', (evt) => {
-            evt.target.setStyle({
-              stroke: evt.type === 'mouseover',
+        if (options.click) {
+          //TODO inhibate cursor on hover
+          // Mouse hover & click
+          layer.on(
+            'mouseover mouseout', (evt) => {
+              evt.target.setStyle({
+                stroke: evt.type === 'mouseover',
+              });
             });
-          });
 
-        layer.on({
-          click: (evt) => {
-            location.href = '/nav/' + evt.sourceTarget.feature.id;
-          },
-        });
+          layer.on({
+            click: (evt) => {
+              location.href = '/nav/' + evt.sourceTarget.feature.id;
+            },
+          });
+        }
       },
       ...options,
     });
