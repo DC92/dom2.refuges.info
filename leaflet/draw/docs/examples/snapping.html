@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Leaflet.draw drawing with snapping</title>
+
+    <link rel="stylesheet" href="../../../leaflet/dist/leaflet.css" />
+    <script src="../../../leaflet/dist/leaflet.js"></script>
+
+    <link rel="stylesheet" href="../../src/leaflet.draw.css" />
+    <script src="../../src/Leaflet.draw.js"></script>
+    <script src="../../src/Leaflet.Draw.Event.js"></script>
+
+    <script src="../../src/edit/handler/Edit.Poly.js"></script>
+    <wscript src="../../src/edit/handler/Edit.SimpleShape.js"></script>
+    <wscript src="../../src/edit/handler/Edit.Rectangle.js"></script>
+    <wscript src="../../src/edit/handler/Edit.Marker.js"></script>
+    <wscript src="../../src/edit/handler/Edit.CircleMarker.js"></script>
+    <wscript src="../../src/edit/handler/Edit.Circle.js"></script>
+
+
+    <script src="../../src/draw/handler/Draw.Feature.js"></script>
+    <script src="../../src/draw/handler/Draw.Polyline.js"></script>
+    <script src="../../src/draw/handler/Draw.Polygon.js"></script>
+    <script src="../../src/draw/handler/Draw.SimpleShape.js"></script>
+    <script src="../../src/draw/handler/Draw.Rectangle.js"></script>
+    <script src="../../src/draw/handler/Draw.Marker.js"></script>
+    <script src="../../src/draw/handler/Draw.CircleMarker.js"></script>
+    <script src="../../src/draw/handler/Draw.Circle.js"></script>
+
+
+    <script src="../../src/ext/TouchEvents.js"></script>
+    <script src="../../src/ext/LatLngUtil.js"></script>
+    <script src="../../src/ext/GeometryUtil.js"></script>
+    <script src="../../src/ext/LineUtil.Intersect.js"></script>
+    <script src="../../src/ext/Polyline.Intersect.js"></script>
+    <script src="../../src/ext/Polygon.Intersect.js"></script>
+
+    <script src="../../src/Control.Draw.js"></script>
+    <script src="../../src/Tooltip.js"></script>
+    <script src="../../src/Toolbar.js"></script>
+
+    <script src="../../src/draw/DrawToolbar.js"></script>
+    <script src="../../src/edit/EditToolbar.js"></script>
+    <script src="../../src/edit/handler/EditToolbar.Edit.js"></script>
+    <script src="../../src/edit/handler/EditToolbar.Delete.js"></script>
+
+    <script src="libs/leaflet.snap.js"></script>
+    <script src="libs/leaflet.geometryutil.js"></script>
+</head>
+<body style="background:#432">
+	<div id="map" style="width: 400px; height: 400px; border: 1px solid #ccc"></div>
+	<button id="changeColor">Rectangle -> Blue</button>
+	<script>
+		var osmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+			osmAttrib = '&copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+			osm = L.tileLayer(osmUrl, {maxZoom: 18, attribution: osmAttrib}),
+			map = new L.Map('map', {layers: [osm], center: new L.LatLng(48.48988, 1.39638), zoom: 14 });
+
+        var drawnItems = new L.FeatureGroup();
+        map.addLayer(drawnItems);
+
+        // Set the title to show on the polygon button
+        L.drawLocal.draw.toolbar.buttons.polygon = 'Draw a sexy polygon!';
+
+        var drawControl = new L.Control.Draw({
+            position: 'topright',
+            draw: {
+                circle: false,
+                circlemarker: false,
+                marker: false,
+                polygon: true,
+                polyline: false,
+                rectangle: false,
+            },
+            edit: {
+                featureGroup: drawnItems,
+                remove: true
+            }
+        });
+        map.addControl(drawControl);
+
+        var guides =
+            L.polyline([
+                [48.505431207150885, 1.3999843597412107],
+                [48.50335551764662, 1.398911476135254],
+                [48.47714618217502, 1.389319896697998],
+                [48.47600819398379, 1.388998031616211]
+            ], {
+                    weight: 5,
+                    color: 'red',
+                    opacity: 1.0
+                }).addTo(map);
+
+     /*   var marker = L.marker([48.488, 1.395]).addTo(map);
+        marker.snapediting = new L.Handler.MarkerSnap(map, marker);
+        marker.snapediting.addGuideLayer(guides);
+        marker.snapediting.enable();*/
+        var road = L.polyline([
+            [48.48922, 1.40033],
+            [48.48935, 1.39981],
+            [48.48948, 1.3976],
+            [48.48986, 1.39634]
+        ], {
+            color: 'green',
+            opacity: 1.0
+        }).addTo(map);
+
+        road.snapediting = new L.Handler.PolylineSnap(map, road);
+        road.snapediting.addGuideLayer(guides);
+        road.snapediting.enable();
+      //  marker.snapediting.addGuideLayer(road);
+
+        var guideLayers = [guides, road];
+        drawControl.setDrawingOptions({
+            polygon: { guideLayers: guideLayers, snapDistance: 25 },
+           polyline: { guideLayers: guideLayers },
+/*             marker: { guideLayers: guideLayers, snapVertices: false },
+            circlemarker: { guideLayers: guideLayers },
+            rectangle: false,
+            circle: false*/
+        });
+
+        map.on(L.Draw.Event.CREATED, function (e) {
+            var type = e.layerType,
+                layer = e.layer;
+
+         /*   if (type === 'marker') {
+                layer.bindPopup('A popup!');
+            }*/
+
+        layer.snapediting = new L.Handler.PolygonSnap(map, layer.snapediting);
+       layer.snapediting.addGuideLayer(guides);
+        layer.snapediting.enable();/* */
+
+            drawnItems.addLayer(layer);
+        });
+
+        map.on(L.Draw.Event.EDITED, function (e) {
+            var layers = e.layers;
+            var countOfEditedLayers = 0;
+            layers.eachLayer(function(layer) {
+                countOfEditedLayers++;
+            });
+            console.log("Edited " + countOfEditedLayers + " layers");
+        });
+
+
+
+        L.DomUtil.get('changeColor').onclick = function () {
+            drawControl.setDrawingOptions({ rectangle: { shapeOptions: { color: '#004a80' } } });
+        };
+
+    </script>
+</body>
+</html>

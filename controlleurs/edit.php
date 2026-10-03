@@ -12,7 +12,10 @@ if (!est_moderateur()) {
 require_once ("nav.php");
 require_once ("polygone.php");
 require_once ("leaflet_libs.php");
-add_lib('geoman/leaflet-geoman.js', 'chemin_leaflet');
+add_lib('Editable/Leaflet.Editable.js', 'chemin_leaflet');
+add_lib('Snap/docs/leaflet.draw.js', 'chemin_leaflet');
+add_lib('Snap/docs/leaflet.geometryutil.js', 'chemin_leaflet');
+add_lib('Snap/leaflet.snap.js', 'chemin_leaflet');
 
 // Quelques trucs spécifiques
 if(!isset($vue->polygone) && isset($vue->contenu))
