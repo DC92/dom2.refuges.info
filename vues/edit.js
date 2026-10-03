@@ -1,5 +1,5 @@
 // Initialisation de la carte
-const map = L.map('carte-edit' , { pmIgnore: false }),
+const map = L.map('carte-edit' , { pmIgnore: false ,}),
    tileLayers = couchesDeFond('<?=json_encode($config_wri["mapKeys"])?>');
 
 //TODO bouton upload
@@ -9,25 +9,10 @@ const map = L.map('carte-edit' , { pmIgnore: false }),
 positionMemoryControl(map);
 (tileLayers[decodeURI(positionMemoryArray[3])] || Object.values(tileLayers)[0]).addTo(map);
 
-// Massifs en fond
-new WriPolygonLayer(1, 'https://<?=$_SERVER["SERVER_NAME"]?>', '<?=$vue->version_features?>', { pmIgnore: true }).addTo(map);
-
 // Contrôles
 controlesComuns(map).forEach((control) => control.addTo(map));
 L.control.layers(tileLayers).addTo(map);
 map.doubleClickZoom.disable();
-
-<?php if (!empty($vue->json_polygones)) { ?>
-  // Affiche le polygone courant
-  const geoJson = <?=$vue->json_polygones?>,
-    polygon = L.polygon(flipLonLatRecursive(geoJson.coordinates)).addTo(map);
-
-  map.fitBounds(polygon.getBounds());
-  // Delete this polygon don't work
-<?php } else { ?>
-  // Position par défaut
-  map.setView([positionMemoryArray[1], positionMemoryArray[2]], positionMemoryArray[0]);
-<?php } ?>
 
  // Editeur
 map.pm.addControls({
@@ -42,10 +27,30 @@ map.pm.addControls({
   cutPolygon: false,
   rotateMode: false,
 });
+
+// Massifs en fond
+new WriPolygonLayer(1, 'https://<?=$_SERVER["SERVER_NAME"]?>', '<?=$vue->version_features?>', { 
+  pmIgnore: true, 
+}).addTo(map);
+
+<?php if (!empty($vue->json_polygones)) { ?>
+  // Affiche le polygone courant
+  const geoJson = <?=$vue->json_polygones?>,
+    polygon = L.polygon(flipLonLatRecursive(geoJson.coordinates), { pmIgnore: false ,
+  pmRemove: false, }).addTo(map);
+
+  map.fitBounds(polygon.getBounds());
+  // Delete this polygon don't work
+
+<?php } else { ?>
+  // Position par défaut
+  map.setView([positionMemoryArray[1], positionMemoryArray[2]], positionMemoryArray[0]);
+<?php } ?>
+
+/*
 map.pm.enableGlobalEditMode({
-  
 });
-/*map.pm.enableGlobalSplitMode({
+map.pm.enableGlobalSplitMode({
   //allowSelfIntersection: true,
 //  allowSelfIntersectionEdit: true,
 });
