@@ -41,12 +41,13 @@ for (const [nom, args] of Object.entries(couchesIconesWRI)) {
 }
 
 // Polygones WRI
-const argsPolygones=[
+const argsPolygones = [
   'https://<?=$_SERVER["SERVER_NAME"]?>',
   '<?=$vue->version_features?>', {
-    labels:true,
-    click:true,
-}];
+    labels: true,
+    click: true,
+  }
+];
 overlays['Régions'] = new WriPolygonLayer(11, ...argsPolygones);
 overlays['Massifs'] = new WriPolygonLayer(1, ...argsPolygones);
 
@@ -77,7 +78,7 @@ vectorCluster.addTo(map);
 L.control.layers(tileLayers).addTo(map);
 L.control.layers(null, overlays).addTo(map);
 controlesComuns(map).forEach((control) => control.addTo(map));
-//DCMM FUTUR HORS RESEAU new ControlPreload( ).addTo(map);// Ajoute de controle pre-load OpenHikingMap
+//DCMM FUTUR HORS RESEAU new ControlPreload().addTo(map); // Ajoute de controle pre-load OpenHikingMap
 positionMemoryControl(map);
 
 // Externalise le sélecteur de points pour les grandes largeurs de fenêtre

@@ -352,12 +352,10 @@ const DownloadPolygonControl = L.Control.extend({
  * Bouton de préchargement des tuiles OpenHikingMap *
  ****************************************************/
 /* eslint-disable-next-line no-unused-vars */
-class ControlPreload extends L.control {
-  constructor() {
-    super({
-      position: 'topleft',
-    });
-  }
+const ControlPreload = L.Control.extend({
+  options: {
+    position: 'topleft',
+  },
 
   onAdd(map) {
     const minZoom = 10,
@@ -400,7 +398,7 @@ class ControlPreload extends L.control {
 
     return buttonDiv;
   }
-}
+});
 
 //DCMM Modèle de classe
 /* eslint-disable-next-line no-unused-vars */
