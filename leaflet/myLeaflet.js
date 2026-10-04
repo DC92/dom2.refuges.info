@@ -347,6 +347,29 @@ const DownloadPolygonControl = L.Control.extend({
   }
 });
 
+/************************************
+ * Bouton de chargement d'un fichier *
+ *************************************/
+/* eslint-disable-next-line no-unused-vars */
+const ControlUpload = L.Control.extend({
+  options: {
+    position: 'topleft',
+  },
+
+  onAdd() {
+    const buttonDiv = L.DomUtil.create('div', 'button-wrapper leaflet-control-upload');
+
+    buttonDiv.innerHTML = '<button title="Importer un fichier GML">📁</button>';
+    buttonDiv.addEventListener('click', () => {
+      if (confirm('avertissement')) {
+        console.log(arguments); //DCMM
+      };
+    });
+
+    return buttonDiv;
+  }
+});
+
 //DCMM FUTUR HORS RESEAU
 /****************************************************
  * Bouton de préchargement des tuiles OpenHikingMap *
@@ -367,7 +390,7 @@ const ControlPreload = L.Control.extend({
       'pour les zooms ' + minZoom + ' à ' + maxZoom + '.\n' +
       'Cela peut engendrer une consommation réseau et mémoire de l\'ordre de 15 Mo.';
 
-    buttonDiv.innerHTML = '<button title="Précharger le fond de carte OpenHikingMap">&#127760;</button>';
+    buttonDiv.innerHTML = '<button title="Précharger le fond de carte OpenHikingMap">🌐</button>';
     buttonDiv.addEventListener('click', () => {
       if (confirm(avertissement)) {
         const pos = map.getCenter(),

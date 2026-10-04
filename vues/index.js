@@ -1,5 +1,6 @@
-/* global couchesDeFond, couchesIconesWRI, WriPOILayer, WriPolygonLayer, couchesOverpass, coucheItineraires */
-/* global controlesComuns, positionMemoryControl, positionMemoryArray */
+/* global couchesIconesWRI, WriPOILayer, WriPolygonLayer,
+ couchesDeFond, couchesOverpass, coucheItineraires,
+ controlesComuns, positionMemoryControl, positionMemoryArray */
 
 const map = L.map('carte-accueil'),
   tileLayers = couchesDeFond('<?=json_encode($config_wri["mapKeys"])?>'),
