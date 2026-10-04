@@ -13,6 +13,7 @@ positionMemoryControl(map);
 controlesComuns(map).forEach((control) => control.addTo(map));
 L.control.layers(tileLayers).addTo(map);
 map.doubleClickZoom.disable();
+new ControlUpload().addTo(map);
 
  // Editeur
 map.pm.addControls({
@@ -55,3 +56,7 @@ map.pm.enableGlobalSplitMode({
 //  allowSelfIntersectionEdit: true,
 });
 map.pm.enableGlobalUnionMode();*/
+
+function uploadFile(evt) {
+  console.log(evt.files);//DCMM
+}

@@ -352,6 +352,7 @@ const DownloadPolygonControl = L.Control.extend({
  *************************************/
 /* eslint-disable-next-line no-unused-vars */
 const ControlUpload = L.Control.extend({
+  //TODO taille du bouton
   options: {
     position: 'topleft',
   },
@@ -361,9 +362,9 @@ const ControlUpload = L.Control.extend({
 
     buttonDiv.innerHTML = '<button title="Importer un fichier GML">📁</button>';
     buttonDiv.addEventListener('click', () => {
-      if (confirm('avertissement')) {
-        console.log(arguments); //DCMM
-      };
+      buttonDiv.innerHTML = '<button title="Importer un fichier GML">' +
+        '<input type="file" accept="image/png, image/jpeg" onchange="uploadFile(this)" />' +
+        '</button>';
     });
 
     return buttonDiv;
