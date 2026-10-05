@@ -352,7 +352,6 @@ const DownloadPolygonControl = L.Control.extend({
  *************************************/
 /* eslint-disable-next-line no-unused-vars */
 const ControlUpload = L.Control.extend({
-  //TODO taille du bouton
   options: {
     position: 'topleft',
   },

@@ -532,6 +532,10 @@ a img {
   cursor: pointer;
 }
 
+.leaflet-control-upload button {
+  height: 34px;
+}
+
 /* Menu deplié */
 @media screen and (min-width: 641px) and (min-height: 361px) {
   #carte-nav {
