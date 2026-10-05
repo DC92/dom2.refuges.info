@@ -1,6 +1,8 @@
 // Initialisation de la carte
-const map = L.map('carte-edit' , { pmIgnore: false ,}),
-   tileLayers = couchesDeFond('<?=json_encode($config_wri["mapKeys"])?>');
+const map = L.map('carte-edit', {
+    pmIgnore: false,
+  }),
+  tileLayers = couchesDeFond('<?=json_encode($config_wri["mapKeys"])?>');
 
 //TODO bouton upload
 //TODO bouton download
@@ -15,7 +17,7 @@ L.control.layers(tileLayers).addTo(map);
 map.doubleClickZoom.disable();
 new ControlUpload().addTo(map);
 
- // Editeur
+// Editeur
 map.pm.addControls({
   oneBlock: true,
   drawMarker: false,
@@ -29,25 +31,6 @@ map.pm.addControls({
   rotateMode: false,
 });
 
-// Massifs en fond
-new WriPolygonLayer(1, 'https://<?=$_SERVER["SERVER_NAME"]?>', '<?=$vue->version_features?>', { 
-  pmIgnore: true, 
-}).addTo(map);
-
-<?php if (!empty($vue->json_polygones)) { ?>
-  // Affiche le polygone courant
-  const geoJson = <?=$vue->json_polygones?>,
-    polygon = L.polygon(flipLonLatRecursive(geoJson.coordinates), { pmIgnore: false ,
-  pmRemove: false, }).addTo(map);
-
-  map.fitBounds(polygon.getBounds());
-  // Delete this polygon don't work
-
-<?php } else { ?>
-  // Position par défaut
-  map.setView([positionMemoryArray[1], positionMemoryArray[2]], positionMemoryArray[0]);
-<?php } ?>
-
 /*
 map.pm.enableGlobalEditMode({
 });
@@ -57,6 +40,35 @@ map.pm.enableGlobalSplitMode({
 });
 map.pm.enableGlobalUnionMode();*/
 
+// Massifs en fond
+new WriPolygonLayer(
+  1,
+  'https://<?=$_SERVER["SERVER_NAME"]?>',
+  '<?=$vue->version_features?>', {
+    pmIgnore: true,
+  }).addTo(map);
+
+<?php if (!empty($vue->json_polygones)) { ?>
+  // Affiche le polygone courant
+  const inpoly=L.geoJson(<?=$vue->json_polygones?>);//.addTo(map);
+
+  // Wait an instant the end of geoman init to add it
+  setInterval(() => inpoly .addTo(map) , 50);
+
+  map.fitBounds(inpoly.getBounds());
+<?php } else { ?>
+  // Position par défaut
+  map.setView([positionMemoryArray[1], positionMemoryArray[2]], positionMemoryArray[0]);
+<?php } ?>
+
+// Pour le bouton importer un fichier
 function uploadFile(evt) {
-  console.log(evt.files);//DCMM
+  const file = event.target.files[0], //TODO DCMM BUG c'est quoi, event ?
+    reader = new FileReader();
+
+  reader.readAsText(file);
+  if (file)
+    reader.onload = () => {
+      L.geoJson(JSON.parse(reader.result)).addTo(map);
+    };
 }

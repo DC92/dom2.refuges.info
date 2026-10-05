@@ -4,8 +4,8 @@
   "author": "Dominique Cavailhez",
   "type": "module",
   "scripts": {
-    "lint": "npx eslint *.js leaflet/myLeaflet.js *.js vues/_cartes*.js vues/index.js vues/point.js vues/point_formulaire_modification.js",
-    "beautify": "js-beautify -s=2 *.js* leaflet/*.[chj]* vues/_cartes*.js vues/index.js vues/point.js vues/point_formulaire_modification.js"
+    "lint": "npx eslint *.js leaflet/myLeaflet.js *.js vues/_cartes*.js vues/index.js vues/point.js vues/edit.js",
+    "beautify": "js-beautify -s=2 *.js* leaflet/*.[chj]* vues/_cartes*.js vues/index.js vues/point.js vues/edit.js"
   },
   "dependencies": {
     "eslint": "latest",

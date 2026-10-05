@@ -359,10 +359,10 @@ const ControlUpload = L.Control.extend({
   onAdd() {
     const buttonDiv = L.DomUtil.create('div', 'button-wrapper leaflet-control-upload');
 
-    buttonDiv.innerHTML = '<button title="Importer un fichier GML">📁</button>';
+    buttonDiv.innerHTML = '<button title="Importer un fichier geoJSON">📁</button>';
     buttonDiv.addEventListener('click', () => {
       buttonDiv.innerHTML = '<button title="Importer un fichier GML">' +
-        '<input type="file" accept="image/png, image/jpeg" onchange="uploadFile(this)" />' +
+        '<input type="file" accept="application/json" onchange="uploadFile(this)" />' +
         '</button>';
     });
 
