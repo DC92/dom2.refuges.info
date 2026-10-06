@@ -25,17 +25,17 @@
       </strong>
     <?php }
     // Si les droits sont suffisants, lien de modification
-    if (est_autorise($point->id_createur)) { ?>
+    if (est_autorise($point->id_moderateur)) { ?>
       <div class="noprint bloc_liens_centre">
-        <p><b>Vous êtes modérateur de cette fiche, vous pouvez :
-          <a class="liens_avec_decoration" href="/point_formulaire_modification?id_point=<?=$vue->point->id_point?>">
-            Modifier cette fiche
+        <p><b>
+          <a class="lien_bouton" href="/point_formulaire_modification?id_point=<?=$vue->point->id_point?>">
+            Modification
           </a>&nbsp;
-          <a class="liens_avec_decoration" href="/gestion/historique_modifications/<?=$vue->point->id_point?>">
-            Consulter l'historique de cette fiche
+          <a class="lien_bouton" href="/gestion/historique_modifications/<?=$vue->point->id_point?>">
+            Historique
           </a>&nbsp;
-          <?php if (est_autorise($point->id_createur)) { ?>
-            <a class="liens_avec_decoration"
+          <?php if (est_autorise($point->id_moderateur)) { ?>
+            <a class="lien_bouton"
                href="<?=$config_wri['lien_forum']?>mcp.php?i=-RefugesInfo-trace-mcp-main_module&id_point=<?=$vue->point->id_point?>"
                title="Trace de la création du point">
               i
@@ -86,7 +86,7 @@
     </p>
 <!--================================= DEMANDE DE MODIFICATION =================================-->
     <div class="noprint bloc_liens_centre">
-      <a class="liens_avec_decoration" href="/point_ajout_commentaire/<?=$vue->point->id_point?>?correction=oui">
+      <a class="lien_bouton" href="/point_ajout_commentaire/<?=$vue->point->id_point?>?correction=oui">
         Demander une modification de la fiche
       </a>
     </div>
@@ -95,7 +95,7 @@
       <?php // Champs textes libres
       if (!empty($vue->point->equivalent_proprio)) { ?>
         <dt><?=$vue->point->equivalent_proprio?>: <a class="onhover" href="<?=$vue->lien_wiki_explication_proprio?>"><i><span>Vous êtes le gestionnaire ?</span><sup>?</sup></i></a></dt>
-        <dd><?=$vue->proprio?></dd>
+        <dd><?=$vue->proprietaires?></dd>
         <?php // Il peut y avoir des propriétaires/responsables comme la commune ou une association, mais il est rare qu'on doivent les appeler, n'encourageons pas
         if ($vue->point->id_point_type!=$config_wri['id_cabane_non_gardee']) { ?>
           <dd>
@@ -111,7 +111,7 @@
     <dd><?=$vue->acces?></dd>
 <!--========================================== REMARQUES ==========================================-->
     <dt>Remarques:</dt>
-    <dd><?=$vue->remark?></dd>
+    <dd><?=$vue->remarques?></dd>
 <!--================================= INFORMATIONS COMPLÉMENTAIRES ================================-->
     <?php if (count($vue->infos_complementaires)) { ?>
       <dt style='clear: left;'>Informations complémentaires:</dt>
@@ -188,9 +188,9 @@
 
       // modérateur de fiche
       if ($vue->nom_createur!="") { ?>
-        <?php if ($vue->point->id_createur != 0) { ?>
+        <?php if ($vue->point->id_moderateur != 0) { ?>
           Modérateur actuel de cette fiche:
-          <a href="<?=$config_wri['fiche_utilisateur'].$vue->point->id_createur?>">
+          <a href="<?=$config_wri['fiche_utilisateur'].$vue->point->id_moderateur?>">
             <?=$vue->nom_createur?>
           </a>
         <?php } else { ?>
@@ -228,7 +228,7 @@
 <!--===================================== LIEN AJOUT COMMENTAIRE ====================================-->
   <h5 class="noprint">Informations récentes</h5>
     <div class="noprint bloc_liens_centre">
-      <a class="liens_avec_decoration" href="/point_ajout_commentaire/<?=$vue->point->id_point?>">
+      <a class="lien_bouton" href="/point_ajout_commentaire/<?=$vue->point->id_point?>">
         Ajouter une information et/ou une photo
       </a>
     </div>
@@ -255,7 +255,7 @@
           <div class="bloc_liens_haut_droit">
           <a class="liens_avec_decoration" href="<?=$commentaire->lien_commentaire?>">
             <?=$commentaire->texte_lien_commentaire?></a>
-            <?php if (est_autorise($point->id_createur)) { ?>
+            <?php if (est_autorise($point->id_moderateur)) { ?>
               <a class="liens_avec_decoration"
                 href="<?=$config_wri['lien_forum']?>mcp.php?i=-RefugesInfo-trace-mcp-main_module&id_commentaire=<?=$commentaire->id_commentaire?>"
                 title="Trace de la création du commentaire">

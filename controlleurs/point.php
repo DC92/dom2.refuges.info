@@ -51,9 +51,9 @@ else // le point est valide
   $vue->point=$point;
   $vue->nom_createur = protege($point->nom_createur);
   $vue->nom=protege($point->nom);
-  $vue->proprio=bbcode2html($point->proprio);
+  $vue->proprietaires=bbcode2html($point->proprietaires);
   $vue->acces=bbcode2html($point->acces);
-  $vue->remark=bbcode2html($point->remark);
+  $vue->remarques=bbcode2html($point->remarques);
   $vue->nom_debut_majuscule = protege(mb_ucfirst($point->nom));
   $vue->lien_wiki_explication_type=lien_wiki("fiche-".replace_url($point->nom_type));
   $vue->lien_wiki_explication_geo=lien_wiki("geo-uri");
@@ -143,7 +143,7 @@ else // le point est valide
     if (est_autorise($commentaire->id_createur_commentaire))
     {
       $commentaire->lien_commentaire =
-        '/gestion/moderation?id_point_retour='.$commentaire->id_point.
+        '/commentaire_formulaire_modification?id_point_retour='.$commentaire->id_point.
         '&amp;id_commentaire='.$commentaire->id_commentaire;
       $commentaire->texte_lien_commentaire = 'Modifier';
     }

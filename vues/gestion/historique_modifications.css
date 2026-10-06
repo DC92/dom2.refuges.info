@@ -1,0 +1,62 @@
+/* Mini formulaire de filtres de /gestion/historique_modifications */
+form.filtres_historique {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5em 1em;
+  align-items: end;
+  margin-bottom: 1em;
+}
+
+form.filtres_historique label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.9em;
+}
+
+form.filtres_historique button {
+  background: var(--couleur_lien);
+  color: white;
+  border: 0;
+  border-radius: 4px;
+  padding: 0.4em 1em;
+  cursor: pointer;
+}
+
+/* Une modification = un bloc de 3 parties côte à côte, empilées quand l'écran est étroit */
+.modification_historique {
+  display: grid;
+  grid-template-columns: 14em 1fr 1fr;
+  border: 1px solid black;
+  margin-bottom: 0.8em;
+}
+
+.modification_historique > div {
+  min-width: 0; /* sinon une longue valeur force la largeur de la grille */
+  overflow-wrap: anywhere;
+  padding: 0.4em 0.6em;
+}
+
+.modification_historique > div + div {
+  border-left: 1px solid black;
+}
+
+.modification_historique h4 {
+  margin: 0 0 0.3em 0;
+}
+
+@media (max-width: 50em) {
+  .modification_historique {
+    grid-template-columns: 1fr;
+  }
+
+  .modification_historique > div + div {
+    border-left: 0;
+    border-top: 1px solid black;
+  }
+}
+
+/* Partie modifiée d'un champ texte (remarques, acces, proprietaires) */
+.modification_historique b.modif {
+  color: #c0392b;
+  font-weight: bold;
+}

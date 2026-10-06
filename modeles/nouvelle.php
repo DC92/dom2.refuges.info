@@ -140,11 +140,11 @@ function nouvelles($nombre,$type,$ids_polygones="",$lien_locaux=True,$req=null)
             $news_array[$i]['id_point']=$point->id_point;
             $news_array[$i]['partitif_point']=$point->article_partitif_point_type;
             $news_array[$i]['type_point']=$point->nom_type;
-            $news_array[$i]['remarques']=$point->remark;
+            $news_array[$i]['remarques']=$point->remarques;
             $news_array[$i]['acces']=$point->acces;
             $news_array[$i]['date']=$point->date_creation_timestamp;
             $news_array[$i]['localisation']=chaine_de_localisation($point->polygones);
-            $news_array[$i]['user_id']=$point->id_createur;
+            $news_array[$i]['user_id']=$point->id_moderateur;
             $news_array[$i]['auteur']=$point->nom_createur;
             $texte = "<b><a href=\"".lien_point($point,$lien_locaux)."\">Ajout ".$news_array[$i]['partitif_point']." ".$news_array[$i]['type_point']."</a></b>" ;
             $news_array[$i]['texte']=$texte;

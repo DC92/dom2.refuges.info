@@ -45,7 +45,7 @@ if ( !empty($_REQUEST["id_point"]) )
   }
 
   // Soit on est avec un modérateur global ou de cette fiche
-  if ( est_autorise($point->id_createur) )
+  if ( est_autorise($point->id_moderateur) )
   {
     /* boutton "supprimer" uniquement pour les modérateurs globaux
        sly 09/2025 : A DÉBATTRE, Voulons nous interdire la suppression d'une fiche à son auteur ? je peux comprendre que dans le cas du gérant de gîte excédé par les commentaires peu glorieux, il puisse être tenté de supprimer la fiche ce que nous ne voulons peut-être pas, mais pour celui qui ajoute une fiche de cabane, constate après coup qu'il s'est trompé, il ne peut alors, sans l'aide de modérateurs, supprimer et recommencer ?
@@ -59,6 +59,7 @@ if ( !empty($_REQUEST["id_point"]) )
       $bouton_suppr->type = "submit";
       $bouton_suppr->valeur = "supprimer";
       $bouton_suppr->label = "Suppression de la fiche";
+      $bouton_suppr->classe = "bouton-supprimer"; // rouge, voir style_formulaire.css
     }
 
     //cosmétique
@@ -98,7 +99,7 @@ elseif ( !empty($_REQUEST["id_point_type"]))
   // on force l'id du point à vide histoire de ne pas modifier le modèle
   unset($point->id_point);
   // et pareil pour le modérateur actuel du point qui sera alors choisi directement car l'utilisateur est authentifié (ou pas, mais alors ça sera 0)
-  unset($point->id_createur);
+  unset($point->id_moderateur);
   // et on retire le flag "est un modèle" car on s'est servit du modèle, mais ce n'en est plus un
   unset($point->modele);
 
@@ -133,15 +134,8 @@ $bouton_valider->nom = "action";
 $bouton_valider->type = "submit";
 $bouton_valider->valeur = $bouton_valider->label = $vue->verbe;
 
-$bouton_reset = new stdClass;
-$bouton_reset->nom = "reset";
-$bouton_reset->type = "reset";
-$bouton_reset->valeur = "Recommencer";
-$bouton_reset->label = "Recommencer";
-
 // Gestion de l'ordre des boutons modifier/valider/supprimer
 $vue->champs->boutons->valider=$bouton_valider;
-$vue->champs->boutons->reset=$bouton_reset;
 
 if (!empty($bouton_suppr))
   $vue->champs->boutons->suppr=$bouton_suppr;
@@ -149,11 +143,11 @@ if (!empty($bouton_suppr))
 //3 Champs text area similaires, on fait une boucle
 // tous les points n'ont pas forcément un propriétaire ( grotte, point d'eau, ... )
 if ( !empty($point->equivalent_proprio) )
-  $textes_area[$point->equivalent_proprio]="proprio";
+  $textes_area[$point->equivalent_proprio]="proprietaires";
 
 //ils ont en revanche tous un accès et un champ remarques
 $textes_area["accès"]="acces";
-$textes_area["remarques"]="remark";
+$textes_area["remarques"]="remarques";
 
 /******** Les champs libres *****************/
 foreach ($textes_area as $libelle => $nom_variable)
