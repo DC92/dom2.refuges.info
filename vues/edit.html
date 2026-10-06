@@ -49,8 +49,8 @@
     </form>
     <?php if (isset($vue->polygone->id_polygone)) { ?>
       <p>
-        <a href="/api/polygones?format=json&massif=<?=$vue->polygone->id_polygone?>">
-          Exporter au format GML la dernière version enregistrée
+        <a href="/api/polygones?format=json&massif=<?=$vue->polygone->id_polygone?>" target="_BLANCK">
+          Exporter au format GeoJSON la dernière version enregistrée
         </a>
       </p>
     <?php } ?>

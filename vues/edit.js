@@ -15,7 +15,10 @@ positionMemoryControl(map);
 controlesComuns(map).forEach((control) => control.addTo(map));
 L.control.layers(tileLayers).addTo(map);
 map.doubleClickZoom.disable();
-new ControlUpload().addTo(map);
+new ControlUpload({
+  title: 'Importer un fichier GeoJSON',
+  //TODO recentrer bounds de tous les polygones
+}).addTo(map);
 
 // Editeur
 map.pm.addControls({
@@ -60,15 +63,3 @@ new WriPolygonLayer(
   // Position par défaut
   map.setView([positionMemoryArray[1], positionMemoryArray[2]], positionMemoryArray[0]);
 <?php } ?>
-
-// Pour le bouton importer un fichier
-function uploadFile(evt) {
-  const file = event.target.files[0], //TODO DCMM BUG c'est quoi, event ?
-    reader = new FileReader();
-
-  reader.readAsText(file);
-  if (file)
-    reader.onload = () => {
-      L.geoJson(JSON.parse(reader.result)).addTo(map);
-    };
-}

@@ -512,6 +512,7 @@ a img {
   /* Pour ne pas trop déborder en bas */
 }
 
+/* Carte de l'éditeur de massifs */
 .selecteur-carte-edit {
   padding-left: 1px;
 }
@@ -534,6 +535,11 @@ a img {
 
 .leaflet-control-upload button {
   height: 34px;
+}
+
+.leaflet-control-upload.buttonSelected span,
+.leaflet-control-upload:not(.buttonSelected) input {
+  display:none;
 }
 
 /* Menu deplié */

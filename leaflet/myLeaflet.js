@@ -278,7 +278,6 @@ function positionMemoryControl(map) {
  * Editeur de massifs *
  **********************/
 // Inverse les lat & lng entre geoJson et Leaflet
-/* eslint-disable-next-line no-unused-vars */
 function flipLonLatRecursive(data) {
   if (Array.isArray(data) && typeof data[0] === 'number')
     return [data[1], data[0]];
@@ -347,23 +346,47 @@ const DownloadPolygonControl = L.Control.extend({
   }
 });
 
-/************************************
+/*************************************
  * Bouton de chargement d'un fichier *
  *************************************/
 /* eslint-disable-next-line no-unused-vars */
 const ControlUpload = L.Control.extend({
   options: {
     position: 'topleft',
+    title: 'Import geometry file',
   },
 
-  onAdd() {
+  onAdd(map) {
     const buttonDiv = L.DomUtil.create('div', 'button-wrapper leaflet-control-upload');
 
-    buttonDiv.innerHTML = '<button title="Importer un fichier geoJSON">📁</button>';
-    buttonDiv.addEventListener('click', () => {
-      buttonDiv.innerHTML = '<button title="Importer un fichier GML">' +
-        '<input type="file" accept="application/json" onchange="uploadFile(this)" />' +
-        '</button>';
+    buttonDiv.addEventListener('click', () => buttonDiv.classList.add('buttonSelected'));
+    buttonDiv.innerHTML = '<button title="' + this.options.title + '">' +
+      '<span>📁</span>' +
+      '<input type="file" accept="application/json application/geojson text/xml" />' +
+      '</button>';
+
+    buttonDiv.lastChild.addEventListener('change', (evt) => {
+      const file = evt.target.files[0],
+        reader = new FileReader();
+
+      reader.readAsText(file);
+      if (file)
+        reader.onload = () => {
+          for (const match of reader.result.matchAll(/"coordinates"[:|>]([^}]*)/gu)) {
+            //for (const match of reader.result.matchAll(/"coordinates":([0-9\.\,\n]*)/gu)) {
+            // Extraction of coordinates
+            const coords = flipLonLatRecursive(JSON.parse(match[1]));
+
+            if (typeof coords[0] === 'object') { // Avoid points
+              if (typeof coords[0][0] === 'number') // Transform ligns in polygons
+                L.polygon([coords]).addTo(map);
+              else // Polygons & MultiPolygons
+                L.polygon(coords).addTo(map);
+            }
+
+            buttonDiv.classList.remove('buttonSelected');
+          };
+        };
     });
 
     return buttonDiv;
