@@ -10,7 +10,7 @@ const map = L.map('carte-accueil'),
     showCoverageOnHover: false, // Optional: hides the cluster bounds polygon
     maxClusterRadius: 30, // Less clusters
   });
-//TODO séparer sélecteur / clusters et faire 2 fonctions générales
+  //TODO séparer sélecteur / clusters et faire 2 fonctions générales
 
 // Couches refuges.info de la page 
 if (typeof sessionStorage.checkedLayers !== 'string')
@@ -79,8 +79,8 @@ vectorCluster.addTo(map);
 L.control.layers(tileLayers).addTo(map);
 L.control.layers(null, overlays).addTo(map);
 controlesComuns(map).forEach((control) => control.addTo(map));
-//DCMM FUTUR HORS RESEAU new ControlPreload().addTo(map); // Ajoute de controle pre-load OpenHikingMap
 positionMemoryControl(map);
+//DCMM FUTUR HORS RESEAU new ControlPreload().addTo(map); // Ajoute de controle pre-load OpenHikingMap
 
 // Externalise le sélecteur de points pour les grandes largeurs de fenêtre
 ['load', 'resize'].forEach(evtName =>
