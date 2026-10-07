@@ -10,7 +10,6 @@ const map = L.map('carte-accueil'),
     showCoverageOnHover: false, // Optional: hides the cluster bounds polygon
     maxClusterRadius: 30, // Less clusters
   });
-  //TODO séparer sélecteur / clusters et faire 2 fonctions générales
 
 // Couches refuges.info de la page 
 if (typeof sessionStorage.checkedLayers !== 'string')
@@ -104,7 +103,7 @@ const overlaySelectors = document.querySelectorAll('.leaflet-control-layers-over
 
 /* eslint-disable-next-line no-unused-vars */
 function copyExportLink() {
-  navigator.clipboard.writeText(exportCarteEl.children[1].href)
+  navigator.clipboard.writeText(exportCarteEl.lastChild.href)
     .then(() => alert('Lien d\'exportation copié dans le presse-papier :\n\n' +
       exportCarteEl.children[1].href));
 }

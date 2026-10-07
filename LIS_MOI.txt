@@ -1,0 +1,18 @@
+Fichiers changés
+controlleurs\edit.php
+includes\leaflet_libs.php
+leaflet...
+vues\edit.html
+vues\edit.js
+vues\index.js
+vues\style_pages.css
+
+Répertoire non géré par dom2
+ressources...
+
+Fichiers avec des commentaires à ne pas remonter pour l'instant
+controlleurs\index.php
+vues\_cartes_leaflet.js
+vues\_page.html
+vues\nav.html
+vues\point_formulaire_modification.js

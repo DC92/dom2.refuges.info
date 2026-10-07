@@ -1,0 +1,4 @@
+https://github.com/mapbox/leaflet-omnivore
+
+Download 0.3.4
+https://cdnjs.com/libraries/leaflet-omnivore

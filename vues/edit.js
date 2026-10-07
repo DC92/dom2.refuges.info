@@ -43,6 +43,16 @@ map.pm.enableGlobalSplitMode({
 });
 map.pm.enableGlobalUnionMode();*/
 
+// Changement de format d'export
+function formatChange() {
+  const exportPolygonEl = document.getElementById('export-polygon');
+
+  exportPolygonEl.firstElementChild.href =
+    "/api/polygones?massif=<?=$vue->polygone->id_polygone?>&format=" +
+    exportPolygonEl.lastElementChild.value;
+}
+formatChange(); // Init de la page
+
 // Massifs en fond
 new WriPolygonLayer(
   1,
