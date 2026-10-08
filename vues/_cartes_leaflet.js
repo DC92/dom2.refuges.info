@@ -53,24 +53,22 @@ function controlesComuns(map) {
 /* eslint-disable-next-line no-unused-vars */
 function couchesDeFond(layerKeys) {
   return {
-    //DCMM pour développements ultérieurs
-    //TODO https://leaflet-extras.github.io/leaflet-providers/preview/
-    /*OpenCycleMap: L.tileLayer(
+    //DCMM Pour tests, à enlever à la fin
+    'Google': L.tileLayer('https://mt0.google.com/vt/lyrs=r&x={x}&y={y}&z={z}'),
+    OpenCycleMap: L.tileLayer(
       'https://api.thunderforest.com/cycle/{z}/{x}/{y}{r}.png?apikey=' + layerKeys.thunderforest, {
         maxZoom: 22,
         attribution: '<a href="https://www.thunderforest.com/">Thunderforest</a> | ' +
           '<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-      }),*/
-    /*Cadastre: new IGNTileLayer(
+      }),
+    Cadastre: new IGNTileLayer(
       'https://data.geopf.fr/wmts?', {
         layer: 'CADASTRALPARCELS.PARCELLAIRE_EXPRESS',
         style: 'PCI vecteur',
         format: 'image/png',
-      // }),*/
+      }),
+    //TODO https://leaflet-extras.github.io/leaflet-providers/preview/
     //TODO Autriche
-
-    //DCMM Pour tests, à enlever à la fin
-    'Google': L.tileLayer('https://mt0.google.com/vt/lyrs=r&x={x}&y={y}&z={z}'),
     //DCMM FIN pour développements ultérieurs
 
     // Cartes libres
