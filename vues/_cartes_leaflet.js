@@ -61,11 +61,7 @@ function couchesDeFond(layerKeys) {
         attribution: '<a href="https://www.thunderforest.com/">Thunderforest</a> | ' +
           '<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
       }),*/
-    /*'IGN photo': new IGNTileLayer(
-      'https://data.geopf.fr/wmts?', {
-        layer: 'ORTHOIMAGERY.ORTHOPHOTOS',
-      }),
-    Cadastre: new IGNTileLayer(
+    /*Cadastre: new IGNTileLayer(
       'https://data.geopf.fr/wmts?', {
         layer: 'CADASTRALPARCELS.PARCELLAIRE_EXPRESS',
         style: 'PCI vecteur',
@@ -143,6 +139,15 @@ function couchesDeFond(layerKeys) {
       'https://api.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}@2x.webp?access_token=' + layerKeys.mapbox, {
         maxZoom: 22,
         attribution: '<a href="https://www.mapbox.com/"> Mapbox</a>',
+      }),
+    'Photo IGN': new IGNTileLayer(
+      'https://data.geopf.fr/wmts?', {
+        layer: 'ORTHOIMAGERY.ORTHOPHOTOS',
+      }),
+    'Photo ArcGIS': L.tileLayer(
+      'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        maxZoom: 19,
+        attribution: '<a href="https://www.arcgis.com/"> ArcGIS (Esri)</a>',
       }),
     'Photo Google': L.tileLayer(
       'https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {

@@ -2,7 +2,7 @@
 const map = L.map('carte-edit', {
     editable: true,
   }),
-   tileLayers = couchesDeFond('<?=json_encode($config_wri["mapKeys"])?>'),
+   tileLayers = couchesDeFond(<?=json_encode($config_wri["mapKeys"])?>),
  /* overlays = {
     'Massifs': new WriPolygonLayer('https://<?=$_SERVER["SERVER_NAME"]?>', 1, '<?=$vue->version_features?>'),
     'Régions': new WriPolygonLayer('https://<?=$_SERVER["SERVER_NAME"]?>', 11, '<?=$vue->version_features?>'),
