@@ -359,39 +359,86 @@ const ControlUpload = L.Control.extend({
   onAdd(map) {
     const buttonDiv = L.DomUtil.create('div', 'button-wrapper leaflet-control-upload');
 
-    buttonDiv.addEventListener('click', () => buttonDiv.classList.add('buttonSelected'));
     buttonDiv.innerHTML = '<button title="' + this.options.title + '">' +
       '<span>📁</span>' +
       '<input type="file" accept="application/json application/geojson text/xml" />' +
       '</button>';
+    // Display the input
+    buttonDiv.addEventListener('click', () => buttonDiv.classList.add('buttonSelected'));
 
+    // A file has been selected
     buttonDiv.lastChild.addEventListener('change', (evt) => {
-      const file = evt.target.files[0],
-        reader = new FileReader();
+      const reader = new FileReader();
 
-      reader.readAsText(file);
-      if (file)
-        reader.onload = () => {
-          for (const match of reader.result.matchAll(/"coordinates"[:|>]([^}]*)/gu)) {
-            //for (const match of reader.result.matchAll(/"coordinates":([0-9\.\,\n]*)/gu)) {
-            // Extraction of coordinates
-            const coords = flipLonLatRecursive(JSON.parse(match[1]));
+      reader.readAsText(evt.target.files[0]);
+      reader.onload = () => {
+        // We cannot use libraries because we want to convert lines into polygons
+        const fileName = evt.target.files.item(0).name,
+          fileExt = /[^.]+$/gu.exec(fileName)[0].toLowerCase(),
+          fileText = reader.result
+          .replace(/[\n\r\t]/gu, ' ') // Remove CR LF & tabs     
+          .replace(/ +/gu, ' '); // Remove multiple spaces   
 
-            if (typeof coords[0] === 'object') { // Avoid points
-              if (typeof coords[0][0] === 'number') // Transform ligns in polygons
-                L.polygon([coords]).addTo(map);
-              else // Polygons & MultiPolygons
+        switch (fileExt) {
+          case 'json':
+          case 'geojson':
+            for (const match of reader.result.matchAll(/"coordinates":([^}]*)/gu)) {
+              // Extraction of coordinates
+              const coords = flipLonLatRecursive(JSON.parse(match[1]));
+              if (typeof coords[0] === 'object') { // Avoid points
+                if (typeof coords[0][0] === 'number') // Transform ligns in polygons
+                  L.polygon([coords]).addTo(map);
+                else // Polygons & MultiPolygons
+                  L.polygon(coords).addTo(map);
+              }
+            };
+            break;
+
+          case 'xml':
+          case 'kml':
+            for (const match of fileText.matchAll(/[0-9,. ]+/gu))
+              if (match[0].includes(',')) {
+                const coords = flipLonLatRecursive(JSON.parse(
+                  '[[' + match[0].trim().replaceAll(' ', '],[') + ']]'
+                ));
                 L.polygon(coords).addTo(map);
-            }
+              } break;
 
-            buttonDiv.classList.remove('buttonSelected');
-          };
-        };
+            //TODO GML
+            //TODO GPX
+
+          default:
+            alert('Extension .' + fileExt + ' non gérée');
+        }
+        buttonDiv.classList.remove('buttonSelected');
+      };
     });
 
     return buttonDiv;
   }
 });
+
+/*
+EXEMPLE GML MULTIPOLYGON
+<GeometryCollection srsName="EPSG:4326">
+<geometryMember>
+<Point>
+<coordinates>
+50.0,50.0
+</coordinates>
+</Point>
+</geometryMember>
+<geometryMember>
+<LineString>
+<coordinates>
+0.0,0.0 0.0,50.0 100.0,50.0 100.0,100.0
+</coordinates>
+</LineString>
+</geometryMember>
+<geometryMember>
+<Polygon>
+<outerBoundar>
+*/
 
 //DCMM FUTUR HORS RESEAU
 /****************************************************
