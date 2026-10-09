@@ -273,7 +273,6 @@ function positionMemoryControl(map) {
   });
 }
 
-//DCMM FUTUR EDIT MASSIF
 /**********************
  * Editeur de massifs *
  **********************/
@@ -284,65 +283,6 @@ function flipLonLatRecursive(data) {
 
   return data.map(item => flipLonLatRecursive(item));
 }
-
-//DCMM FUTUR EDIT MASSIF
-// Contrôle permettant l'ajout d'un ploygone dans Leaflet.Editable
-/* eslint-disable-next-line no-unused-vars */
-const NewPolygonControl = L.Control.extend({
-  options: {
-    position: 'topleft',
-  },
-
-  onAdd: function(map) {
-    // Création du conteneur HTML pour le bouton
-    const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-custom-control');
-
-    // Création du bouton lui-même
-    const button = L.DomUtil.create('a', '', container);
-    button.innerHTML = '<span style="font-size:30px">⬡</span>'; // Icône ou texte de votre choix
-    button.href = '#';
-    button.title = 'Dessiner un nouveau polygone';
-
-    // Gestion de l'événement clic
-    L.DomEvent.on(button, 'click', (e) => {
-      L.DomEvent.stopPropagation(e);
-      L.DomEvent.preventDefault(e);
-
-      // Déclenchement de l'outil de dessin de polygone Leaflet.Editable
-      if (map.editTools)
-        map.editTools.startPolygon();
-    });
-
-    return container;
-  }
-});
-
-// Contrôle permettant de télécharger un GPX externe dans Leaflet.Editable
-/* eslint-disable-next-line no-unused-vars */
-const DownloadPolygonControl = L.Control.extend({
-  options: {
-    position: 'topleft',
-  },
-
-  onAdd: function() {
-    // Création du conteneur HTML pour le bouton
-    const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-custom-control');
-
-    // Création du bouton lui-même
-    const button = L.DomUtil.create('a', '', container);
-    button.innerHTML = '<span style="font-size:30px">⇓</span>'; // Icône ou texte de votre choix
-    button.href = '#';
-    button.title = 'Télécharger un fichier GPX';
-
-    // Gestion de l'événement clic
-    L.DomEvent.on(button, 'click', (e) => {
-      L.DomEvent.stopPropagation(e);
-      L.DomEvent.preventDefault(e);
-    });
-
-    return container;
-  }
-});
 
 /*************************************
  * Bouton de chargement d'un fichier *

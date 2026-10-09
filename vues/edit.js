@@ -30,14 +30,19 @@ map.pm.addControls({
   rotateMode: false,
 });
 
-/*
-map.pm.enableGlobalEditMode({
+map.pm.enableGlobalEditMode();
+map.pm.setGlobalOptions({
+  snappable: true,
+  allowSelfIntersection: false,
 });
+
+/*
 map.pm.enableGlobalSplitMode({
   //allowSelfIntersection: true,
 //  allowSelfIntersectionEdit: true,
 });
-map.pm.enableGlobalUnionMode();*/
+map.pm.enableGlobalUnionMode();
+*/
 
 // Changement de format d'export
 function formatChange() {
@@ -55,6 +60,7 @@ new WriPolygonLayer(
   'https://<?=$_SERVER["SERVER_NAME"]?>',
   '<?=$vue->version_features?>', {
     pmIgnore: true,
+    //TODO (si bbox) snapIgnore: false,
   }).addTo(map);
 
 <?php if (!empty($vue->json_polygones)) { ?>
