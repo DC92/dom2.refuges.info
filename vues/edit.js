@@ -2,10 +2,7 @@
 const map = L.map('carte-edit', {
     pmIgnore: false,
   }),
-  tileLayers = couchesDeFond('<?=json_encode($config_wri["mapKeys"])?>');
-
-//TODO bouton upload
-//TODO bouton download
+  tileLayers = couchesDeFond(<?=json_encode($config_wri["mapKeys"])?>);
 
 // Chargement du fond de carte actif
 positionMemoryControl(map);
@@ -15,7 +12,7 @@ positionMemoryControl(map);
 controlesComuns(map).forEach((control) => control.addTo(map));
 L.control.layers(tileLayers).addTo(map);
 map.doubleClickZoom.disable();
-new ControlUpload({
+new ControlPolygonsUpload({
   title: 'Importer un fichier GeoJSON',
   //TODO recentrer bounds de tous les polygones
 }).addTo(map);

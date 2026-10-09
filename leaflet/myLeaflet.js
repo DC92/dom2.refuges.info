@@ -350,7 +350,7 @@ const DownloadPolygonControl = L.Control.extend({
  * Bouton de chargement d'un fichier *
  *************************************/
 /* eslint-disable-next-line no-unused-vars */
-const ControlUpload = L.Control.extend({
+const ControlPolygonsUpload = L.Control.extend({
   options: {
     position: 'topleft',
     title: 'Import geometry file',
@@ -373,43 +373,30 @@ const ControlUpload = L.Control.extend({
       reader.readAsText(evt.target.files[0]);
       reader.onload = () => {
         // We cannot use libraries because we want to convert lines into polygons
-        const fileName = evt.target.files.item(0).name,
-          fileExt = /[^.]+$/gu.exec(fileName)[0].toLowerCase(),
-          fileText = reader.result
+        const fileText = reader.result
           .replace(/[\n\r\t]/gu, ' ') // Remove CR LF & tabs     
-          .replace(/ +/gu, ' '); // Remove multiple spaces   
+          .replace(/ +/gu, ' '), // Remove multiple spaces   
+          polygonsCoords = [];
 
-        switch (fileExt) {
-          case 'json':
-          case 'geojson':
-            for (const match of reader.result.matchAll(/"coordinates":([^}]*)/gu)) {
-              // Extraction of coordinates
-              const coords = flipLonLatRecursive(JSON.parse(match[1]));
-              if (typeof coords[0] === 'object') { // Avoid points
-                if (typeof coords[0][0] === 'number') // Transform ligns in polygons
-                  L.polygon([coords]).addTo(map);
-                else // Polygons & MultiPolygons
-                  L.polygon(coords).addTo(map);
-              }
-            };
-            break;
-
-          case 'xml':
-          case 'kml':
-            for (const match of fileText.matchAll(/[0-9,. ]+/gu))
-              if (match[0].includes(',')) {
-                const coords = flipLonLatRecursive(JSON.parse(
-                  '[[' + match[0].trim().replaceAll(' ', '],[') + ']]'
-                ));
-                L.polygon(coords).addTo(map);
-              } break;
-
-            //TODO GML
-            //TODO GPX
-
-          default:
-            alert('Extension .' + fileExt + ' non gérée');
+        // Json, geojson
+        for (const match of fileText.matchAll(/"coordinates":([^}]*)/gu)) {
+          const coords = flipLonLatRecursive(JSON.parse(match[1]));
+          if (typeof coords[0] === 'object') // Avoid points
+            polygonsCoords.push(coords);
         }
+
+        // Xml, kml
+        for (const match of fileText.matchAll(/coordinates>([0-9,. ]+)/gu))
+          polygonsCoords.push(flipLonLatRecursive(JSON.parse(
+            '[[' + match[1].trim().replaceAll(' ', '],[') + ']]'
+          )));
+
+        //TODO GML
+        //TODO GPX
+        if (polygonsCoords.length)
+          L.polygon(polygonsCoords).addTo(map);
+        else alert('Type de fichier non géré ou ne comportant pas de polygones ni de trace');
+
         buttonDiv.classList.remove('buttonSelected');
       };
     });
