@@ -103,8 +103,8 @@ class WriPolygonLayer extends L.geoJson {
         if (options.labels)
           layer.bindTooltip(
             feature.properties.nom
-            .replace(/ ([a-z]?[a-z]?[a-z]) /gui, ' $1&nbsp;')
-            .replace(/ /gu, '<br/>'), {
+            .replaceAll(/ ([a-z]?[a-z]?[a-z]) /gui, ' $1&nbsp;')
+            .replaceAll(/ /gu, '<br/>'), {
               permanent: true,
               direction: 'center',
             }).openTooltip();
@@ -229,7 +229,7 @@ class MarkerCompass extends L.Marker {
   // Add or replace the icon rotation style
   rotateIcon() {
     this._icon.style.transform =
-      this._icon.style.transform.replace(/rotateZ\([^)]+\)/u, '') +
+      this._icon.style.transform.replaceAll(/rotateZ\([^)]+\)/gu, '') +
       ' rotateZ(' + (45 - parseInt(this.heading, 10)) + 'deg)';
   }
 }
@@ -338,8 +338,6 @@ const DownloadPolygonControl = L.Control.extend({
     L.DomEvent.on(button, 'click', (e) => {
       L.DomEvent.stopPropagation(e);
       L.DomEvent.preventDefault(e);
-
-      //TODO DownloadPolygonControl
     });
 
     return container;
@@ -359,9 +357,9 @@ const ControlPolygonsUpload = L.Control.extend({
   onAdd(map) {
     const buttonDiv = L.DomUtil.create('div', 'button-wrapper leaflet-control-upload');
 
-    buttonDiv.innerHTML = '<button title="' + this.options.title + '">' +
+    buttonDiv.innerHTML = '<button title="' + this.options.title + ' .geojson, .gml, .gpx, .json, .kml, .xml">' +
       '<span>📁</span>' +
-      '<input type="file" accept="application/json application/geojson text/xml" />' +
+      '<input type="file" accept=".geojson,.gml,.gpx,.json,.kml,.xml" />' +
       '</button>';
     // Display the input
     buttonDiv.addEventListener('click', () => buttonDiv.classList.add('buttonSelected'));
@@ -374,28 +372,35 @@ const ControlPolygonsUpload = L.Control.extend({
       reader.onload = () => {
         // We cannot use libraries because we want to convert lines into polygons
         const fileText = reader.result
-          .replace(/[\n\r\t]/gu, ' ') // Remove CR LF & tabs     
-          .replace(/ +/gu, ' '), // Remove multiple spaces   
+          .replaceAll(/[\n\r\t]/gu, ' ') // Remove CR LF & tabs     
+          .replaceAll(/ +/gu, ' '), // Remove multiple spaces   
           polygonsCoords = [];
 
-        // Json, geojson
+        // Json, GeoJson
         for (const match of fileText.matchAll(/"coordinates":([^}]*)/gu)) {
           const coords = flipLonLatRecursive(JSON.parse(match[1]));
           if (typeof coords[0] === 'object') // Avoid points
             polygonsCoords.push(coords);
         }
 
-        // Xml, kml
+        // XML, KML, GML
         for (const match of fileText.matchAll(/coordinates>([0-9,. ]+)/gu))
-          polygonsCoords.push(flipLonLatRecursive(JSON.parse(
+          polygonsCoords.push(flipLonLatRecursive(JSON.parse( //TODO flipLonLatRecursive -> L.polygon
             '[[' + match[1].trim().replaceAll(' ', '],[') + ']]'
           )));
 
-        //TODO GML
-        //TODO GPX
-        if (polygonsCoords.length)
-          L.polygon(polygonsCoords).addTo(map);
-        else alert('Type de fichier non géré ou ne comportant pas de polygones ni de trace');
+        // GPX
+        for (const match of fileText.replaceAll('" /> <trkpt lat="', ' ').replaceAll('" lon="', ',').matchAll(/lat="([0-9,. ]+)/gu))
+          polygonsCoords.push((JSON.parse(
+            '[[' + match[1].trim().replaceAll(' ', '],[') + ']]'
+          )));
+
+        if (polygonsCoords.length) {
+          const polygons = L.polygon(polygonsCoords).addTo(map);
+          map.fitBounds(polygons.getBounds());
+          map.pm.enableGlobalEditMode();
+        } else
+          alert('Type de fichier non géré ou ne comportant pas de polygones ni de trace');
 
         buttonDiv.classList.remove('buttonSelected');
       };
@@ -404,28 +409,6 @@ const ControlPolygonsUpload = L.Control.extend({
     return buttonDiv;
   }
 });
-
-/*
-EXEMPLE GML MULTIPOLYGON
-<GeometryCollection srsName="EPSG:4326">
-<geometryMember>
-<Point>
-<coordinates>
-50.0,50.0
-</coordinates>
-</Point>
-</geometryMember>
-<geometryMember>
-<LineString>
-<coordinates>
-0.0,0.0 0.0,50.0 100.0,50.0 100.0,100.0
-</coordinates>
-</LineString>
-</geometryMember>
-<geometryMember>
-<Polygon>
-<outerBoundar>
-*/
 
 //DCMM FUTUR HORS RESEAU
 /****************************************************

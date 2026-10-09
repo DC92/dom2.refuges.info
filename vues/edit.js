@@ -13,8 +13,7 @@ controlesComuns(map).forEach((control) => control.addTo(map));
 L.control.layers(tileLayers).addTo(map);
 map.doubleClickZoom.disable();
 new ControlPolygonsUpload({
-  title: 'Importer un fichier GeoJSON',
-  //TODO recentrer bounds de tous les polygones
+  title: 'Importer un fichier',
 }).addTo(map);
 
 // Editeur

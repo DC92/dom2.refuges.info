@@ -64,7 +64,7 @@ for (const [nom, query] of Object.entries(couchesOverpass))
   overlays['OSM ' + nom] = new L.OverPassLayer({
     query: '(nwr' + query + '({{bbox}}););out center;',
     markerIcon: L.icon({
-      iconUrl: 'https://<?=$_SERVER["SERVER_NAME"]?>/images/icones/' + nom.replace('ô', 'o').replace(/[^a-z]/gu, '') + '.svg',
+      iconUrl: 'https://<?=$_SERVER["SERVER_NAME"]?>/images/icones/' + nom.replaceAll('ô', 'o').replaceAll(/[^a-z]/gu, '') + '.svg',
       iconSize: [24, 24],
       iconAnchor: [12, 12],
     }),
