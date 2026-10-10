@@ -2,7 +2,28 @@
 const map = L.map('carte-edit', {
     pmIgnore: false,
   }),
-  tileLayers = couchesDeFond(<?=json_encode($config_wri["mapKeys"])?>);
+  tileLayers = couchesDeFond(<?=json_encode($config_wri["mapKeys"])?>),
+  polygoneId = <?=$vue->polygone->id_polygone??0?>,
+  geoJsonAEditer = <?=$vue->json_polygones??'null'?>,
+  massifsLayer = new WriPolygonLayer(
+    1,
+    'https://<?=$_SERVER["SERVER_NAME"]?>',
+    '<?=$vue->version_features?>', {
+      pmIgnore: true,
+  });
+
+if (geoJsonAEditer) {
+  // Affiche le polygone courant
+  const polygonesAEditer = L.geoJson(geoJsonAEditer); //.addTo(map);
+
+  // Wait an instant the end of geoman init to add it
+  setInterval(() => polygonesAEditer.addTo(map), 50);
+
+  map.fitBounds(polygonesAEditer.getBounds());
+} else {
+  // Position par défaut
+  map.setView([positionMemoryArray[1], positionMemoryArray[2]], positionMemoryArray[0]);
+}
 
 // Chargement du fond de carte actif
 positionMemoryControl(map);
@@ -10,7 +31,9 @@ positionMemoryControl(map);
 
 // Contrôles
 controlesComuns(map).forEach((control) => control.addTo(map));
-L.control.layers(tileLayers).addTo(map);
+L.control.layers(tileLayers, {
+  Massifs: massifsLayer,
+}).addTo(map);
 map.doubleClickZoom.disable();
 new ControlPolygonsUpload({
   title: 'Importer un fichier',
@@ -48,30 +71,27 @@ map.pm.enableGlobalUnionMode();
 function formatChange() {
   const exportPolygonEl = document.getElementById('export-polygon');
 
-  exportPolygonEl.firstElementChild.href =
-    "/api/polygones?massif=<?=$vue->polygone->id_polygone?>&format=" +
-    exportPolygonEl.lastElementChild.value;
+  exportPolygonEl.firstElementChild.href = '/api/polygones' +
+    '?massif=' + polygoneId +
+    '&format=' + exportPolygonEl.lastElementChild.value;
 }
 formatChange(); // Init de la page
 
-// Massifs en fond
-new WriPolygonLayer(
-  1,
-  'https://<?=$_SERVER["SERVER_NAME"]?>',
-  '<?=$vue->version_features?>', {
-    pmIgnore: true,
-    //TODO (si bbox) snapIgnore: false,
-  }).addTo(map);
+// Restitue le geoJson édité
+function layerChanged() {
+  const featureCollection = {
+    type: 'FeatureCollection',
+    features: [],
+  };
 
-<?php if (!empty($vue->json_polygones)) { ?>
-  // Affiche le polygone courant
-  const inpoly=L.geoJson(<?=$vue->json_polygones?>);//.addTo(map);
+  L.PM.Utils.findLayers(map).forEach((layer) =>
+    featureCollection.features.push(layer.toGeoJSON())
+  );
+  console.log(JSON.stringify(featureCollection)); //DCMM
+}
 
-  // Wait an instant the end of geoman init to add it
-  setInterval(() => inpoly .addTo(map) , 50);
-
-  map.fitBounds(inpoly.getBounds());
-<?php } else { ?>
-  // Position par défaut
-  map.setView([positionMemoryArray[1], positionMemoryArray[2]], positionMemoryArray[0]);
-<?php } ?>
+map.on('layeradd', (evt) => {
+  layerChanged();
+  evt.layer.on('pm:edit', layerChanged);
+});
+map.on('pm:remove', layerChanged);
