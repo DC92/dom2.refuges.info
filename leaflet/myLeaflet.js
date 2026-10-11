@@ -130,6 +130,21 @@ class WriPolygonLayer extends L.geoJson {
       ...options,
     });
 
+    this.on('add', (evt) => {
+      this.fetchUrlData(url);
+      const mapw = evt.target;
+
+      map.on('dragend', () => {
+        const b = map.getBounds(),
+          bbox = [b.getWest(), b.getSouth(), b.getEast(), b.getNorth(), ];
+
+        this.clearLayers();
+        this.fetchUrlData(url + '&bbox=' + bbox.join(','));
+      });
+    });
+  }
+
+  fetchUrlData = function(url) {
     fetch(url)
       .catch((er) => console.error(er + ' fetching ' + url))
       .then((response) => response.json())
