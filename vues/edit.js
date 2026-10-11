@@ -1,15 +1,3 @@
-<?php // Calcul de la bbox des massifs, limitée à 2 fois l'emprise du polygone à éviter pour ne pas ralentir le snap
-  if (empty($vue->polygone))
-    $doubleExtent = '2,42,8,48';
-  else
-    $doubleExtent = implode(',', [
-      2 * $vue->polygone->extent[0] - $vue->polygone->extent[2],
-      2 * $vue->polygone->extent[1] - $vue->polygone->extent[3],
-      2 * $vue->polygone->extent[2] - $vue->polygone->extent[0],
-      2 * $vue->polygone->extent[3] - $vue->polygone->extent[1],
-    ]);
-?>
-
 // Initialisation de la carte
 const map = L.map('carte-edit', {
     pmIgnore: false,
@@ -21,7 +9,7 @@ const map = L.map('carte-edit', {
     1,
     'https://<?=$_SERVER["SERVER_NAME"]?>',
     '<?=$vue->version_features?>', {
-      urlParam: '&bbox=<?=$doubleExtent?>',
+      bbox: true,
       pmIgnore: true, // Pour qu'ils ne soient pas modifiables
       snapIgnore: false, // Pour que les polygones en édition puisse coller aux contours de massifs
     }).addTo(map);
@@ -40,16 +28,16 @@ if (polygonGeoJson) {
 }
 
 // Chargement du fond de carte actif
-positionMemoryControl(map);
 (tileLayers[decodeURI(positionMemoryArray[3])] || Object.values(tileLayers)[0]).addTo(map);
 
 // Contrôles
 controlesComuns(map).forEach((control) => control.addTo(map));
-L.control.layers(tileLayers,  ).addTo(map);
+L.control.layers(tileLayers, ).addTo(map);
 map.doubleClickZoom.disable();
 new ControlPolygonsUpload({
   title: 'Importer un fichier',
 }).addTo(map);
+positionMemoryControl(map);
 
 // Editeur
 map.pm.addControls({
@@ -99,7 +87,7 @@ function layerChanged() {
   L.PM.Utils.findLayers(map).forEach((layer) =>
     featureCollection.features.push(layer.toGeoJSON())
   );
-  console.log(JSON.stringify(featureCollection)); //DCMM
+  //console.log(JSON.stringify(featureCollection)); //DCMM
 }
 
 map.on('layeradd', (evt) => {

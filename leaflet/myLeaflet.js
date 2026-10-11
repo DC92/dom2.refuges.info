@@ -27,9 +27,10 @@
 class WriPOILayer extends L.geoJson {
   constructor(serveurAPI, type, versionFeatures, hideTooltip) {
     const iconList = [],
-      url = serveurAPI + '/api/bbox?' +
-      'nb_points=all&type_points=' + type +
-      '&version=' + versionFeatures + '&cache=' + (7 * 24 * 3600);
+      url = serveurAPI + '/api/bbox' +
+      '?nb_points=all&type_points=' + type +
+      '&version=' + versionFeatures +
+      '&cache=' + (7 * 24 * 3600);
     //TODO Délai cache api / depuis
 
     super(null, {
@@ -65,7 +66,7 @@ class WriPOILayer extends L.geoJson {
 
     // Fetch remote data
     fetch(url)
-      .catch((er) => console.error(er + ' fetching ' + url))
+      .catch((error) => console.error(error + ' fetching ' + url))
       .then((response) => response.json())
       .then((json) => {
         if (json.features.length) {
@@ -130,23 +131,31 @@ class WriPolygonLayer extends L.geoJson {
       ...options,
     });
 
-    this.on('add', (evt) => {
-      this.fetchUrlData(url);
-      const mapw = evt.target;
+    if (options.bbox)
+      // Wait for the attachment to the map to get the map reference
+      this.on('add', (evtAdd) => {
+        this.fetchUrlDataBbox(url, evtAdd.target._map);
 
-      map.on('dragend', () => {
-        const b = map.getBounds(),
-          bbox = [b.getWest(), b.getSouth(), b.getEast(), b.getNorth(), ];
-
-        this.clearLayers();
-        this.fetchUrlData(url + '&bbox=' + bbox.join(','));
+        // Get event when the map is moved to refresh the bbox
+        evtAdd.target._map.on('dragend', (evtDragEnd) => {
+          this.clearLayers();
+          this.fetchUrlDataBbox(url, evtDragEnd.target);
+        });
       });
-    });
+    else
+      this.fetchUrlData(url);
+  }
+
+  fetchUrlDataBbox = function(url, map) {
+    const b = map.getBounds(),
+      bbox = [b.getWest(), b.getSouth(), b.getEast(), b.getNorth()];
+
+    this.fetchUrlData(url + '&bbox=' + bbox.join(','));
   }
 
   fetchUrlData = function(url) {
     fetch(url)
-      .catch((er) => console.error(er + ' fetching ' + url))
+      .catch((error) => console.error(error + ' fetching ' + url))
       .then((response) => response.json())
       .then((json) => {
         if (json.features.length)
