@@ -16,20 +16,19 @@ const map = L.map('carte-edit', {
   }),
   tileLayers = couchesDeFond(<?=json_encode($config_wri["mapKeys"])?>),
   polygoneId = <?=$vue->polygone->id_polygone??0?>,
-  geoJsonAEditer = <?=$vue->json_polygones??'null'?>,
+  polygonGeoJson = <?=$vue->json_polygones??'null'?>,
   massifsLayer = new WriPolygonLayer(
     1,
     'https://<?=$_SERVER["SERVER_NAME"]?>',
     '<?=$vue->version_features?>', {
       urlParam: '&bbox=<?=$doubleExtent?>',
-      pmIgnore: true,
-  });
+      pmIgnore: true, // Pour qu'ils ne soient pas modifiables
+      snapIgnore: false, // Pour que les polygones en édition puisse coller aux contours de massifs
+    }).addTo(map);
 
-console.log('<?=$doubleExtent?>');//DCMM
-
-if (geoJsonAEditer) {
+if (polygonGeoJson) {
   // Affiche le polygone courant
-  const polygonesAEditer = L.geoJson(geoJsonAEditer); //.addTo(map);
+  const polygonesAEditer = L.geoJson(polygonGeoJson); //.addTo(map);
 
   // Wait an instant the end of geoman init to add it
   setInterval(() => polygonesAEditer.addTo(map), 50);
@@ -46,9 +45,7 @@ positionMemoryControl(map);
 
 // Contrôles
 controlesComuns(map).forEach((control) => control.addTo(map));
-L.control.layers(tileLayers, {
-  Massifs: massifsLayer,
-}).addTo(map);
+L.control.layers(tileLayers,  ).addTo(map);
 map.doubleClickZoom.disable();
 new ControlPolygonsUpload({
   title: 'Importer un fichier',
