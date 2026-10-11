@@ -90,7 +90,8 @@ class WriPolygonLayer extends L.geoJson {
     const url = serveurAPI + '/api/polygones?' +
       'type_polygon=' + typeId +
       '&version=' + versionFeatures +
-      '&cache=' + (7 * 24 * 3600);
+      '&cache=' + (7 * 24 * 3600) +
+      (options.urlParam || '');
 
     super(null, {
       style: (feature) => ({

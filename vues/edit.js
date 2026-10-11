@@ -1,3 +1,15 @@
+<?php // Calcul de la bbox des massifs, limitée à 2 fois l'emprise du polygone à éviter pour ne pas ralentir le snap
+  if (empty($vue->polygone))
+    $doubleExtent = '2,42,8,48';
+  else
+    $doubleExtent = implode(',', [
+      2 * $vue->polygone->extent[0] - $vue->polygone->extent[2],
+      2 * $vue->polygone->extent[1] - $vue->polygone->extent[3],
+      2 * $vue->polygone->extent[2] - $vue->polygone->extent[0],
+      2 * $vue->polygone->extent[3] - $vue->polygone->extent[1],
+    ]);
+?>
+
 // Initialisation de la carte
 const map = L.map('carte-edit', {
     pmIgnore: false,
@@ -9,8 +21,11 @@ const map = L.map('carte-edit', {
     1,
     'https://<?=$_SERVER["SERVER_NAME"]?>',
     '<?=$vue->version_features?>', {
+      urlParam: '&bbox=<?=$doubleExtent?>',
       pmIgnore: true,
   });
+
+console.log('<?=$doubleExtent?>');//DCMM
 
 if (geoJsonAEditer) {
   // Affiche le polygone courant
