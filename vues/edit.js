@@ -3,8 +3,8 @@ const map = L.map('carte-edit', {
     pmIgnore: false,
   }),
   tileLayers = couchesDeFond(<?=json_encode($config_wri["mapKeys"])?>),
-  polygoneId = <?=$vue->polygone->id_polygone??0?>,
-  polygonGeoJson = <?=$vue->json_polygones??'null'?>,
+  polygoneId = <?=$vue->polygone->id_polygone ?? 0?> ,
+  polygonGeoJson = <?=$vue->json_polygones ?? 'null'?> ,
   massifsLayer = new WriPolygonLayer(
     1,
     'https://<?=$_SERVER["SERVER_NAME"]?>',
@@ -58,14 +58,6 @@ map.pm.setGlobalOptions({
   snappable: true,
   allowSelfIntersection: false,
 });
-
-/*
-map.pm.enableGlobalSplitMode({
-  //allowSelfIntersection: true,
-//  allowSelfIntersectionEdit: true,
-});
-map.pm.enableGlobalUnionMode();
-*/
 
 // Changement de format d'export
 function formatChange() {
