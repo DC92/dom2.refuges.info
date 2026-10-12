@@ -3,7 +3,7 @@ const map = L.map('carte-edit', {
     pmIgnore: false,
   }),
   tileLayers = couchesDeFond(<?=json_encode($config_wri["mapKeys"])?>),
-  polygoneId = <?=$vue->polygone->id_polygone ?? 0?> ,
+  polygoneId = <?=$vue->polygone->id_polygone??0?>,
   editJsonEl = document.getElementById('edit-json'),
   exportPolygonEl = document.getElementById('export-polygon'),
   massifsLayer = new WriPolygonLayer(
@@ -45,20 +45,19 @@ positionMemoryControl(map);
 // Editeur
 map.pm.addControls({
   oneBlock: true,
-  drawMarker: false,
+  drawCircle: false,
   drawCircleMarker: false,
+  drawMarker: false,
+  dragMode: false,
   drawPolyline: false,
   drawRectangle: false,
-  drawCircle: false,
   drawText: false,
-  dragMode: false,
   rotateMode: false,
 });
 
 map.pm.enableGlobalEditMode();
 map.pm.setGlobalOptions({
   snappable: true,
-  allowSelfIntersection: false,
 });
 
 // Changement de format d'export
@@ -72,15 +71,25 @@ if (exportPolygonEl)
 
 // Restitue le geoJson édité
 function layerChanged() {
-  const featureCollection = {
-    type: 'FeatureCollection',
-    features: [],
+  const finalGeoJson = {
+    type: 'MultiPolygon',
+    coordinates: [],
   };
 
-  L.PM.Utils.findLayers(map).forEach((layer) =>
-    featureCollection.features.push(layer.toGeoJSON())
-  );
-  editJsonEl.value = JSON.stringify(featureCollection);
+  L.PM.Utils.findLayers(map).forEach((layer) => {
+    const layerGeometry = layer.toGeoJSON().geometry;
+
+    switch (layerGeometry.type) {
+      case 'Polygon':
+        finalGeoJson.coordinates.push(layerGeometry.coordinates);
+        break;
+      case 'MultiPolygon':
+        finalGeoJson.coordinates.push(...layerGeometry.coordinates);
+        break;
+    }
+  });
+
+  editJsonEl.value = JSON.stringify(finalGeoJson);
 }
 
 map.on('layeradd', (evt) => {
