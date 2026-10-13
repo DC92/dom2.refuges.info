@@ -4,34 +4,36 @@ const map = L.map('carte-edit', {
   }),
   tileLayers = couchesDeFond(<?=json_encode($config_wri["mapKeys"])?>),
   polygoneId = <?=$vue->polygone->id_polygone??0?>,
-  editJsonEl = document.getElementById('edit-json'),
-  exportPolygonEl = document.getElementById('export-polygon'),
-  massifsLayer = new WriPolygonLayer(
-    1,
-    'https://<?=$_SERVER["SERVER_NAME"]?>',
-    '<?=$vue->version_features?>', {
-      bbox: true,
-      pmIgnore: true, // Pour qu'ils ne soient pas modifiables
-      snapIgnore: false, // Pour que les polygones en édition puisse coller aux contours de massifs
-    }
-  ).addTo(map);
+  editJsonEl = document.getElementById('edit-json'), // Champ d'édition du geoJson
+  exportPolygonEl = document.getElementById('export-polygon'); // Lien d'export dans la page
 
+// Couche de massifs en fond pour servir de base au snapping
+new WriPolygonLayer(
+  1, // Seulement les massifs
+  'https://<?=$_SERVER["SERVER_NAME"]?>',
+  '<?=$vue->version_features?>', {
+    bbox: true, // Pour ne pas ralentir le snapping
+    pmIgnore: true, // Pour qu'ils ne soient pas modifiables
+    snapIgnore: false, // Pour que les polygones en édition puisse coller aux contours de massifs
+  }
+).addTo(map);
 
+// Chargement du fond de carte actif
+(tileLayers[decodeURI(positionMemoryArray[3])] ||
+  Object.values(tileLayers)[0] // La première par défaut
+).addTo(map);
+
+// Affiche le polygone courant
 if (editJsonEl.value) {
-  // Affiche le polygone courant
   const polygonesAEditer = L.geoJson(JSON.parse(editJsonEl.value)); //.addTo(map);
 
   // Wait an instant the end of geoman init to add it
   setInterval(() => polygonesAEditer.addTo(map), 50);
 
   map.fitBounds(polygonesAEditer.getBounds());
-} else {
-  // Position par défaut
+} else
+  // Ou positionne la carte par défaut sur la dernière position utilisée
   map.setView([positionMemoryArray[1], positionMemoryArray[2]], positionMemoryArray[0]);
-}
-
-// Chargement du fond de carte actif
-(tileLayers[decodeURI(positionMemoryArray[3])] || Object.values(tileLayers)[0]).addTo(map);
 
 // Contrôles
 controlesComuns(map).forEach((control) => control.addTo(map));
@@ -54,11 +56,45 @@ map.pm.addControls({
   drawText: false,
   rotateMode: false,
 });
-
 map.pm.enableGlobalEditMode();
 map.pm.setGlobalOptions({
   snappable: true,
 });
+
+// Restitue le geoJson édité
+function layerChanged() {
+  const polygons = []; // On sépare les polygones dans des objets séparés
+
+  L.PM.Utils.findLayers(map).forEach((layer) => {
+    const layerGeometry = layer.toGeoJSON().geometry;
+
+    switch (layerGeometry.type) {
+      case 'Polygon':
+        polygons.push(turf.polygon(layerGeometry.coordinates));
+        break;
+      case 'MultiPolygon':
+        layerGeometry.coordinates.forEach((polCoods) => {
+          polygons.push(turf.polygon(polCoods));
+        });
+    }
+  });
+
+  if (polygons.length > 1) {
+    // let finalGeometryCollection = turf.featureCollection(polygons);
+    const finalGeometryCollection = turf.union(turf.featureCollection(polygons));
+
+    console.log(finalGeometryCollection); //DCMM
+  }
+  //TODO BUG else
+
+  // Ecrit le résultat dans le champ d'édition pour pouvoir le remonter au serveur
+  //  editJsonEl.value = JSON.stringify(finalGeometryCollection.geometry);
+}
+map.on('layeradd', (evt) => {
+  layerChanged();
+  evt.layer.on('pm:edit', layerChanged);
+});
+map.on('pm:remove', layerChanged);
 
 // Changement de format d'export
 function formatChange() {
@@ -68,35 +104,3 @@ function formatChange() {
 }
 if (exportPolygonEl)
   formatChange(); // Init de la page
-
-// Restitue le geoJson édité
-function layerChanged() {
-  const plgs = []; // On crée un objet polygone par polygone sur le sdessin
-
-  L.PM.Utils.findLayers(map).forEach((layer) => {
-    const layerGeometry = layer.toGeoJSON().geometry;
-
-    switch (layerGeometry.type) {
-      case 'Polygon':
-        plgs.push(turf.polygon(layerGeometry.coordinates));
-
-        break;
-      case 'MultiPolygon':
-        layerGeometry.coordinates.forEach((polCoods) => {
-          plgs.push(turf.polygon(polCoods));
-        });
-        break;
-    }
-  });
-
-  let tfcn = turf.featureCollection(plgs);
-  if (plgs.length > 1)
-    tfcn = turf.union(tfcn);
-  editJsonEl.value = JSON.stringify(tfcn.geometry);
-}
-
-map.on('layeradd', (evt) => {
-  layerChanged();
-  evt.layer.on('pm:edit', layerChanged);
-});
-map.on('pm:remove', layerChanged);
