@@ -13,7 +13,6 @@ require_once ("nav.php");
 require_once ("polygone.php");
 require_once ("leaflet_libs.php");
 add_lib('geoman/leaflet-geoman.js', 'chemin_leaflet');
-add_lib('turf/turf.min.js', 'chemin_leaflet');
 
 
 // Quelques trucs spécifiques

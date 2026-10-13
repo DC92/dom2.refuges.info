@@ -18,6 +18,15 @@ new WriPolygonLayer(
   }
 ).addTo(map);
 
+// Contrôles
+controlesComuns(map).forEach((control) => control.addTo(map));
+L.control.layers(tileLayers, ).addTo(map);
+map.doubleClickZoom.disable();
+new ControlPolygonsUpload({
+  title: 'Importer un fichier',
+}).addTo(map);
+positionMemoryControl(map);
+
 // Chargement du fond de carte actif
 (tileLayers[decodeURI(positionMemoryArray[3])] ||
   Object.values(tileLayers)[0] // La première par défaut
@@ -31,18 +40,11 @@ if (editJsonEl.value) {
   setInterval(() => polygonesAEditer.addTo(map), 50);
 
   map.fitBounds(polygonesAEditer.getBounds());
-} else
+} else {
   // Ou positionne la carte par défaut sur la dernière position utilisée
   map.setView([positionMemoryArray[1], positionMemoryArray[2]], positionMemoryArray[0]);
+}
 
-// Contrôles
-controlesComuns(map).forEach((control) => control.addTo(map));
-L.control.layers(tileLayers, ).addTo(map);
-map.doubleClickZoom.disable();
-new ControlPolygonsUpload({
-  title: 'Importer un fichier',
-}).addTo(map);
-positionMemoryControl(map);
 
 // Editeur
 map.pm.addControls({
@@ -59,48 +61,51 @@ map.pm.addControls({
 map.pm.enableGlobalEditMode();
 map.pm.setGlobalOptions({
   snappable: true,
+  allowSelfIntersection: false,
 });
+
 
 // Restitue le geoJson édité
 function layerChanged() {
-  const polygons = []; // On sépare les polygones dans des objets séparés
+  // On crée un multipolygone unique qui va englober tous les polygones du massif
+  const finalGeoJson = {
+    type: 'MultiPolygon',
+    coordinates: [],
+  };
 
+  // On recherche les polygones éditables
   L.PM.Utils.findLayers(map).forEach((layer) => {
     const layerGeometry = layer.toGeoJSON().geometry;
 
     switch (layerGeometry.type) {
       case 'Polygon':
-        polygons.push(turf.polygon(layerGeometry.coordinates));
+        // On ajoute le polygone
+        finalGeoJson.coordinates.push(layerGeometry.coordinates);
         break;
       case 'MultiPolygon':
-        layerGeometry.coordinates.forEach((polCoods) => {
-          polygons.push(turf.polygon(polCoods));
-        });
+        // On ajoute séparément les polygones inclus
+        finalGeoJson.coordinates.push(...layerGeometry.coordinates);
+        break;
     }
   });
 
-  if (polygons.length > 1) {
-    // let finalGeometryCollection = turf.featureCollection(polygons);
-    const finalGeometryCollection = turf.union(turf.featureCollection(polygons));
-
-    console.log(finalGeometryCollection); //DCMM
-  }
-  //TODO BUG else
-
-  // Ecrit le résultat dans le champ d'édition pour pouvoir le remonter au serveur
-  //  editJsonEl.value = JSON.stringify(finalGeometryCollection.geometry);
+  // Ecriture du résultat dans la zone d'édition de la page
+  editJsonEl.value = JSON.stringify(finalGeoJson);
 }
+
 map.on('layeradd', (evt) => {
-  layerChanged();
-  evt.layer.on('pm:edit', layerChanged);
+  layerChanged(); // A la création du polynome
+  evt.layer.on('pm:edit', layerChanged); // A l'édition du polygone
 });
-map.on('pm:remove', layerChanged);
+map.on('pm:remove', layerChanged); // A la suppression du polygone
+
 
 // Changement de format d'export
-function formatChange() {
+function formatChange() { // Réponse au changement d'état de l'input select
   exportPolygonEl.firstElementChild.href = '/api/polygones' +
     '?massif=' + polygoneId +
     '&format=' + exportPolygonEl.lastElementChild.value;
 }
+
 if (exportPolygonEl)
   formatChange(); // Init de la page

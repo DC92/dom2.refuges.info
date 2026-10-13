@@ -1,11 +1,10 @@
+<link type="text/css" rel="stylesheet" href="/leaflet/geoman/leaflet-geoman.css"><?php //TODO mettre ailleurs ?>
+
 <div class="contenu noprint">
   <h3 id="titrepage">
     <?=$vue->titre?>
   </h3>
 </div>
-
-<?php //TODO mettre ailleurs ?>
-<link type="text/css" rel="stylesheet" href="/leaflet/geoman/leaflet-geoman.css">
 
 <div id="carte-edit"></div>
 
@@ -59,16 +58,16 @@
     <?php } ?>
   </fieldset>
 
-  <div id="edit-help-modify">
-    <p>Bouton en triangle pour créér un nouveau polygone</p>
+  <div id="edit-help-modify" class="leaflet-pm-toolbar">
+    <p><span class="leaflet-pm-icon-polygon"></span> créér un nouveau polygone</p>
     <p>- puis sur chaque emplacement de sommet</p>
     <p>- le fermer pour finir</p>
-    <p>Bouton flèche pour éditer les polygones</p>
+    <p><span class="leaflet-pm-icon-edit"></span> éditer les polygones</p>
     <p>- déplacer un sommet pour modifier la forme d'un polygone</p>
     <p>- déplacer le milieu d'un segment pour créer un sommet</p>
     <p>- clic droit sur un sommet pour le supprimer</p>
-    <p>Bouton ciseaux pour enlever une partie d'un polygone ou faireun trou</p>
-    <p>Bouton gomme pour supprimer des polygones</p>
+    <p><span class="leaflet-pm-icon-cut"></span> enlever une partie d'un polygone ou faire un trou</p>
+    <p><span class="leaflet-pm-icon-delete"></span> supprimer des polygones</p>
   </div>
 
   <?php if (isset($vue->polygone->id_polygone)) { ?>

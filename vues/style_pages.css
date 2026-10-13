@@ -565,8 +565,23 @@ a img {
 
 .leaflet-control-upload.buttonSelected span,
 .leaflet-control-upload:not(.buttonSelected) input {
-  display:none;
+  display: none;
 }
+
+#edit-help-modify {
+  margin: 5px;
+}
+
+#edit-help-modify span {
+  display: inline-block;
+  background-repeat: no-repeat;
+  height: 16px;
+  width: 16px;
+  background-color: white;
+  background-size: 14px;
+  background-position: center;
+}
+
 
 /* Menu deplié */
 @media screen and (min-width: 641px) and (min-height: 361px) {
