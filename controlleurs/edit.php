@@ -14,7 +14,6 @@ require_once ("polygone.php");
 require_once ("leaflet_libs.php");
 add_lib('geoman/leaflet-geoman.js', 'chemin_leaflet');
 
-
 // Quelques trucs spécifiques
 if(!isset($vue->polygone) && isset($vue->contenu))
   $vue->polygone = $vue->contenu; // En édition, c'est la même chose
