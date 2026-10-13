@@ -71,25 +71,28 @@ if (exportPolygonEl)
 
 // Restitue le geoJson édité
 function layerChanged() {
-  const finalGeoJson = {
-    type: 'MultiPolygon',
-    coordinates: [],
-  };
+  const plgs = []; // On crée un objet polygone par polygone sur le sdessin
 
   L.PM.Utils.findLayers(map).forEach((layer) => {
     const layerGeometry = layer.toGeoJSON().geometry;
 
     switch (layerGeometry.type) {
       case 'Polygon':
-        finalGeoJson.coordinates.push(layerGeometry.coordinates);
+        plgs.push(turf.polygon(layerGeometry.coordinates));
+
         break;
       case 'MultiPolygon':
-        finalGeoJson.coordinates.push(...layerGeometry.coordinates);
+        layerGeometry.coordinates.forEach((polCoods) => {
+          plgs.push(turf.polygon(polCoods));
+        });
         break;
     }
   });
 
-  editJsonEl.value = JSON.stringify(finalGeoJson);
+  let tfcn = turf.featureCollection(plgs);
+  if (plgs.length > 1)
+    tfcn = turf.union(tfcn);
+  editJsonEl.value = JSON.stringify(tfcn.geometry);
 }
 
 map.on('layeradd', (evt) => {
