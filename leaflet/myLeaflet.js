@@ -198,6 +198,8 @@ class IGNTileLayer extends L.tileLayer {
   }
 }
 
+//TODO GPS : affichage distance au touch sur une carte
+
 /*********************************************************
  * Rotating marker to be used in L.Control.Gps           *
  * which indicates the direction in which we are looking *
