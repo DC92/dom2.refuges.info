@@ -13,7 +13,9 @@ const map = L.map('carte-accueil'),
 
 // Couches refuges.info de la page 
 if (typeof sessionStorage.checkedLayers !== 'string')
-  sessionStorage.checkedLayers = 'Cabane non gardée,Refuge gardé,Gîte d\'étape';
+  sessionStorage.checkedLayers =
+  localStorage.checkedLayers ||
+  'Cabane non gardée,Refuge gardé,Gîte d\'étape';
 
 // Chargement du fond de carte actif
 (tileLayers[decodeURI(positionMemoryArray[3])] || Object.values(tileLayers)[0]).addTo(map);
@@ -130,7 +132,8 @@ function addRemoveOverlay() {
   }
 
   // Mémorise dans la mémoire de l'explorateur
-  sessionStorage.checkedLayers = checkedLayersNames.join(',');
+  localStorage.checkedLayers =
+    sessionStorage.checkedLayers = checkedLayersNames.join(',');
 
   exportCarteEl.children[1].href = '/api/bbox' +
     '?type_points=' + checkedLayersTypes.join(',') +

@@ -76,7 +76,10 @@ class WriPOILayer extends L.geoJson {
           // Preload icons
           //TODO don't do it twice
           for (const name in iconList)
-            document.body.insertAdjacentHTML('beforeend', '<img style="display:none" src="/images/icones/' + name + '.svg"/>')
+            document.body.insertAdjacentHTML(
+              'beforeend',
+              '<img style="display:none" src="/images/icones/' + name + '.svg"/>'
+            );
         }
 
         // Trigger for who needs it
