@@ -49,6 +49,7 @@ if (editJsonEl.value) {
 // Editeur
 map.pm.addControls({
   oneBlock: true,
+  cutPolygon: false, // Commenter pour activer le bouton ciseaux
   drawCircle: false,
   drawCircleMarker: false,
   drawMarker: false,
