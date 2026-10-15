@@ -2,12 +2,9 @@
 body{
   color:white;background:#543;
   margin:0;
-    height:100%;
+  height:100%;
 }
-html,
-#scrolable{
-    height:100%;
-}
+html,#scrolable{height:100%}
 h2,p{margin:0}
 .basdepage{display:none}
 
@@ -19,30 +16,30 @@ h2,p{margin:0}
   float:left;
   height:70%;
   width:70%;
-  background:#333;
 }
 /* Mobile vertical rouge */
 @media (max-aspect-ratio: 2/3) {
   .carte{
-    background:#422;
+    width:100%;
   }
 }
 /* Mobile horizontal bleu */
 @media (min-aspect-ratio: 3/2) {
   .carte{
     height:100%;
-    background:#224;
   }
 }
 </style>
 
 <div class="contenu-accueil">
-<div class="carte"></div>
+<div id="carte-accueil" class="carte"></div>
 
-  <p>    <b>Refuges.info</b> est un site web contributif et non commercial qui regroupe et présente des informations sur les possibilités de se réfugier lors d’une sortie en randonnée ou en montagne.<br>
+<div class="entete">
+<p><b>Refuges.info</b> est un site web contributif et non commercial qui regroupe et présente des informations sur les possibilités de se réfugier lors d’une sortie en randonnée ou en montagne.<br>
 C'est un site collaboratif où les informations sont fournies, mises à jour et complétées par VOUS ! (c'est à dire les utilisateurs du site). <br>
 Il a été créé pour compléter et corriger les informations disponibles sur d'autres supports, en particulier les pictogrammes "refuge" et "abris" des cartes topographiques.<br>
-<a href="/wiki/">En savoir plus...</a>      </p>
+<a href="/wiki/">En savoir plus...</a></p>
+</div>
     <h4>8667 points, 494 massifs</h4>
     
     <h5>Autres zones :</h5>
