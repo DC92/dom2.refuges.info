@@ -101,6 +101,7 @@ class WriPolygonLayer extends L.geoJson {
       style: (feature) => ({
         stroke: false,
         color: feature.properties.couleur,
+        ...options,
       }),
 
       onEachFeature: (feature, layer) => {
@@ -115,7 +116,6 @@ class WriPolygonLayer extends L.geoJson {
             }).openTooltip();
 
         if (options.click) {
-          //TODO inhibate cursor on hover
           // Mouse hover & click
           layer.on(
             'mouseover mouseout', (evt) => {
@@ -129,7 +129,13 @@ class WriPolygonLayer extends L.geoJson {
               location.href = '/nav/' + evt.sourceTarget.feature.id;
             },
           });
-        }
+        } else
+          // Remove cursor pointer on hover
+          layer.on({
+            mouseover: (evt) => {
+              evt.target.getElement().style.cursor = 'grab';
+            },
+          });
       },
       ...options,
     });
@@ -137,31 +143,45 @@ class WriPolygonLayer extends L.geoJson {
     if (options.bbox)
       // Wait for the attachment to the map to get the map reference
       this.on('add', (evtAdd) => {
-        this.fetchUrlDataBbox(url, evtAdd.target._map);
+        this.fetchUrlDataBbox(evtAdd.target._map, url);
 
         // Get event when the map is moved to refresh the bbox
         evtAdd.target._map.on('dragend', (evtDragEnd) => {
           this.clearLayers();
-          this.fetchUrlDataBbox(url, evtDragEnd.target);
+          this.fetchUrlDataBbox(evtDragEnd.target, url);
         });
       });
     else
-      this.fetchUrlData(url);
+      this.fetchUrlData(url, options);
   }
 
-  fetchUrlDataBbox = function(url, map) {
+  fetchUrlDataBbox = function(map, url) {
     const b = map.getBounds(),
       bbox = [b.getWest(), b.getSouth(), b.getEast(), b.getNorth()];
 
     this.fetchUrlData(url + '&bbox=' + bbox.join(','));
   }
 
-  fetchUrlData = function(url) {
+  fetchUrlData = function(url, options = {}) {
     fetch(url)
       .catch((error) => console.error(error + ' fetching ' + url))
       .then((response) => response.json())
       .then((json) => {
-        if (json.features.length)
+        if (options.polygonIdToReverse)
+          json.features.forEach((f) => {
+            if (f.id === options.polygonIdToReverse) {
+              f.geometry.coordinates.unshift([
+                [ // Set the world first to make the polygons holes
+                  [-180, -90],
+                  [-180, 90],
+                  [180, 90],
+                  [180, -90]
+                ]
+              ]);
+              this.addData(f);
+            }
+          });
+        else if (json.features.length)
           this.addData(json);
 
         // Trigger for who needs it
