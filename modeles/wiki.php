@@ -9,10 +9,14 @@ require_once ("mise_en_forme_texte.php");
 require_once ("bdd.php");
 
 // Fonction pour réaliser un lien vers une page du wiki dont le nom est passé en paramètre
-function lien_wiki($page="/")
+function lien_wiki($page="/",$langue=null)
 {
     global $config_wri;
-    return $config_wri['base_wiki'].strtolower($page);
+    // $langue : null = langue de la page courante ; 'fr' ou 'en' pour faire le lien vers l'autre version
+    $suffixe_langue = ($langue===null) ? $config_wri['url_suffixe_langue'] : (($langue==='fr') ? '' : $langue.'/');
+    // /wiki/page/en/ ; la page d'accueil du wiki s'appelle "index" (appelée sans nom ou avec "/", elle donne /wiki/index)
+    $page = ($page==="/" or $page==="") ? 'index' : strtolower($page);
+    return $config_wri['base_wiki'].$page.($suffixe_langue ? '/'.$suffixe_langue : '');
 }
 
 // retourne plus simplement le contenu de la page wiki concernée au format html (le bbcode a été converti en html)
@@ -22,6 +26,18 @@ function wiki_page_html($page)
     $contenu_page=wiki_page_brut($page);
     if (!empty($contenu_page->erreur))
         return "Contenu inexistant";
+
+    // Traduction (table traductions, type 'wiki', clé = nom de la page) : seulement si elle correspond à la version
+    // actuelle de la page, sinon on garde le français plutôt que d'afficher une information périmée
+    if (($config_wri['langue_courante'] ?? 'fr') != 'fr')
+    {
+      $res_traduction = $pdo->query("SELECT texte,hash_source FROM traductions
+        WHERE type_objet='wiki' AND id_objet=0 AND champ='contenu'
+          AND cle_objet=".$pdo->quote($page)." AND langue=".$pdo->quote($config_wri['langue_courante']));
+      $traduction = $res_traduction ? $res_traduction->fetch() : false;
+      if ($traduction && $traduction->texte !== null && $traduction->hash_source === md5($contenu_page->contenu))
+        $contenu_page->contenu = $traduction->texte;
+    }
 
   // Horible bidouille pour le wiki contact
   // A intégrer dans le bbcode2html ?
@@ -81,7 +97,7 @@ function wiki_page_brut($page)
 
   $page=$res->fetch();
   if (!$page)
-    return erreur("Cette page du wiki n'existe pas");
+    return erreur(_("Cette page du wiki n'existe pas"));
   return $page;
 }
 
@@ -108,6 +124,7 @@ function supprimer_page($page)
   $res=$pdo->query($query);
   if (!$res)
     return erreur("Requête SQL impossible à executer",$query);
+  $pdo->query("delete from traductions where type_objet='wiki' and cle_objet=$page"); // ses traductions aussi
 
   return ok("Page supprimée et tout ses anciennes versions");
 }

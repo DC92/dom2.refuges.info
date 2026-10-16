@@ -2,10 +2,18 @@ Fichiers changés
 controlleurs\edit.php
 includes\leaflet_libs.php
 leaflet...
+vues\bandeau.html
 vues\edit.html
 vues\edit.js
 vues\index.js
 vues\style_pages.css
+
+Fichiers avec des commentaires à ne pas remonter pour l'instant
+controlleurs\index.php
+vues\_cartes_leaflet.js
+vues\_page.html
+vues\nav.html
+vues\point_formulaire_modification.js
 
 Répertoire non modifiés par dom2
 forum...
@@ -14,10 +22,8 @@ images...
 modeles...
 ressources...
 routes...
+/*
 
-Fichiers avec des commentaires à ne pas remonter pour l'instant
-controlleurs\index.php
-vues\_cartes_leaflet.js
-vues\_page.html
-vues\nav.html
-vues\point_formulaire_modification.js
+Traduction : il reste
+vues/edit.html
+vues/index.js
