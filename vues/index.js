@@ -55,8 +55,8 @@ const argsPolygones = [
     click: true,
   }
 ];
-overlays['Régions'] = new WriPolygonLayer(11, ...argsPolygones);
-overlays['Massifs'] = new WriPolygonLayer(1, ...argsPolygones);
+overlays[libelle('Régions')] = new WriPolygonLayer(11, ...argsPolygones);
+overlays[libelle('Massifs')] = new WriPolygonLayer(1, ...argsPolygones);
 
 // Couche externe d'itinéraires
 overlays[libelle('Itinéraires')] = coucheItineraires;
@@ -89,17 +89,35 @@ positionMemoryControl(map);
 //DCMM FUTUR HORS RESEAU new ControlPreload().addTo(map); // Ajoute de controle pre-load OpenHikingMap
 
 // Externalise le sélecteur de points pour les grandes largeurs de fenêtre
-['load', 'resize'].forEach(evtName =>
-  window.addEventListener(evtName, () => {
-    const conteneurSelecteurExterneEl = document.getElementById('conteneur-selecteur-points'),
-      conteneurDeuxiemeSelecteurEl = document.querySelector(':has(>.leaflet-control-layers)').lastChild.lastChild,
-      selecteursPointsEl = document.querySelector('.leaflet-control-layers-overlays:has(img)');
+const conteneurSelecteurExterneEl = document.getElementById('conteneur-selecteur-points'),
+  conteneurDeuxiemeSelecteurEl = document.querySelector(':has(>.leaflet-control-layers)').lastChild.lastChild,
+  selecteursPointsEl = document.querySelector('.leaflet-control-layers-overlays:has(img)');
 
-    if (window.innerWidth < 800)
-      conteneurDeuxiemeSelecteurEl.appendChild(selecteursPointsEl);
-    else
-      conteneurSelecteurExterneEl.insertBefore(selecteursPointsEl, conteneurSelecteurExterneEl.firstElementChild);
-  }));
+if (conteneurSelecteurExterneEl)
+  ['load', 'resize'].forEach(evtName =>
+    window.addEventListener(evtName, () => {
+      if (window.innerWidth < 800)
+        conteneurDeuxiemeSelecteurEl.appendChild(selecteursPointsEl);
+      else
+        conteneurSelecteurExterneEl.insertBefore(selecteursPointsEl, conteneurSelecteurExterneEl.firstElementChild);
+    }));
+
+new WriPolygonLayer(
+  1,
+  'https://<?=$_SERVER["SERVER_NAME"]?>',
+  '<?=$vue->version_features?>', {
+    labels: false,
+    click: false,
+    polygonIdToReverse: 4,
+    color: '#808080',
+    fillOpacity: 0.5,
+  }
+).addTo(map);
+//DCMM TODO utiliser le hash
+//DCMM TODO dustinguer les régions
+//DCMM TODO positionner la carte sur le massif
+const hashMassifId = window.location.hash.replace('#', '');
+console.log(hashMassifId); //DCMM
 
 // Lance le chargement de la carte
 map.setView([positionMemoryArray[1], positionMemoryArray[2]], positionMemoryArray[0]);
@@ -110,9 +128,10 @@ const overlaySelectors = document.querySelectorAll('.leaflet-control-layers-over
 
 /* eslint-disable-next-line no-unused-vars */
 function copyExportLink() {
-  navigator.clipboard.writeText(exportCarteEl.lastChild.href)
-    .then(() => alert(<?=json_encode(_("Lien d'exportation copié dans le presse-papier :"))?> + '\n\n' +
-      exportCarteEl.lastChild.href));
+  if (exportCarteEl)
+    navigator.clipboard.writeText(exportCarteEl.lastChild.href)
+      .then(() => alert(<?=json_encode(_("Lien d'exportation copié dans le presse-papier :"))?> + '\n\n' +
+        exportCarteEl.lastChild.href));
 }
 
 // Mémorisation des couches de points et l'export
@@ -141,14 +160,16 @@ function addRemoveOverlay() {
   localStorage.checkedLayers =
     sessionStorage.checkedLayers = checkedLayersNames.join(',');
 
-  exportCarteEl.children[1].href = '/api/bbox' +
-    '?type_points=' + checkedLayersTypes.join(',') +
-    '&nb_points=all' +
-    '&bbox=' + fc(bsw.lng) + ',' + fc(bsw.lat) + ',' + cc(bne.lng) + ',' + cc(bne.lat) +
-    '&format=' + exportCarteEl.firstElementChild.value;
+  if (exportCarteEl) {
+    exportCarteEl.children[1].href = '/api/bbox' +
+      '?type_points=' + checkedLayersTypes.join(',') +
+      '&nb_points=all' +
+      '&bbox=' + fc(bsw.lng) + ',' + fc(bsw.lat) + ',' + cc(bne.lng) + ',' + cc(bne.lat) +
+      '&format=' + exportCarteEl.firstElementChild.value;
 
-  // Affiche seulement quand il y a quelque chose à exporter
-  exportCarteEl.style.display = checkedLayersTypes.length ? 'block' : 'none';
+    // Affiche seulement quand il y a quelque chose à exporter
+    exportCarteEl.style.display = checkedLayersTypes.length ? 'block' : 'none';
+  }
 }
 
 map.on('overlayadd', () => addRemoveOverlay()); // Also for init
