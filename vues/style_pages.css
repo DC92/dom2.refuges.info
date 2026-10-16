@@ -494,6 +494,13 @@ a img {
 }
 
 /* Carte de l'accueil */
+#carte-accueil {
+  margin-top: 5px;
+  max-width: 750px; /* Ne pas spécifier de width permet de cadrer à la place disponible en tenant compte de l'ascenseur */
+  max-height: 90vh; /* Evite d'avoir une carte recouvrant l'écran et empêchant de récupérer le scrool */
+  aspect-ratio: 4/3; /* La carte prendra le meilleur des précédents */
+}
+
 /* Sélecteur externe au delà d'une certaine largeur de fenêtre */
 @media screen and (max-width: 799.99px) {
   #conteneur-selecteur-points {

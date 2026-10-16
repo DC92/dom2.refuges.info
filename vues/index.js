@@ -1,6 +1,5 @@
-/* global couchesIconesWRI, WriPOILayer, WriPolygonLayer,
- couchesDeFond, couchesOverpass, coucheItineraires,
- controlesComuns, positionMemoryControl, positionMemoryArray */
+/* global couchesIconesWRI, WriPOILayer, WriPolygonLayer, couchesDeFond, couchesOverpass,
+ coucheItineraires, controlesComuns, positionMemoryControl, positionMemoryArray */
 
 const map = L.map('carte-accueil'),
   tileLayers = couchesDeFond(<?=json_encode($config_wri["mapKeys"])?>),
@@ -10,6 +9,12 @@ const map = L.map('carte-accueil'),
     showCoverageOnHover: false, // Optional: hides the cluster bounds polygon
     maxClusterRadius: 30, // Less clusters
   });
+
+// Libellés affichés des couches (traduits par le serveur). L'identité d'une couche reste son nom français : c'est lui qui est
+// mémorisé dans sessionStorage et cherché dans couchesIconesWRI ; on repasse donc du libellé affiché à ce nom (identite).
+const libelles = <?=json_encode($vue->libelles_couches)?>,
+  identite = Object.fromEntries(Object.entries(libelles).map(([fr, traduit]) => [traduit, fr])),
+  libelle = (nom) => libelles[nom] || nom;
 
 // Couches refuges.info de la page 
 if (typeof sessionStorage.checkedLayers !== 'string')
@@ -22,7 +27,7 @@ if (typeof sessionStorage.checkedLayers !== 'string')
 
 // points WRI
 for (const [nom, args] of Object.entries(couchesIconesWRI)) {
-  const icone = '<img src="/images/icones/' + args[1] + '.svg"/> ' + nom, // Libellé de la ligne sélecteur
+  const icone = '<img src="/images/icones/' + args[1] + '.svg"/> ' + libelle(nom), // Libellé de la ligne sélecteur
     layer = new WriPOILayer('https://<?=$_SERVER["SERVER_NAME"]?>', args[0], '<?=$vue->version_features?>'); // Couche affichable
 
   // Il est nécéssaire de grouper les points de chaque couche pour pouvoir les sélectionner indépendament
@@ -54,11 +59,11 @@ overlays['Régions'] = new WriPolygonLayer(11, ...argsPolygones);
 overlays['Massifs'] = new WriPolygonLayer(1, ...argsPolygones);
 
 // Couche externe d'itinéraires
-overlays['Itinéraires'] = coucheItineraires;
+overlays[libelle('Itinéraires')] = coucheItineraires;
 
 // Restitution de ces 3 couches si elles sont mémorisése
-for (const [nom, layer] of Object.entries(overlays))
-  if (sessionStorage.checkedLayers.search(nom) !== -1)
+for (const [affiche, layer] of Object.entries(overlays))
+  if (sessionStorage.checkedLayers.search(identite[affiche] || affiche) !== -1) 
     layer.addTo(map);
 
 // Couches OSM OverPass
@@ -84,35 +89,17 @@ positionMemoryControl(map);
 //DCMM FUTUR HORS RESEAU new ControlPreload().addTo(map); // Ajoute de controle pre-load OpenHikingMap
 
 // Externalise le sélecteur de points pour les grandes largeurs de fenêtre
-const conteneurSelecteurExterneEl = document.getElementById('conteneur-selecteur-points'),
-  conteneurDeuxiemeSelecteurEl = document.querySelector(':has(>.leaflet-control-layers)').lastChild.lastChild,
-  selecteursPointsEl = document.querySelector('.leaflet-control-layers-overlays:has(img)');
+['load', 'resize'].forEach(evtName =>
+  window.addEventListener(evtName, () => {
+    const conteneurSelecteurExterneEl = document.getElementById('conteneur-selecteur-points'),
+      conteneurDeuxiemeSelecteurEl = document.querySelector(':has(>.leaflet-control-layers)').lastChild.lastChild,
+      selecteursPointsEl = document.querySelector('.leaflet-control-layers-overlays:has(img)');
 
-if (conteneurSelecteurExterneEl)
-  ['load', 'resize'].forEach(evtName =>
-    window.addEventListener(evtName, () => {
-      if (window.innerWidth < 800)
-        conteneurDeuxiemeSelecteurEl.appendChild(selecteursPointsEl);
-      else
-        conteneurSelecteurExterneEl.insertBefore(selecteursPointsEl, conteneurSelecteurExterneEl.firstElementChild);
-    }));
-
-new WriPolygonLayer(
-  1,
-  'https://<?=$_SERVER["SERVER_NAME"]?>',
-  '<?=$vue->version_features?>', {
-    labels: false,
-    click: false,
-    polygonIdToReverse: 4,
-    color: '#808080',
-    fillOpacity: 0.5,
-  }
-).addTo(map);
-//DCMM TODO utiliser le hash
-//DCMM TODO dustinguer les régions
-//DCMM TODO positionner la carte sur le massif
-const hashMassifId = window.location.hash.replace('#', '');
-console.log(hashMassifId); //DCMM
+    if (window.innerWidth < 800)
+      conteneurDeuxiemeSelecteurEl.appendChild(selecteursPointsEl);
+    else
+      conteneurSelecteurExterneEl.insertBefore(selecteursPointsEl, conteneurSelecteurExterneEl.firstElementChild);
+  }));
 
 // Lance le chargement de la carte
 map.setView([positionMemoryArray[1], positionMemoryArray[2]], positionMemoryArray[0]);
@@ -123,10 +110,9 @@ const overlaySelectors = document.querySelectorAll('.leaflet-control-layers-over
 
 /* eslint-disable-next-line no-unused-vars */
 function copyExportLink() {
-  if (exportCarteEl)
-    navigator.clipboard.writeText(exportCarteEl.lastChild.href)
-    .then(() => alert('Lien d\'exportation copié dans le presse-papier :\n\n' +
-      exportCarteEl.children[1].href));
+  navigator.clipboard.writeText(exportCarteEl.lastChild.href)
+    .then(() => alert(<?=json_encode(_("Lien d'exportation copié dans le presse-papier :"))?> + '\n\n' +
+      exportCarteEl.lastChild.href));
 }
 
 // Mémorisation des couches de points et l'export
@@ -140,7 +126,8 @@ function addRemoveOverlay() {
 
   // Calcul des couches sélectionnées
   for (const lsInputEl of overlaySelectors) {
-    const nom = lsInputEl.parentElement.lastChild.innerText.trim();
+    const affiche = lsInputEl.parentElement.lastChild.innerText.trim(),
+      nom = identite[affiche] || affiche; // identité (nom français) du libellé affiché
 
     if (lsInputEl.checked) {
       checkedLayersNames.push(nom);
@@ -154,16 +141,14 @@ function addRemoveOverlay() {
   localStorage.checkedLayers =
     sessionStorage.checkedLayers = checkedLayersNames.join(',');
 
-  if (exportCarteEl) {
-    exportCarteEl.children[1].href = '/api/bbox' +
-      '?type_points=' + checkedLayersTypes.join(',') +
-      '&nb_points=all' +
-      '&bbox=' + fc(bsw.lng) + ',' + fc(bsw.lat) + ',' + cc(bne.lng) + ',' + cc(bne.lat) +
-      '&format=' + exportCarteEl.firstElementChild.value;
+  exportCarteEl.children[1].href = '/api/bbox' +
+    '?type_points=' + checkedLayersTypes.join(',') +
+    '&nb_points=all' +
+    '&bbox=' + fc(bsw.lng) + ',' + fc(bsw.lat) + ',' + cc(bne.lng) + ',' + cc(bne.lat) +
+    '&format=' + exportCarteEl.firstElementChild.value;
 
-    // Affiche seulement quand il y a quelque chose à exporter
-    exportCarteEl.style.display = checkedLayersTypes.length ? 'block' : 'none';
-  }
+  // Affiche seulement quand il y a quelque chose à exporter
+  exportCarteEl.style.display = checkedLayersTypes.length ? 'block' : 'none';
 }
 
 map.on('overlayadd', () => addRemoveOverlay()); // Also for init
