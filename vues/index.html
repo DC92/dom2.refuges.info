@@ -1,6 +1,6 @@
 <style>
 body{
-  color:white;background:#543;
+  wcolor:white;wbackground:#543;
   margin:0;
   height:100%;
 }
@@ -31,15 +31,32 @@ h2,p{margin:0}
 }
 </style>
 
-<div class="contenu-accueil">
+<div id="conteneur-selecteur-points"></div>
 <div id="carte-accueil" class="carte"></div>
+<div class="noprint texte-tout-petit"><?=_("Cliquer sur un cluster pour dissocier les points proches.")?></div>
 
-<div class="entete">
-<p><b>Refuges.info</b> est un site web contributif et non commercial qui regroupe et présente des informations sur les possibilités de se réfugier lors d’une sortie en randonnée ou en montagne.<br>
-C'est un site collaboratif où les informations sont fournies, mises à jour et complétées par VOUS ! (c'est à dire les utilisateurs du site). <br>
-Il a été créé pour compléter et corriger les informations disponibles sur d'autres supports, en particulier les pictogrammes "refuge" et "abris" des cartes topographiques.<br>
-<a href="/wiki/">En savoir plus...</a></p>
-</div>
+<p id="export-carte">
+  <?=_("Export des points refuges.info sélectionnés sur la carte au format")?>
+  <select name="format" onchange="addRemoveOverlay()">
+    <option value="gpx"><?=_("gpx (Complet, pour logiciel type osmand, marble, ...)")?></option>
+    <option value="gpx_garmin"><?=_("gpx (compatible basecamp/mapsource/viking/...)")?></option>
+    <option value="gpx_simple"><?=_("gpx simplifié (sans remarques et accès)")?></option>
+    <option value="kml"><?=_("kml (googlearth et plusieurs applications smartphone)")?></option>
+    <option value="gml">Geography Markup Language</option>
+    <option value="csv"><?=_("csv (tableurs)")?></option>
+    <option value="xml"><?=_("xml Spécifique à notre base, exhaustif")?></option>
+    <option value="json">Json</option>
+    <option value="geojson">GeoJson</option>
+  </select>
+  <a title="<?=_("Télécharger le fichier")?>"><?=_("Télécharger")?></a>
+  <?=_("ou")?> <a onclick="copyExportLink()" title="<?=_("Copier le lien dans le clipboard")?>">🔗</a>
+</p>
+
+<div class="entete" style="float:left">
+   <?=wiki_page_html("contenu_accueil")?>
+   <?=wiki_page_html("nouvelles_generales")?>
+ </div>
+
     <h4>8667 points, 494 massifs</h4>
     
     <h5>Autres zones :</h5>
@@ -120,6 +137,7 @@ Il a été créé pour compléter et corriger les informations disponibles sur d
           <a href="/nav/5337/zone/Rhodopes/?id_polygone_type=1">Rhodopes</a>
         </li>
           </ul>
+<div class="contenu-accueil">
   </div>
 
   <div class="tablo">
