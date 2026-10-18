@@ -284,45 +284,6 @@ class MarkerCompass extends L.Marker {
   }
 }
 
-/*****************************
- * Saving the map position   *
- * Lon, lat, zoom, baselayer *
- *****************************/
-let positionMemoryArray = []; // For use during the page lifetime.
-
-// Store lon/lat/zoom/baselayer in sessionStorage 
-/* eslint-disable-next-line no-unused-vars */
-function positionMemoryControl(map) {
-  ['baselayerchange', 'zoom', 'moveend'].forEach((evtName) => {
-    map.on(evtName, () => {
-      const baselayerSelector = document.querySelectorAll('.leaflet-control-layers-base input'),
-        pos = map.getCenter();
-      let baseLayerName = null;
-
-      for (const lsInputEl of baselayerSelector)
-        if (lsInputEl.checked || !baseLayerName)
-          baseLayerName = lsInputEl.parentElement.lastChild.innerText.trim();
-
-      // To restart from this position at the next map change
-      positionMemoryArray = [
-        map.getZoom().toFixed(1),
-        pos.lat.toFixed(5),
-        pos.lng.toFixed(5),
-        encodeURI(baseLayerName),
-      ];
-      sessionStorage.positionMemory = positionMemoryArray.join('/');
-
-      // To resume from the last position at the start of the next session
-      const pa2 = Array.from(positionMemoryArray);
-      pa2[0] = Math.max(5, Math.min(10, pa2[0])); // In zoom limits
-      localStorage.positionMemory = pa2.join('/');
-
-      // Hides labels for large scales
-      map.getContainer().classList[map.getZoom() < 8 ? 'add' : 'remove']('hide-tooltips');
-    });
-  });
-}
-
 /**********************
  * Editeur de massifs *
  **********************/
@@ -399,6 +360,117 @@ const ControlPolygonsUpload = L.Control.extend({
     return buttonDiv;
   }
 });
+
+/*****************************
+ * Saving the map position   *
+ * Lon, lat, zoom, baselayer *
+ *****************************/
+let positionMemoryArray = []; // For use during the page lifetime.
+
+// Store lon/lat/zoom/baselayer in sessionStorage 
+/* eslint-disable-next-line no-unused-vars */
+function positionMemoryControl(map) {
+  ['baselayerchange', 'zoom', 'moveend'].forEach((evtName) => {
+    map.on(evtName, () => {
+      const baselayerSelector = document.querySelectorAll('.leaflet-control-layers-base input'),
+        pos = map.getCenter();
+      let baseLayerName = null;
+
+      for (const lsInputEl of baselayerSelector)
+        if (lsInputEl.checked || !baseLayerName)
+          baseLayerName = lsInputEl.parentElement.lastChild.innerText.trim();
+
+      // To restart from this position at the next map change
+      positionMemoryArray = [
+        map.getZoom().toFixed(1),
+        pos.lat.toFixed(5),
+        pos.lng.toFixed(5),
+        encodeURI(baseLayerName),
+      ];
+      sessionStorage.positionMemory = positionMemoryArray.join('/');
+
+      // To resume from the last position at the start of the next session
+      const pa2 = Array.from(positionMemoryArray);
+      pa2[0] = Math.max(5, Math.min(10, pa2[0])); // In zoom limits
+      localStorage.positionMemory = pa2.join('/');
+
+      // Hides labels for large scales
+      map.getContainer().classList[map.getZoom() < 8 ? 'add' : 'remove']('hide-tooltips');
+    });
+  });
+}
+
+//DCMM PERMALINK
+/*****************************
+ * Saving the map position   *
+ * Lon, lat, zoom, baselayer *
+ *****************************/
+
+// Store lon/lat/zoom/baselayer in sessionStorage 
+/* eslint-disable-next-line no-unused-vars */
+function permalinkControl(map, defaut) {
+  /*priorités:
+    defaut
+    localStorage
+    sessionStorage
+    hash
+    forcage page (position d'une fiche)
+  */
+  const regex = /#?([0-9.]+)\/([0-9.]+)\/([0-9.]+)\/?(.*)/u;
+
+  const prio2 = (localStorage.permalink || sessionStorage.permalink || defaut || '6/2/47');
+  console.log(prio2); //DCMM
+  const prio = prio2.match(regex);
+  console.log(prio); //DCMM
+  console.log(location.hash); //DCMM
+  const hashmatch = location.hash.match(regex);
+  console.log(hashmatch); //DCMM
+  prio.fill(...hashmatch); // Écrase les index 1, 2 et 3 par 0
+  console.log(prio); //DCMM
+
+  /*****************************************
+   * Position et couche de fond par défaut *
+   *****************************************/
+  localStorage.permalink ||= '5/46.5/5'; // S'il n'y a aucune donnée enregistrée
+  sessionStorage.permalink ||= localStorage.permalink; // En début de session, on repart de la dernière position
+  let permalinkArray = sessionStorage.permalink.split('/'); // Pour usage au cours de la durée de vie de la page.
+
+  ['baselayerchange', 'zoom', 'moveend'].forEach((evtName) => {
+    map.on(evtName, () => {
+      const baselayerSelector = document.querySelectorAll('.leaflet-control-layers-base input'),
+        pos = map.getCenter();
+      let baseLayerName = null;
+
+      for (const lsInputEl of baselayerSelector)
+        if (lsInputEl.checked || !baseLayerName)
+          baseLayerName = lsInputEl.parentElement.lastChild.innerText.trim();
+
+      // To restart from this position at the next map change
+      permalinkArray = [
+        map.getZoom().toFixed(1),
+        pos.lat.toFixed(5),
+        pos.lng.toFixed(5),
+        encodeURI(baseLayerName),
+      ];
+      sessionStorage.permalink = permalinkArray.join('/');
+
+      // To resume from the last position at the start of the next session
+      const pa2 = Array.from(permalinkArray);
+      pa2[0] = Math.max(5, Math.min(10, pa2[0])); // In zoom limits
+      localStorage.permalink = pa2.join('/');
+
+      // Hides labels for large scales
+      map.getContainer().classList[map.getZoom() < 8 ? 'add' : 'remove']('hide-tooltips');
+    });
+  });
+
+  // Chargement du fond de carte actif
+  if ((sessionStorage.permalink || '').split('/')[3])
+    (tileLayers[decodeURI((sessionStorage.permalink || '').split('/')[3])]).addTo(map);
+
+  // Lance le chargement de la carte
+  map.setView([permalinkArray[1], permalinkArray[2]], permalinkArray[0]);
+}
 
 //DCMM FUTUR HORS RESEAU
 /****************************************************

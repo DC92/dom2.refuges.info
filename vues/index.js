@@ -1,5 +1,4 @@
-/* global couchesIconesWRI, WriPOILayer, WriPolygonLayer, couchesDeFond, couchesOverpass,
- coucheItineraires, controlesComuns, positionMemoryControl, positionMemoryArray */
+/* global couchesIconesWRI, WriPOILayer, WriPolygonLayer, couchesDeFond, couchesOverpass, coucheItineraires, controlesComuns */
 
 const map = L.map('carte-accueil'),
   tileLayers = couchesDeFond(<?=json_encode($config_wri["mapKeys"])?>),
@@ -12,7 +11,7 @@ const map = L.map('carte-accueil'),
 
 // Libellés affichés des couches (traduits par le serveur). L'identité d'une couche reste son nom français : c'est lui qui est
 // mémorisé dans sessionStorage et cherché dans couchesIconesWRI ; on repasse donc du libellé affiché à ce nom (identite).
-const libelles = <?=json_encode($vue->libelles_couches)?>,
+const libelles = <?=json_encode($vue->libelles_couches)?> ,
   identite = Object.fromEntries(Object.entries(libelles).map(([fr, traduit]) => [traduit, fr])),
   libelle = (nom) => libelles[nom] || nom;
 
@@ -21,9 +20,6 @@ if (typeof sessionStorage.checkedLayers !== 'string')
   sessionStorage.checkedLayers =
   localStorage.checkedLayers ||
   'Cabane non gardée,Refuge gardé,Gîte d\'étape';
-
-// Chargement du fond de carte actif
-(tileLayers[decodeURI(positionMemoryArray[3])] || Object.values(tileLayers)[0]).addTo(map);
 
 // points WRI
 for (const [nom, args] of Object.entries(couchesIconesWRI)) {
@@ -63,7 +59,7 @@ overlays[libelle('Itinéraires')] = coucheItineraires;
 
 // Restitution de ces 3 couches si elles sont mémorisése
 for (const [affiche, layer] of Object.entries(overlays))
-  if (sessionStorage.checkedLayers.search(identite[affiche] || affiche) !== -1) 
+  if (sessionStorage.checkedLayers.search(identite[affiche] || affiche) !== -1)
     layer.addTo(map);
 
 // Couches OSM OverPass
@@ -86,7 +82,12 @@ L.control.layers(tileLayers).addTo(map);
 L.control.layers(null, overlays).addTo(map);
 controlesComuns(map).forEach((control) => control.addTo(map));
 positionMemoryControl(map);
+//DCMM FUTUR PERMALINK permalinkControl(map,'5/46.5/5');
 //DCMM FUTUR HORS RESEAU new ControlPreload().addTo(map); // Ajoute de controle pre-load OpenHikingMap
+
+// Chargement du fond de carte actif
+//DCMM remove when PERMALINK
+(tileLayers[decodeURI(positionMemoryArray[3])] || Object.values(tileLayers)[0]).addTo(map);
 
 // Externalise le sélecteur de points pour les grandes largeurs de fenêtre
 const conteneurSelecteurExterneEl = document.getElementById('conteneur-selecteur-points'),
@@ -103,24 +104,27 @@ if (conteneurSelecteurExterneEl)
     }));
 
 new WriPolygonLayer(
-  1,
-  'https://<?=$_SERVER["SERVER_NAME"]?>',
-  '<?=$vue->version_features?>', {
-    labels: false,
-    click: false,
-    polygonIdToReverse: 4,
-    color: '#808080',
-    fillOpacity: 0.5,
-  }
-).addTo(map);
-//DCMM TODO utiliser le hash
-//DCMM TODO dustinguer les régions
-//DCMM TODO positionner la carte sur le massif
-const hashMassifId = window.location.hash.replace('#', '');
-console.log(hashMassifId); //DCMM
+    1,
+    'https://<?=$_SERVER["SERVER_NAME"]?>',
+    '<?=$vue->version_features?>', {
+      labels: false,
+      click: false,
+      polygonIdToReverse: 4,
+      color: '#808080',
+      fillOpacity: 0.5,
+    }
+  )
+  .addTo(map); //DCMM remove PERMALINK
 
 // Lance le chargement de la carte
+//DCMM remove PERMALINK
 map.setView([positionMemoryArray[1], positionMemoryArray[2]], positionMemoryArray[0]);
+
+//DCMM TODO utiliser le hash
+//DCMM TODO distinguer les régions
+//DCMM TODO positionner la carte sur le massif
+const hashMassifId = window.location.hash.replace('#', '');
+//console.log(hashMassifId); //DCMM
 
 // Calcul du lien d'export
 const overlaySelectors = document.querySelectorAll('.leaflet-control-layers-overlays input'), // Lien d'export de la carte
@@ -130,8 +134,8 @@ const overlaySelectors = document.querySelectorAll('.leaflet-control-layers-over
 function copyExportLink() {
   if (exportCarteEl)
     navigator.clipboard.writeText(exportCarteEl.lastChild.href)
-      .then(() => alert(<?=json_encode(_("Lien d'exportation copié dans le presse-papier :"))?> + '\n\n' +
-        exportCarteEl.lastChild.href));
+    .then(() => alert('<?=json_encode(_("Lien copié dans le presse-papier"))?> :\n\n' + //TDOD BUG affiche les "
+      exportCarteEl.lastChild.href)); //TODO BUG undefined
 }
 
 // Mémorisation des couches de points et l'export
@@ -144,6 +148,7 @@ function addRemoveOverlay() {
     checkedLayersTypes = [];
 
   // Calcul des couches sélectionnées
+  //TODO BUG ne mémorise pas
   for (const lsInputEl of overlaySelectors) {
     const affiche = lsInputEl.parentElement.lastChild.innerText.trim(),
       nom = identite[affiche] || affiche; // identité (nom français) du libellé affiché
