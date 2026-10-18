@@ -31,31 +31,44 @@ h2,p{margin:0}
 }
 </style>
 
-<div id="conteneur-selecteur-points"></div>
-<div id="carte-accueil" class="carte"></div>
-<div class="noprint texte-tout-petit"><?=_("Cliquer sur un cluster pour dissocier les points proches.")?></div>
+<div class="contenu index">
+  <!-- PRESENTATION   -->
 
-<p id="export-carte">
-  <?=_("Export des points refuges.info sélectionnés sur la carte au format")?>
-  <select name="format" onchange="addRemoveOverlay()">
-    <option value="gpx"><?=_("gpx (Complet, pour logiciel type osmand, marble, ...)")?></option>
-    <option value="gpx_garmin"><?=_("gpx (compatible basecamp/mapsource/viking/...)")?></option>
-    <option value="gpx_simple"><?=_("gpx simplifié (sans remarques et accès)")?></option>
-    <option value="kml"><?=_("kml (googlearth et plusieurs applications smartphone)")?></option>
-    <option value="gml">Geography Markup Language</option>
-    <option value="csv"><?=_("csv (tableurs)")?></option>
-    <option value="xml"><?=_("xml Spécifique à notre base, exhaustif")?></option>
-    <option value="json">Json</option>
-    <option value="geojson">GeoJson</option>
-  </select>
-  <a title="<?=_("Télécharger le fichier")?>"><?=_("Télécharger")?></a>
-  <?=_("ou")?> <a onclick="copyExportLink()" title="<?=_("Copier le lien dans le clipboard")?>">🔗</a>
-</p>
+  <p>
+    <?=wiki_page_html("contenu_accueil")?>
+    <?=wiki_page_html("nouvelles_generales")?>
+  </p>
 
+  <div class="tablo">
+    <h4><?=sprintf(_("%s points, %s massifs"), $vue->stat->nbpoints, $vue->stat->nbmassifs)?></h4>
+
+  <div id="conteneur-selecteur-points"></div>
+  <div id="carte-accueil" class="carte"></div>
+  <div class="noprint texte-tout-petit"><?=_("Cliquer sur un cluster pour dissocier les points proches.")?></div>
+
+  <p id="export-carte">
+    <?=_("Export des points refuges.info sélectionnés sur la carte au format")?>
+    <select name="format" onchange="addRemoveOverlay()">
+      <option value="gpx"><?=_("gpx (Complet, pour logiciel type osmand, marble, ...)")?></option>
+      <option value="gpx_garmin"><?=_("gpx (compatible basecamp/mapsource/viking/...)")?></option>
+      <option value="gpx_simple"><?=_("gpx simplifié (sans remarques et accès)")?></option>
+      <option value="kml"><?=_("kml (googlearth et plusieurs applications smartphone)")?></option>
+      <option value="gml">Geography Markup Language</option>
+      <option value="csv"><?=_("csv (tableurs)")?></option>
+      <option value="xml"><?=_("xml Spécifique à notre base, exhaustif")?></option>
+      <option value="json">Json</option>
+      <option value="geojson">GeoJson</option>
+    </select>
+    <a title="<?=_("Télécharger le fichier")?>"><?=_("Télécharger")?></a>
+    <?=_("ou")?> <a onclick="copyExportLink()" title="<?=_("Copier le lien dans le clipboard")?>">🔗</a>
+  </p>
+
+<!--
 <div class="entete" style="float:left">
    <?=wiki_page_html("contenu_accueil")?>
    <?=wiki_page_html("nouvelles_generales")?>
  </div>
+-->
 
     <h4>8667 points, 494 massifs</h4>
     
@@ -137,11 +150,9 @@ h2,p{margin:0}
           <a href="/nav/5337/zone/Rhodopes/?id_polygone_type=1">Rhodopes</a>
         </li>
           </ul>
-<div class="contenu-accueil">
   </div>
 
   <div class="tablo">
-        
     <h4>8667 points dans la base. Les 10 derniers ajoutés :</h4>
     <ul>
               <li>
@@ -294,4 +305,5 @@ h2,p{margin:0}
 <h1>Bla bla </h1>
 <p>Bla bla </p>
 
+</div>
 </div>
