@@ -9,12 +9,17 @@
   color: black;
 }
 
-/* Inhibe l'affichage du pavé coordonnées quand il n'y a rien dedans */
+/* Do not display a layer control that has no options */
+.leaflet-control-layers:not(:has(label)) {
+  display: none;
+}
+
+/* Prevents the coordinate panel from being displayed when it contains no data */
 .leaflet-control-coordinates:has(span:empty) {
   display: none;
 }
 
-/* VECTORLAYERS */
+/* VECTOR LAYERS */
 /* Etiquettes icones et polygones */
 .leaflet-tooltip {
   top: -18px;
@@ -47,7 +52,8 @@
 }
 
 /* DCMM FUTUR HORS RESEAU */
-/* Préchargement des tuiles */
+/* TILE LAYERS */
+/* Tile preloading */
 .leaflet-control-preload button {
   margin-right: 8px;
   padding: 0;

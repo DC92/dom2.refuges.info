@@ -1,309 +1,138 @@
 <style>
-body{
-  wcolor:white;wbackground:#543;
-  margin:0;
-  height:100%;
+#carte-accueil {
+  margin-top: 5px;
+  wmax-width: 750px; /* Ne pas spécifier de width permet de cadrer à la place disponible en tenant compte de l'ascenseur */
+  max-height: 90vh; /* Evite d'avoir une carte recouvrant l'écran et empêchant de récupérer le scrool */
+  aspect-ratio: 4/3; /* La carte prendra le meilleur des précédents */
 }
-html,#scrolable{height:100%}
-h2,p{margin:0}
-.basdepage{display:none}
-
-.contenu-accueil{
-  height:100%;
-  margin:0;
-}
-.carte{
-  float:left;
-  height:70%;
-  width:70%;
-}
-/* Mobile vertical rouge */
+  .texte-tout-petit{text-align: center;}
+/* Mobile vertical */
 @media (max-aspect-ratio: 2/3) {
   .carte{
     width:100%;
   }
+.presentation-accueil:not(:hover)  {
+text-overflow: ellipsis;
+height:1em;
+overflow: hidden;
+white-space: nowrap;
+margin:10px;
 }
-/* Mobile horizontal bleu */
+  .texte-tout-petit{background:red}
+}
+/* Mobile horizontal */
 @media (min-aspect-ratio: 3/2) {
   .carte{
     height:100%;
   }
+  .texte-tout-petit{background:blue}
 }
 </style>
 
-<div class="contenu index">
-  <!-- PRESENTATION   -->
-
-  <p>
-    <?=wiki_page_html("contenu_accueil")?>
-    <?=wiki_page_html("nouvelles_generales")?>
-  </p>
-
-  <div class="tablo">
-    <h4><?=sprintf(_("%s points, %s massifs"), $vue->stat->nbpoints, $vue->stat->nbmassifs)?></h4>
-
-  <div id="conteneur-selecteur-points"></div>
-  <div id="carte-accueil" class="carte"></div>
-  <div class="noprint texte-tout-petit"><?=_("Cliquer sur un cluster pour dissocier les points proches.")?></div>
-
-  <p id="export-carte">
-    <?=_("Export des points refuges.info sélectionnés sur la carte au format")?>
-    <select name="format" onchange="addRemoveOverlay()">
-      <option value="gpx"><?=_("gpx (Complet, pour logiciel type osmand, marble, ...)")?></option>
-      <option value="gpx_garmin"><?=_("gpx (compatible basecamp/mapsource/viking/...)")?></option>
-      <option value="gpx_simple"><?=_("gpx simplifié (sans remarques et accès)")?></option>
-      <option value="kml"><?=_("kml (googlearth et plusieurs applications smartphone)")?></option>
-      <option value="gml">Geography Markup Language</option>
-      <option value="csv"><?=_("csv (tableurs)")?></option>
-      <option value="xml"><?=_("xml Spécifique à notre base, exhaustif")?></option>
-      <option value="json">Json</option>
-      <option value="geojson">GeoJson</option>
-    </select>
-    <a title="<?=_("Télécharger le fichier")?>"><?=_("Télécharger")?></a>
-    <?=_("ou")?> <a onclick="copyExportLink()" title="<?=_("Copier le lien dans le clipboard")?>">🔗</a>
-  </p>
-
-<!--
-<div class="entete" style="float:left">
-   <?=wiki_page_html("contenu_accueil")?>
-   <?=wiki_page_html("nouvelles_generales")?>
- </div>
--->
-
-    <h4>8667 points, 494 massifs</h4>
-    
-    <h5>Autres zones :</h5>
-    <ul class="liste-massifs">
-              <li>
-          <a href="/nav/5242/zone/Acores/?id_polygone_type=1">Açores</a>
-        </li>
-              <li>
-          <a href="/nav/352/zone/Alpes/?id_polygone_type=1">Alpes</a>
-        </li>
-              <li>
-          <a href="/nav/5283/zone/Alpes-dinariques/?id_polygone_type=1">Alpes dinariques</a>
-        </li>
-              <li>
-          <a href="/nav/5087/zone/Alpes-scandinaves/?id_polygone_type=1">Alpes scandinaves</a>
-        </li>
-              <li>
-          <a href="/nav/374/zone/Andes/?id_polygone_type=1">Andes</a>
-        </li>
-              <li>
-          <a href="/nav/5237/zone/Apennins/?id_polygone_type=1">Apennins</a>
-        </li>
-              <li>
-          <a href="/nav/3309/zone/Atlas/?id_polygone_type=1">Atlas</a>
-        </li>
-              <li>
-          <a href="/nav/5243/zone/Balkans/?id_polygone_type=1">Balkans</a>
-        </li>
-              <li>
-          <a href="/nav/5240/zone/Canaries/?id_polygone_type=1">Canaries</a>
-        </li>
-              <li>
-          <a href="/nav/5405/zone/Carpates/?id_polygone_type=1">Carpates</a>
-        </li>
-              <li>
-          <a href="/nav/748/zone/Corse/?id_polygone_type=1">Corse</a>
-        </li>
-              <li>
-          <a href="/nav/5244/zone/Epire-Macedoine-Pinde-mer-Egee/?id_polygone_type=1">Épire, Macédoine, Pinde, mer Égée</a>
-        </li>
-              <li>
-          <a href="/nav/5124/zone/Guadeloupe/?id_polygone_type=1">Guadeloupe</a>
-        </li>
-              <li>
-          <a href="/nav/5113/zone/Iles-Australes-de-l-ocean-Indien/?id_polygone_type=1">Îles Australes de l'océan Indien</a>
-        </li>
-              <li>
-          <a href="/nav/5238/zone/Iles-Britanniques/?id_polygone_type=1">Îles Britanniques</a>
-        </li>
-              <li>
-          <a href="/nav/3307/zone/Jura-elargi/?id_polygone_type=1">Jura élargi</a>
-        </li>
-              <li>
-          <a href="/nav/5241/zone/Madere/?id_polygone_type=1">Madère</a>
-        </li>
-              <li>
-          <a href="/nav/5125/zone/Martinique/?id_polygone_type=1">Martinique</a>
-        </li>
-              <li>
-          <a href="/nav/5085/zone/Massif-Armoricain/?id_polygone_type=1">Massif Armoricain </a>
-        </li>
-              <li>
-          <a href="/nav/50/zone/Massif-Central/?id_polygone_type=1">Massif Central</a>
-        </li>
-              <li>
-          <a href="/nav/749/zone/Nouvelle-Caledonie/?id_polygone_type=1">Nouvelle-Calédonie</a>
-        </li>
-              <li>
-          <a href="/nav/5111/zone/Peninsule-Iberique/?id_polygone_type=1">Péninsule Ibérique</a>
-        </li>
-              <li>
-          <a href="/nav/351/zone/Pyrenees/?id_polygone_type=1">Pyrénées</a>
-        </li>
-              <li>
-          <a href="/nav/746/zone/Reunion/?id_polygone_type=1">Réunion</a>
-        </li>
-              <li>
-          <a href="/nav/5337/zone/Rhodopes/?id_polygone_type=1">Rhodopes</a>
-        </li>
-          </ul>
-  </div>
-
-  <div class="tablo">
-    <h4>8667 points dans la base. Les 10 derniers ajoutés :</h4>
-    <ul>
-              <li>
-          <b>14/10/26</b>
-          &nbsp;Ajout d'un point d'eau                        par <a href="/forum/memberlist.php?mode=viewprofile&u=8047">fabr</a>
-                                  : <a href="/point/11809/point-d-eau/Source-de-Chabaud/">Source de Chabaud</a>
-        </li>
-              <li>
-          <b>13/10/26</b>
-          &nbsp;Ajout d'un point d'eau                      : <a href="/point/11808/point-d-eau/Robinet-au-cimetiere-de-Brezons/">Robinet au cimetière de Brezons</a>
-        </li>
-              <li>
-          <b>13/10/26</b>
-          &nbsp;Ajout d'un point d'eau                        par <a href="/forum/memberlist.php?mode=viewprofile&u=4206">Patrick</a>
-                                  : <a href="/point/11807/point-d-eau/Fontaine-d-Estezargues/">Fontaine d'Estézargues</a>
-        </li>
-              <li>
-          <b>12/10/26</b>
-          &nbsp;Ajout d'une cabane non gardée                        par <a href="/forum/memberlist.php?mode=viewprofile&u=11435">Marc1951</a>
-                                  : <a href="/point/11806/cabane-non-gardee/Spesbourg/">Spesbourg</a>
-        </li>
-              <li>
-          <b>11/10/26</b>
-          &nbsp;Ajout d'un point d'eau                      : <a href="/point/11805/point-d-eau/Robinet-a-Chaliers/">Robinet à Chaliers</a>
-        </li>
-              <li>
-          <b>09/10/26</b>
-          &nbsp;Ajout d'un point d'eau                      : <a href="/point/11804/point-d-eau/Robinet-a-Lustrande-Vallee-de-Brezons-/">Robinet à Lustrande ( Vallée de Brezons ) .</a>
-        </li>
-              <li>
-          <b>09/10/26</b>
-          &nbsp;Ajout d'une cabane non gardée                        par <a href="/forum/memberlist.php?mode=viewprofile&u=5291">Rémi</a>
-                                  : <a href="/point/11803/cabane-non-gardee/abri-du-Casse-de-la-Riviere-de-l-Est/">Abri du Cassé de la Rivière de l'Est</a>
-        </li>
-              <li>
-          <b>06/10/26</b>
-          &nbsp;Ajout d'un point d'eau                        par <a href="/forum/memberlist.php?mode=viewprofile&u=8783">crntnsbn</a>
-                                  : <a href="/point/11801/point-d-eau/Source-de-la-riviere-de-Mantet/">Source de la rivière de Mantet</a>
-        </li>
-              <li>
-          <b>05/10/26</b>
-          &nbsp;Ajout d'un point d'eau                      : <a href="/point/11800/point-d-eau/Robinet-a-Pailherols/">Robinet à Pailherols</a>
-        </li>
-              <li>
-          <b>04/10/26</b>
-          &nbsp;Ajout d'une cabane non gardée                        par <a href="/forum/memberlist.php?mode=viewprofile&u=1141">Claude Mauguier</a>
-                                  : <a href="/point/11799/cabane-non-gardee/Local-technique-de-la-Pointe-Benedicte/">Local technique de la Pointe Bénédicte</a>
-        </li>
-            <li>
-        <a href="/nouvelles/?nombre=100&amp;quoi=points"
-          title="Voir les 100 derniers points ajoutés sur le site">
-          <b>Plus...</b>
-        </a>
-      </li>
-    </ul>
-
-    <h4>37516 commentaires. Les 10 derniers :</h4>
-    <ul>
-              <li>
-          <b>14/10/26</b>
-          &nbsp;Commentaire
-                      sur <a href="/point/11808/point-d-eau/Robinet-au-cimetiere-de-Brezons/#C56801">Robinet au cimetière de Brezons</a>
-                          dans le
-              <a href="/nav/5257/massif/Monts-du-Cantal/">massif des Monts du Cantal</a>
-                    </li>
-              <li>
-          <b>14/10/26</b>
-          &nbsp;Commentaire
-                        par Chloé                                   sur <a href="/point/2681/cabane-non-gardee/cabane-du-Mont-Lozere/#C56800">cabane du Mont Lozère</a>
-                          dans le
-              <a href="/nav/5260/massif/monts-des-Cevennes/">massif des monts des Cévennes</a>
-                    </li>
-              <li>
-          <b>14/10/26</b>
-          &nbsp;Commentaire
-                        par Nathan                                  sur <a href="/point/9620/cabane-non-gardee/abri-de-l-ancien-telepherique/#C56798">abri de l'ancien téléphérique</a>
-                          dans le
-              <a href="/nav/751/massif/Vosges/">massif des Vosges</a>
-                    </li>
-              <li>
-          <b>14/10/26</b>
-          &nbsp;Commentaire
-                        par <a href="/forum/memberlist.php?mode=viewprofile&u=8047">fabr</a>
-                                  sur <a href="/point/5632/cabane-non-gardee/cabane-de-Chabaud/#C56797">cabane de Chabaud</a>
-                          dans le
-              <a href="/nav/42/massif/Trois-Eveches/">massif des Trois-Évêchés</a>
-                    </li>
-              <li>
-          <b>14/10/26</b>
-          &nbsp;Commentaire
-                        par <a href="/forum/memberlist.php?mode=viewprofile&u=8047">fabr</a>
-                                  sur <a href="/point/11809/point-d-eau/Source-de-Chabaud/#C56796">Source de Chabaud</a>
-                          dans le
-              <a href="/nav/42/massif/Trois-Eveches/">massif des Trois-Évêchés</a>
-                    </li>
-              <li>
-          <b>14/10/26</b>
-          &nbsp;Commentaire
-                        par <a href="/forum/memberlist.php?mode=viewprofile&u=8047">fabr</a>
-                                  sur <a href="/point/11809/point-d-eau/Source-de-Chabaud/#C56795">Source de Chabaud</a>
-                          dans le
-              <a href="/nav/42/massif/Trois-Eveches/">massif des Trois-Évêchés</a>
-                    </li>
-              <li>
-          <b>14/10/26</b>
-          &nbsp;Commentaire
-                        par <a href="/forum/memberlist.php?mode=viewprofile&u=8047">fabr</a>
-                                  sur <a href="/point/5633/cabane-non-gardee/cabane-de-Joyeux/#C56794">cabane de Joyeux</a>
-                          dans le
-              <a href="/nav/42/massif/Trois-Eveches/">massif des Trois-Évêchés</a>
-                    </li>
-              <li>
-          <b>14/10/26</b>
-          &nbsp;Commentaire
-                        par <a href="/forum/memberlist.php?mode=viewprofile&u=8047">fabr</a>
-                                  sur <a href="/point/5633/cabane-non-gardee/cabane-de-Joyeux/#C56793">cabane de Joyeux</a>
-                          dans le
-              <a href="/nav/42/massif/Trois-Eveches/">massif des Trois-Évêchés</a>
-                    </li>
-              <li>
-          <b>14/10/26</b>
-          &nbsp;Commentaire
-                        par <a href="/forum/memberlist.php?mode=viewprofile&u=8047">fabr</a>
-                                  sur <a href="/point/5633/cabane-non-gardee/cabane-de-Joyeux/#C56792">cabane de Joyeux</a>
-                          dans le
-              <a href="/nav/42/massif/Trois-Eveches/">massif des Trois-Évêchés</a>
-                    </li>
-              <li>
-          <b>14/10/26</b>
-          &nbsp;Commentaire
-                        par <a href="/forum/memberlist.php?mode=viewprofile&u=8072">mLv1JP</a>
-                                  sur <a href="/point/91/cabane-non-gardee/refuge-de-la-Grande-Montagne-de-Presle/#C56791">refuge de la Grande Montagne de Presle</a>
-                          dans le
-              <a href="/nav/7/massif/Belledonne/">massif de Belledonne</a>
-                    </li>
-            <li>
-        <a href="/nouvelles/?nombre=100&quoi=commentaires"
-          title="Les 100derniers commentaires dans refuges.info">
-          <b>Plus...</b>
-        </a>
-      </li>
-    </ul>
-  </div>
-  
-  
-    
-<h2>Bla bla </h2>
-<p>Bla bla </p>
-<p>Bla bla Bla bla Bla bla Bla bla Bla bla Bla bla Bla bla Bla bla Bla bla Bla bla Bla bla Bla bla Bla bla </p>
-<h1>Bla bla </h1>
-<p>Bla bla </p>
-
+<!-- PRESENTATION -->
+<div class="presentation-accueil">
+  <span><?=wiki_page_html("contenu_accueil")?></span>
 </div>
+<div class="presentation-accueil">
+  <?=wiki_page_html("nouvelles_generales")?>
 </div>
+
+<!-- CARTE -->
+<h4><?=sprintf(_("%s points, %s massifs"), $vue->stat->nbpoints, $vue->stat->nbmassifs)?></h4>
+<div id="conteneur-selecteur-points"></div>
+<div id="carte-accueil" class="carte"></div>
+<div class="noprint texte-tout-petit"><?=_("Cliquer sur un cluster pour dissocier les points proches.")?></div>
+
+<p id="export-carte">
+  <?=_("Export des points refuges.info sélectionnés sur la carte au format")?>
+  <select name="format" onchange="addRemoveOverlay()">
+    <option value="gpx"><?=_("gpx (Complet, pour logiciel type osmand, marble, ...)")?></option>
+    <option value="gpx_garmin"><?=_("gpx (compatible basecamp/mapsource/viking/...)")?></option>
+    <option value="gpx_simple"><?=_("gpx simplifié (sans remarques et accès)")?></option>
+    <option value="kml"><?=_("kml (googlearth et plusieurs applications smartphone)")?></option>
+    <option value="gml">Geography Markup Language</option>
+    <option value="csv"><?=_("csv (tableurs)")?></option>
+    <option value="xml"><?=_("xml Spécifique à notre base, exhaustif")?></option>
+    <option value="json">Json</option>
+    <option value="geojson">GeoJson</option>
+  </select>
+  <a title="<?=_("Télécharger le fichier")?>"><?=_("Télécharger")?></a>
+  <?=_("ou")?> <a onclick="copyExportLink()" title="<?=_("Copier le lien dans le clipboard")?>">🔗</a>
+</p>
+
+<!-- NEWS POINTS -->
+<h4><?=sprintf(_("%s points dans la base. Les %s derniers ajoutés :"), $vue->stat->nbpoints, $config_wri['defaut_max_ajouts_recents'])?></h4>
+<ul>
+  <?php if (isset($vue->nouveaux_points)) foreach ($vue->nouveaux_points as $nouveau_point) { ?>
+    <li>
+      <b><?=date("d/m/y",$nouveau_point->date_creation_timestamp)?></b>
+      &nbsp;<?=$config_wri['langue_courante']=='fr' ? 'Ajout '.$nouveau_point->article_partitif_point_type.' '.$nouveau_point->nom_type : sprintf(_("Ajout : %s"), _($nouveau_point->nom_type))?>
+      <?php if ($nouveau_point->nom_createur!="") {
+        if ($nouveau_point->id_moderateur==0) { ?>
+          <?=_("par")?> <?=$nouveau_point->nom_createur?>
+        <?php } else { ?>
+          <?=_("par")?> <a href="<?=$config_wri['fiche_utilisateur'].$nouveau_point->id_moderateur?>"><?=$nouveau_point->nom_createur?></a>
+        <?php } ?>
+      <?php } ?>
+        : <a href="<?=lien_point($nouveau_point,true)?>"><?=mb_ucfirst($nouveau_point->nom)?></a>
+    </li>
+  <?php } ?>
+  <li>
+    <a href="<?=url_langue('/nouvelles/')?>?nombre=<?=$config_wri['defaut_nombre_nouvelles_page_nouvelles']?>&amp;quoi=points"
+      title="<?=sprintf(_("Voir les %s derniers points ajoutés sur le site"), $config_wri['defaut_nombre_nouvelles_page_nouvelles'])?>">
+      <b><?=_("Plus...")?></b>
+    </a>
+  </li>
+</ul>
+<br/>
+
+<!-- NEWS COMMENTAIRES -->
+<h4><?=sprintf(_("%s commentaires. Les %s derniers :"), $vue->stat->nbcomm, $config_wri['defaut_max_commentaires_recents'])?></h4>
+<ul>
+  <?php foreach ($vue->nouveaux_commentaires as $nouveau_commentaire) { ?>
+    <li>
+      <b><?=date("d/m/y",$nouveau_commentaire->ts_unix_commentaire)?></b>
+      &nbsp;<?=_("Commentaire")?>
+      <?php if ($nouveau_commentaire->auteur_commentaire!="") {
+        if ($nouveau_commentaire->id_createur_commentaire==0) { ?>
+          <?=_("par")?> <?=$nouveau_commentaire->auteur_commentaire?>
+        <?php } else { ?>
+          <?=_("par")?> <a href="<?=$config_wri['fiche_utilisateur'].$nouveau_commentaire->id_createur_commentaire?>"><?=$nouveau_commentaire->auteur_commentaire?></a>
+        <?php } ?>
+      <?php } ?>
+        <?=_("sur")?> <a href="<?=lien_point($nouveau_commentaire,true)?>#C<?=$nouveau_commentaire->id_commentaire?>"><?=$nouveau_commentaire->nom?></a>
+        <?php if (isset($nouveau_commentaire->id_polygone)) { ?>
+          <?php if ($config_wri['langue_courante']=='fr') { ?>
+            dans le
+            <a href="<?=lien_polygone($nouveau_commentaire,True)?>">massif <?=$nouveau_commentaire->article_partitif?> <?=$nouveau_commentaire->nom_polygone?></a>
+          <?php } else { ?>
+            <?=sprintf(_("dans le massif %s"), '<a href="'.lien_polygone($nouveau_commentaire,True).'">'.$nouveau_commentaire->nom_polygone.'</a>')?>
+          <?php } ?>
+        <?php } ?>
+    </li>
+  <?php } ?>
+  <li>
+    <a href="<?=url_langue('/nouvelles/')?>?nombre=<?=$config_wri['defaut_nombre_nouvelles_page_nouvelles']?>&quoi=commentaires"
+      title="<?=sprintf(_("Les %s derniers commentaires dans refuges.info"), $config_wri['defaut_nombre_nouvelles_page_nouvelles'])?>">
+      <b><?=_("Plus...")?></b>
+    </a>
+  </li>
+</ul>
+<br/>
+
+<!-- NEWS PHOTOS -->
+<h4><?=sprintf(_("%s photos. Les dernières :"), $vue->stat->nbphotos)?></h4>
+<?php if (isset($vue->nouveaux_commentaires))
+  foreach ($vue->nouveaux_commentaires as $nouveau_commentaire) {
+    if (isset ($nouveau_commentaire->photo_existe) &&
+      isset ($nouveau_commentaire->lien_photo)) { ?>
+      <a href="<?=lien_point($nouveau_commentaire,true)?>#C<?=$nouveau_commentaire->id_commentaire?>"
+        title="<?=$nouveau_commentaire->nom?>">
+        <img alt="<?=_("photo")?>" src="<?=$nouveau_commentaire->lien_photo['vignette']?>">
+      </a>
+    <?php }
+  } ?>
+<br/><br/>
+
+<!-- TOUTES les NEWS -->
+<h4><a href="<?=url_langue('/nouvelles')?>"><?=sprintf(_("Toutes les nouvelles..."))?></a></h4>

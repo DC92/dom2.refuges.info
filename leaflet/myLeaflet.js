@@ -466,6 +466,8 @@ function permalinkControl(map, defaut) {
 
   // Chargement du fond de carte actif
   if ((sessionStorage.permalink || '').split('/')[3])
+    //TODO BUG tileLayers n'est pas défini
+    /* eslint-disable-next-line no-undef */
     (tileLayers[decodeURI((sessionStorage.permalink || '').split('/')[3])]).addTo(map);
 
   // Lance le chargement de la carte

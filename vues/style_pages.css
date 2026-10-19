@@ -326,7 +326,8 @@ a:hover {
 }
 
 #export-carte {
-  display: none; /* Par défaut */
+  /* Par défaut */
+  display: none;
 }
 
 #export-carte a {
@@ -494,14 +495,13 @@ a img {
 }
 
 /* Carte de l'accueil */
-#carte-accueil {
-  margin-top: 5px;
-  max-width: 750px; /* Ne pas spécifier de width permet de cadrer à la place disponible en tenant compte de l'ascenseur */
-  max-height: 90vh; /* Evite d'avoir une carte recouvrant l'écran et empêchant de récupérer le scrool */
-  aspect-ratio: 4/3; /* La carte prendra le meilleur des précédents */
-}
 
 /* Sélecteur externe au delà d'une certaine largeur de fenêtre */
+#conteneur-selecteur-points {
+  min-width: 188px;
+  /* Réservation de l'espace pendant le chargment de la page */
+}
+
 @media screen and (max-width: 799.99px) {
   #conteneur-selecteur-points {
     display: none;
@@ -515,20 +515,6 @@ a img {
 
 #conteneur-selecteur-points label {
   display: block;
-}
-
-/* N'affiche pas un layer control qui n'a pas de choix */
-#carte-accueil .leaflet-control-layers:not(:has(label)) {
-  display: none;
-}
-
-.accueil-switcher {
-  float: right !important;
-  background-color: var(--couleur_titre) !important;
-}
-
-.accueil-switcher:not(.myol-button-selected) button {
-  opacity: 0.5;
 }
 
 /* Carte NAV présentation mobile verticale */
