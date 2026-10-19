@@ -32,6 +32,18 @@ $vue->nouveaux_points=infos_points($conditions_nouveaux_points);
 
 $vue->type="index";
 
+// Cas de la visualisation d'un massif
+if ($controlleur->url_decoupee[0] == 'massif') {
+  $id_polygone = $controlleur->url_decoupee[1] ?? NULL; // Id du polygone contenant
+  $params = new stdClass();
+  $params->ids_polygones = $id_polygone;
+  $params->avec_geometrie = 'geojson';
+  $params->intersection = NULL;
+  $polygones_bruts=infos_polygones($params);
+  if(count($polygones_bruts))
+    $vue->infos_polygone = $polygones_bruts[0];
+}
+
 // Libellés des couches de la carte d'accueil (vues/index.js). La clé est l'identité de la couche (mémorisée dans le navigateur
 // et cherchée dans couchesIconesWRI de _cartes_leaflet.js) : elle reste en français. Seul le libellé affiché est traduit.
 $vue->libelles_couches = array(

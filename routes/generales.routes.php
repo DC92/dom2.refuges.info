@@ -147,6 +147,7 @@ switch ($controlleur->url_decoupee[0])
     $controlleur->type=$controlleur->url_decoupee[0];
     break;
   case "" : // c'est la home page "/"
+  case "massif" : // c'est la home page pour visualiser un massif
     $controlleur->type="index";
     break;
   case "gestion" :

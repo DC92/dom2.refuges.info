@@ -103,22 +103,36 @@ if (conteneurSelecteurExterneEl)
         conteneurSelecteurExterneEl.insertBefore(selecteursPointsEl, conteneurSelecteurExterneEl.firstElementChild);
     }));
 
-new WriPolygonLayer(
-    1,
-    'https://<?=$_SERVER["SERVER_NAME"]?>',
-    '<?=$vue->version_features?>', {
-      labels: false,
-      click: false,
-      polygonIdToReverse: 4,
-      color: '#808080',
-      fillOpacity: 0.5,
-    }
-  )
-  .addTo(map); //DCMM remove PERMALINK
+<?php if ($controlleur->url_decoupee[0] == 'massif') { ?>
+  // Surimposition du massif
+  const gjpoly = JSON.parse('<?=$vue->infos_polygone->geometrie_geojson?>').coordinates;
 
-// Lance le chargement de la carte
-//DCMM remove PERMALINK
-map.setView([positionMemoryArray[1], positionMemoryArray[2]], positionMemoryArray[0]);
+  // Set the world first to make the polygons holes
+  gjpoly.unshift([
+    [
+      [-180, -90],
+      [-180, 90],
+      [180, 90],
+      [180, -90]
+    ]
+  ]);
+
+  const massifLayer =
+    L.polygon(flipLonLatRecursive(gjpoly), {
+      weight: 1,
+      color: '#ffffff',
+      fillColor: '#999999',
+      fillOpacity: 0.7,
+    });
+  console.log(massifLayer); //DCMM
+  console.log(massifLayer.getBounds()); //DCMM
+  massifLayer.addTo(map);
+  //DCMM TODO map.fitBounds(massifLayer.getBounds());
+<?php } else { ?>
+<?php } ?>
+  // Lance le chargement de la carte
+  //DCMM remove PERMALINK
+  map.setView([positionMemoryArray[1], positionMemoryArray[2]], positionMemoryArray[0]);
 
 //DCMM TODO utiliser le hash
 //DCMM TODO distinguer les régions
