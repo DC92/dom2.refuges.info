@@ -10,10 +10,7 @@
 }
 
 /* Do not display a layer control that has no options */
-.leaflet-control-layers:not(:has(label)) {
-  display: none;
-}
-
+.leaflet-control-layers:not(:has(label)),
 /* Prevents the coordinate panel from being displayed when it contains no data */
 .leaflet-control-coordinates:has(span:empty) {
   display: none;

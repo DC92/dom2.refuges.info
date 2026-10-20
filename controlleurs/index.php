@@ -32,7 +32,7 @@ $vue->nouveaux_points=infos_points($conditions_nouveaux_points);
 
 $vue->type="index";
 
-// Cas de la visualisation d'un massif
+// Cas de la visualisation d'un polygone (/nav)
 if ($controlleur->url_decoupee[0] == 'nav') {
   $id_polygone = $controlleur->url_decoupee[1] ?? NULL; // Id du polygone contenant
   $params = new stdClass();
