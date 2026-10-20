@@ -82,11 +82,8 @@ L.control.layers(tileLayers).addTo(map);
 L.control.layers(null, overlays).addTo(map);
 controlesComuns(map).forEach((control) => control.addTo(map));
 positionMemoryControl(map);
-//DCMM FUTUR PERMALINK permalinkControl(map,'5/46.5/5');
-//DCMM FUTUR HORS RESEAU new ControlPreload().addTo(map); // Ajoute de controle pre-load OpenHikingMap
 
 // Chargement du fond de carte actif
-//DCMM remove when PERMALINK
 (tileLayers[decodeURI(positionMemoryArray[3])] || Object.values(tileLayers)[0]).addTo(map);
 
 // Externalise le sélecteur de points pour les grandes largeurs de fenêtre
@@ -105,40 +102,15 @@ if (conteneurSelecteurExterneEl)
 
 <?php if ($controlleur->url_decoupee[0] == 'massif') { ?>
   // Surimposition du massif
-  const gjpoly = JSON.parse('<?=$vue->infos_polygone->geometrie_geojson?>').coordinates;
-
-  // Set the world first to make the polygons holes
-  gjpoly.unshift([
-    [
-      [-180, -90],
-      [-180, 90],
-      [180, 90],
-      [180, -90]
-    ]
-  ]);
-
-  const massifLayer =
-    L.polygon(flipLonLatRecursive(gjpoly), {
-      weight: 1,
-      color: '#ffffff',
-      fillColor: '#999999',
-      fillOpacity: 0.7,
-    });
-  console.log(massifLayer); //DCMM
-  console.log(massifLayer.getBounds()); //DCMM
+  const polygonLayer= JSON.parse('<?=$vue->infos_polygone->geometrie_geojson??'{}'?>'),
+  massifLayer = L.polygon(flipLonLatRecursive(polygonLayer.coordinates));
+  
   massifLayer.addTo(map);
-  //DCMM TODO map.fitBounds(massifLayer.getBounds());
+  map.fitBounds(massifLayer.getBounds());
 <?php } else { ?>
-<?php } ?>
-  // Lance le chargement de la carte
-  //DCMM remove PERMALINK
+  // Place la carte au dernier emplacement
   map.setView([positionMemoryArray[1], positionMemoryArray[2]], positionMemoryArray[0]);
-
-//DCMM TODO utiliser le hash
-//DCMM TODO distinguer les régions
-//DCMM TODO positionner la carte sur le massif
-const hashMassifId = window.location.hash.replace('#', '');
-//console.log(hashMassifId); //DCMM
+<?php } ?>
 
 // Calcul du lien d'export
 const overlaySelectors = document.querySelectorAll('.leaflet-control-layers-overlays input'), // Lien d'export de la carte
@@ -148,8 +120,9 @@ const overlaySelectors = document.querySelectorAll('.leaflet-control-layers-over
 function copyExportLink() {
   if (exportCarteEl)
     navigator.clipboard.writeText(exportCarteEl.lastChild.href)
-    .then(() => alert('<?=json_encode(_("Lien copié dans le presse-papier"))?> :\n\n' + //TDOD BUG affiche les "
+    .then(() => alert('<?=json_encode(_("Lien copié dans le presse-papier"))?> :\n\n' +
       exportCarteEl.lastChild.href)); //TODO BUG undefined
+      //TDOD BUG affiche les ""
 }
 
 // Mémorisation des couches de points et l'export
