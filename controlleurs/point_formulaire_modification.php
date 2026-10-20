@@ -88,9 +88,11 @@ elseif ( !empty($_REQUEST["id_point_type"]))
   if (count($points_modele)!=1)
   {
     // Un "modèle" est une fiche spéciale (flag modele) servant à pré-remplir le formulaire d'ajout pour un type de point
-    $probleme = count($points_modele)==0 ? "aucune fiche modèle n'existe" : "plusieurs fiches modèles existent";
+    $format_probleme = count($points_modele)==0
+      ? _("Le formulaire d'ajout n'a pas pu être pré-rempli : aucune fiche modèle n'existe pour le type de point n°%d dans la base (il en faut exactement une). Le formulaire est affiché avec des champs vides, vous pouvez le remplir normalement.")
+      : _("Le formulaire d'ajout n'a pas pu être pré-rempli : plusieurs fiches modèles existent pour le type de point n°%d dans la base (il en faut exactement une). Le formulaire est affiché avec des champs vides, vous pouvez le remplir normalement.");
     // Affiché par la vue sous le bandeau (pas de print ici : ça sortirait tout en haut de la page, avant les en-têtes)
-    $vue->avertissement="Le formulaire d'ajout n'a pas pu être pré-rempli : ".$probleme." pour le type de point n°".(int)$_REQUEST["id_point_type"]." dans la base (il en faut exactement une). Le formulaire est affiché avec des champs vides, vous pouvez le remplir normalement.";
+    $vue->avertissement=sprintf($format_probleme, (int)$_REQUEST["id_point_type"]);
     $point = new stdClass;
   }
   else
@@ -145,7 +147,8 @@ if (!empty($point->id_point))
 $bouton_valider = new stdClass;
 $bouton_valider->nom = "action";
 $bouton_valider->type = "submit";
-$bouton_valider->valeur = $bouton_valider->label = $vue->verbe; // la valeur est testée par point_modification.php, le libellé est traduit à l'affichage
+$bouton_valider->valeur = $vue->verbe; // la valeur est testée par point_modification.php, le libellé est traduit à l'affichage
+$bouton_valider->label = $vue->verbe == "Modifier" ? "Enregistrer" : $vue->verbe;
 
 // Gestion de l'ordre des boutons modifier/valider/supprimer
 $vue->champs->boutons->valider=$bouton_valider;

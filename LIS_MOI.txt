@@ -1,10 +1,9 @@
-Fichiers changés
-controlleurs\edit.php
-includes\leaflet_libs.php
+Fichiers changés NAV
+controlleurs\index.php
 leaflet...
-vues\bandeau.html
+routes\generales_routes.php
 vues\edit.html
-vues\edit.js
+vues\index.html
 vues\index.js
 vues\style_pages.css
 
@@ -23,7 +22,3 @@ modeles...
 ressources...
 routes...
 /*
-
-Traduction : il reste
-vues/edit.html
-vues/index.js

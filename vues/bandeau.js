@@ -68,10 +68,11 @@ function masqueBandeauInfo() {
 /*********** Langue de l'interface : mémorisation du choix et suggestion ***********
  Tout se passe ici, dans le navigateur, et pas côté serveur : la page est la même pour tous (cache, moteurs de recherche)
  et on n'utilise jamais l'en-tête Accept-Language mais navigator.languages, uniquement pour proposer.
- - un clic sur FR / EN du sélecteur mémorise le choix (cookie "langue", 1 an)
+ - un clic sur une langue du sélecteur mémorise le choix (cookie "langue", 1 an)
  - choix = autre langue que celle de la page : bascule vers la même page dans cette langue (jamais vers le français :
    le français est la langue de repli, on ne renvoie pas un visiteur arrivé sur une page anglaise vers le français)
- - pas de choix et navigateur en anglais (avant le français) : proposition discrète, jamais de redirection */
+ - pas de choix, page en français et navigateur dans une autre langue gérée (avant le français) : bascule automatique
+   avec le message "Switched to ... / Back to French" ; sur une page non française : proposition discrète */
 (function () {
   const alternates = {};
   document.querySelectorAll('link[rel=alternate][hreflang]').forEach(function (l) {
@@ -79,8 +80,6 @@ function masqueBandeauInfo() {
       alternates[l.hreflang] = l.href;
   });
   const langues = Object.keys(alternates);
-  if (langues.length < 2)
-    return; // page sans version dans une autre langue (erreur...)
 
   const languePage = document.documentElement.lang || 'fr';
   const bloc = document.getElementById('suggestion-langue');
@@ -99,6 +98,9 @@ function masqueBandeauInfo() {
     a.addEventListener('click', function () { memoriser(a.hreflang); });
   });
 
+  if (langues.length < 2)
+    return; // page sans version dans une autre langue (erreur, forum : la bascule se fait côté serveur avec le cookie)
+
   const choix = lireChoix();
 
   // 2. Choix déjà fait pour une langue autre que le français, page en français : on bascule
@@ -114,10 +116,12 @@ function masqueBandeauInfo() {
     origine = sessionStorage.getItem('langue_bascule');
     sessionStorage.removeItem('langue_bascule');
   } catch (e) { }
-  if (origine && alternates[origine] && bloc) {
-    document.getElementById('suggestion-langue-bascule').hidden = false;
+  const bascule = bloc && bloc.querySelector('.suggestion-bascule[data-langue="' + languePage + '"]');
+  if (origine && alternates[origine] && bascule) {
+    bascule.hidden = false;
+    bascule.querySelector('.origine').textContent = origine.toUpperCase();
     bloc.hidden = false;
-    document.getElementById('suggestion-langue-retour').addEventListener('click', function () {
+    bascule.querySelector('.retour').addEventListener('click', function () {
       memoriser(origine);
       location.href = alternates[origine];
     });
@@ -137,13 +141,25 @@ function masqueBandeauInfo() {
   }
   if (!suggeree || suggeree == languePage || suggeree == 'fr')
     return;
-  document.getElementById('suggestion-langue-proposition').hidden = false;
+  // Page en français et navigateur dans une autre langue gérée : bascule automatique. On mémorise la langue (cookie)
+  // pour que le forum, géré côté serveur, la suive aussi ; "Back to French" mémorise le français, et le message
+  // de 2 bis prévient et permet de revenir
+  if (languePage == 'fr' && alternates[suggeree]) {
+    memoriser(suggeree);
+    try { sessionStorage.setItem('langue_bascule', languePage); } catch (e) { }
+    location.replace(alternates[suggeree]);
+    return;
+  }
+  const proposition = bloc.querySelector('.suggestion-proposition[data-langue="' + suggeree + '"]');
+  if (!proposition)
+    return;
+  proposition.hidden = false;
   bloc.hidden = false;
-  document.getElementById('suggestion-langue-oui').addEventListener('click', function () {
+  proposition.querySelector('.oui').addEventListener('click', function () {
     memoriser(suggeree);
     location.href = alternates[suggeree];
   });
-  document.getElementById('suggestion-langue-non').addEventListener('click', function () {
+  proposition.querySelector('.non').addEventListener('click', function () {
     memoriser(languePage); // "pas maintenant" = on ne le redemande plus
     bloc.hidden = true;
   });
