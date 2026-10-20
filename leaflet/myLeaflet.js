@@ -400,12 +400,11 @@ function positionMemoryControl(map) {
   });
 }
 
-//DCMM PERMALINK
+//DCMM FUTUR PERMALINK
 /*****************************
  * Saving the map position   *
  * Lon, lat, zoom, baselayer *
  *****************************/
-
 // Store lon/lat/zoom/baselayer in sessionStorage 
 /* eslint-disable-next-line no-unused-vars */
 function permalinkControl(map, defaut) {

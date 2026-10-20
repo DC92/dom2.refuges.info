@@ -127,7 +127,6 @@ switch ($controlleur->url_decoupee[0])
   // sly: Pour toutes ces routes, on est dans un cas simple, l'url correspond au controlleur du même nom, factorisation !
   // et si, il faut les lister explicitement sinon, un pirate pourrait tenter de mettre de fausse page, et le code ouvrirait des fichiers que l'on ne préfère pas ouvrir
   case "point" :
-  case "nav" :
   case "edit" :
   case "wiki" :
   case "nouvelles" :
@@ -147,7 +146,7 @@ switch ($controlleur->url_decoupee[0])
     $controlleur->type=$controlleur->url_decoupee[0];
     break;
   case "" : // c'est la home page "/"
-  case "massif" : // c'est la home page pour visualiser un massif
+  case "nav" : // c'est la home page pour visualiser un polygone
     $controlleur->type="index";
     break;
   case "gestion" :

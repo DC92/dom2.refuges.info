@@ -100,9 +100,9 @@ if (conteneurSelecteurExterneEl)
         conteneurSelecteurExterneEl.insertBefore(selecteursPointsEl, conteneurSelecteurExterneEl.firstElementChild);
     }));
 
-<?php if ($controlleur->url_decoupee[0] == 'massif') { ?>
-  // Surimposition du massif
-  const polygonLayer= JSON.parse('<?=$vue->infos_polygone->geometrie_geojson??'{}'?>'),
+<?php if (!empty($vue->polygone)) { ?>
+  // Surimposition du polygone
+  const polygonLayer= JSON.parse('<?=$vue->polygone->geometrie_geojson??'{}'?>'),
   massifLayer = L.polygon(flipLonLatRecursive(polygonLayer.coordinates));
   
   massifLayer.addTo(map);

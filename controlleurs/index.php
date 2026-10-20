@@ -33,7 +33,7 @@ $vue->nouveaux_points=infos_points($conditions_nouveaux_points);
 $vue->type="index";
 
 // Cas de la visualisation d'un massif
-if ($controlleur->url_decoupee[0] == 'massif') {
+if ($controlleur->url_decoupee[0] == 'nav') {
   $id_polygone = $controlleur->url_decoupee[1] ?? NULL; // Id du polygone contenant
   $params = new stdClass();
   $params->ids_polygones = $id_polygone;
@@ -41,7 +41,7 @@ if ($controlleur->url_decoupee[0] == 'massif') {
   $params->intersection = NULL;
   $polygones_bruts=infos_polygones($params);
   if(count($polygones_bruts))
-    $vue->infos_polygone = $polygones_bruts[0];
+    $vue->polygone = $polygones_bruts[0];
 }
 
 // Libellés des couches de la carte d'accueil (vues/index.js). La clé est l'identité de la couche (mémorisée dans le navigateur
