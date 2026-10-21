@@ -24,7 +24,6 @@
 /forum/store/*
 !/forum/store/.htaccess
 !/forum/store/index.htm
-/myol/node_modules/*
 /ressources/geoip/*.dat
 node_modules
 mobile/keys.js

@@ -1,11 +1,14 @@
 Fichiers changés NAV
 controlleurs\index.php
+includes\config.php
 leaflet...
 routes\generales_routes.php
+vues\bandeau.html
 vues\edit.html
 vues\index.html
 vues\index.js
 vues\style_pages.css
+\.gitignore
 
 Fichiers avec des commentaires à ne pas remonter pour l'instant
 controlleurs\index.php
@@ -14,11 +17,13 @@ vues\_page.html
 vues\nav.html
 vues\point_formulaire_modification.js
 
-Répertoire non modifiés par dom2
-forum...
+Répertoires supprimés dom2
 gps...
+myol...
+
+Répertoires non modifiés par dom2
+forum...
 images...
 modeles...
 ressources...
 routes...
-/*

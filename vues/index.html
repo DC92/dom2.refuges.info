@@ -25,8 +25,7 @@ margin:10px;
   .carte{
     height:100%;
   }
-  .texte-tout-petit{background:blue}
-}
+ }
 </style>
 
 <?php if (empty($vue->polygone)) { ?>
@@ -70,19 +69,27 @@ margin:10px;
     <a title="<?=_("Télécharger le fichier")?>"><?=_("Télécharger")?></a>
     <?=_("ou")?> <a onclick="copyExportLink()" title="<?=_("Copier le lien dans le clipboard")?>">🔗</a>
   </p>
+<?php } ?>
 
-  <!-- AUTRES ZONES
-  //TODO
-  <h5><?=_("Autres zones :")?></h5>
-  <ul class="liste-massifs">
-    <?php if (isset($vue->zones_couvertes)) foreach ($vue->zones_couvertes AS $nom_zone => $lien) { ?>
-      <li>
-        <a href="<?=$lien?>"><?=$nom_zone?></a>
-      </li>
-    <?php } ?>
-  </ul>
-  -->
+<!-- GESTION DES POLYGONES -->
+<?php if (est_moderateur()) {
+  if (!empty($vue->polygone)) { ?>
+    <h2>
+      <a href="<?=url_langue('/edit')?>/<?=$vue->polygone->id_polygone?>">
+        <?=sprintf(_("Modifier les contours ".$vue->polygone->article_partitif." ".$vue->polygone->nom_polygone))?>
+      </a>
+    </h2>
+  <?php }
+  if (!empty($controlleur->url_decoupee[0])) { ?>
+    <h2>
+      <a href="<?=url_langue('/edit')?>">
+        <?=sprintf(_("Créer un nouveau polygone"))?>
+      </a>
+    </h2>
+  <?php }
+} ?>
 
+<?php if (empty($vue->polygone)) { ?>
   <!-- NEWS POINTS -->
   <h4><?=sprintf(_("%s points dans la base. Les %s derniers ajoutés :"), $vue->stat->nbpoints, $config_wri['defaut_max_ajouts_recents'])?></h4>
   <ul>
@@ -155,8 +162,22 @@ margin:10px;
         </a>
       <?php }
     } ?>
-  <br/><br/>
+  <br/>
 
   <!-- TOUTES les NEWS -->
-  <h4><a href="<?=url_langue('/nouvelles')?>"><?=sprintf(_("Toutes les nouvelles..."))?></a></h4>
+  <h2>
+    <a href="<?=url_langue('/nouvelles')?>">
+      <?=sprintf(_("Toutes les nouvelles..."))?>
+    </a>
+  </h2>
 <?php } ?>
+
+<!-- AUTRES ZONES -->
+<h4><?=_("Autres zones :")?></h4>
+<ul class="liste-massifs">
+  <?php if (isset($vue->zones_couvertes)) foreach ($vue->zones_couvertes AS $nom_zone => $lien) { ?>
+    <li>
+      <a href="<?=$lien?>"><?=$nom_zone?></a>
+    </li>
+  <?php } ?>
+</ul>
