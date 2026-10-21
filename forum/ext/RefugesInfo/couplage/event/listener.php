@@ -9,6 +9,10 @@ namespace RefugesInfo\couplage\event;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class listener implements EventSubscriberInterface
 {
+  // Code de langue du site (url, cookie) => nom du pack de langue phpBB, quand il est différent (le pack espagnol est es_x_tu).
+  // Le dossier language/<pack phpBB> de l'extension porte aussi ce nom.
+  const LANGUES_PHPBB = ['es' => 'es_x_tu'];
+
   public function __construct() {
     global $__time_start;
 
@@ -20,6 +24,7 @@ class listener implements EventSubscriberInterface
       'core.viewtopic_assign_template_vars_before' => 'assign_template_vars_before',
       'core.posting_modify_template_vars' => 'assign_template_vars_before',
       'core.page_footer' => 'page_footer', // includes/functions.php 4308
+      'core.user_setup' => 'user_setup',
       'core.user_add_modify_data' => 'user_add_modify_data',
       'core.user_add_modify_notifications_data' => 'user_add_modify_notifications_data',
     ];
@@ -40,6 +45,24 @@ class listener implements EventSubscriberInterface
         $point = true;
       }
     }
+  }
+
+  // Langue du forum : le choix fait dans le sélecteur du bandeau (cookie "langue" posé par vues/bandeau.js, commun au site
+  // et au forum) l'emporte sur la langue du profil et sur la langue par défaut. Sans cookie, rien ne change.
+  // Pas de langue dans l'url du forum : les robots (sans cookie) voient toujours la même version.
+  public function user_setup($event) {
+    global $request, $phpbb_root_path, $phpEx;
+
+    // (config.php n'est chargé que dans page_footer : les langues possibles sont celles qui ont un dossier language/ dans l'extension)
+    $choix = $request->variable('langue', '', false, \phpbb\request\request_interface::COOKIE);
+    $pack = self::LANGUES_PHPBB[$choix] ?? $choix;
+    if (preg_match('/^[a-z]{2}$/', $choix) && is_dir(__DIR__.'/../language/'.$pack) && file_exists($phpbb_root_path.'language/'.$pack."/common.$phpEx"))
+      $event['user_lang_name'] = $pack;
+
+    // Textes des templates de l'extension (language/<langue>/common.php)
+    $lang_set_ext = $event['lang_set_ext'];
+    $lang_set_ext[] = ['ext_name' => 'RefugesInfo/couplage', 'lang_set' => 'common'];
+    $event['lang_set_ext'] = $lang_set_ext;
   }
 
   public function page_footer() {
@@ -69,6 +92,20 @@ class listener implements EventSubscriberInterface
       'STYLE_CSS' => fichier_vue('style.css.php', 'chemin_vues', true),
       'STYLE_FORUM_CSS' => fichier_vue('style_forum.css', 'chemin_vues', true),
     ]);
+
+    // Le bandeau et le pied de page sont dans la langue du forum (le routeur du site n'est pas passé par là) :
+    // seules les langues de $config_wri['langues_url'] y ont un catalogue ; le sélecteur recharge la même page, le cookie "langue" (bandeau.js) fait le reste
+    $code_site = array_flip(self::LANGUES_PHPBB)[$user->lang_name] ?? $user->lang_name;
+    $langue = in_array($code_site, $config_wri['langues_url'], true) ? $code_site : 'fr';
+    $config_wri['langue_courante'] = $langue;
+    $config_wri['url_suffixe_langue'] = $langue == 'fr' ? '' : $langue.'/';
+    if ($langue != 'fr')
+      $config_wri['langue'] = $config_wri['locales_intl'][$langue] ?? 'en_GB'; // IntlDateFormatter
+    setlocale(LC_MESSAGES, $config_wri['locales_systeme'][$langue]);
+    bindtextdomain('refuges', $config_wri['chemin_locale']);
+    bind_textdomain_codeset('refuges', 'UTF-8');
+    textdomain('refuges');
+    $config_wri['liens_langues'] = array_fill_keys(array_merge(['fr'], $config_wri['langues_url']), $_SERVER['REQUEST_URI']);
 
     // On recrée le contexte car on n'est pas dans le MVC de WRI
     $vue = new \stdClass;
