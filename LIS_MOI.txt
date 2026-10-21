@@ -1,4 +1,5 @@
 Fichiers changés NAV
+controlleurs\edit.php
 controlleurs\index.php
 includes\config.php
 leaflet...
@@ -11,11 +12,15 @@ vues\style_pages.css
 \.gitignore
 
 Fichiers avec des commentaires à ne pas remonter pour l'instant
-controlleurs\index.php
 vues\_cartes_leaflet.js
 vues\_page.html
-vues\nav.html
 vues\point_formulaire_modification.js
+
+Fichiers supprimés dom2
+\controlleurs\nav.php
+\vues\_cartes_myol.js
+\vues\nav.html
+\vues\nav.js
 
 Répertoires supprimés dom2
 gps...
