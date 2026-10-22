@@ -79,22 +79,25 @@ function couchesDeFond(layerKeys) {
         attribution: '<a href="https://wiki.openstreetmap.org/wiki/OpenHikingMap"> OpenHikingMap</a> | ' +
           '<a href="https://openmaps.fr/map-legend/openhikingmap-legend.html">Légende</a>',
       }),
-    OpenStreetMap: L.tileLayer(
-      'https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | ' +
+    'AlpineQuest Topo': L.tileLayer(
+      '/proxy/aq-topo/?x={x}&y={y}&z={z}', {
+        maxZoom: 16,
+        attribution: '©<a href="https://alpinequest.net">AlpineQuest</a> | ' +
+          '©<a href="https://www.openstreetmap.org/copyright">OSM</a> | ' +
           '<a href="https://www.openstreetmap.org/panes/legend">Légende</a>'
       }),
     OpenTopoMap: L.tileLayer(
       'https://tile.openmaps.fr/opentopomap/{z}/{x}/{y}.png', {
         maxZoom: 18,
         attribution: '<a href="https://github.com/sletuffe/OpenTopoMap">OTM-R</a> | ' +
+          '©<a href="https://www.openstreetmap.org/copyright">OSM</a> | ' +
           '<a href="https://openmaps.fr/map-legend/opentopomap-legend.html">Légende</a>',
       }),
     'ISO-maps': L.tileLayer(
       'https://api.iso-maps.com/v1/tiles/{z}/{x}/{y}.webp?api_key=' + layerKeys.isomaps, {
         maxZoom: 16,
-        attribution: '<a href="https://www.iso-maps.com/">Isomaps</a>',
+        attribution: '<a href="https://www.iso-maps.com/">Isomaps</a> | ' +
+          '©<a href="https://www.openstreetmap.org/copyright">OSM</a>',
       }),
 
     // Thunderforest
