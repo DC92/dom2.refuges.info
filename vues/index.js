@@ -11,7 +11,7 @@ const map = L.map('carte-accueil'),
 
 // Libellés affichés des couches (traduits par le serveur). L'identité d'une couche reste son nom français : c'est lui qui est
 // mémorisé dans sessionStorage et cherché dans couchesIconesWRI ; on repasse donc du libellé affiché à ce nom (identite).
-const libelles = <?=json_encode($vue->libelles_couches)?> ,
+const libelles = <?=json_encode($vue->libelles_couches)?>,
   identite = Object.fromEntries(Object.entries(libelles).map(([fr, traduit]) => [traduit, fr])),
   libelle = (nom) => libelles[nom] || nom;
 
