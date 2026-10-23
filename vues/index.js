@@ -122,7 +122,7 @@ function copyExportLink() {
     navigator.clipboard.writeText(exportCarteEl.lastChild.href)
     .then(() => alert('<?=json_encode(_("Lien copié dans le presse-papier"))?> :\n\n' +
       exportCarteEl.lastChild.href)); //TODO BUG undefined
-      //TDOD BUG affiche les ""
+  //TODO BUG affiche les ""
 }
 
 // Mémorisation des couches de points et l'export
