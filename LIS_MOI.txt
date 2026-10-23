@@ -4,31 +4,26 @@ controlleurs\index.php
 includes\config.php
 leaflet...
 routes\generales_routes.php
+vues\_page.html
 vues\bandeau.html
+vues\_cartes_leaflet.js
 vues\edit.html
 vues\index.html
 vues\index.js
+vues\point_formulaire_modification.js
 vues\style_pages.css
 \.gitignore
 
-Fichiers avec des commentaires à ne pas remonter pour l'instant
-vues\_cartes_leaflet.js
-vues\_page.html
-vues\point_formulaire_modification.js
-
 Fichiers supprimés dom2
 \controlleurs\nav.php
+gps...
+myol...
 \vues\_cartes_myol.js
 \vues\nav.html
 \vues\nav.js
-
-Répertoires supprimés dom2
-gps...
-myol...
 
 Répertoires non modifiés par dom2
 forum...
 images...
 modeles...
 ressources...
-routes...

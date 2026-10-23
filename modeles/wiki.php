@@ -7,6 +7,7 @@ Accés aux données : entrées / sorties / modifications des textes / formatage 
 
 require_once ("mise_en_forme_texte.php");
 require_once ("bdd.php");
+require_once ("traduction.php");
 
 // Fonction pour réaliser un lien vers une page du wiki dont le nom est passé en paramètre
 function lien_wiki($page="/",$langue=null)
@@ -31,11 +32,8 @@ function wiki_page_html($page)
     // actuelle de la page, sinon on garde le français plutôt que d'afficher une information périmée
     if (($config_wri['langue_courante'] ?? 'fr') != 'fr')
     {
-      $res_traduction = $pdo->query("SELECT texte,hash_source FROM traductions
-        WHERE type_objet='wiki' AND id_objet=0 AND champ='contenu'
-          AND cle_objet=".$pdo->quote($page)." AND langue=".$pdo->quote($config_wri['langue_courante']));
-      $traduction = $res_traduction ? $res_traduction->fetch() : false;
-      if ($traduction && $traduction->texte !== null && $traduction->hash_source === md5($contenu_page->contenu))
+      $traduction = traduction_a_jour_wiki($page, $contenu_page->contenu);
+      if ($traduction)
         $contenu_page->contenu = $traduction->texte;
     }
 
@@ -96,7 +94,8 @@ function wiki_page_brut($page)
     return erreur(_("Requête SQL impossible à executer"),$query);
 
   $page=$res->fetch();
-  if (!$page)
+  // Une page supprimée = sa dernière version a un contenu NULL (voir supprimer_page), les versions antérieures restent en base
+  if (!$page or $page->contenu === null)
     return erreur(_("Cette page du wiki n'existe pas"));
   return $page;
 }
@@ -115,27 +114,32 @@ function ecrire_contenu($page,$contenu)
   return ok("Page mise à jour, et ancienne verson conservée");
 }
 
-// Supprime la page et toute ses anciennes versions
+// Supprime la page : on ajoute une version au contenu NULL, les anciennes versions et les traductions sont conservées
+// (restauration à la main : réinsérer une copie de la dernière version non NULL de la page)
 function supprimer_page($page)
 {
   global $config_wri,$pdo;
-  $page=$pdo->quote($page);
-  $query="delete from pages_wiki where nom_page=$page";
+  $existante=wiki_page_brut($page);
+  if (!empty($existante->erreur))
+    return $existante; // inexistante ou déjà supprimée : rien à faire
+  $query="insert into pages_wiki (nom_page,contenu) VALUES (".$pdo->quote($page).",NULL)";
   $res=$pdo->query($query);
   if (!$res)
     return erreur(_("Requête SQL impossible à executer"),$query);
-  $pdo->query("delete from traductions where type_objet='wiki' and cle_objet=$page"); // ses traductions aussi
 
-  return ok("Page supprimée et tout ses anciennes versions");
+  return ok("Page supprimée, ses anciennes versions sont conservées");
 }
 
 // Récupération en format brut
 function liste_pages_wiki($conditions = Null)
 {
   global $config_wri,$pdo;
-  $query="SELECT nom_page, MAX(extract('epoch' from date)) as ts_date_derniere_modification
-          FROM pages_wiki
-          GROUP BY nom_page
+  // Dernière version de chaque page, sans les pages supprimées (contenu NULL)
+  $query="SELECT nom_page, extract('epoch' from date) as ts_date_derniere_modification
+          FROM (SELECT DISTINCT ON (nom_page) nom_page, date, contenu
+                FROM pages_wiki
+                ORDER BY nom_page, date DESC) AS dernieres_versions
+          WHERE contenu IS NOT NULL
           ORDER BY nom_page ASC;";
   $res=$pdo->query($query);
   if (!$res)
@@ -145,4 +149,61 @@ function liste_pages_wiki($conditions = Null)
   if (empty($pages_wiki))
     return erreur(_("Il n'y a aucune page dans notre wiki, oulla, c'est louche, quelqu'un à tout purger, ou alors une nouvelle installation, ou alors un bug..."));
   return $pages_wiki;
+}
+
+// Toutes les pages du wiki, supprimées comprises (dernière version à contenu NULL), avec leur nombre de versions
+function liste_pages_wiki_avec_supprimees()
+{
+  global $config_wri,$pdo;
+  $query="SELECT nom_page, count(*) AS nb_versions,
+            extract('epoch' from max(date)) AS ts_date_derniere_modification,
+            (array_agg(contenu IS NULL ORDER BY date DESC))[1]::int AS supprimee
+          FROM pages_wiki
+          GROUP BY nom_page
+          ORDER BY nom_page ASC;";
+  $res=$pdo->query($query);
+  if (!$res)
+    return erreur(_("Requête SQL impossible à executer"),$query);
+  return $res->fetchAll();
+}
+
+// Toutes les versions d'une page, de la plus récente à la plus ancienne ; ->version identifie la ligne (date au microseconde près)
+function versions_page_wiki($page)
+{
+  global $config_wri,$pdo;
+  $query="SELECT date::text AS version, extract('epoch' from date) AS ts_date, contenu
+          FROM pages_wiki
+          WHERE nom_page=".$pdo->quote($page)."
+          ORDER BY date DESC";
+  $res=$pdo->query($query);
+  if (!$res)
+    return erreur(_("Requête SQL impossible à executer"),$query);
+  return $res->fetchAll();
+}
+
+// Restaure une version : on en ajoute une copie en tête de l'historique (rien n'est écrasé), ce qui remet aussi en ligne une page supprimée
+function restaurer_version_wiki($page,$version)
+{
+  global $config_wri,$pdo;
+  $query="insert into pages_wiki (nom_page,contenu)
+          select nom_page,contenu from pages_wiki
+          where nom_page=".$pdo->quote($page)." and date::text=".$pdo->quote($version)." and contenu is not null";
+  $nb=$pdo->exec($query);
+  if ($nb===false)
+    return erreur(_("Requête SQL impossible à executer"),$query);
+  if (!$nb)
+    return erreur(_("Cette version n'existe pas ou correspond à une suppression"));
+  return ok(_("Version restaurée, la page est en ligne avec ce contenu"));
+}
+
+// Purge définitive : la page, toutes ses versions et ses traductions (irréversible, réservé aux administrateurs, voir le contrôleur)
+function purger_page_wiki($page)
+{
+  global $config_wri,$pdo;
+  $query="delete from pages_wiki where nom_page=".$pdo->quote($page);
+  $res=$pdo->query($query);
+  if (!$res)
+    return erreur(_("Requête SQL impossible à executer"),$query);
+  supprime_traductions_wiki($page);
+  return ok(_("Page, versions et traductions purgées définitivement"));
 }
