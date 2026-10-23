@@ -5,21 +5,6 @@
  * © Dominique Cavailhez 2026                    *
  *************************************************/
 
-/*********************************************
- * Couches vectorielles du site refuges.info *
- *********************************************
-  Une icône est une image .png représentant un type de point.
-  Un point est défini par une position, un nom et une icône destinée à être affiché sur une carte.
-  Une fiche contient toutes les informations concernant un point, y compris les commentaires.
-
-  json est une structure contenant des définitions de points,
-  geoJson sa représentation en string.
-
-  Le résultat des requêtes API est mis en cache pendant 1 semaine par l'explorateur.
-  La date de dernière création, édition, suppression de polygone ou point (hors commentaires),
-  est fournie à la page HTML qui la passe en argument de l'API pour recharger si nécessaire.
-*/
-
 /*********************************
  * Points d'intérêt refuges.info *
  *********************************/
@@ -29,7 +14,7 @@ class WriPOILayer extends L.geoJson {
     const iconList = [],
       url = serveurAPI + '/api/bbox' +
       '?nb_points=all&type_points=' + type +
-      (document.documentElement.lang !== 'fr' ? '&langue=' + document.documentElement.lang : '') +
+      (document.documentElement.lang == 'fr' ? '' : '&langue=' + document.documentElement.lang) +
       '&version=' + versionFeatures +
       '&cache=' + (7 * 24 * 3600);
     //TODO Délai cache api / depuis
@@ -89,104 +74,91 @@ class WriPOILayer extends L.geoJson {
   }
 }
 
-/* eslint-disable-next-line no-unused-vars */
-class WriPolygonLayer extends L.geoJson {
-  constructor(typeId, serveurAPI, versionFeatures, options = {}) {
-    const url = serveurAPI + '/api/polygones?' +
-      'type_polygon=' + typeId +
-      '&version=' + versionFeatures +
-      '&cache=' + (7 * 24 * 3600) +
-      (options.urlParam || '');
+class GeoJsonUrlBbox extends L.geoJson {
+  constructor(url, options = {}) {
+    super(null, options);
+    // Wait for the attachment to the map to get the map reference
+    this.on('add', (evt) => {
+      const map = evt.target._map;
 
-    super(null, {
-      style: (feature) => ({
-        stroke: false,
-        color: feature.properties.couleur,
-        ...options,
-      }),
+      if (options.bbox) {
+        const b = map.getBounds(),
+          urlBbox = url + '&bbox=' + [b.getWest(), b.getSouth(), b.getEast(), b.getNorth()].join(',');
 
-      onEachFeature: (feature, layer) => {
-        // Etiquettes
-        if (options.labels)
-          layer.bindTooltip(
-            feature.properties.nom
-            .replaceAll(/ ([a-z]?[a-z]?[a-z]) /gui, ' $1&nbsp;')
-            .replaceAll(/ /gu, '<br/>'), {
-              permanent: true,
-              direction: 'center',
-            }).openTooltip();
-
-        if (options.click) {
-          // Mouse hover & click
-          layer.on(
-            'mouseover mouseout', (evt) => {
-              evt.target.setStyle({
-                stroke: evt.type === 'mouseover',
-              });
-            });
-
-          layer.on({
-            click: (evt) => {
-              location.href = '/nav/' + evt.sourceTarget.feature.id;
-            },
-          });
-        } else
-          // Remove cursor pointer on hover
-          layer.on({
-            mouseover: (evt) => {
-              evt.target.getElement().style.cursor = 'grab';
-            },
-          });
-      },
-      ...options,
-    });
-
-    if (options.bbox)
-      // Wait for the attachment to the map to get the map reference
-      this.on('add', (evtAdd) => {
-        this.fetchUrlDataBbox(evtAdd.target._map, url);
+        // Do it once at init
+        this.fetchUrlData(urlBbox);
 
         // Get event when the map is moved to refresh the bbox
-        evtAdd.target._map.on('dragend', (evtDragEnd) => {
+        map.on('dragend', () => {
           this.clearLayers();
-          this.fetchUrlDataBbox(evtDragEnd.target, url);
+          this.fetchUrlData(urlBbox);
         });
-      });
-    else
-      this.fetchUrlData(url, options);
+      } else
+        this.fetchUrlData(url);
+    });
   }
 
-  fetchUrlDataBbox = function(map, url) {
-    const b = map.getBounds(),
-      bbox = [b.getWest(), b.getSouth(), b.getEast(), b.getNorth()];
-
-    this.fetchUrlData(url + '&bbox=' + bbox.join(','));
-  }
-
-  fetchUrlData = function(url, options = {}) {
+  fetchUrlData = function(url) {
     fetch(url)
       .catch((error) => console.error(error + ' fetching ' + url))
       .then((response) => response.json())
       .then((json) => {
-        if (options.polygonIdToReverse)
-          json.features.forEach((f) => {
-            if (f.id === options.polygonIdToReverse) {
-              f.geometry.coordinates.unshift([
-                [ // Set the world first to make the polygons holes
-                  [-180, -90],
-                  [-180, 90],
-                  [180, 90],
-                  [180, -90]
-                ]
-              ]);
-              this.addData(f);
-            }
-          });
-        else if (json.features.length)
+        if (json.features.length)
           this.addData(json);
 
         // Trigger for who needs it
         this.fire('load');
+      });
+  }
+}
+
+/* eslint-disable-next-line no-unused-vars */
+class WriPolygonLayer extends GeoJsonUrlBbox {
+  constructor(typeId, serveurAPI, versionFeatures, options = {}) {
+    super(serveurAPI + '/api/polygones?' +
+      'type_polygon=' + typeId +
+      '&version=' + versionFeatures +
+      '&cache=' + (7 * 24 * 3600), {
+        style: (feature) => ({
+          stroke: false,
+          color: feature.properties.couleur,
+          ...options,
+        }),
+
+        onEachFeature: (feature, layer) => {
+          // Etiquettes
+          if (options.labels)
+            layer.bindTooltip(
+              feature.properties.nom
+              .replaceAll(/ ([a-z]?[a-z]?[a-z]) /gui, ' $1&nbsp;')
+              .replaceAll(/ /gu, '<br/>'), {
+                permanent: true,
+                direction: 'center',
+              }).openTooltip();
+
+          if (options.click) {
+            // Mouse hover & click
+            layer.on(
+              'mouseover mouseout', (evt) => {
+                evt.target.setStyle({
+                  stroke: evt.type === 'mouseover',
+                });
+              });
+
+            layer.on({
+              click: (evt) => {
+                location.href = '/nav/' + evt.sourceTarget.feature.id;
+              },
+            });
+          } else
+            // Remove cursor pointer on hover
+            layer.on({
+              mouseover: (evt) => {
+                evt.target.getElement().style.cursor = 'grab';
+              },
+            });
+        },
+        ...options,
       });
   }
 }
