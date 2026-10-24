@@ -24,7 +24,11 @@ if (typeof sessionStorage.checkedLayers !== 'string')
 // points WRI
 for (const [nom, args] of Object.entries(couchesIconesWRI)) {
   const icone = '<img src="/images/icones/' + args[1] + '.svg"/> ' + libelle(nom), // Libellé de la ligne sélecteur
-    layer = new WriPOILayer('https://<?=$_SERVER["SERVER_NAME"]?>', args[0], '<?=$vue->version_features?>'); // Couche affichable
+    layer = new WriPOILayer({ // Couche affichable
+      serveurAPI: 'https://<?=$_SERVER["SERVER_NAME"]?>',
+      type: args[0],
+      versionFeatures: '<?=$vue->version_features?>',
+    });
 
   // Il est nécéssaire de grouper les points de chaque couche pour pouvoir les sélectionner indépendament
   overlays[icone] = L.featureGroup.subGroup(vectorCluster).addLayer(layer);

@@ -187,18 +187,25 @@ const couchesIconesWRI = {
     });
 
 // Cluster contenant tous les types de points
+//DCMM TODO move to myLeaflet
 /* eslint-disable-next-line no-unused-vars */
-function clusterPOI(serveurAPI, versionFeatures) {
+function clusterPOI(serveurAPI, versionFeatures, urlArg = '') {
   const cluster = L.markerClusterGroup({
     spiderfyOnMaxZoom: true, // Overlapping markers will spiderfy when clicked
     maxClusterRadius: 30, // Less clusters
   });
 
-  for (const entry of Object.entries(couchesIconesWRI))
+  for (const entry of Object.entries(couchesIconesWRI)) {
     // On crée les couches pour chaque type de point
-    new WriPOILayer(serveurAPI, entry[1][0], versionFeatures)
+    const layer = new WriPOILayer({
+      serveurAPI: serveurAPI,
+      type: entry[1][0],
+      versionFeatures: versionFeatures,
+    });
+
     // Attente de la fin de réception pour l'intégrer au cluster
-    .on('load', (evt) => cluster.addLayer(evt.target));
+    layer.on('load', (evt) => cluster.addLayer(evt.target));
+  }
 
   return cluster;
 }

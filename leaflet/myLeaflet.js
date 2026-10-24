@@ -10,12 +10,12 @@
  *********************************/
 /* eslint-disable-next-line no-unused-vars */
 class WriPOILayer extends L.geoJson {
-  constructor(serveurAPI, type, versionFeatures, hideTooltip) {
+  constructor(options = {}) {
     const iconList = [],
-      url = serveurAPI + '/api/bbox' +
-      '?nb_points=all&type_points=' + type +
+      url = options.serveurAPI + '/api/bbox' +
+      '?nb_points=all&type_points=' + options.type +
       (document.documentElement.lang === 'fr' ? '' : '&langue=' + document.documentElement.lang) +
-      '&version=' + versionFeatures +
+      '&version=' + options.versionFeatures +
       '&cache=' + (7 * 24 * 3600);
     //TODO Délai cache api / depuis
 
@@ -24,7 +24,7 @@ class WriPOILayer extends L.geoJson {
       pointToLayer: (feature, latlng) =>
         L.marker(latlng, {
           icon: L.icon({
-            iconUrl: serveurAPI + '/images/icones/' + feature.properties.type.icone + '.svg',
+            iconUrl: options.serveurAPI + '/images/icones/' + feature.properties.type.icone + '.svg',
             iconSize: [24, 24],
             iconAnchor: [12, 12],
           }),
@@ -32,7 +32,7 @@ class WriPOILayer extends L.geoJson {
 
       onEachFeature: (feature, layer) => {
         // Etiquettes
-        if (!hideTooltip)
+        if (!options.hideTooltip)
           layer.bindTooltip(
             feature.properties.nom, {
               permanent: true,
