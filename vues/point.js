@@ -1,4 +1,4 @@
-/* global couchesDeFond, coucheItineraires, clusterPOI, positionMemoryArray, positionMemoryControl, controlesComuns */
+/* global couchesDeFond, coucheItineraires, clusterCouchePointsWri, positionMemoryArray, positionMemoryControl, controlesComuns */
 
 // Initialisation de la carte
 const map = L.map('carte-point');
@@ -11,13 +11,16 @@ positionMemoryControl(map);
 (tileLayers[decodeURI(positionMemoryArray[3])] || Object.values(tileLayers)[0]).addTo(map);
 
 // Points refuges.info
-clusterPOI('https://<?=$_SERVER["SERVER_NAME"]?>', '<?=$vue->version_features?>').addTo(map);
+clusterCouchePointsWri({ // Couche affichable
+  serveurAPI: 'https://<?=$_SERVER["SERVER_NAME"]?>',
+  versionFeatures: '<?=$vue->version_features?>',
+}).addTo(map);
 
 // Contrôles
 controlesComuns(map).forEach((control) => control.addTo(map));
 
 L.control.layers(tileLayers, {
-  [<?=json_encode(_("Itinéraires"))?>]: coucheItineraires,
+  ['<?=json_encode(_("Itinéraires"))?>']: coucheItineraires,
 }).addTo(map);
 
 // Marqueur de position de cabane

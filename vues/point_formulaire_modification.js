@@ -1,4 +1,4 @@
-/* global couchesDeFond, clusterPOI, positionMemoryControl, positionMemoryArray, controlesComuns */
+/* global couchesDeFond, clusterCouchePointsWri, positionMemoryControl, positionMemoryArray, controlesComuns */
 
 // Utilitaire de saisie des boutons du formulaire
 /* eslint-disable-next-line no-unused-vars */
@@ -25,7 +25,10 @@ positionMemoryControl(map);
 (tileLayers[decodeURI(positionMemoryArray[3])] || Object.values(tileLayers)[0]).addTo(map);
 
 // Points refuges.info
-clusterPOI('https://<?=$_SERVER["SERVER_NAME"]?>', '<?=$vue->version_features?>').addTo(map);
+clusterCouchePointsWri({
+  serveurAPI: 'https://<?=$_SERVER["SERVER_NAME"]?>',
+  versionFeatures: '<?=$vue->version_features?>',
+}).addTo(map);
 
 // Contrôles
 controlesComuns(map).forEach((control) => control.addTo(map));

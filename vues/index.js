@@ -1,4 +1,4 @@
-/* global couchesIconesWRI, WriPOILayer, WriPolygonLayer, couchesDeFond, couchesOverpass, coucheItineraires, controlesComuns */
+/* global couchesIconesWRI, CouchePointsWri, CouchePolygonesWri, couchesDeFond, couchesOverpass, coucheItineraires, controlesComuns */
 
 const map = L.map('carte-accueil'),
   tileLayers = couchesDeFond(<?=json_encode($config_wri["mapKeys"])?>),
@@ -24,7 +24,7 @@ if (typeof sessionStorage.checkedLayers !== 'string')
 // points WRI
 for (const [nom, args] of Object.entries(couchesIconesWRI)) {
   const icone = '<img src="/images/icones/' + args[1] + '.svg"/> ' + libelle(nom), // Libellé de la ligne sélecteur
-    layer = new WriPOILayer({ // Couche affichable
+    layer = new CouchePointsWri({ // Couche affichable
       serveurAPI: 'https://<?=$_SERVER["SERVER_NAME"]?>',
       type: args[0],
       versionFeatures: '<?=$vue->version_features?>',
@@ -48,15 +48,21 @@ for (const [nom, args] of Object.entries(couchesIconesWRI)) {
 }
 
 // Polygones WRI
-const argsPolygones = [
-  'https://<?=$_SERVER["SERVER_NAME"]?>',
-  '<?=$vue->version_features?>', {
-    labels: true,
-    click: true,
-  }
-];
-overlays[libelle('Régions')] = new WriPolygonLayer(11, ...argsPolygones);
-overlays[libelle('Massifs')] = new WriPolygonLayer(1, ...argsPolygones);
+const argsPolygones = {
+  serveurAPI: 'https://<?=$_SERVER["SERVER_NAME"]?>',
+  versionFeatures: '<?=$vue->version_features?>',
+  labels: true,
+  click: true,
+};
+
+overlays[libelle('Régions')] = new CouchePolygonesWri({
+  typeId: 11,
+  ...argsPolygones,
+});
+overlays[libelle('Massifs')] = new CouchePolygonesWri({
+  typeId: 1,
+  ...argsPolygones,
+});
 
 // Couche externe d'itinéraires
 overlays[libelle('Itinéraires')] = coucheItineraires;
@@ -106,9 +112,9 @@ if (conteneurSelecteurExterneEl)
 
 <?php if (!empty($vue->polygone)) { ?>
   // Surimposition du polygone
-  const polygonLayer= JSON.parse('<?=$vue->polygone->geometrie_geojson??'{}'?>'),
-  massifLayer = L.polygon(flipLonLatRecursive(polygonLayer.coordinates));
-  
+  const polygonLayer = JSON.parse('<?=$vue->polygone->geometrie_geojson??"{}"?>'),
+    massifLayer = L.polygon(flipLonLatRecursive(polygonLayer.coordinates));
+
   massifLayer.addTo(map);
   map.fitBounds(massifLayer.getBounds());
 <?php } else { ?>
@@ -139,7 +145,6 @@ function addRemoveOverlay() {
     checkedLayersTypes = [];
 
   // Calcul des couches sélectionnées
-  //TODO BUG ne mémorise pas
   for (const lsInputEl of overlaySelectors) {
     const affiche = lsInputEl.parentElement.lastChild.innerText.trim(),
       nom = identite[affiche] || affiche; // identité (nom français) du libellé affiché

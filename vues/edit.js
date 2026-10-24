@@ -8,22 +8,21 @@ const map = L.map('carte-edit', {
   exportPolygonEl = document.getElementById('export-polygon'); // Lien d'export dans la page
 
 // Couche de massifs en fond pour servir de base au snapping
-new CouchePolygonesWri(
-  1, // Seulement les massifs
-  'https://<?=$_SERVER["SERVER_NAME"]?>',
-  '<?=$vue->version_features?>', {
-    bbox: true, // Pour ne pas ralentir le snapping
-    pmIgnore: true, // Pour qu'ils ne soient pas modifiables
-    snapIgnore: false, // Pour que les polygones en édition puisse coller aux contours de massifs
-  }
-).addTo(map);
+new CouchePolygonesWri({
+  serveurAPI: 'https://<?=$_SERVER["SERVER_NAME"]?>',
+  versionFeatures: '<?=$vue->version_features?>',
+  typeId: 1, // Massifs
+  bbox: true, // Pour ne pas ralentir le snapping
+  pmIgnore: true, // Pour qu'ils ne soient pas modifiables
+  snapIgnore: false, // Pour que les polygones en édition puisse coller aux contours de massifs
+}).addTo(map);
 
 // Contrôles
 controlesComuns(map).forEach((control) => control.addTo(map));
 L.control.layers(tileLayers, ).addTo(map);
 map.doubleClickZoom.disable();
 new ControlPolygonsUpload({
-  title: 'Importer un fichier',
+  title: '<?=_("Importer un fichier")?>',
 }).addTo(map);
 positionMemoryControl(map);
 
@@ -45,7 +44,6 @@ if (editJsonEl.value) {
   map.setView([positionMemoryArray[1], positionMemoryArray[2]], positionMemoryArray[0]);
 }
 
-
 // Editeur
 map.pm.addControls({
   oneBlock: true,
@@ -64,7 +62,6 @@ map.pm.setGlobalOptions({
   snappable: true,
   allowSelfIntersection: false,
 });
-
 
 // Restitue le geoJson édité
 function layerChanged() {

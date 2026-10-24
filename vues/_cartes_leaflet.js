@@ -7,14 +7,14 @@
  *********************************************************************************/
 
 /*****************************************
- * Position et couche de fond par défaut *
+ * POSITION ET COUCHE DE FOND PAR DÉFAUT *
  *****************************************/
 localStorage.positionMemory ||= '5/46.5/5'; // S'il n'y a aucune donnée enregistrée
 sessionStorage.positionMemory ||= localStorage.positionMemory; // En début de session, on repart de la dernière position
 positionMemoryArray = sessionStorage.positionMemory.split('/'); // Pour usage au cours de la durée de vie de la page.
 
 /*****************************************
- * Contrôles communs à toutes les cartes *
+ * CONTRÔLES COMMUNS À TOUTES LES CARTES *
  *****************************************/
 /* eslint-disable-next-line no-unused-vars */
 function controlesComuns(map) {
@@ -48,7 +48,7 @@ function controlesComuns(map) {
 }
 
 /**************************
- * Définition des couches *
+ * DÉFINITION DES COUCHES *
  **************************/
 /* eslint-disable-next-line no-unused-vars */
 function couchesDeFond(layerKeys) {
@@ -186,12 +186,12 @@ const couchesIconesWRI = {
       //TODO BUG Zindex : ne s'affiche pas sur Espagne, photo maxar & photo Google
     });
 
-/*********************************
- * Points d'intérêt refuges.info *
- *********************************/
+/*************************************
+ * COUCHES VECTORIELLES REFUGES.INFO *
+ *************************************/
 class CouchePointsWri extends L.geoJson {
-  //DCMM constructor(serveurAPI, type, versionFeatures, hideTooltip,urlArg) {
-  constructor(options = {}) {
+  //TODO extends GeoJsonUrlBbox //Pb icône
+  constructor(options) {
     const iconList = [],
       url = options.serveurAPI + '/api/bbox' +
       '?nb_points=all&type_points=' + options.type +
@@ -257,7 +257,7 @@ class CouchePointsWri extends L.geoJson {
 
 // Cluster contenant tous les types de points
 /* eslint-disable-next-line no-unused-vars */
-function clusterPOI(serveurAPI, versionFeatures, urlArg = '') {
+function clusterCouchePointsWri(options) {
   const cluster = L.markerClusterGroup({
     spiderfyOnMaxZoom: true, // Overlapping markers will spiderfy when clicked
     maxClusterRadius: 30, // Less clusters
@@ -265,21 +265,9 @@ function clusterPOI(serveurAPI, versionFeatures, urlArg = '') {
 
   for (const entry of Object.entries(couchesIconesWRI)) {
     // On crée les couches pour chaque type de point
-    //DCMM constructor(serveurAPI, type, versionFeatures, hideTooltip,urlArg) {
-    /*
-    new CouchePointsWri({
-      serveurAPI:,
-      type:,
-       versionFeatures:,
-       hideTooltip:,
-      urlArg:,
-    });
-    */
     const layer = new CouchePointsWri({
-      serveurAPI: serveurAPI,
       type: entry[1][0],
-      versionFeatures: versionFeatures,
-      //   hideTooltip:hideTooltip,
+      ...options,
     });
 
     // Attente de la fin de réception pour l'intégrer au cluster
@@ -291,10 +279,10 @@ function clusterPOI(serveurAPI, versionFeatures, urlArg = '') {
 
 /* eslint-disable-next-line no-unused-vars */
 class CouchePolygonesWri extends GeoJsonUrlBbox {
-  constructor(typeId, serveurAPI, versionFeatures, options = {}) {
-    super(serveurAPI + '/api/polygones?' +
-      'type_polygon=' + typeId +
-      '&version=' + versionFeatures +
+  constructor(options) {
+    super(options.serveurAPI + '/api/polygones?' +
+      'type_polygon=' + options.typeId +
+      '&version=' + options.versionFeatures +
       '&cache=' + (7 * 24 * 3600), {
         style: (feature) => ({
           stroke: false,
