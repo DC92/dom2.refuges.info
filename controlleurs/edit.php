@@ -23,13 +23,12 @@ if(!empty($controlleur->url_decoupee[1])) {
   if(count($polygones_bruts)) {
     $vue->polygone = $polygones_bruts[0];
     $vue->titre = implode(' ', [
-      'Modifier',
-      $vue->polygone->art_def_poly,
-      $vue->polygone->type_polygone,
-      $vue->polygone->article_partitif,
+      _('Modifier'),
+      _($vue->polygone->art_def_poly),
+      _($vue->polygone->type_polygone),
+      _($vue->polygone->article_partitif),
       $vue->polygone->nom_polygone,
     ]);
-    // Le défaut et la traduction seront faites dans edit.html
   }
 }
 
