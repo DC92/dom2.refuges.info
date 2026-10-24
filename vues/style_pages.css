@@ -349,6 +349,19 @@ a:hover {
   }
 }
 
+/* Overpass popups */
+.leaflet-popup-content {
+  margin: 3px;
+}
+
+.leaflet-popup-content table {
+  border-spacing: 0 !important;
+}
+
+.leaflet-popup-content>div>a {
+  display: none;
+}
+
 /*==================================================================*/
 /* Les pages points                                                 */
 /*==================================================================*/

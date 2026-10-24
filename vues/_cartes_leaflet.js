@@ -186,6 +186,76 @@ const couchesIconesWRI = {
       //TODO BUG ne s'affiche pas sur Espagne, photo maxar & photo Google
     });
 
+/*********************************
+ * Points d'intérêt refuges.info *
+ *********************************/
+/* eslint-disable-next-line no-unused-vars */
+class WriPOILayer extends L.geoJson {
+  //  constructor(serveurAPI, type, versionFeatures, hideTooltip,urlArg) {
+  constructor(options = {}) {
+    const iconList = [],
+      url = options.serveurAPI + '/api/bbox' +
+      '?nb_points=all&type_points=' + options.type +
+      (document.documentElement.lang === 'fr' ? '' : '&langue=' + document.documentElement.lang) +
+      '&version=' + options.versionFeatures +
+      '&cache=' + (7 * 24 * 3600);
+    //TODO Délai cache api / depuis
+
+    super(null, {
+      // Icônes
+      pointToLayer: (feature, latlng) =>
+        L.marker(latlng, {
+          icon: L.icon({
+            iconUrl: options.serveurAPI + '/images/icones/' + feature.properties.type.icone + '.svg',
+            iconSize: [24, 24],
+            iconAnchor: [12, 12],
+          }),
+        }),
+
+      onEachFeature: (feature, layer) => {
+        // Etiquettes
+        if (!options.hideTooltip)
+          layer.bindTooltip(
+            feature.properties.nom, {
+              permanent: true,
+              direction: 'center',
+            }).openTooltip();
+
+        layer.on({
+          click: () => {
+            location.href = feature.properties.lien || '/point/' + feature.id;
+          },
+        });
+
+        // For icons prelaod
+        iconList[feature.properties.type.icone] = true;
+      },
+    });
+
+    // Fetch remote data
+    fetch(url)
+      .catch((error) => console.error(error + ' fetching ' + url))
+      .then((response) => response.json())
+      .then((json) => {
+        if (json.features.length) {
+          this.addData(json);
+          this.fire('adddata');
+
+          // Preload icons
+          //TODO don't do it twice
+          for (const name in iconList)
+            document.body.insertAdjacentHTML(
+              'beforeend',
+              '<img style="display:none" src="/images/icones/' + name + '.svg"/>'
+            );
+        }
+
+        // Trigger for who needs it
+        this.fire('load');
+      });
+  }
+}
+
 // Cluster contenant tous les types de points
 //DCMM TODO move to myLeaflet
 /* eslint-disable-next-line no-unused-vars */
@@ -197,10 +267,21 @@ function clusterPOI(serveurAPI, versionFeatures, urlArg = '') {
 
   for (const entry of Object.entries(couchesIconesWRI)) {
     // On crée les couches pour chaque type de point
+    //  constructor(serveurAPI, type, versionFeatures, hideTooltip,urlArg) {
+    /*
+    new WriPOILayer({
+      serveurAPI:,
+      type:,
+       versionFeatures:,
+       hideTooltip:,
+      urlArg:,
+    });
+    */
     const layer = new WriPOILayer({
       serveurAPI: serveurAPI,
       type: entry[1][0],
       versionFeatures: versionFeatures,
+      //   hideTooltip:hideTooltip,
     });
 
     // Attente de la fin de réception pour l'intégrer au cluster
@@ -208,4 +289,55 @@ function clusterPOI(serveurAPI, versionFeatures, urlArg = '') {
   }
 
   return cluster;
+}
+
+/* eslint-disable-next-line no-unused-vars */
+class WriPolygonLayer extends GeoJsonUrlBbox {
+  constructor(typeId, serveurAPI, versionFeatures, options = {}) {
+    super(serveurAPI + '/api/polygones?' +
+      'type_polygon=' + typeId +
+      '&version=' + versionFeatures +
+      '&cache=' + (7 * 24 * 3600), {
+        style: (feature) => ({
+          stroke: false,
+          color: feature.properties.couleur,
+          ...options,
+        }),
+
+        onEachFeature: (feature, layer) => {
+          // Etiquettes
+          if (options.labels)
+            layer.bindTooltip(
+              feature.properties.nom
+              .replaceAll(/ ([a-z]?[a-z]?[a-z]) /gui, ' $1&nbsp;')
+              .replaceAll(/ /gu, '<br/>'), {
+                permanent: true,
+                direction: 'center',
+              }).openTooltip();
+
+          if (options.click) {
+            // Mouse hover & click
+            layer.on(
+              'mouseover mouseout', (evt) => {
+                evt.target.setStyle({
+                  stroke: evt.type === 'mouseover',
+                });
+              });
+
+            layer.on({
+              click: (evt) => {
+                location.href = '/nav/' + evt.sourceTarget.feature.id;
+              },
+            });
+          } else
+            // Remove cursor pointer on hover
+            layer.on({
+              mouseover: (evt) => {
+                evt.target.getElement().style.cursor = 'grab';
+              },
+            });
+        },
+        ...options,
+      });
+  }
 }

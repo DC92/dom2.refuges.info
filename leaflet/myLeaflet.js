@@ -5,75 +5,10 @@
  * © Dominique Cavailhez 2026                    *
  *************************************************/
 
-/*********************************
- * Points d'intérêt refuges.info *
- *********************************/
+/************************************
+ * GeoJson layer from url with bbox *
+ ************************************/
 /* eslint-disable-next-line no-unused-vars */
-class WriPOILayer extends L.geoJson {
-  constructor(options = {}) {
-    const iconList = [],
-      url = options.serveurAPI + '/api/bbox' +
-      '?nb_points=all&type_points=' + options.type +
-      (document.documentElement.lang === 'fr' ? '' : '&langue=' + document.documentElement.lang) +
-      '&version=' + options.versionFeatures +
-      '&cache=' + (7 * 24 * 3600);
-    //TODO Délai cache api / depuis
-
-    super(null, {
-      // Icônes
-      pointToLayer: (feature, latlng) =>
-        L.marker(latlng, {
-          icon: L.icon({
-            iconUrl: options.serveurAPI + '/images/icones/' + feature.properties.type.icone + '.svg',
-            iconSize: [24, 24],
-            iconAnchor: [12, 12],
-          }),
-        }),
-
-      onEachFeature: (feature, layer) => {
-        // Etiquettes
-        if (!options.hideTooltip)
-          layer.bindTooltip(
-            feature.properties.nom, {
-              permanent: true,
-              direction: 'center',
-            }).openTooltip();
-
-        layer.on({
-          click: () => {
-            location.href = feature.properties.lien || '/point/' + feature.id;
-          },
-        });
-
-        // For icons prelaod
-        iconList[feature.properties.type.icone] = true;
-      },
-    });
-
-    // Fetch remote data
-    fetch(url)
-      .catch((error) => console.error(error + ' fetching ' + url))
-      .then((response) => response.json())
-      .then((json) => {
-        if (json.features.length) {
-          this.addData(json);
-          this.fire('adddata');
-
-          // Preload icons
-          //TODO don't do it twice
-          for (const name in iconList)
-            document.body.insertAdjacentHTML(
-              'beforeend',
-              '<img style="display:none" src="/images/icones/' + name + '.svg"/>'
-            );
-        }
-
-        // Trigger for who needs it
-        this.fire('load');
-      });
-  }
-}
-
 class GeoJsonUrlBbox extends L.geoJson {
   constructor(url, options = {}) {
     super(null, options);
@@ -112,61 +47,10 @@ class GeoJsonUrlBbox extends L.geoJson {
   }
 }
 
-/* eslint-disable-next-line no-unused-vars */
-class WriPolygonLayer extends GeoJsonUrlBbox {
-  constructor(typeId, serveurAPI, versionFeatures, options = {}) {
-    super(serveurAPI + '/api/polygones?' +
-      'type_polygon=' + typeId +
-      '&version=' + versionFeatures +
-      '&cache=' + (7 * 24 * 3600), {
-        style: (feature) => ({
-          stroke: false,
-          color: feature.properties.couleur,
-          ...options,
-        }),
-
-        onEachFeature: (feature, layer) => {
-          // Etiquettes
-          if (options.labels)
-            layer.bindTooltip(
-              feature.properties.nom
-              .replaceAll(/ ([a-z]?[a-z]?[a-z]) /gui, ' $1&nbsp;')
-              .replaceAll(/ /gu, '<br/>'), {
-                permanent: true,
-                direction: 'center',
-              }).openTooltip();
-
-          if (options.click) {
-            // Mouse hover & click
-            layer.on(
-              'mouseover mouseout', (evt) => {
-                evt.target.setStyle({
-                  stroke: evt.type === 'mouseover',
-                });
-              });
-
-            layer.on({
-              click: (evt) => {
-                location.href = '/nav/' + evt.sourceTarget.feature.id;
-              },
-            });
-          } else
-            // Remove cursor pointer on hover
-            layer.on({
-              mouseover: (evt) => {
-                evt.target.getElement().style.cursor = 'grab';
-              },
-            });
-        },
-        ...options,
-      });
-  }
-}
-
-/**********************************************
- * Couches IGN                                *
- * Remplace avantageusement 663 Ko de lib IGN *
- **********************************************/
+/***********************************
+ *           IGN LAYERS            *
+ * Replaces the 663 KB IGN library *
+ ***********************************/
 /* eslint-disable-next-line no-unused-vars */
 class IGNTileLayer extends L.tileLayer {
   constructor(url, paramsIGN, paramsLayer) {
@@ -194,7 +78,7 @@ class IGNTileLayer extends L.tileLayer {
   }
 }
 
-//TODO GPS : affichage distance au touch sur une carte
+//TODO displaying GPS distance via touch on a map
 
 /*********************************************************
  * Rotating marker to be used in L.Control.Gps           *
@@ -257,10 +141,9 @@ class MarkerCompass extends L.Marker {
   }
 }
 
-/**********************
- * Editeur de massifs *
- **********************/
-// Inverse les lat & lng entre geoJson et Leaflet
+/****************************************************************
+ * Leaflet from/to geoJson & GPX lat/lng coordinates conversion *
+ ****************************************************************/
 function flipLonLatRecursive(data) {
   if (Array.isArray(data) && typeof data[0] === 'number')
     return [data[1], data[0]];
@@ -268,9 +151,9 @@ function flipLonLatRecursive(data) {
   return data.map(item => flipLonLatRecursive(item));
 }
 
-/*************************************
- * Bouton de chargement d'un fichier *
- *************************************/
+/**********************
+ * File upload button *
+ **********************/
 /* eslint-disable-next-line no-unused-vars */
 const ControlPolygonsUpload = L.Control.extend({
   options: {
@@ -436,20 +319,20 @@ function permalinkControl(map, defaut) {
     });
   });
 
-  // Chargement du fond de carte actif
+  // Loading the active basemap
   if ((sessionStorage.permalink || '').split('/')[3])
-    //TODO BUG tileLayers n'est pas défini
+    //TODO BUG tileLayers is not defined
     /* eslint-disable-next-line no-undef */
     (tileLayers[decodeURI((sessionStorage.permalink || '').split('/')[3])]).addTo(map);
 
-  // Lance le chargement de la carte
+  // Initiates the loading of the map
   map.setView([permalinkArray[1], permalinkArray[2]], permalinkArray[0]);
 }
 
 //DCMM FUTUR HORS RESEAU
-/****************************************************
- * Bouton de préchargement des tuiles OpenHikingMap *
- ****************************************************/
+/****************************************
+ * OpenHikingMap tile preloading button *
+ ****************************************/
 /* eslint-disable-next-line no-unused-vars */
 const ControlPreload = L.Control.extend({
   options: {

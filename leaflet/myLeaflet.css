@@ -17,7 +17,7 @@
 }
 
 /* VECTOR LAYERS */
-/* Etiquettes icones et polygones */
+/* Icon labels and polygons */
 .leaflet-tooltip {
   top: -18px;
   left: 12px;
@@ -33,19 +33,6 @@
 
 .leaflet-control-layers-overlays img {
   width: 16px;
-}
-
-/* Overpass popups */
-.leaflet-popup-content {
-  margin: 3px;
-}
-
-.leaflet-popup-content table {
-  border-spacing: 0 !important;
-}
-
-.leaflet-popup-content>div>a {
-  display: none;
 }
 
 /* DCMM FUTUR HORS RESEAU */
