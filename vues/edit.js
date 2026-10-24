@@ -3,12 +3,12 @@ const map = L.map('carte-edit', {
     pmIgnore: false,
   }),
   tileLayers = couchesDeFond(<?=json_encode($config_wri["mapKeys"])?>),
-  polygoneId = <?=$vue->polygone->id_polygone??0?>,
+  polygoneId = '<?=$vue->polygone->id_polygone??0?>',
   editJsonEl = document.getElementById('edit-json'), // Champ d'édition du geoJson
   exportPolygonEl = document.getElementById('export-polygon'); // Lien d'export dans la page
 
 // Couche de massifs en fond pour servir de base au snapping
-new WriPolygonLayer(
+new CouchePolygonesWri(
   1, // Seulement les massifs
   'https://<?=$_SERVER["SERVER_NAME"]?>',
   '<?=$vue->version_features?>', {

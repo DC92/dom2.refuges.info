@@ -32,6 +32,7 @@ controlesComuns(map).forEach((control) => control.addTo(map));
 L.control.layers(tileLayers).addTo(map);
 
 // Lance le chargement de la carte
+//TODO BUG ne repositionne pas la carte au centre mais seulement dans la carte
 map.setView([positionMemoryArray[1], positionMemoryArray[2]], 15);
 
 // Marqueur déplaçable d'édition de position de cabane

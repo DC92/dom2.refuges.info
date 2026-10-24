@@ -1,29 +1,23 @@
 Fichiers changés NAV
-controlleurs\edit.php
 controlleurs\index.php
 includes\config.php
-leaflet...
-routes\generales_routes.php
-vues\_page.html
-vues\bandeau.html
+leaflet\myLeaflet.css
+leaflet\myLeaflet.js
+routes\generales.routes.php
 vues\_cartes_leaflet.js
-vues\edit.html
+vues\_page.html
 vues\index.html
 vues\index.js
-vues\point_formulaire_modification.js
 vues\style_pages.css
-\.gitignore
 
-Fichiers supprimés dom2
+Fichiers supprimés NAV
 \controlleurs\nav.php
-gps...
 myol...
 \vues\_cartes_myol.js
 \vues\nav.html
 \vues\nav.js
 
-Répertoires non modifiés par dom2
+Répertoires non modifiés par NAV mais à remonter dans dom2
 forum...
 images...
 modeles...
-ressources...

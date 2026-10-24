@@ -1,4 +1,4 @@
-/* global WriPOILayer, IGNTileLayer, MarkerCompass */
+/* global GeoJsonUrlBbox, IGNTileLayer, MarkerCompass */
 /* eslint-disable-next-line no-unused-vars */
 /* global positionMemoryArray:writable */
 
@@ -183,15 +183,14 @@ const couchesIconesWRI = {
   coucheItineraires = L.tileLayer(
     'https://tile.waymarkedtrails.org/hiking/{z}/{x}/{y}.png', {
       maxZoom: 18,
-      //TODO BUG ne s'affiche pas sur Espagne, photo maxar & photo Google
+      //TODO BUG Zindex : ne s'affiche pas sur Espagne, photo maxar & photo Google
     });
 
 /*********************************
  * Points d'intérêt refuges.info *
  *********************************/
-/* eslint-disable-next-line no-unused-vars */
-class WriPOILayer extends L.geoJson {
-  //  constructor(serveurAPI, type, versionFeatures, hideTooltip,urlArg) {
+class CouchePointsWri extends L.geoJson {
+  //DCMM constructor(serveurAPI, type, versionFeatures, hideTooltip,urlArg) {
   constructor(options = {}) {
     const iconList = [],
       url = options.serveurAPI + '/api/bbox' +
@@ -257,7 +256,6 @@ class WriPOILayer extends L.geoJson {
 }
 
 // Cluster contenant tous les types de points
-//DCMM TODO move to myLeaflet
 /* eslint-disable-next-line no-unused-vars */
 function clusterPOI(serveurAPI, versionFeatures, urlArg = '') {
   const cluster = L.markerClusterGroup({
@@ -267,9 +265,9 @@ function clusterPOI(serveurAPI, versionFeatures, urlArg = '') {
 
   for (const entry of Object.entries(couchesIconesWRI)) {
     // On crée les couches pour chaque type de point
-    //  constructor(serveurAPI, type, versionFeatures, hideTooltip,urlArg) {
+    //DCMM constructor(serveurAPI, type, versionFeatures, hideTooltip,urlArg) {
     /*
-    new WriPOILayer({
+    new CouchePointsWri({
       serveurAPI:,
       type:,
        versionFeatures:,
@@ -277,7 +275,7 @@ function clusterPOI(serveurAPI, versionFeatures, urlArg = '') {
       urlArg:,
     });
     */
-    const layer = new WriPOILayer({
+    const layer = new CouchePointsWri({
       serveurAPI: serveurAPI,
       type: entry[1][0],
       versionFeatures: versionFeatures,
@@ -292,7 +290,7 @@ function clusterPOI(serveurAPI, versionFeatures, urlArg = '') {
 }
 
 /* eslint-disable-next-line no-unused-vars */
-class WriPolygonLayer extends GeoJsonUrlBbox {
+class CouchePolygonesWri extends GeoJsonUrlBbox {
   constructor(typeId, serveurAPI, versionFeatures, options = {}) {
     super(serveurAPI + '/api/polygones?' +
       'type_polygon=' + typeId +
