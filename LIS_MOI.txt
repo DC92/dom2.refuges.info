@@ -8,6 +8,8 @@ vues\_cartes_leaflet.js
 vues\_page.html
 vues\index.html
 vues\index.js
+vues\point.js
+vues\point_formulaire_modification.js
 vues\style_pages.css
 
 Fichiers supprimés NAV

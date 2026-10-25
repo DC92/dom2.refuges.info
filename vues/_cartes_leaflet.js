@@ -255,7 +255,6 @@ class CouchePointsWri extends L.geoJson {
   }
 }
 
-// Cluster contenant tous les types de points
 /* eslint-disable-next-line no-unused-vars */
 function clusterCouchePointsWri(options) {
   const cluster = L.markerClusterGroup({
