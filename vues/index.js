@@ -15,19 +15,22 @@ const libelles = <?=json_encode($vue->libelles_couches)?>,
   identite = Object.fromEntries(Object.entries(libelles).map(([fr, traduit]) => [traduit, fr])),
   libelle = (nom) => libelles[nom] || nom;
 
-// Couches refuges.info de la page 
+// Récupération de la mémorisation des couches refuges.info du sélecteur de couches
 if (typeof sessionStorage.checkedLayers !== 'string')
   sessionStorage.checkedLayers =
   localStorage.checkedLayers ||
   'Cabane non gardée,Refuge gardé,Gîte d\'étape';
 
-// points WRI
+// Construction du sélecteur de couches points WRI
 for (const [nom, args] of Object.entries(couchesIconesWRI)) {
   const icone = '<img src="/images/icones/' + args[1] + '.svg"/> ' + libelle(nom), // Libellé de la ligne sélecteur
     layer = new CouchePointsWri({ // Couche affichable
       serveurAPI: 'https://<?=$_SERVER["SERVER_NAME"]?>',
-      type: args[0],
       versionFeatures: '<?=$vue->version_features?>',
+      typePoints: args[0],
+      <?php if (!empty($vue->polygone)) { ?>
+        massif: <?=$vue->polygone->id_polygone?>,
+      <?php } ?>
     });
 
   // Il est nécéssaire de grouper les points de chaque couche pour pouvoir les sélectionner indépendament
@@ -113,7 +116,10 @@ if (conteneurSelecteurExterneEl)
 <?php if (!empty($vue->polygone)) { ?>
   // Surimposition du polygone
   const polygonLayer = JSON.parse('<?=$vue->polygone->geometrie_geojson??"{}"?>'),
-    massifLayer = L.polygon(flipLonLatRecursive(polygonLayer.coordinates));
+    massifLayer = L.polygon(
+      flipLonLatRecursive(polygonLayer.coordinates), {
+        fill: false,
+      });
 
   massifLayer.addTo(map);
   map.fitBounds(massifLayer.getBounds());

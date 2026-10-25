@@ -190,14 +190,17 @@ const couchesIconesWRI = {
  * COUCHES VECTORIELLES REFUGES.INFO *
  *************************************/
 class CouchePointsWri extends L.geoJson {
+  // On en fait une classe car on doit étendre une classe Leaflet
   //TODO extends GeoJsonUrlBbox //Pb icône
   constructor(options) {
     const iconList = [],
-      url = options.serveurAPI + '/api/bbox' +
-      '?nb_points=all&type_points=' + options.type +
-      (document.documentElement.lang === 'fr' ? '' : '&langue=' + document.documentElement.lang) +
+      url = options.serveurAPI + '/api/' + (options.massif ? 'massif' : 'bbox') +
+      '?nb_points=all' +
+      (options.typePoints ? '&type_points=' + options.typePoints : '') +
+      (options.massif ? '&massif=' + options.massif : '') +
       '&version=' + options.versionFeatures +
-      '&cache=' + (7 * 24 * 3600);
+      '&cache=' + (7 * 24 * 3600) +
+      (document.documentElement.lang === 'fr' ? '' : '&langue=' + document.documentElement.lang);
     //TODO Délai cache api / depuis
 
     super(null, {
@@ -257,15 +260,16 @@ class CouchePointsWri extends L.geoJson {
 
 /* eslint-disable-next-line no-unused-vars */
 function clusterCouchePointsWri(options) {
+  // On n'en fait pas une classe car on n'a pas à étendre une classe Leaflet
   const cluster = L.markerClusterGroup({
     spiderfyOnMaxZoom: true, // Overlapping markers will spiderfy when clicked
-    maxClusterRadius: 30, // Less clusters
+    maxClusterRadius: 30, // Règle le nombre de points versus clusters
   });
 
   for (const entry of Object.entries(couchesIconesWRI)) {
     // On crée les couches pour chaque type de point
     const layer = new CouchePointsWri({
-      type: entry[1][0],
+      typePoints: entry[1][0],
       ...options,
     });
 
