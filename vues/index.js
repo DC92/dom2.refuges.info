@@ -31,6 +31,8 @@ for (const [nom, args] of Object.entries(couchesIconesWRI)) {
       <?php if (!empty($vue->polygone)) { ?>
         massif: <?=$vue->polygone->id_polygone?>,
       <?php } ?>
+      etiquette: true,
+      clic: true,
     });
 
   // Il est nécéssaire de grouper les points de chaque couche pour pouvoir les sélectionner indépendament
@@ -54,8 +56,8 @@ for (const [nom, args] of Object.entries(couchesIconesWRI)) {
 const argsPolygones = {
   serveurAPI: 'https://<?=$_SERVER["SERVER_NAME"]?>',
   versionFeatures: '<?=$vue->version_features?>',
-  labels: true,
-  click: true,
+  etiquettes: true,
+  clic: true,
 };
 
 overlays[libelle('Régions')] = new CouchePolygonesWri({
@@ -116,7 +118,8 @@ positionMemoryControl(map);
 
 // Externalise le sélecteur de points pour les grandes largeurs de fenêtre
 const conteneurSelecteurExterneEl = document.getElementById('conteneur-selecteur-points'),
-  conteneurDeuxiemeSelecteurEl = document.querySelector(':has(>.leaflet-control-layers)').lastChild.lastChild,
+  conteneurDeuxiemeSelecteurEl = document.querySelector(':has(>.leaflet-control-layers)')
+  .lastChild.lastChild, //TODO remove *ElementChild
   selecteursPointsEl = document.querySelector('.leaflet-control-layers-overlays:has(img)');
 
 if (conteneurSelecteurExterneEl && selecteursPointsEl)
@@ -153,9 +156,9 @@ const overlaySelectors = document.querySelectorAll('.leaflet-control-layers-over
 /* eslint-disable-next-line no-unused-vars */
 function copyExportLink() {
   if (exportCarteEl)
-    navigator.clipboard.writeText(exportCarteEl.lastChild.href)
+    navigator.clipboard.writeText(exportCarteEl.lastChild.href) //TODO remove *ElementChild
     .then(() => alert('<?=json_encode(_("Lien copié dans le presse-papier"))?> :\n\n' +
-      exportCarteEl.lastChild.href)); //TODO BUG undefined
+      exportCarteEl.lastChild.href)); //TODO BUG undefined / remove *ElementChild
   //TODO BUG affiche les ""
 }
 
@@ -170,7 +173,7 @@ function addRemoveOverlay() {
 
   // Calcul des couches sélectionnées
   for (const lsInputEl of overlaySelectors) {
-    const affiche = lsInputEl.parentElement.lastChild.innerText.trim(),
+    const affiche = lsInputEl.parentElement.lastChild.innerText.trim(), //TODO remove *ElementChild
       nom = identite[affiche] || affiche; // identité (nom français) du libellé affiché
 
     if (lsInputEl.checked) {
@@ -186,7 +189,7 @@ function addRemoveOverlay() {
     sessionStorage.checkedLayers = checkedLayersNames.join(',');
 
   if (exportCarteEl) {
-    exportCarteEl.children[1].href = '/api/bbox' +
+    exportCarteEl.children[1].href = '/api/bbox' + //TODO remove *ElementChild
       '?type_points=' + checkedLayersTypes.join(',') +
       '&nb_points=all' +
       '&bbox=' + fc(bsw.lng) + ',' + fc(bsw.lat) + ',' + cc(bne.lng) + ',' + cc(bne.lat) +

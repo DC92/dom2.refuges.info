@@ -113,7 +113,7 @@ const ControlPolygonsUpload = L.Control.extend({
     buttonDiv.addEventListener('click', () => buttonDiv.classList.add('buttonSelected'));
 
     // A file has been selected
-    buttonDiv.lastChild.addEventListener('change', (evt) => {
+    buttonDiv.lastChild.addEventListener('change', (evt) => { //TODO remove *ElementChild
       const reader = new FileReader();
 
       reader.readAsText(evt.target.files[0]);
@@ -235,7 +235,7 @@ function positionMemoryControl(map) {
 
       for (const lsInputEl of baselayerSelector)
         if (lsInputEl.checked || !baseLayerName)
-          baseLayerName = lsInputEl.parentElement.lastChild.innerText.trim();
+          baseLayerName = lsInputEl.parentElement.lastChild.innerText.trim(); //TODO remove *ElementChild
 
       // To restart from this position at the next map change
       positionMemoryArray = [

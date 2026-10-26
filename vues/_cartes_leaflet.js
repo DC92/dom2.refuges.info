@@ -47,9 +47,9 @@ function controlesComuns(map) {
   ];
 }
 
-/**************************
- * DÉFINITION DES COUCHES *
- **************************/
+/*******************
+ * COUCHES TUILÉES *
+ *******************/
 /* eslint-disable-next-line no-unused-vars */
 function couchesDeFond(layerKeys) {
   return {
@@ -167,9 +167,9 @@ const coucheItineraires = L.tileLayer(
     //TODO BUG Zindex : ne s'affiche pas sur Espagne, photo maxar & photo Google
   });
 
-/*************************************
- * COUCHES VECTORIELLES REFUGES.INFO *
- *************************************/
+/************************
+ * COUCHES VECTORIELLES *
+ ************************/
 const couchesIconesWRI = {
     'Cabane non gardée': [7, 'cabane'],
     'Refuge gardé': [10, 'cabane_red'],
@@ -217,18 +217,17 @@ class CouchePointsWri extends L.geoJson {
 
       onEachFeature: (feature, layer) => {
         // Etiquettes
-        if (!options.hideTooltip)
+        if (options.etiquette)
           layer.bindTooltip(
             feature.properties.nom, {
               permanent: true,
               direction: 'center',
             }).openTooltip();
 
-        layer.on({
-          click: () => {
+        if (options.clic)
+          layer.on('click', () => {
             location.href = feature.properties.lien || '/point/' + feature.id;
-          },
-        });
+          });
 
         // For icons prelaod
         iconList[feature.properties.type.icone] = true;
@@ -296,7 +295,7 @@ class CouchePolygonesWri extends GeoJsonUrlBbox {
 
         onEachFeature: (feature, layer) => {
           // Etiquettes
-          if (options.labels)
+          if (options.etiquettes)
             layer.bindTooltip(
               feature.properties.nom
               .replaceAll(/ ([a-z]?[a-z]?[a-z]) /gui, ' $1&nbsp;')
@@ -305,19 +304,16 @@ class CouchePolygonesWri extends GeoJsonUrlBbox {
                 direction: 'center',
               }).openTooltip();
 
-          if (options.click) {
-            // Mouse hover & click
-            layer.on(
-              'mouseover mouseout', (evt) => {
-                evt.target.setStyle({
-                  stroke: evt.type === 'mouseover',
-                });
+          if (options.clic) {
+            // Survol & clic
+            layer.on('mouseover mouseout', (evt) => {
+              evt.target.setStyle({
+                stroke: evt.type === 'mouseover',
               });
+            });
 
-            layer.on({
-              click: (evt) => {
-                location.href = '/nav/' + evt.sourceTarget.feature.id;
-              },
+            layer.on('click', (evt) => {
+              location.href = '/nav/' + evt.sourceTarget.feature.id;
             });
           } else
             // Remove cursor pointer on hover

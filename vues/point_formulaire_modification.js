@@ -22,39 +22,42 @@ document.querySelectorAll('form#form_point .booleen input[type=radio]').forEach(
   radio.addEventListener('change', marquePilulesCochees);
 });
 
-// Positionne la carte à l'emplacement du point à modifier
-<?php if(!empty($vue->point->id_point)) { ?>
-  sessionStorage.positionMemory =
-    '15/<?=$vue->point->latitude?>/<?=$vue->point->longitude?>/' + sessionStorage.positionMemory.split('/')[3];
-<?php } ?>
-
-// Initialisation de la carte
+/***********************
+ * GESTION DE LA CARTE *
+ ***********************/
 const map = L.map('carte-saisie');
 
 // Couches tuilées
 const tileLayers = couchesDeFond(<?=json_encode($config_wri["mapKeys"])?>);
-
 // Chargement du fond de carte actif
-positionMemoryControl(map);
 (tileLayers[decodeURI(positionMemoryArray[3])] || Object.values(tileLayers)[0]).addTo(map);
 
 // Points refuges.info
 clusterCouchePointsWri({
   serveurAPI: 'https://<?=$_SERVER["SERVER_NAME"]?>',
   versionFeatures: '<?=$vue->version_features?>',
+  //TODO no cursor
 }).addTo(map);
 
 // Contrôles
 controlesComuns(map).forEach((control) => control.addTo(map));
 L.control.layers(tileLayers).addTo(map);
 
+// Positionne la carte à l'emplacement du point à modifier
+<?php if(!empty($vue->point->id_point)) { ?>
+  sessionStorage.positionMemory =
+    '15/<?=$vue->point->latitude?>/<?=$vue->point->longitude?>/' + sessionStorage.positionMemory.split('/')[3];
+<?php } ?>
+positionMemoryControl(map);
+
 // Lance le chargement de la carte
 //TODO BUG ne repositionne pas la carte au centre mais seulement dans la carte
 map.setView([positionMemoryArray[1], positionMemoryArray[2]], 15);
 
-// Marqueur déplaçable d'édition de position de cabane
+/***********************
+ * GESTION DU MARQUEUR *
+ ***********************/
 const champsPositionEls = document.querySelectorAll('#champs-position input'),
-  //TODO no click, no cursor
   marqueur = L.marker(
     map.getCenter(), {
       icon: L.icon({
