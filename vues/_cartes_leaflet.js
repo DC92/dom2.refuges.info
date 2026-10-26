@@ -159,6 +159,17 @@ function couchesDeFond(layerKeys) {
   };
 }
 
+// Couche overlay sélectionnable
+/* eslint-disable-next-line no-unused-vars */
+const coucheItineraires = L.tileLayer(
+  'https://tile.waymarkedtrails.org/hiking/{z}/{x}/{y}.png', {
+    maxZoom: 18,
+    //TODO BUG Zindex : ne s'affiche pas sur Espagne, photo maxar & photo Google
+  });
+
+/*************************************
+ * COUCHES VECTORIELLES REFUGES.INFO *
+ *************************************/
 const couchesIconesWRI = {
     'Cabane non gardée': [7, 'cabane'],
     'Refuge gardé': [10, 'cabane_red'],
@@ -177,18 +188,8 @@ const couchesIconesWRI = {
     'ravitaillement': '["shop"~"supermarket|convenience"]',
     'parking': '["amenity"="parking"]["access"!="private"]',
     'bus': '["highway"="bus_stop"]',
-  },
+  };
 
-  /* eslint-disable-next-line no-unused-vars */
-  coucheItineraires = L.tileLayer(
-    'https://tile.waymarkedtrails.org/hiking/{z}/{x}/{y}.png', {
-      maxZoom: 18,
-      //TODO BUG Zindex : ne s'affiche pas sur Espagne, photo maxar & photo Google
-    });
-
-/*************************************
- * COUCHES VECTORIELLES REFUGES.INFO *
- *************************************/
 class CouchePointsWri extends L.geoJson {
   // On en fait une classe car on doit étendre une classe Leaflet
   //TODO extends GeoJsonUrlBbox //Pb icône
@@ -260,7 +261,7 @@ class CouchePointsWri extends L.geoJson {
 
 /* eslint-disable-next-line no-unused-vars */
 function clusterCouchePointsWri(options) {
-  // On n'en fait pas une classe car on n'a pas à étendre une classe Leaflet
+  // On fait une fonction car on n'a pas à étendre une classe Leaflet
   const cluster = L.markerClusterGroup({
     spiderfyOnMaxZoom: true, // Overlapping markers will spiderfy when clicked
     maxClusterRadius: 30, // Règle le nombre de points versus clusters

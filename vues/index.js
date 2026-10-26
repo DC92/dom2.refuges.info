@@ -125,7 +125,10 @@ if (conteneurSelecteurExterneEl && selecteursPointsEl)
       if (window.innerWidth < 800)
         conteneurDeuxiemeSelecteurEl.appendChild(selecteursPointsEl);
       else
-        conteneurSelecteurExterneEl.insertBefore(selecteursPointsEl, conteneurSelecteurExterneEl.firstElementChild);
+        conteneurSelecteurExterneEl.insertBefore(
+          selecteursPointsEl,
+          conteneurSelecteurExterneEl.firstElementChild //TODO remove *ElementChild
+        );
     }));
 
 <?php if (!empty($vue->polygone)) { ?>
@@ -187,7 +190,7 @@ function addRemoveOverlay() {
       '?type_points=' + checkedLayersTypes.join(',') +
       '&nb_points=all' +
       '&bbox=' + fc(bsw.lng) + ',' + fc(bsw.lat) + ',' + cc(bne.lng) + ',' + cc(bne.lat) +
-      '&format=' + exportCarteEl.firstElementChild.value;
+      '&format=' + exportCarteEl.firstElementChild.value; //TODO remove *ElementChild
 
     // Affiche seulement quand il y a quelque chose à exporter
     exportCarteEl.style.display = checkedLayersTypes.length ? 'block' : 'none';

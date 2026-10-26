@@ -7,16 +7,6 @@ const map = L.map('carte-edit', {
   editJsonEl = document.getElementById('edit-json'), // Champ d'édition du geoJson
   exportPolygonEl = document.getElementById('export-polygon'); // Lien d'export dans la page
 
-// Couche de massifs en fond pour servir de base au snapping
-new CouchePolygonesWri({
-  serveurAPI: 'https://<?=$_SERVER["SERVER_NAME"]?>',
-  versionFeatures: '<?=$vue->version_features?>',
-  typeId: 1, // Massifs
-  bbox: true, // Pour ne pas ralentir le snapping
-  pmIgnore: true, // Pour qu'ils ne soient pas modifiables
-  snapIgnore: false, // Pour que les polygones en édition puisse coller aux contours de massifs
-}).addTo(map);
-
 // Contrôles
 controlesComuns(map).forEach((control) => control.addTo(map));
 L.control.layers(tileLayers, ).addTo(map);
@@ -31,7 +21,7 @@ positionMemoryControl(map);
   Object.values(tileLayers)[0] // La première par défaut
 ).addTo(map);
 
-// Affiche le polygone courant
+// Affiche le polygone à éditer
 if (editJsonEl.value) {
   const polygonesAEditer = L.geoJson(JSON.parse(editJsonEl.value)); //.addTo(map);
 
@@ -43,6 +33,16 @@ if (editJsonEl.value) {
   // Ou positionne la carte par défaut sur la dernière position utilisée
   map.setView([positionMemoryArray[1], positionMemoryArray[2]], positionMemoryArray[0]);
 }
+
+// Couche de massifs en fond pour servir de base au snapping
+new CouchePolygonesWri({
+  serveurAPI: 'https://<?=$_SERVER["SERVER_NAME"]?>',
+  versionFeatures: '<?=$vue->version_features?>',
+  typeId: 1, // Massifs
+  bbox: true, // Pour ne pas ralentir le snapping
+  pmIgnore: true, // Pour qu'ils ne soient pas modifiables
+  snapIgnore: false, // Pour que les polygones en édition puisse coller aux contours de massifs
+}).addTo(map);
 
 // Editeur
 map.pm.addControls({
@@ -97,12 +97,13 @@ map.on('layeradd', (evt) => {
 });
 map.on('pm:remove', layerChanged); // A la suppression du polygone
 
-
-// Changement de format d'export
+// Sélecteur de format d'export
 function formatChange() { // Réponse au changement d'état de l'input select
-  exportPolygonEl.firstElementChild.href = '/api/polygones' +
+  console.log(exportPolygonEl); //DCMM
+
+  exportPolygonEl.lastElementChild.href = '/api/polygones' + //TODO remove *ElementChild
     '?massif=' + polygoneId +
-    '&format=' + exportPolygonEl.lastElementChild.value;
+    '&format=' + exportPolygonEl.firstElementChild.value; //TODO remove *ElementChild
 }
 
 if (exportPolygonEl)
