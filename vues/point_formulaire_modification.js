@@ -49,6 +49,9 @@ L.control.layers(tileLayers).addTo(map);
   map.setView([<?=$vue->point->latitude?>,<?=$vue->point->longitude?>], 12);
 <?php } ?>
 
+// Mémorisation des glissements de la carte
+positionMemoryControl(map);
+
 /***********************
  * GESTION DU MARQUEUR *
  ***********************/
@@ -65,6 +68,7 @@ const champsPositionEls = document.querySelectorAll('#champs-position input'),
     }
   ).addTo(map);
 
+// Changement de curseur au survol du marqueur
 marqueur.on('mouseover', (evt) => {
   evt.target.getElement().style.cursor = 'move';
 });
