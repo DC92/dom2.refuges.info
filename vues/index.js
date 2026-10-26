@@ -66,6 +66,15 @@ overlays[libelle('Massifs')] = new CouchePolygonesWri({
   typeId: 1,
   ...argsPolygones,
 });
+/*
+<?php if (!empty($vue->polygone) && $vue->polygone->id_polygone_type == 11) { ?>
+  new CouchePolygonesWri({
+    typeId: 1,
+    massif:50,
+    ...argsPolygones,
+  }).addTomap;
+<?php } ?>
+*/
 
 // Couche externe d'itinéraires
 overlays[libelle('Itinéraires')] = coucheItineraires;
@@ -95,6 +104,12 @@ L.control.layers(tileLayers).addTo(map);
 L.control.layers(null, overlays).addTo(map);
 controlesComuns(map).forEach((control) => control.addTo(map));
 positionMemoryControl(map);
+/*
+<?php if (empty($vue->polygone) || $vue->polygone->id_polygone_type == 1) { ?>
+  conteneurDeuxiemeSelecteurEl.style.display = 'none';
+  // Cannot access 'conteneurDeuxiemeSelecteurEl' before initialization
+<?php } ?>
+*/
 
 // Chargement du fond de carte actif
 (tileLayers[decodeURI(positionMemoryArray[3])] || Object.values(tileLayers)[0]).addTo(map);
@@ -104,7 +119,7 @@ const conteneurSelecteurExterneEl = document.getElementById('conteneur-selecteur
   conteneurDeuxiemeSelecteurEl = document.querySelector(':has(>.leaflet-control-layers)').lastChild.lastChild,
   selecteursPointsEl = document.querySelector('.leaflet-control-layers-overlays:has(img)');
 
-if (conteneurSelecteurExterneEl)
+if (conteneurSelecteurExterneEl && selecteursPointsEl)
   ['load', 'resize'].forEach(evtName =>
     window.addEventListener(evtName, () => {
       if (window.innerWidth < 800)
