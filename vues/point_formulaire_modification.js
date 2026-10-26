@@ -36,23 +36,18 @@ const tileLayers = couchesDeFond(<?=json_encode($config_wri["mapKeys"])?>);
 clusterCouchePointsWri({
   serveurAPI: 'https://<?=$_SERVER["SERVER_NAME"]?>',
   versionFeatures: '<?=$vue->version_features?>',
-  //TODO no cursor
 }).addTo(map);
 
 // Contrôles
 controlesComuns(map).forEach((control) => control.addTo(map));
 L.control.layers(tileLayers).addTo(map);
 
-// Positionne la carte à l'emplacement du point à modifier
-<?php if(!empty($vue->point->id_point)) { ?>
-  sessionStorage.positionMemory =
-    '15/<?=$vue->point->latitude?>/<?=$vue->point->longitude?>/' + sessionStorage.positionMemory.split('/')[3];
+// Initialisation de la position de la carte
+<?php if(empty($vue->point->id_point)) { ?>
+  map.setView([positionMemoryArray[1], positionMemoryArray[2]], 15);
+<?php } else { ?>
+  map.setView([<?=$vue->point->latitude?>,<?=$vue->point->longitude?>], 12);
 <?php } ?>
-positionMemoryControl(map);
-
-// Lance le chargement de la carte
-//TODO BUG ne repositionne pas la carte au centre mais seulement dans la carte
-map.setView([positionMemoryArray[1], positionMemoryArray[2]], 15);
 
 /***********************
  * GESTION DU MARQUEUR *
