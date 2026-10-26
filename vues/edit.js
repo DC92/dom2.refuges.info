@@ -99,8 +99,6 @@ map.on('pm:remove', layerChanged); // A la suppression du polygone
 
 // Sélecteur de format d'export
 function formatChange() { // Réponse au changement d'état de l'input select
-  console.log(exportPolygonEl); //DCMM
-
   exportPolygonEl.lastElementChild.href = '/api/polygones' + //TODO remove *ElementChild
     '?massif=' + polygoneId +
     '&format=' + exportPolygonEl.firstElementChild.value; //TODO remove *ElementChild

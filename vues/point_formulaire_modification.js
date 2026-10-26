@@ -70,6 +70,10 @@ const champsPositionEls = document.querySelectorAll('#champs-position input'),
     }
   ).addTo(map);
 
+marqueur.on('mouseover', (evt) => {
+  evt.target.getElement().style.cursor = 'move';
+});
+
 function deplacerMarqueur(ll) {
   marqueur.setLatLng(ll);
 

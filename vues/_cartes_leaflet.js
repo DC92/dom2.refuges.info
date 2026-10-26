@@ -75,7 +75,6 @@ function couchesDeFond(layerKeys) {
     OpenHikingMap: L.tileLayer(
       'https://tile.openmaps.fr/openhikingmap/{z}/{x}/{y}.png', {
         maxZoom: 18,
-        //DCMM FUTUR HORS RESEAU edgeBufferTiles: 3,
         attribution: '<a href="https://wiki.openstreetmap.org/wiki/OpenHikingMap"> OpenHikingMap</a> | ' +
           '<a href="https://openmaps.fr/map-legend/openhikingmap-legend.html">Légende</a>',
       }),
@@ -228,6 +227,11 @@ class CouchePointsWri extends L.geoJson {
           layer.on('click', () => {
             location.href = feature.properties.lien || '/point/' + feature.id;
           });
+        else
+          // Remove cursor pointer on hover
+          layer.on('mouseover', (evt) => {
+            evt.target.getElement().style.cursor = 'grab';
+          });
 
         // For icons prelaod
         iconList[feature.properties.type.icone] = true;
@@ -305,8 +309,8 @@ class CouchePolygonesWri extends GeoJsonUrlBbox {
               }).openTooltip();
 
           if (options.clic) {
-            // Survol & clic
             layer.on('mouseover mouseout', (evt) => {
+              // Elargit le contour au survol
               evt.target.setStyle({
                 stroke: evt.type === 'mouseover',
               });
@@ -317,10 +321,8 @@ class CouchePolygonesWri extends GeoJsonUrlBbox {
             });
           } else
             // Remove cursor pointer on hover
-            layer.on({
-              mouseover: (evt) => {
-                evt.target.getElement().style.cursor = 'grab';
-              },
+            layer.on('mouseover', (evt) => {
+              evt.target.getElement().style.cursor = 'grab';
             });
         },
         ...options,

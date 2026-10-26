@@ -119,7 +119,7 @@ positionMemoryControl(map);
 // Externalise le sélecteur de points pour les grandes largeurs de fenêtre
 const conteneurSelecteurExterneEl = document.getElementById('conteneur-selecteur-points'),
   conteneurDeuxiemeSelecteurEl = document.querySelector(':has(>.leaflet-control-layers)')
-  .lastChild.lastChild, //TODO remove *ElementChild
+    .lastChild.lastChild, //TODO remove *ElementChild
   selecteursPointsEl = document.querySelector('.leaflet-control-layers-overlays:has(img)');
 
 if (conteneurSelecteurExterneEl && selecteursPointsEl)

@@ -34,14 +34,3 @@
 .leaflet-control-layers-overlays img {
   width: 16px;
 }
-
-/* DCMM FUTUR HORS RESEAU */
-/* TILE LAYERS */
-/* Tile preloading */
-.leaflet-control-preload button {
-  margin-right: 8px;
-  padding: 0;
-  aspect-ratio: 1;
-  font-size: 20px;
-  cursor: pointer;
-}
