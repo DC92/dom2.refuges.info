@@ -169,6 +169,7 @@ const coucheItineraires = L.tileLayer(
 /************************
  * COUCHES VECTORIELLES *
  ************************/
+/* eslint-disable-next-line no-unused-vars */
 const couchesIconesWRI = {
     'Cabane non gardée': [7, 'cabane'],
     'Refuge gardé': [10, 'cabane_red'],
@@ -263,25 +264,25 @@ class CouchePointsWri extends L.geoJson {
 }
 
 /* eslint-disable-next-line no-unused-vars */
-function clusterCouchePointsWri(options) {
-  // On fait une fonction car on n'a pas à étendre une classe Leaflet
-  const cluster = L.markerClusterGroup({
-    spiderfyOnMaxZoom: true, // Overlapping markers will spiderfy when clicked
-    maxClusterRadius: 30, // Règle le nombre de points versus clusters
-  });
-
-  for (const entry of Object.entries(couchesIconesWRI)) {
-    // On crée les couches pour chaque type de point
-    const layer = new CouchePointsWri({
-      typePoints: entry[1][0],
+class ClusterPointsWri extends L.markerClusterGroup {
+  constructor(options) {
+    super({
+      spiderfyOnMaxZoom: true, // Overlapping markers will spiderfy when clicked
+      maxClusterRadius: 30, // Règle le nombre de points versus clusters
       ...options,
     });
 
-    // Attente de la fin de réception pour l'intégrer au cluster
-    layer.on('load', (evt) => cluster.addLayer(evt.target));
-  }
+    for (const entry of Object.entries(options.couchesIcones)) {
+      // On crée les couches pour chaque type de point
+      const layer = new CouchePointsWri({
+        typePoints: entry[1][0],
+        ...options,
+      });
 
-  return cluster;
+      // Attente de la fin de réception pour l'intégrer au cluster
+      layer.on('load', (evt) => this.addLayer(evt.target));
+    }
+  }
 }
 
 /* eslint-disable-next-line no-unused-vars */

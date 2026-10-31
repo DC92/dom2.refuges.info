@@ -1,4 +1,4 @@
-/* global couchesDeFond, clusterCouchePointsWri, positionMemoryControl, positionMemoryArray, controlesComuns */
+/* global couchesDeFond, ClusterPointsWri, positionMemoryControl, positionMemoryArray, controlesComuns */
 
 // Utilitaire de saisie des boutons du formulaire
 /* eslint-disable-next-line no-unused-vars */
@@ -33,9 +33,10 @@ const tileLayers = couchesDeFond(<?=json_encode($config_wri["mapKeys"])?>);
 (tileLayers[decodeURI(positionMemoryArray[3])] || Object.values(tileLayers)[0]).addTo(map);
 
 // Points refuges.info
-clusterCouchePointsWri({
+new ClusterPointsWri({
   serveurAPI: 'https://<?=$_SERVER["SERVER_NAME"]?>',
   version: '<?=$vue->version_features?>',
+  couchesIcones: couchesIconesWRI,
 }).addTo(map);
 
 // Contrôles

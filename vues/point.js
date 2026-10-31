@@ -1,4 +1,4 @@
-/* global couchesDeFond, coucheItineraires, clusterCouchePointsWri, positionMemoryArray, positionMemoryControl, controlesComuns */
+/* global couchesDeFond, coucheItineraires, ClusterPointsWri, positionMemoryArray, positionMemoryControl, controlesComuns */
 
 // Initialisation de la carte
 const map = L.map('carte-point');
@@ -11,9 +11,10 @@ positionMemoryControl(map);
 (tileLayers[decodeURI(positionMemoryArray[3])] || Object.values(tileLayers)[0]).addTo(map);
 
 // Points refuges.info
-clusterCouchePointsWri({ // Couche affichable
+new ClusterPointsWri({ // Couche affichable
   serveurAPI: 'https://<?=$_SERVER["SERVER_NAME"]?>',
   version: '<?=$vue->version_features?>',
+  couchesIcones: couchesIconesWRI,
   etiquette: true,
   clic: true,
 }).addTo(map);
