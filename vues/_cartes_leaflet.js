@@ -268,6 +268,7 @@ class ClusterPointsWri extends L.markerClusterGroup {
   constructor(options) {
     super({
       spiderfyOnMaxZoom: true, // Overlapping markers will spiderfy when clicked
+      showCoverageOnHover: false, // Hides the cluster bounds polygon
       maxClusterRadius: 30, // Règle le nombre de points versus clusters
       ...options,
     });
@@ -279,8 +280,11 @@ class ClusterPointsWri extends L.markerClusterGroup {
         ...options,
       });
 
-      // Attente de la fin de réception pour l'intégrer au cluster
-      layer.on('load', (evt) => this.addLayer(evt.target));
+      // Quand les données sont chargées, on rafraîchit l'affichage du cluster
+      layer.on('load', (evt) => {
+        this.removeLayer(evt.target);
+        this.addLayer(evt.target);
+      });
     }
   }
 }

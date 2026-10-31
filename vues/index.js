@@ -5,7 +5,7 @@ const map = L.map('carte-accueil'),
   overlays = {},
   vectorCluster = L.markerClusterGroup({
     spiderfyOnMaxZoom: true, // Overlapping markers will spiderfy when clicked
-    showCoverageOnHover: false, // Optional: hides the cluster bounds polygon
+    showCoverageOnHover: false, // Hides the cluster bounds polygon
     maxClusterRadius: 30, // Less clusters
   });
 
@@ -22,6 +22,7 @@ if (typeof sessionStorage.checkedLayers !== 'string')
   'Cabane non gardée,Refuge gardé,Gîte d\'étape';
 
 // Construction du sélecteur de couches points WRI
+//TODO fusionner avec ClusterPointsWri
 for (const [nom, args] of Object.entries(couchesIconesWRI)) {
   const icone = '<img src="/images/icones/' + args[1] + '.svg"/> ' + libelle(nom), // Libellé de la ligne sélecteur
     layer = new CouchePointsWri({ // Couche affichable

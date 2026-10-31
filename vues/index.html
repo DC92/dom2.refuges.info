@@ -1,33 +1,3 @@
-<style>
-#carte-accueil {
-  margin-top: 5px;
-  wmax-width: 750px; /* Ne pas spécifier de width permet de cadrer à la place disponible en tenant compte de l'ascenseur */
-  max-height: 90vh; /* Evite d'avoir une carte recouvrant l'écran et empêchant de récupérer le scrool */
-  aspect-ratio: 4/3; /* La carte prendra le meilleur des précédents */
-}
-  .texte-tout-petit{text-align: center;}
-/* Mobile vertical */
-@media (max-aspect-ratio: 2/3) {
-  .carte{
-    width:100%;
-  }
-.presentation-accueil:not(:hover)  {
-text-overflow: ellipsis;
-height:1em;
-overflow: hidden;
-white-space: nowrap;
-margin:10px;
-}
-  .texte-tout-petit{background:red}
-}
-/* Mobile horizontal */
-@media (min-aspect-ratio: 3/2) {
-  .carte{
-    height:100%;
-  }
- }
-</style>
-
 <?php if (empty($vue->polygone)) { ?>
   <!-- PRESENTATION ACCUEIL -->
   <div class="presentation-accueil">
@@ -46,10 +16,6 @@ margin:10px;
     </h3>
   </div>
 <?php } ?>
-
-<?php
-/*DCMM*/var_dump($vue->polygone);
-?>
 
 <!-- CARTE -->
 <div id="conteneur-selecteur-points"></div>
