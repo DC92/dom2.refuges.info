@@ -26,7 +26,7 @@ for (const [nom, args] of Object.entries(couchesIconesWRI)) {
   const icone = '<img src="/images/icones/' + args[1] + '.svg"/> ' + libelle(nom), // Libellé de la ligne sélecteur
     layer = new CouchePointsWri({ // Couche affichable
       serveurAPI: 'https://<?=$_SERVER["SERVER_NAME"]?>',
-      versionFeatures: '<?=$vue->version_features?>',
+      version: '<?=$vue->version_features?>',
       typePoints: args[0],
       <?php if (!empty($vue->polygone)) { ?>
         massif: <?=$vue->polygone->id_polygone?>,
@@ -55,7 +55,7 @@ for (const [nom, args] of Object.entries(couchesIconesWRI)) {
 // Polygones WRI
 const argsPolygones = {
   serveurAPI: 'https://<?=$_SERVER["SERVER_NAME"]?>',
-  versionFeatures: '<?=$vue->version_features?>',
+  version: '<?=$vue->version_features?>',
   etiquettes: true,
   clic: true,
 };
@@ -66,17 +66,11 @@ overlays[libelle('Régions')] = new CouchePolygonesWri({
 });
 overlays[libelle('Massifs')] = new CouchePolygonesWri({
   typeId: 1,
+  <?php if (!empty($vue->polygone)) { ?>
+    intersection: <?=$vue->polygone->id_polygone?>,
+  <?php } ?>
   ...argsPolygones,
 });
-/*
-<?php if (!empty($vue->polygone) && $vue->polygone->id_polygone_type == 11) { ?>
-  new CouchePolygonesWri({
-    typeId: 1,
-    massif:50,
-    ...argsPolygones,
-  }).addTomap;
-<?php } ?>
-*/
 
 // Couche externe d'itinéraires
 overlays[libelle('Itinéraires')] = coucheItineraires;

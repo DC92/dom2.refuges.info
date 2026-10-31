@@ -13,7 +13,7 @@ positionMemoryControl(map);
 // Points refuges.info
 clusterCouchePointsWri({ // Couche affichable
   serveurAPI: 'https://<?=$_SERVER["SERVER_NAME"]?>',
-  versionFeatures: '<?=$vue->version_features?>',
+  version: '<?=$vue->version_features?>',
   etiquette: true,
   clic: true,
 }).addTo(map);

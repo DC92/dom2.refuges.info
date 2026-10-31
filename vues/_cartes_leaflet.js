@@ -198,7 +198,7 @@ class CouchePointsWri extends L.geoJson {
       '?nb_points=all' +
       (options.typePoints ? '&type_points=' + options.typePoints : '') +
       (options.massif ? '&massif=' + options.massif : '') +
-      '&version=' + options.versionFeatures +
+      (options.version ? '&version=' + options.version : '') +
       '&cache=' + (7 * 24 * 3600) +
       (document.documentElement.lang === 'fr' ? '' : '&langue=' + document.documentElement.lang);
     //TODO Délai cache api / depuis
@@ -289,12 +289,13 @@ class CouchePolygonesWri extends GeoJsonUrlBbox {
   constructor(options) {
     super(options.serveurAPI + '/api/polygones?' +
       'type_polygon=' + options.typeId +
-      '&version=' + options.versionFeatures +
+      (options.massif ? '&massif=' + options.massif : '') +
+      (options.intersection ? '&intersection=' + options.intersection : '') +
       '&cache=' + (7 * 24 * 3600), {
         style: (feature) => ({
           stroke: false,
           color: feature.properties.couleur,
-          ...options,
+          ...options.style,
         }),
 
         onEachFeature: (feature, layer) => {

@@ -35,7 +35,7 @@ const tileLayers = couchesDeFond(<?=json_encode($config_wri["mapKeys"])?>);
 // Points refuges.info
 clusterCouchePointsWri({
   serveurAPI: 'https://<?=$_SERVER["SERVER_NAME"]?>',
-  versionFeatures: '<?=$vue->version_features?>',
+  version: '<?=$vue->version_features?>',
 }).addTo(map);
 
 // Contrôles

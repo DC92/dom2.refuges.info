@@ -37,7 +37,7 @@ if (editJsonEl.value) {
 // Couche de massifs en fond pour servir de base au snapping
 new CouchePolygonesWri({
   serveurAPI: 'https://<?=$_SERVER["SERVER_NAME"]?>',
-  versionFeatures: '<?=$vue->version_features?>',
+  version: '<?=$vue->version_features?>',
   typeId: 1, // Massifs
   bbox: true, // Pour ne pas ralentir le snapping
   pmIgnore: true, // Pour qu'ils ne soient pas modifiables
