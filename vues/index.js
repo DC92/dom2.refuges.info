@@ -7,7 +7,13 @@ const map = L.map('carte-accueil'),
     spiderfyOnMaxZoom: true, // Overlapping markers will spiderfy when clicked
     showCoverageOnHover: false, // Hides the cluster bounds polygon
     maxClusterRadius: 30, // Less clusters
-  });
+  }),
+  argsApiLayersWri = { // Polygones WRI
+    serveurAPI: 'https://<?=$_SERVER["SERVER_NAME"]?>',
+    version: '<?=$vue->version_features?>',
+    etiquettes: true,
+    clic: true,
+  };
 
 // Libellés affichés des couches (traduits par le serveur). L'identité d'une couche reste son nom français : c'est lui qui est
 // mémorisé dans sessionStorage et cherché dans couchesIconesWRI ; on repasse donc du libellé affiché à ce nom (identite).
@@ -21,19 +27,18 @@ if (typeof sessionStorage.checkedLayers !== 'string')
   localStorage.checkedLayers ||
   'Cabane non gardée,Refuge gardé,Gîte d\'étape';
 
-// Construction du sélecteur de couches points WRI
+/****************************************
+ * CONSTRUCTION DU SÉLECTEUR DE COUCHES *
+ ****************************************/
 //TODO fusionner avec ClusterPointsWri
 for (const [nom, args] of Object.entries(couchesIconesWRI)) {
   const icone = '<img src="/images/icones/' + args[1] + '.svg"/> ' + libelle(nom), // Libellé de la ligne sélecteur
     layer = new CouchePointsWri({ // Couche affichable
-      serveurAPI: 'https://<?=$_SERVER["SERVER_NAME"]?>',
-      version: '<?=$vue->version_features?>',
+      ...argsApiLayersWri,
       typePoints: args[0],
       <?php if (!empty($vue->polygone)) { ?>
         massif: <?=$vue->polygone->id_polygone?>,
       <?php } ?>
-      etiquette: true,
-      clic: true,
     });
 
   // Il est nécéssaire de grouper les points de chaque couche pour pouvoir les sélectionner indépendament
@@ -53,25 +58,25 @@ for (const [nom, args] of Object.entries(couchesIconesWRI)) {
   }
 }
 
-// Polygones WRI
-const argsPolygones = {
-  serveurAPI: 'https://<?=$_SERVER["SERVER_NAME"]?>',
-  version: '<?=$vue->version_features?>',
-  etiquettes: true,
-  clic: true,
-};
+<?php if (empty($vue->polygone)) { ?>
+  overlays[libelle('Régions')] = new CouchePolygonesWri({
+    ...argsApiLayersWri,
+    typeId: 11,
+  });
 
-overlays[libelle('Régions')] = new CouchePolygonesWri({
-  typeId: 11,
-  ...argsPolygones,
-});
-overlays[libelle('Massifs')] = new CouchePolygonesWri({
-  typeId: 1,
-  <?php if (!empty($vue->polygone)) { ?>
+  overlays[libelle('Massifs')] = new CouchePolygonesWri({
+    ...argsApiLayersWri,
+    typeId: 1,
+  });
+<?php } ?>
+
+<?php if (!empty($vue->polygone) && $vue->polygone->id_polygone_type == 11) { ?>
+  overlays[libelle('Massifs')] = new CouchePolygonesWri({
+    ...argsApiLayersWri,
+    typeId: 1,
     intersection: <?=$vue->polygone->id_polygone?>,
-  <?php } ?>
-  ...argsPolygones,
-});
+  }).addTo(map);
+<?php } ?>
 
 // Couche externe d'itinéraires
 overlays[libelle('Itinéraires')] = coucheItineraires;
@@ -86,7 +91,9 @@ for (const [nom, query] of Object.entries(couchesOverpass))
   overlays['OSM ' + nom] = new L.OverPassLayer({
     query: '(nwr' + query + '({{bbox}}););out center;',
     markerIcon: L.icon({
-      iconUrl: 'https://<?=$_SERVER["SERVER_NAME"]?>/images/icones/' + nom.replaceAll('ô', 'o').replaceAll(/[^a-z]/gu, '') + '.svg',
+      iconUrl: 'https://<?=$_SERVER["SERVER_NAME"]?>/images/icones/' +
+        nom.replaceAll('ô', 'o').replaceAll(/[^a-z]/gu, '') +
+        '.svg',
       iconSize: [24, 24],
       iconAnchor: [12, 12],
     }),
@@ -96,12 +103,18 @@ for (const [nom, query] of Object.entries(couchesOverpass))
 
 vectorCluster.addTo(map);
 
-// Controles
-L.control.layers(tileLayers).addTo(map);
-L.control.layers(null, overlays).addTo(map);
+
+/*************
+ * CONTROLES *
+ *************/
 controlesComuns(map).forEach((control) => control.addTo(map));
 positionMemoryControl(map);
-/*
+L.control.layers(tileLayers).addTo(map);
+<?php if (empty($vue->polygone) || $vue->polygone->id_polygone_type == 1) { ?>
+  L.control.layers(null, overlays).addTo(map);
+<?php } ?>
+
+/*//DCMM
 <?php if (empty($vue->polygone) || $vue->polygone->id_polygone_type == 1) { ?>
   conteneurDeuxiemeSelecteurEl.style.display = 'none';
   // Cannot access 'conteneurDeuxiemeSelecteurEl' before initialization
@@ -144,20 +157,28 @@ if (conteneurSelecteurExterneEl && selecteursPointsEl)
   map.setView([positionMemoryArray[1], positionMemoryArray[2]], positionMemoryArray[0]);
 <?php } ?>
 
-// Calcul du lien d'export
+
+/***************************
+ * CALCUL DU LIEN D'EXPORT *
+ ***************************/
 const overlaySelectors = document.querySelectorAll('.leaflet-control-layers-overlays input'), // Lien d'export de la carte
   exportCarteEl = document.getElementById('export-carte');
 
 /* eslint-disable-next-line no-unused-vars */
 function copyExportLink() {
+  //TODO BUG affiche les ""
   if (exportCarteEl)
     navigator.clipboard.writeText(exportCarteEl.lastChild.href) //TODO remove *ElementChild
     .then(() => alert('<?=json_encode(_("Lien copié dans le presse-papier"))?> :\n\n' +
       exportCarteEl.lastChild.href)); //TODO BUG undefined / remove *ElementChild
-  //TODO BUG affiche les ""
 }
 
-// Mémorisation des couches de points et l'export
+
+/**************************************************
+ * MÉMORISATION DES COUCHES DE POINTS ET L'EXPORT *
+ **************************************************/
+//DCMM TODO BUG efface la mémorisation des massifs et regions en mode /nav/massif
+//TODO remonter dans myLeaflet.js
 function addRemoveOverlay() {
   const bne = map.getBounds()._northEast,
     bsw = map.getBounds()._southWest,
@@ -195,6 +216,8 @@ function addRemoveOverlay() {
   }
 }
 
-map.on('overlayadd', () => addRemoveOverlay()); // Also for init
-map.on('overlayremove', () => addRemoveOverlay());
-map.on('moveend', () => addRemoveOverlay()); // For zoom & shifts
+<?php if (empty($vue->polygone) || $vue->polygone->id_polygone_type == 1) { ?>
+  map.on('overlayadd', () => addRemoveOverlay()); // Also for init
+  map.on('overlayremove', () => addRemoveOverlay());
+  map.on('moveend', () => addRemoveOverlay()); // For zoom & shifts
+<?php } ?>
