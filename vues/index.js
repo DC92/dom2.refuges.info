@@ -10,13 +10,14 @@ const map = L.map('carte-accueil'),
   }),
   argsApiLayersWri = { // Polygones WRI
     serveurAPI: 'https://<?=$_SERVER["SERVER_NAME"]?>',
-    version: '<?=$vue->version_features?>',
+    version: <?=$vue->version_features?>,
     etiquettes: true,
     clic: true,
   };
 
-// Libellés affichés des couches (traduits par le serveur). L'identité d'une couche reste son nom français : c'est lui qui est
-// mémorisé dans sessionStorage et cherché dans couchesIconesWRI ; on repasse donc du libellé affiché à ce nom (identite).
+// Libellés affichés des couches (traduits par le serveur). L'identité d'une couche reste son nom français :
+// c'est lui qui est mémorisé dans sessionStorage et cherché dans couchesIconesWRI ;
+// on repasse donc du libellé affiché à ce nom (identite).
 const libelles = <?=json_encode($vue->libelles_couches)?>,
   identite = Object.fromEntries(Object.entries(libelles).map(([fr, traduit]) => [traduit, fr])),
   libelle = (nom) => libelles[nom] || nom;
@@ -30,6 +31,11 @@ if (typeof sessionStorage.checkedLayers !== 'string')
 /****************************************
  * CONSTRUCTION DU SÉLECTEUR DE COUCHES *
  ****************************************/
+/* Couches vectorielles de points WRI :
+ On appelle l'API avec bbox monde pour chaque type de point
+ avec le numéro de version chargé avec la page et correspondant à la dernière modification de point.
+ Elle seront mémorisées par le cache jusqu'à la prochaine évolution de la base.
+*/
 //TODO fusionner avec ClusterPointsWri
 for (const [nom, args] of Object.entries(couchesIconesWRI)) {
   const icone = '<img src="/images/icones/' + args[1] + '.svg"/> ' + libelle(nom), // Libellé de la ligne sélecteur
@@ -58,6 +64,7 @@ for (const [nom, args] of Object.entries(couchesIconesWRI)) {
   }
 }
 
+// Autres overlays :
 <?php if (empty($vue->polygone)) { ?>
   overlays[libelle('Régions')] = new CouchePolygonesWri({
     ...argsApiLayersWri,
@@ -114,15 +121,15 @@ L.control.layers(tileLayers).addTo(map);
   L.control.layers(null, overlays).addTo(map);
 <?php } ?>
 
+// Chargement du fond de carte actif
+(tileLayers[decodeURI(positionMemoryArray[3])] || Object.values(tileLayers)[0]).addTo(map);
+
 /*//DCMM
 <?php if (empty($vue->polygone) || $vue->polygone->id_polygone_type == 1) { ?>
   conteneurDeuxiemeSelecteurEl.style.display = 'none';
   // Cannot access 'conteneurDeuxiemeSelecteurEl' before initialization
 <?php } ?>
 */
-
-// Chargement du fond de carte actif
-(tileLayers[decodeURI(positionMemoryArray[3])] || Object.values(tileLayers)[0]).addTo(map);
 
 // Externalise le sélecteur de points pour les grandes largeurs de fenêtre
 const conteneurSelecteurExterneEl = document.getElementById('conteneur-selecteur-points'),
