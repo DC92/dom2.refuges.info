@@ -119,8 +119,8 @@
     <?php if (count($vue->infos_complementaires)) { ?>
       <dt style='clear: left;'><?=_("Informations complémentaires :")?></dt>
       <?php foreach ($vue->infos_complementaires as $val) { ?>
-        <dd><?=sprintf(_("%s : %s"), _($val['nom']), '<b>'._($val['valeur']).'</b>')?></dd>
-      <?php }
+        <dd><?=sprintf(_("%s : %s"), htmlspecialchars(_($val['nom'])), '<b>'.htmlspecialchars(_($val['valeur'])).'</b>')?></dd>
+        <?php }
     } ?>
 <!--===================================== POINTS À PROXIMITÉ ======================================-->
     <?php if (!empty($vue->points_proches) and count($vue->points_proches)) { ?>
