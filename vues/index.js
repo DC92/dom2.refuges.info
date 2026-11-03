@@ -3,7 +3,7 @@
 // Libellés affichés des couches (traduits par le serveur). L'identité d'une couche reste son nom français :
 // c'est lui qui est mémorisé dans sessionStorage et cherché dans couchesIconesWRI ;
 // on repasse donc du libellé affiché à ce nom (identite).
-const libelles =<?=json_encode($vue->libelles_couches)?>,
+const libelles = <?=json_encode($vue->libelles_couches)?>,
   identite = Object.fromEntries(Object.entries(libelles).map(([fr, traduit]) => [traduit, fr])),
   libelle = (nom) => libelles[nom] || nom,
   typesPointsParDefaut = 'Cabane non gardée,Refuge gardé,Gîte d\'étape';
@@ -44,42 +44,41 @@ if (polygoneAAfficher) {
 /****************************
  * COUCHES EN SURIMPRESSION *
  ****************************/
-const argumentsApiWri = { // Polygones WRI
-    serveurAPI: 'https://<?=$_SERVER["SERVER_NAME"]?>',
-    version: '<?=$vue->version_features?>',
-    etiquettes: true,
-    clic: true,
-  },
-  vectorCluster = L.markerClusterGroup({
-    spiderfyOnMaxZoom: true, // Overlapping markers will spiderfy when clicked
-    showCoverageOnHover: false, // Hides the cluster bounds polygon
-    maxClusterRadius: 30, // Less clusters
-  }),
-  overlays = {};
+const argumentsApiWri = {
+  serveurAPI: 'https://<?=$_SERVER["SERVER_NAME"]?>',
+  version: '<?=$vue->version_features?>',
+  etiquettes: true,
+  clic: true,
+};
 
-// Récupération de la mémorisation des couches refuges.info du sélecteur de couches
-if (typeof sessionStorage.checkedLayers !== 'string')
-  sessionStorage.checkedLayers = localStorage.checkedLayers || typesPointsParDefaut;
-
-const ccc = new ClusterPointsWri({
-  ...argumentsApiWri,
-  couchesIcones: couchesIconesWRI,
-  massif: polygoneAAfficher ? polygoneAAfficher.id_polygone : 0,
-});
-
-if (!polygoneAAfficher || polygoneAAfficher.id_polygone_type === 1) {
-  ccc.addTo(map);
-  L.control.layers(null, overlays).addTo(map);
-} else
-  new CouchePolygonesWri({
+// Cas de la carte d'une zone
+if (polygoneAAfficher && polygoneAAfficher.id_polygone_type === 11) {
+  new CouchePolygonesWri({ // On affiche les massifs
     ...argumentsApiWri,
-    typeId: 1,
-    intersection: polygoneAAfficher.id_polygone,
+    typeId: 1, // Les polygones de massifs
+    intersection: polygoneAAfficher.id_polygone, // inclus dans la zone
     featureStyle: {
-      fillOpacity: 0.5,
+      fillOpacity: 0.5, // Un peu plus visibles que sur les autres cartes car il n'y a que ça
     },
   }).addTo(map);
+}
+// Carte normale ou page d'un massif
+else {
+  const overlays = {}; // Liste de toutes les couches du sélecteur d'overlays
 
+  const ccc = new ClusterPointsWri({
+    ...argumentsApiWri,
+    couchesIcones: couchesIconesWRI,
+    massif: polygoneAAfficher ? polygoneAAfficher.id_polygone : 0,
+  });
+
+  ccc.addTo(map);
+  L.control.layers(null, overlays).addTo(map);
+
+  // Récupération de la mémorisation des couches refuges.info du sélecteur de couches
+  if (typeof sessionStorage.checkedLayers !== 'string')
+    sessionStorage.checkedLayers = localStorage.checkedLayers || typesPointsParDefaut;
+}
 
 /////////////////////////////////////////////////DCMM TODO
 // Externalise le sélecteur de points pour les grandes largeurs de fenêtre
