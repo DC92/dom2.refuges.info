@@ -300,7 +300,7 @@ class CouchePolygonesWri extends GeoJsonUrlBbox {
         style: (feature) => ({
           stroke: false,
           color: feature.properties.couleur,
-          ...options.style,
+          ...options.featureStyle,
         }),
 
         onEachFeature: (feature, layer) => {
