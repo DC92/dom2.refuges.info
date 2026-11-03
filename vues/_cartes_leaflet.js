@@ -181,6 +181,7 @@ const couchesIconesWRI = {
   },
   /* eslint-disable-next-line no-unused-vars */
   typesPointsParDefaut = 'Cabane non gardée,Refuge gardé,Gîte d\'étape',
+  //DCMM typesPointsParDefaut = '7,9,10',
 
   /* eslint-disable-next-line no-unused-vars */
   couchesOverpass = {

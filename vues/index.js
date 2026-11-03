@@ -5,8 +5,10 @@
 // on repasse donc du libellé affiché à ce nom (identite).
 const libelles = <?=json_encode($vue->libelles_couches)?>,
   identite = Object.fromEntries(Object.entries(libelles).map(([fr, traduit]) => [traduit, fr])),
-  libelle = (nom) => libelles[nom] || nom;
- //DCMM TODO mémoriser le n° de type de point
+  libelle = (nom) => libelles[nom] || nom,
+  typesPoints = <?=json_encode(types_points())?>; //DCMM TODO mémoriser le n° de type de point
+
+console.log(typesPoints);//DCMM
 
 /*************************************
  * CARTE, COUCHE DE BASE ET POLYGONE *
