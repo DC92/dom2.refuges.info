@@ -5,9 +5,8 @@
 // on repasse donc du libellé affiché à ce nom (identite).
 const libelles = <?=json_encode($vue->libelles_couches)?>,
   identite = Object.fromEntries(Object.entries(libelles).map(([fr, traduit]) => [traduit, fr])),
-  libelle = (nom) => libelles[nom] || nom,
-  typesPointsParDefaut = 'Cabane non gardée,Refuge gardé,Gîte d\'étape';
-
+  libelle = (nom) => libelles[nom] || nom;
+ //DCMM TODO mémoriser le n° de type de point
 
 /*************************************
  * CARTE, COUCHE DE BASE ET POLYGONE *
@@ -51,36 +50,54 @@ const argumentsApiWri = {
   clic: true,
 };
 
+// Récupération de la mémorisation du sélecteur de couches
+if (typeof sessionStorage.checkedLayers !== 'string')
+  sessionStorage.checkedLayers = localStorage.checkedLayers || typesPointsParDefaut;
+
 // Cas de la carte d'une zone
 if (polygoneAAfficher && polygoneAAfficher.id_polygone_type === 11) {
   new CouchePolygonesWri({ // On affiche les massifs
     ...argumentsApiWri,
     typeId: 1, // Les polygones de massifs
-    intersection: polygoneAAfficher.id_polygone, // inclus dans la zone
+    intersection: polygoneAAfficher.id_polygone, // Les massifs concernés et c'est tout
     featureStyle: {
       fillOpacity: 0.5, // Un peu plus visibles que sur les autres cartes car il n'y a que ça
     },
   }).addTo(map);
 }
+
 // Carte normale ou page d'un massif
 else {
-  const overlays = {}; // Liste de toutes les couches du sélecteur d'overlays
+  // Couches points refuges.info (clustérisées ensembles)
+  const clusterPoints = new ClusterPointsWri({
+      ...argumentsApiWri,
+      couchesIcones: couchesIconesWRI,
+      massif: polygoneAAfficher ? polygoneAAfficher.id_polygone : 0,
+    }).addTo(map),
+    // Liste de toutes les couches du sélecteur d'overlays
+    overlays = clusterPoints.overlays;
 
-  const ccc = new ClusterPointsWri({
-    ...argumentsApiWri,
-    couchesIcones: couchesIconesWRI,
-    massif: polygoneAAfficher ? polygoneAAfficher.id_polygone : 0,
-  });
+  // Polygones (seulement pour la page d'accueil)
+  if (!polygoneAAfficher) {
+    overlays[libelle('Régions')] = new CouchePolygonesWri({
+      ...argumentsApiWri,
+      typeId: 11,
+    });
 
-  ccc.addTo(map);
+    overlays[libelle('Massifs')] = new CouchePolygonesWri({
+      ...argumentsApiWri,
+      typeId: 1,
+    });
+  }
+
+  //DCMM TODO BUG overpass ne fonctionne plus sur WRI
+
+  // Sélecteur de couches en surimpression
   L.control.layers(null, overlays).addTo(map);
-
-  // Récupération de la mémorisation des couches refuges.info du sélecteur de couches
-  if (typeof sessionStorage.checkedLayers !== 'string')
-    sessionStorage.checkedLayers = localStorage.checkedLayers || typesPointsParDefaut;
 }
 
 /////////////////////////////////////////////////DCMM TODO
+/*
 // Externalise le sélecteur de points pour les grandes largeurs de fenêtre
 const conteneurSelecteurExterneEl = document.getElementById('conteneur-selecteur-points'),
   conteneurDeuxiemeSelecteurEl = document.querySelector(':has(>.leaflet-control-layers)')
@@ -98,7 +115,7 @@ if (conteneurSelecteurExterneEl && selecteursPointsEl)
           conteneurSelecteurExterneEl.firstElementChild //TODO remove *ElementChild
         );
     }));
-
+*/
 
 /*****************
  * LIEN D'EXPORT *
@@ -109,6 +126,7 @@ const exportCarteEl = document.getElementById('export-carte');
 /* eslint-disable-next-line no-unused-vars */
 function copyExportLink() {
   //TODO BUG affiche les ""
+  //TODO traiter les pages /nav massifs
   if (exportCarteEl)
     navigator.clipboard.writeText(exportCarteEl.lastChild.href) //TODO remove *ElementChild
     .then(() => alert('<?=json_encode(_("Lien copié dans le presse-papier"))?> :\n\n' +
@@ -132,6 +150,7 @@ function mapMoved(_map) {
     exportCarteEl.style.display = checkedLayersTypes.length ? 'block' : 'none';
   }
 }
-
+/*
 map.on('overlayadd', () => mapMoved(map)); // For init
 map.on('moveend', () => mapMoved(map)); // For zoom & shifts
+*/

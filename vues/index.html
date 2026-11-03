@@ -20,9 +20,10 @@
 <!-- CARTE -->
 <div id="conteneur-selecteur-points"></div>
 <div id="carte-accueil" class="carte"></div>
-<div class="noprint texte-tout-petit"><?=_("Cliquer sur un cluster pour dissocier les points proches.")?></div>
 
-<?php if (empty($vue->polygone)) { ?>
+<?php if (empty($vue->polygone) || $vue->polygone->id_polygone_type == 1) { ?>
+  <div class="noprint texte-tout-petit"><?=_("Cliquer sur un cluster pour dissocier les points proches.")?></div>
+
   <p id="export-carte">
     <?=_("Export des points refuges.info sélectionnés sur la carte au format")?>
     <select name="format" onchange="addRemoveOverlay()">
@@ -44,18 +45,18 @@
 <!-- GESTION DES POLYGONES -->
 <?php if (est_moderateur()) {
   if (!empty($vue->polygone)) { ?>
-    <h2>
+    <p>
       <a href="<?=url_langue('/edit')?>/<?=$vue->polygone->id_polygone?>">
-        <?=sprintf(_("Modifier les contours ".$vue->polygone->article_partitif." ".$vue->polygone->nom_polygone))?>
+        <?=sprintf(_("Modifier le contour ".$vue->polygone->article_partitif." ".$vue->polygone->nom_polygone))?>
       </a>
-    </h2>
+    </p>
   <?php }
   if (!empty($controlleur->url_decoupee[0])) { ?>
-    <h2>
+    <p>
       <a href="<?=url_langue('/edit')?>">
         <?=sprintf(_("Créer un nouveau polygone"))?>
       </a>
-    </h2>
+    </p>
   <?php }
 } ?>
 

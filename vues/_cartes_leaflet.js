@@ -179,6 +179,8 @@ const couchesIconesWRI = {
     'Passage délicat': [3, 'triangle_a33.10'],
     'Bâtiment à investiguer': [28, 'cabane_white_black_a63'],
   },
+  /* eslint-disable-next-line no-unused-vars */
+  typesPointsParDefaut = 'Cabane non gardée,Refuge gardé,Gîte d\'étape',
 
   /* eslint-disable-next-line no-unused-vars */
   couchesOverpass = {
@@ -273,6 +275,8 @@ class ClusterPointsWri extends L.markerClusterGroup {
       ...options,
     });
 
+    this.overlays = {}; // Liste de toutes les couches du sélecteur d'overlays
+
     for (const entry of Object.entries(options.couchesIcones)) {
       // On crée les couches pour chaque type de point
       const layer = new CouchePointsWri({
@@ -280,10 +284,17 @@ class ClusterPointsWri extends L.markerClusterGroup {
         ...options,
       });
 
+      const icone = '<img src="/images/icones/' + entry[1][1] + '.svg"/> ' + entry[0]; // Libellé de la ligne sélecteur
+
+      // Il est nécéssaire de grouper les points de chaque couche pour pouvoir les sélectionner indépendament
+      this.overlays[icone] = L.featureGroup.subGroup(this).addLayer(layer);
+
       // Quand les données sont chargées, on rafraîchit l'affichage du cluster
       layer.on('load', (evt) => {
-        this.removeLayer(evt.target);
-        this.addLayer(evt.target);
+        //this.removeLayer(evt.target);//TODO documenter quand c'est nécéssaire
+
+        if (options.display)
+          this.addLayer(layer);
       });
     }
   }

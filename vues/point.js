@@ -15,6 +15,7 @@ new ClusterPointsWri({ // Couche affichable
   serveurAPI: 'https://<?=$_SERVER["SERVER_NAME"]?>',
   version: '<?=$vue->version_features?>',
   couchesIcones: couchesIconesWRI,
+  display: true,
   etiquette: true,
   clic: true,
 }).addTo(map);
