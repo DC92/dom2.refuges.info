@@ -193,7 +193,7 @@ const couchesIconesWRI = {
     'bus': '["highway"="bus_stop"]',
   };
 
-class CouchePointsWri extends L.geoJson {
+class CouchePointsWri extends GeoJsonUrlBbox {
   //TODO revenir à BBOX
   // On en fait une classe car on doit étendre une classe Leaflet
   //TODO extends GeoJsonUrlBbox //Pb icône
@@ -209,6 +209,7 @@ class CouchePointsWri extends L.geoJson {
     //TODO Délai cache api / depuis
 
     super(null, {
+      ...options,
       // Icônes
       pointToLayer: (feature, latlng) =>
         L.marker(latlng, {
@@ -293,7 +294,7 @@ class ClusterPointsWri extends L.markerClusterGroup {
 
       // Quand les données sont chargées, on rafraîchit l'affichage du cluster
       layer.on('load', (evt) => {
-        //this.removeLayer(evt.target);//TODO documenter quand c'est nécéssaire
+        //if (options.bbox) this.removeLayer(evt.target); //TODO documenter quand c'est nécéssaire
 
         if (options.display)
           this.addLayer(layer);

@@ -51,37 +51,6 @@ class GeoJsonUrlBbox extends L.geoJson {
   }
 }
 
-/**********************************
- * IGN LAYERS                     *
- * Replace the 663 KB IGN library *
- **********************************/
-/* eslint-disable-next-line no-unused-vars */
-class IGNTileLayer extends L.tileLayer {
-  constructor(url, paramsIGN, paramsLayer) {
-    const params = {
-      request: 'GetTile',
-      service: 'WMTS',
-      version: '1.0.0',
-      tilematrixset: 'PM',
-      style: 'normal',
-      format: 'image/jpeg',
-      tilematrix: '{z}',
-      tilerow: '{y}',
-      tilecol: '{x}',
-      ...paramsIGN,
-    };
-
-    super(url + Object.entries(params).map(e => e.join('=')).join('&'), {
-      bounds: [
-        [-75, -180],
-        [81, 180],
-      ],
-      attribution: '<a href="https://www.geoportail.gouv.fr/">IGN Geoportail</a>',
-      ...paramsLayer,
-    });
-  }
-}
-
 /****************************************************************
  * Leaflet from/to geoJson & GPX lat/lng coordinates conversion *
  ****************************************************************/
@@ -255,4 +224,35 @@ function positionMemoryControl(map) {
       map.getContainer().classList[map.getZoom() < 8 ? 'add' : 'remove']('hide-tooltips');
     });
   });
+}
+
+/**********************************
+ * IGN LAYERS                     *
+ * Replace the 663 KB IGN library *
+ **********************************/
+/* eslint-disable-next-line no-unused-vars */
+class IGNTileLayer extends L.tileLayer {
+  constructor(url, paramsIGN, paramsLayer) {
+    const params = {
+      request: 'GetTile',
+      service: 'WMTS',
+      version: '1.0.0',
+      tilematrixset: 'PM',
+      style: 'normal',
+      format: 'image/jpeg',
+      tilematrix: '{z}',
+      tilerow: '{y}',
+      tilecol: '{x}',
+      ...paramsIGN,
+    };
+
+    super(url + Object.entries(params).map(e => e.join('=')).join('&'), {
+      bounds: [
+        [-75, -180],
+        [81, 180],
+      ],
+      attribution: '<a href="https://www.geoportail.gouv.fr/">IGN Geoportail</a>',
+      ...paramsLayer,
+    });
+  }
 }
