@@ -543,14 +543,6 @@ a img {
   .carte {
     width: 100%;
   }
-
-  .presentation-accueil:not(:hover) {
-    text-overflow: ellipsis;
-    height: 1em;
-    overflow: hidden;
-    white-space: nowrap;
-    margin: 10px;
-  }
 }
 
 /* Mobile horizontal */

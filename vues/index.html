@@ -1,11 +1,5 @@
 <?php if (empty($vue->polygone)) { ?>
   <!-- PRESENTATION ACCUEIL -->
-  <div class="presentation-accueil">
-    <?=wiki_page_html("contenu_accueil")?>
-  </div>
-  <div class="presentation-accueil">
-    <?=wiki_page_html("nouvelles_generales")?>
-  </div>
   <h4><?=sprintf(_("%s points, %s massifs"), $vue->stat->nbpoints, $vue->stat->nbmassifs)?></h4>
 <?php } else { ?>
   <!-- PRESENTATION POLYGONE -->
@@ -61,6 +55,11 @@
 } ?>
 
 <?php if (empty($vue->polygone)) { ?>
+  <br/>
+  <div><?=wiki_page_html("contenu_accueil")?></div>
+  <div><?=wiki_page_html("nouvelles_generales")?></div>
+  <br/>
+
   <!-- NEWS POINTS -->
   <h4><?=sprintf(_("%s points dans la base. Les %s derniers ajoutés :"), $vue->stat->nbpoints, $config_wri['defaut_max_ajouts_recents'])?></h4>
   <ul>
@@ -142,13 +141,3 @@
     </a>
   </h2>
 <?php } ?>
-
-<!-- AUTRES ZONES -->
-<h4><?=_("Autres zones :")?></h4>
-<ul class="liste-massifs">
-  <?php if (isset($vue->zones_couvertes)) foreach ($vue->zones_couvertes AS $nom_zone => $lien) { ?>
-    <li>
-      <a href="<?=$lien?>"><?=$nom_zone?></a>
-    </li>
-  <?php } ?>
-</ul>

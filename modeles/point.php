@@ -1068,26 +1068,3 @@ function calcul_distance_points($point1,$point2)
 {
   return calcul_distance_gps($point1->latitude,$point1->longitude,$point2->latitude,$point2->longitude);
 }
-
-/********************************************************
-Fonction qui retourne le nom et l'icône de tous les types de points
-********************************************************/
-function types_points()
-{
-  global $pdo, $config_wri;
-
-  $query_types_points = "SELECT id_point_type,nom_type FROM point_type
-    ORDER BY ARRAY_POSITION(ARRAY[7,10,9,29], id_point_type)";
-
-  if ( ! ($res = $pdo->query($query_types_points)))
-    return erreur(_("Une erreur sur la requête est survenue"),$query_points);
-
-  $liste_types_points = [];
-  while ($type_point = $res->fetch()) {
-    $type_point->icone = $config_wri['correspondance_type_icone'][replace_url($type_point->nom_type)] ?? '';
-    $type_point->nom_type_traduit = _($type_point->nom_type);
-    $liste_types_points[] = $type_point;
-  }
-
-  return $liste_types_points;
-}

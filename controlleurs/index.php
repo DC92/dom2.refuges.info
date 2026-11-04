@@ -10,9 +10,21 @@ Les variables sont passées dans l'objet $vue->...
 
 require_once ("nouvelle.php");
 require_once ("polygone.php");
+require_once ("meta_donnee.php");
 require_once ("leaflet_libs.php");
 add_lib('overpass/dist/OverPassLayer.bundle.js', 'chemin_leaflet');
 add_lib('overpass/dist/OverPassLayer.css', 'chemin_leaflet');
+
+// Table servant à la construction du sélecteur de couches de points
+$types_points = [];
+foreach (types_point_affichables() as $pt) {
+  $types_points[] = [
+    'id_point_type' => $pt->id_point_type,
+    'nom_type' => $pt->nom_type,
+    'nom_type_traduit' => _($pt->nom_type),
+    'icone' => $config_wri['correspondance_type_icone'][replace_url($pt->nom_type)] ?? 'a63',
+  ];
+}
 
 $vue->titre = _('Carte et informations sur les refuges, cabanes et abris de montagne');
 $vue->stat = stat_site ();

@@ -6,7 +6,7 @@
 const libelles = <?=json_encode($vue->libelles_couches)?>,
   identite = Object.fromEntries(Object.entries(libelles).map(([fr, traduit]) => [traduit, fr])),
   libelle = (nom) => libelles[nom] || nom,
-  typesPoints = <?=json_encode(types_points())?>; //DCMM TODO mémoriser le n° de type de point
+  typesPoints = <?=json_encode($types_points)?>; //DCMM TODO mémoriser le n° de type de point
 
 console.log(typesPoints);//DCMM
 
