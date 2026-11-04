@@ -278,17 +278,17 @@ class ClusterPointsWri extends L.markerClusterGroup {
 
     this.overlays = {}; // Liste de toutes les couches du sélecteur d'overlays
 
-    for (const entry of Object.entries(options.couchesIcones)) {
+    options.typesPoints.forEach((type) => {
       // On crée les couches pour chaque type de point
       const layer = new CouchePointsWri({
-        typePoints: entry[1][0],
+        typePoints: type.id_point_type,
         ...options,
       });
 
-      const icone = '<img src="/images/icones/' + entry[1][1] + '.svg"/> ' + entry[0]; // Libellé de la ligne sélecteur
+      const titre = '<img src="/images/icones/' + type.icone + '.svg"/> ' + type.nom_type_traduit; // Libellé de la ligne sélecteur
 
       // Il est nécéssaire de grouper les points de chaque couche pour pouvoir les sélectionner indépendament
-      this.overlays[icone] = L.featureGroup.subGroup(this).addLayer(layer);
+      this.overlays[titre] = L.featureGroup.subGroup(this).addLayer(layer);
 
       // Quand les données sont chargées, on rafraîchit l'affichage du cluster
       layer.on('load', (evt) => {
@@ -297,7 +297,7 @@ class ClusterPointsWri extends L.markerClusterGroup {
         if (options.display)
           this.addLayer(layer);
       });
-    }
+    });
   }
 }
 

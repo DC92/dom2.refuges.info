@@ -1083,11 +1083,11 @@ function types_points()
     return erreur(_("Une erreur sur la requête est survenue"),$query_points);
 
   $liste_types_points = [];
-  while ($type_point = $res->fetch())
-    $liste_types_points[$type_point->id_point_type] = [
-      _($type_point->nom_type),
-      $config_wri['correspondance_type_icone'][replace_url($type_point->nom_type)] ?? '',
-    ];
+  while ($type_point = $res->fetch()) {
+    $type_point->icone = $config_wri['correspondance_type_icone'][replace_url($type_point->nom_type)] ?? '';
+    $type_point->nom_type_traduit = _($type_point->nom_type);
+    $liste_types_points[] = $type_point;
+  }
 
   return $liste_types_points;
 }

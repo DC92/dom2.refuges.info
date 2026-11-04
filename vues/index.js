@@ -73,7 +73,7 @@ else {
   // Couches points refuges.info (clustérisées ensembles)
   const clusterPoints = new ClusterPointsWri({
       ...argumentsApiWri,
-      couchesIcones: couchesIconesWRI,
+      typesPoints: typesPoints, // De table SQL point_type
       massif: polygoneAAfficher ? polygoneAAfficher.id_polygone : 0,
     }).addTo(map),
     // Liste de toutes les couches du sélecteur d'overlays
