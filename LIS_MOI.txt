@@ -3,9 +3,10 @@ controlleurs\index.php
 includes\config.php
 leaflet\myLeaflet.css
 leaflet\myLeaflet.js
+modeles\point.php
 routes\generales.routes.php
 vues\_cartes_leaflet.js
-vues\_page.html
+vues\edit.js
 vues\index.html
 vues\index.js
 vues\point.js
@@ -22,4 +23,3 @@ myol...
 Répertoires non modifiés par NAV mais à remonter dans dom2
 forum...
 images...
-modeles...
