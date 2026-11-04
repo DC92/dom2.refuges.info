@@ -1,5 +1,7 @@
 /* global couchesDeFond, ClusterPointsWri, positionMemoryControl, positionMemoryArray, controlesComuns */
 
+//TODO Garder zoom carte modif à la création de point
+
 // Utilitaire de saisie des boutons du formulaire
 /* eslint-disable-next-line no-unused-vars */
 function afficheEtSet(el, affiche, valeur) {

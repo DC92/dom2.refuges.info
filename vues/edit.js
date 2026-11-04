@@ -1,3 +1,5 @@
+//TODO BUG ? mémorisation des types de points KO
+
 // Initialisation de la carte
 const map = L.map('carte-edit', {
     pmIgnore: false,

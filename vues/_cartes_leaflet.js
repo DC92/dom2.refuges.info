@@ -194,6 +194,7 @@ const couchesIconesWRI = {
   };
 
 class CouchePointsWri extends L.geoJson {
+  //TODO revenir à BBOX
   // On en fait une classe car on doit étendre une classe Leaflet
   //TODO extends GeoJsonUrlBbox //Pb icône
   constructor(options) {
