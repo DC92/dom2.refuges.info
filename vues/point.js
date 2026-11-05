@@ -4,13 +4,16 @@
 const map = L.map('carte-point');
 
 // Couches tuilées
-const tileLayers = couchesDeFond(<?=json_encode($config_wri["mapKeys"])?>);
-// Chargement du fond de carte actif
-(tileLayers[decodeURI(positionMemoryArray[3])] || Object.values(tileLayers)[0]).addTo(map);
+const tileLayers = couchesDeFond(<?=json_encode($config_wri["mapKeys"])?>),
+  fondDecarteActif = tileLayers[decodeURI(positionMemoryArray[3])] || // Dernière couche affichée
+  Object.values(tileLayers)[0]; // Par défaut, première couche déclarée
+
+fondDecarteActif.addTo(map);
 
 // Contrôles
 controlesComuns(map).forEach((control) => control.addTo(map));
-//positionMemoryControl(map); // Mémorise lon, lat zoom & baselayer
+L.control.layers(tileLayers).addTo(map); // Sélecteur de couche de base
+positionMemoryControl(map); // Mémorise lon, lat zoom & baselayer
 
 // Marqueur de position de cabane
 const marqueur = L.marker(
@@ -24,14 +27,24 @@ const marqueur = L.marker(
 ).addTo(map);
 
 // Lance le chargement de la carte
-map.setView(marqueur.getLatLng(), 10);
+map.setView(marqueur.getLatLng(), 15);
 
-//DCMM TODO max zoom ???
-//DCMM TODO make clusters
-new CouchePointsWri({
-  serveurAPI: 'https://<?=$_SERVER["SERVER_NAME"]?>',
-  version: '<?=$vue->version_features?>',
-  bbox: true,
-  etiquette: true,
-  clic: true,
-}).addTo(map);
+// Couche des points de tous les types
+const cluster = new L.MarkerClusterGroup({
+      spiderfyOnMaxZoom: true, // Overlapping markers will spiderfy when clicked
+      showCoverageOnHover: false, // Hides the cluster bounds polygon
+      maxClusterRadius: 30, // Règle le nombre de points versus clusters
+     }),
+  coucheVectoriellePoints = new CouchePointsWri({
+    serveurAPI: 'https://<?=$_SERVER["SERVER_NAME"]?>',
+    version: '<?=$vue->version_features?>',
+    bbox: true,
+    etiquette: true,
+    clic: true,
+  });
+
+coucheVectoriellePoints.on('load', () => {
+  cluster.addLayer(coucheVectoriellePoints);
+});
+coucheVectoriellePoints.beginFetchData(map);
+cluster.addTo(map);

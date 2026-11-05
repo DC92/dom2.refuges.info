@@ -16,28 +16,30 @@ class GeoJsonUrlBbox extends L.geoJson {
   constructor(url, options = {}) {
     super(null, options);
 
-    // Wait for the attachment to the map to get the map reference
-    this.on('add', (evt) => {
-      const map = evt.target._map;
+    this.url = url;
 
-      if (options.bbox) {
-        // Do it once at init
-        this.fetchUrlData(url, map);
+    if (options.bbox)
+      // Wait for the attachment to the map to get the map info for bbox
+      this.on('add', (evt) => this.beginFetchData(evt.target._map));
+    else
+      // If no bbox, just fetch the whole layer at init
+      this.fetchUrlData(url);
+  }
 
-        // Get event when the map is moved to refresh the bbox
-        map.on('dragend', () => {
-          this.clearLayers();
-          this.fetchUrlData(url, map);
-        });
-      } else
-        // If no bbox, just fetch the whole layer at init
-        this.fetchUrlData(url);
+  beginFetchData = function(map) {
+    // Do it once at init
+    this.fetchUrlData(map);
+
+    // Get event when the map is moved to refresh the bbox
+    map.on('dragend zoomend', () => {
+      this.clearLayers();
+      this.fetchUrlData(map);
     });
   }
 
-  fetchUrlData = function(url, map) {
-    fetch(url + (map ? '&bbox=' + map.getBounds().toBBoxString() : ''))
-      .catch((error) => console.error(error + ' fetching ' + url))
+  fetchUrlData = function(map) {
+    fetch(this.url + (map ? '&bbox=' + map.getBounds().toBBoxString() : ''))
+      .catch((error) => console.error(error + ' fetching ' + this.url))
       .then((response) => response.json())
       .then((json) => {
         if (json.features.length)

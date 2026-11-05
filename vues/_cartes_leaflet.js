@@ -195,19 +195,18 @@ const couchesIconesWRI = {
 
 class CouchePointsWri extends GeoJsonUrlBbox {
   // On en fait une classe car on doit étendre une classe Leaflet
-  //TODO extends GeoJsonUrlBbox //Pb icône
   constructor(options) {
-    const iconList = [],
-      url = options.serveurAPI + '/api/' + (options.massif ? 'massif' : 'bbox') +
+    const url = options.serveurAPI + '/api/' + (options.massif ? 'massif' : 'bbox') +
       '?nb_points=all' +
       (options.typePoints ? '&type_points=' + options.typePoints : '') +
       (options.massif ? '&massif=' + options.massif : '') +
       (options.version ? '&version=' + options.version : '') +
-      '&cache=' + (7 * 24 * 3600) +
+      '&cache=' + 7 * 24 * 3600 +
       (document.documentElement.lang === 'fr' ? '' : '&langue=' + document.documentElement.lang);
 
     super(url, {
       ...options,
+
       // Icônes
       pointToLayer: (feature, latlng) =>
         L.marker(latlng, {
@@ -236,13 +235,12 @@ class CouchePointsWri extends GeoJsonUrlBbox {
           layer.on('mouseover', (evt) => {
             evt.target.getElement().style.cursor = 'grab';
           });
-
-        // For icons prelaod
-        iconList[feature.properties.type.icone] = true;
       },
     });
   }
 }
+
+//TODO Les nouvelles cartes leaflet ne font pas appel à la clusterisation serveur, trop spécifique et complexe à mettre en oeuvre. On pourait la supprimer de l'API.
 
 /* eslint-disable-next-line no-unused-vars */
 class ClusterPointsWri extends L.markerClusterGroup {
