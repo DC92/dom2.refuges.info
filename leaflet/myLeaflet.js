@@ -15,21 +15,19 @@
 class GeoJsonUrlBbox extends L.geoJson {
   constructor(url, options = {}) {
     super(null, options);
+
     // Wait for the attachment to the map to get the map reference
     this.on('add', (evt) => {
       const map = evt.target._map;
 
       if (options.bbox) {
-        const b = map.getBounds(),
-          urlBbox = url + '&bbox=' + [b.getWest(), b.getSouth(), b.getEast(), b.getNorth()].join(',');
-
         // Do it once at init
-        this.fetchUrlData(urlBbox);
+        this.fetchUrlData(url, map);
 
         // Get event when the map is moved to refresh the bbox
         map.on('dragend', () => {
           this.clearLayers();
-          this.fetchUrlData(urlBbox);
+          this.fetchUrlData(url, map);
         });
       } else
         // If no bbox, just fetch the whole layer at init
@@ -37,8 +35,8 @@ class GeoJsonUrlBbox extends L.geoJson {
     });
   }
 
-  fetchUrlData = function(url) {
-    fetch(url)
+  fetchUrlData = function(url, map) {
+    fetch(url + (map ? '&bbox=' + map.getBounds().toBBoxString() : ''))
       .catch((error) => console.error(error + ' fetching ' + url))
       .then((response) => response.json())
       .then((json) => {

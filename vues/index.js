@@ -1,7 +1,7 @@
-/* global couchesIconesWRI, CouchePointsWri, CouchePolygonesWri, couchesDeFond, couchesOverpass, coucheItineraires, controlesComuns */
+/* global ClusterPointsWri, CouchePolygonesWri, couchesDeFond, couchesOverpass, coucheItineraires, controlesComuns */
 
 // Libellés affichés des couches (traduits par le serveur). L'identité d'une couche reste son nom français :
-// c'est lui qui est mémorisé dans sessionStorage et cherché dans couchesIconesWRI ;
+// c'est lui qui est mémorisé dans sessionStorage et cherché dans couchesIconesWRI ; //DCMM change comment
 // on repasse donc du libellé affiché à ce nom (identite).
 const libelles = <?=json_encode($vue->libelles_couches)?>,
   identite = Object.fromEntries(Object.entries(libelles).map(([fr, traduit]) => [traduit, fr])),

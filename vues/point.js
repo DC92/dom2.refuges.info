@@ -5,27 +5,12 @@ const map = L.map('carte-point');
 
 // Couches tuilées
 const tileLayers = couchesDeFond(<?=json_encode($config_wri["mapKeys"])?>);
-
 // Chargement du fond de carte actif
-positionMemoryControl(map);
 (tileLayers[decodeURI(positionMemoryArray[3])] || Object.values(tileLayers)[0]).addTo(map);
-
-// Points refuges.info
-new ClusterPointsWri({ // Couche affichable
-  serveurAPI: 'https://<?=$_SERVER["SERVER_NAME"]?>',
-  version: '<?=$vue->version_features?>',
-  couchesIcones: couchesIconesWRI,
-  display: true,
-  etiquette: true,
-  clic: true,
-}).addTo(map);
 
 // Contrôles
 controlesComuns(map).forEach((control) => control.addTo(map));
-
-L.control.layers(tileLayers, {
-  ['<?=json_encode(_("Itinéraires"))?>']: coucheItineraires,
-}).addTo(map);
+//positionMemoryControl(map); // Mémorise lon, lat zoom & baselayer
 
 // Marqueur de position de cabane
 const marqueur = L.marker(
@@ -39,4 +24,14 @@ const marqueur = L.marker(
 ).addTo(map);
 
 // Lance le chargement de la carte
-map.setView(marqueur.getLatLng(), 15);
+map.setView(marqueur.getLatLng(), 10);
+
+//DCMM TODO max zoom ???
+//DCMM TODO make clusters
+new CouchePointsWri({
+  serveurAPI: 'https://<?=$_SERVER["SERVER_NAME"]?>',
+  version: '<?=$vue->version_features?>',
+  bbox: true,
+  etiquette: true,
+  clic: true,
+}).addTo(map);

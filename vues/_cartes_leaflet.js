@@ -194,7 +194,6 @@ const couchesIconesWRI = {
   };
 
 class CouchePointsWri extends GeoJsonUrlBbox {
-  //TODO revenir à BBOX
   // On en fait une classe car on doit étendre une classe Leaflet
   //TODO extends GeoJsonUrlBbox //Pb icône
   constructor(options) {
@@ -206,9 +205,8 @@ class CouchePointsWri extends GeoJsonUrlBbox {
       (options.version ? '&version=' + options.version : '') +
       '&cache=' + (7 * 24 * 3600) +
       (document.documentElement.lang === 'fr' ? '' : '&langue=' + document.documentElement.lang);
-    //TODO Délai cache api / depuis
 
-    super(null, {
+    super(url, {
       ...options,
       // Icônes
       pointToLayer: (feature, latlng) =>
@@ -243,28 +241,6 @@ class CouchePointsWri extends GeoJsonUrlBbox {
         iconList[feature.properties.type.icone] = true;
       },
     });
-
-    // Fetch remote data
-    fetch(url)
-      .catch((error) => console.error(error + ' fetching ' + url))
-      .then((response) => response.json())
-      .then((json) => {
-        if (json.features.length) {
-          this.addData(json);
-          this.fire('adddata');
-
-          // Preload icons
-          //TODO don't do it twice
-          for (const name in iconList)
-            document.body.insertAdjacentHTML(
-              'beforeend',
-              '<img style="display:none" src="/images/icones/' + name + '.svg"/>'
-            );
-        }
-
-        // Trigger for who needs it
-        this.fire('load');
-      });
   }
 }
 
@@ -293,12 +269,7 @@ class ClusterPointsWri extends L.markerClusterGroup {
       this.overlays[titre] = L.featureGroup.subGroup(this).addLayer(layer);
 
       // Quand les données sont chargées, on rafraîchit l'affichage du cluster
-      layer.on('load', (evt) => {
-        //if (options.bbox) this.removeLayer(evt.target); //TODO documenter quand c'est nécéssaire
-
-        if (options.display)
-          this.addLayer(layer);
-      });
+      layer.on('load', () => this.addLayer(layer));
     });
   }
 }

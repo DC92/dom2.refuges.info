@@ -1,6 +1,3 @@
-//TODO BUG ? mémorisation des types de points KO
-//TODO BUG bbox massifs ne réaffihe pas la couche
-
 // Initialisation de la carte
 const map = L.map('carte-edit', {
     pmIgnore: false,
