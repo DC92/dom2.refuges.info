@@ -23,7 +23,7 @@ class GeoJsonUrlBbox extends L.geoJson {
       this.on('add', (evt) => this.beginFetchData(evt.target._map));
     else
       // If no bbox, just fetch the whole layer at init
-      this.fetchUrlData(url);
+      this.fetchUrlData();
   }
 
   beginFetchData = function(map) {

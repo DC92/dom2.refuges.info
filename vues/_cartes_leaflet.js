@@ -180,8 +180,7 @@ const couchesIconesWRI = {
     'Bâtiment à investiguer': [28, 'cabane_white_black_a63'],
   },
   /* eslint-disable-next-line no-unused-vars */
-  typesPointsParDefaut = 'Cabane non gardée,Refuge gardé,Gîte d\'étape',
-  //DCMM typesPointsParDefaut = '7,9,10',
+  typesPointsParDefaut = '7,9,10',
 
   /* eslint-disable-next-line no-unused-vars */
   couchesOverpass = {

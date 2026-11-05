@@ -66,6 +66,7 @@ if (polygoneAAfficher && polygoneAAfficher.id_polygone_type === 11) {
       fillOpacity: 0.5, // Un peu plus visibles que sur les autres cartes car il n'y a que ça
     },
   }).addTo(map);
+  //TODO recadrer la carte toujours sur la largeur de la page ou mettre quelque chose à gauche
 }
 
 // Carte normale ou page d'un massif

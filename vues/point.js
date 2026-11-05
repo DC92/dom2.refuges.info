@@ -1,4 +1,4 @@
-/* global couchesDeFond, coucheItineraires, ClusterPointsWri, positionMemoryArray, positionMemoryControl, controlesComuns */
+/* global couchesDeFond, coucheItineraires, positionMemoryArray, positionMemoryControl, controlesComuns */
 
 // Initialisation de la carte
 const map = L.map('carte-point');
@@ -12,7 +12,9 @@ fondDecarteActif.addTo(map);
 
 // Contrôles
 controlesComuns(map).forEach((control) => control.addTo(map));
-L.control.layers(tileLayers).addTo(map); // Sélecteur de couche de base
+L.control.layers(tileLayers, {
+  '<?=_("Itinéraires")?>': coucheItineraires,
+}).addTo(map); // Sélecteur de couches
 positionMemoryControl(map); // Mémorise lon, lat zoom & baselayer
 
 // Marqueur de position de cabane
@@ -31,10 +33,10 @@ map.setView(marqueur.getLatLng(), 15);
 
 // Couche des points de tous les types
 const cluster = new L.MarkerClusterGroup({
-      spiderfyOnMaxZoom: true, // Overlapping markers will spiderfy when clicked
-      showCoverageOnHover: false, // Hides the cluster bounds polygon
-      maxClusterRadius: 30, // Règle le nombre de points versus clusters
-     }),
+    spiderfyOnMaxZoom: true, // Overlapping markers will spiderfy when clicked
+    showCoverageOnHover: false, // Hides the cluster bounds polygon
+    maxClusterRadius: 30, // Règle le nombre de points versus clusters
+  }),
   coucheVectoriellePoints = new CouchePointsWri({
     serveurAPI: 'https://<?=$_SERVER["SERVER_NAME"]?>',
     version: '<?=$vue->version_features?>',
