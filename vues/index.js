@@ -1,14 +1,6 @@
 /* global ClusterPointsWri, CouchePolygonesWri, couchesDeFond, couchesOverpass, coucheItineraires, controlesComuns */
 
-// Libellés affichés des couches (traduits par le serveur). L'identité d'une couche reste son nom français :
-// c'est lui qui est mémorisé dans sessionStorage et cherché dans couchesIconesWRI ; //DCMM change comment
-// on repasse donc du libellé affiché à ce nom (identite).
-const libelles = <?=json_encode($vue->libelles_couches)?>,
-  identite = Object.fromEntries(Object.entries(libelles).map(([fr, traduit]) => [traduit, fr])),
-  libelle = (nom) => libelles[nom] || nom,
-  typesPoints = <?=json_encode($types_points)?>; //DCMM TODO mémoriser le n° de type de point
-
-console.log(typesPoints);//DCMM
+//DCMM TODO BUG /nav affiche le premier rectangle !
 
 /*************************************
  * CARTE, COUCHE DE BASE ET POLYGONE *
@@ -52,10 +44,6 @@ const argumentsApiWri = {
   clic: true,
 };
 
-// Récupération de la mémorisation du sélecteur de couches
-if (typeof sessionStorage.checkedLayers !== 'string')
-  sessionStorage.checkedLayers = localStorage.checkedLayers || typesPointsParDefaut;
-
 // Cas de la carte d'une zone
 if (polygoneAAfficher && polygoneAAfficher.id_polygone_type === 11) {
   new CouchePolygonesWri({ // On affiche les massifs
@@ -72,35 +60,48 @@ if (polygoneAAfficher && polygoneAAfficher.id_polygone_type === 11) {
 // Carte normale ou page d'un massif
 else {
   // Couches points refuges.info (clustérisées ensembles)
-  const clusterPoints = new ClusterPointsWri({
-      ...argumentsApiWri,
-      typesPoints: typesPoints, // De table SQL point_type
-      massif: polygoneAAfficher ? polygoneAAfficher.id_polygone : 0,
-    }).addTo(map),
-    // Liste de toutes les couches du sélecteur d'overlays
-    overlays = clusterPoints.overlays;
+  const typesPoints = <?=json_encode($types_points)?>,
+    overlays = {};
 
-  // Polygones (seulement pour la page d'accueil)
-  if (!polygoneAAfficher) {
-    overlays[libelle('Régions')] = new CouchePolygonesWri({
-      ...argumentsApiWri,
-      typeId: 11,
-    });
+  // Génère de fausses lignes du sélecteur de couches pour récupérer leur état
+  for (const [k, type] of Object.entries(typesPoints)) {
+    const titre = '<img src="/images/icones/' + type.icone + '.svg"/> ' + type.nom_type_traduit,
+      emptyLayer = L.circle([0, 0], {
+        stroke: false,
+      });
 
-    overlays[libelle('Massifs')] = new CouchePolygonesWri({
-      ...argumentsApiWri,
-      typeId: 1,
-    });
+    overlays[titre] = emptyLayer;
+    if (sessionStorage.checkedPoints.split(',').includes(type.id_point_type.toString()))
+      emptyLayer.addTo(map); // Sélectionne l'entrée
   }
-
-  //DCMM TODO BUG overpass ne fonctionne plus sur WRI
 
   // Sélecteur de couches en surimpression
   L.control.layers(null, overlays).addTo(map);
+
+  // Mémorise le n° de type des point sélectionnés
+  const inputEls = document.querySelectorAll('.leaflet-control-layers-overlays input[type=checkbox]');
+
+  for (let el of inputEls)
+    el.addEventListener('change', selecteurInputChanged);
+
+  function selecteurInputChanged() {
+    // Récupère la liste des id de types de points sélectionnés dans le sélecteur d'overlays
+    sessionStorage.checkedPoints = Array.from(inputEls) // Tous les checkbox
+      .filter((el) => el.checked) // Ceux qui sont sélectionnés
+      .map((el) => typesPoints // Reprend la liste des types de points
+        .filter((type) => el.parentElement.innerHTML.includes(type.icone + '.svg')) // Celui qui a la même icône
+        .map((type) => type.id_point_type) // Récupère l'id du point type
+        .join(',')) // Ferme proprement
+      .join(','); // En fait un string
+
+    console.log(sessionStorage.checkedPoints); //DCMM
+    //TODO recharger les points qui correspondent
+  }
+
+  //DCMM TODO BUG overpass ne fonctionne plus sur WRI
 }
 
-/////////////////////////////////////////////////DCMM TODO
-/*
+/*//DCMM TODO
 // Externalise le sélecteur de points pour les grandes largeurs de fenêtre
 const conteneurSelecteurExterneEl = document.getElementById('conteneur-selecteur-points'),
   conteneurDeuxiemeSelecteurEl = document.querySelector(':has(>.leaflet-control-layers)')

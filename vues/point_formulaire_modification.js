@@ -34,13 +34,6 @@ const tileLayers = couchesDeFond(<?=json_encode($config_wri["mapKeys"])?>);
 // Chargement du fond de carte actif
 (tileLayers[decodeURI(positionMemoryArray[3])] || Object.values(tileLayers)[0]).addTo(map);
 
-// Points refuges.info
-new ClusterPointsWri({
-  serveurAPI: 'https://<?=$_SERVER["SERVER_NAME"]?>',
-  version: '<?=$vue->version_features?>',
-  couchesIcones: couchesIconesWRI,
-}).addTo(map);
-
 // Contrôles
 controlesComuns(map).forEach((control) => control.addTo(map));
 L.control.layers(tileLayers).addTo(map);
@@ -54,6 +47,29 @@ L.control.layers(tileLayers).addTo(map);
 
 // Mémorisation des glissements de la carte
 positionMemoryControl(map);
+
+
+/*********************
+ * COUCHE DES POINTS *
+ *********************/
+//TODO factoriser
+const cluster = new L.MarkerClusterGroup({
+    spiderfyOnMaxZoom: true, // Overlapping markers will spiderfy when clicked
+    showCoverageOnHover: false, // Hides the cluster bounds polygon
+    maxClusterRadius: 30, // Règle le nombre de points versus clusters
+  }),
+  coucheVectoriellePoints = new CouchePointsWri({
+    serveurAPI: 'https://<?=$_SERVER["SERVER_NAME"]?>',
+    version: '<?=$vue->version_features?>',
+    bbox: true,
+  });
+
+coucheVectoriellePoints.on('load', () => {
+  cluster.addLayer(coucheVectoriellePoints);
+});
+coucheVectoriellePoints.beginFetchData(map);
+cluster.addTo(map);
+
 
 /***********************
  * GESTION DU MARQUEUR *

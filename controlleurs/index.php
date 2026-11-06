@@ -56,21 +56,7 @@ if ($controlleur->url_decoupee[0] == 'nav') {
     $vue->polygone = $polygones_bruts[0];
 }
 
-// Libellés des couches de la carte d'accueil (vues/index.js). La clé est l'identité de la couche (mémorisée dans le navigateur
-// et cherchée dans couchesIconesWRI de _cartes_leaflet.js) : elle reste en français. Seul le libellé affiché est traduit.
-$vue->libelles_couches = array(
-  'Cabane non gardée' => mb_ucfirst(_('cabane non gardée')),
-  'Refuge gardé' => mb_ucfirst(_('refuge gardé')),
-  "Gîte d'étape" => mb_ucfirst(_("gîte d'étape")),
-  'Abri naturel' => mb_ucfirst(_('abri naturel')),
-  "Point d'eau" => mb_ucfirst(_("point d'eau")),
-  'Passage délicat' => mb_ucfirst(_('passage délicat')),
-  'Bâtiment à investiguer' => mb_ucfirst(_('bâtiment à investiguer')),
-  'Régions' => _('Régions'),
-  'Massifs' => _('Massifs'),
-  'Itinéraires' => _('Itinéraires'),
-);
-$vue->bbox=$config_wri['bbox_page_accueil']; //point de vue et position initiale de la page
+$vue->bbox=$config_wri['bbox_page_accueil']; //point de vue et position initiale de la page //TODO metre en /vues/_cartes_leaflet.js
 
 // Zones couvertes
 $vue->zones_couvertes=[];

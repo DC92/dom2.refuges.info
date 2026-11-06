@@ -16,10 +16,23 @@ Fichiers supprimés NAV
 \controlleurs\nav.php
 myol...
 \vues\_cartes_myol.js
+\vues\bandeau.html
 \vues\nav.html
 \vues\nav.js
 
-Répertoires non modifiés par NAV mais à remonter dans dom2
+Répertoires non modifiés mais à remonter dans dom2
 forum...
 images...
 modeles...
+
+Je vous propose une nouvelle version de la page d'accueil simplifiée et avec une carte plus grande.
+Proto à découvrir et à valider sur https://dom.refuges.info/
+
+Cette page d'accueil fait maintenant fonction de page des cartes.
+L'entrée "cartes" a disparu du bandeau.
+Le lien /nav/1234 permet toujours d'afficher massifs et zones à partir d'un clic sur la carte, avec une ergonomie revue.
+
+/gps n’est pas un logiciel refuges.info et la page d’accueil offre le même service en cliquant sur les boutons de la carte « Localisation » puis « Plein écran ».
+Pour les nostalgiques, j’ai mis un lien dans le menu déroulant de gauche vers la version native de l'ancien /gps (supportée).
+
+Pour Sly, tout est en bbox :)

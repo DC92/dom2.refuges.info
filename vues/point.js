@@ -12,9 +12,11 @@ fondDecarteActif.addTo(map);
 
 // Contrôles
 controlesComuns(map).forEach((control) => control.addTo(map));
+
 L.control.layers(tileLayers, {
-  '<?=_("Itinéraires")?>': coucheItineraires,
+  '<?=_("itinéraires")?>': coucheItineraires,
 }).addTo(map); // Sélecteur de couches
+
 positionMemoryControl(map); // Mémorise lon, lat zoom & baselayer
 
 // Marqueur de position de cabane
@@ -32,6 +34,7 @@ const marqueur = L.marker(
 map.setView(marqueur.getLatLng(), 15);
 
 // Couche des points de tous les types
+//TODO factoriser
 const cluster = new L.MarkerClusterGroup({
     spiderfyOnMaxZoom: true, // Overlapping markers will spiderfy when clicked
     showCoverageOnHover: false, // Hides the cluster bounds polygon

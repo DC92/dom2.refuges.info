@@ -179,7 +179,6 @@ const couchesIconesWRI = {
     'Passage délicat': [3, 'triangle_a33.10'],
     'Bâtiment à investiguer': [28, 'cabane_white_black_a63'],
   },
-  /* eslint-disable-next-line no-unused-vars */
   typesPointsParDefaut = '7,9,10',
 
   /* eslint-disable-next-line no-unused-vars */
@@ -191,6 +190,11 @@ const couchesIconesWRI = {
     'parking': '["amenity"="parking"]["access"!="private"]',
     'bus': '["highway"="bus_stop"]',
   };
+
+// Récupération de la mémorisation du sélecteur de couches
+if (typeof sessionStorage.checkedPoints !== 'string')
+  sessionStorage.checkedPoints = localStorage.checkedPoints || // de la dernière session
+  typesPointsParDefaut; // par défaut
 
 class CouchePointsWri extends GeoJsonUrlBbox {
   // On en fait une classe car on doit étendre une classe Leaflet
@@ -240,36 +244,6 @@ class CouchePointsWri extends GeoJsonUrlBbox {
 }
 
 //TODO Les nouvelles cartes leaflet ne font pas appel à la clusterisation serveur, trop spécifique et complexe à mettre en oeuvre. On pourait la supprimer de l'API.
-
-/* eslint-disable-next-line no-unused-vars */
-class ClusterPointsWri extends L.markerClusterGroup {
-  constructor(options) {
-    super({
-      spiderfyOnMaxZoom: true, // Overlapping markers will spiderfy when clicked
-      showCoverageOnHover: false, // Hides the cluster bounds polygon
-      maxClusterRadius: 30, // Règle le nombre de points versus clusters
-      ...options,
-    });
-
-    this.overlays = {}; // Liste de toutes les couches du sélecteur d'overlays
-
-    options.typesPoints.forEach((type) => {
-      // On crée les couches pour chaque type de point
-      const layer = new CouchePointsWri({
-        typePoints: type.id_point_type,
-        ...options,
-      });
-
-      const titre = '<img src="/images/icones/' + type.icone + '.svg"/> ' + type.nom_type_traduit; // Libellé de la ligne sélecteur
-
-      // Il est nécéssaire de grouper les points de chaque couche pour pouvoir les sélectionner indépendament
-      this.overlays[titre] = L.featureGroup.subGroup(this).addLayer(layer);
-
-      // Quand les données sont chargées, on rafraîchit l'affichage du cluster
-      layer.on('load', () => this.addLayer(layer));
-    });
-  }
-}
 
 /* eslint-disable-next-line no-unused-vars */
 class CouchePolygonesWri extends GeoJsonUrlBbox {
