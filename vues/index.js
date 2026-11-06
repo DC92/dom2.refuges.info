@@ -1,7 +1,5 @@
 /* global ClusterPointsWri, CouchePolygonesWri, couchesDeFond, couchesOverpass, coucheItineraires, controlesComuns */
 
-//DCMM TODO BUG /nav affiche le premier rectangle !
-
 /*************************************
  * CARTE, COUCHE DE BASE ET POLYGONE *
  *************************************/

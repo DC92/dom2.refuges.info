@@ -1,7 +1,7 @@
 /* global serveurAPI, mapKeys, initMap, idbKeyval */
 
-//TODO supprimer le SW et le cache si debug
-//TODO recherche de points
+// TODO supprimer le SW et le cache si debug
+// TODO recherche de points
 
 /****************************
  * Gestion de l'application *
@@ -73,7 +73,7 @@ function vueFiche(json) {
       lng: json.geometry.coordinates[1],
       alt: properties.coord.alt,
       rubriques: properties,
-      //TODO masquer "Informations complémentaires": si pas d'info_comp
+      // TODO masquer "Informations complémentaires": si pas d'info_comp
       //BEST format de Léo
       complements: properties.info_comp,
     };
@@ -123,7 +123,7 @@ function controleurFiche(idFiche) {
   // Récupère les infos de la fiche dans indexDB
   idbKeyval.get(parseInt(idFiche, 10))
     .catch((er) => console.error(er))
-    //TODO BUG quand il n'y a pas de base keyval
+    // TODO BUG quand il n'y a pas de base keyval
     .then((jsonFiche) => {
       if (jsonFiche)
         vueFiche(jsonFiche);

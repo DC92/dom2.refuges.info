@@ -26,13 +26,13 @@ images...
 modeles...
 
 Je vous propose une nouvelle version de la page d'accueil simplifiée et avec une carte plus grande.
-Proto à découvrir et à valider sur https://dom.refuges.info/
+A découvrir et à valider sur https://dom.refuges.info/ avant mise en production
 
-Cette page d'accueil fait maintenant fonction de page des cartes.
-L'entrée "cartes" a disparu du bandeau.
-Le lien /nav/1234 permet toujours d'afficher massifs et zones à partir d'un clic sur la carte, avec une ergonomie revue.
+Les liens /nav/1234 permetent d'afficher massifs et zones à partir d'un clic sur la carte, avec une ergonomie revue.
+Le lien /nav affiche la même carte que la page d'acceuil.
 
 /gps n’est pas un logiciel refuges.info et la page d’accueil offre le même service en cliquant sur les boutons de la carte « Localisation » puis « Plein écran ».
-Pour les nostalgiques, j’ai mis un lien dans le menu déroulant de gauche vers la version native de l'ancien /gps (supportée).
+Pour les nostalgiques, j’ai redirigé le lien dans le menu déroulant de gauche vers sa version native (supportée).
 
 Pour Sly, tout est en bbox :)
+Ceci termine la migration d'Openlayers vers Leaflet pour une meilleure maintenance et pérennité. 

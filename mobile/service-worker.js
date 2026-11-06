@@ -6,7 +6,7 @@
  * https://korben.info/pwa-cache-cauchemar-solution.html
  */
 
-//TODO service-worker.php avec derniere date de modif d'un fichier /mobile/...
+// TODO service-worker.php avec derniere date de modif d'un fichier /mobile/...
 
 const cacheName = 'refuges.info';
 
@@ -22,8 +22,8 @@ self.addEventListener('install', () => {
   // Alors on supprime le cache de l'appli pour recharger tous les autres fichiers (code, icônes, ...)
   caches.delete(cacheName)
     .then(console.info('Cache ' + cacheName + ' deleted'));
-  //TODO SURVEILLER : supprime le cache mais ne le recrée pas à ce moment.
-  //TODO faire 2 caches service-worker : un pour le code à rèinitialiser, un pour les données à garder
+  // TODO SURVEILLER : supprime le cache mais ne le recrée pas à ce moment.
+  // TODO faire 2 caches service-worker : un pour le code à rèinitialiser, un pour les données à garder
 });
 
 self.addEventListener('fetch', (event) =>

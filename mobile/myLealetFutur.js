@@ -74,7 +74,7 @@ function permalinkControl(map, defaut) {
 
   // Loading the active basemap
   if ((sessionStorage.permalink || '').split('/')[3])
-    //TODO BUG tileLayers is not defined
+    // TODO BUG tileLayers is not defined
     /* eslint-disable-next-line no-undef */
     (tileLayers[decodeURI((sessionStorage.permalink || '').split('/')[3])]).addTo(map);
 

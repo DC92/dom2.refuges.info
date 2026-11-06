@@ -134,7 +134,7 @@ a {
 /* Montre uniquement les zones liées à la vue courante */
 body:not(.carte) .carte,
 body:not(.fiche) .fiche,
-/*//TODO ??? body:not([class*="attente"]) .attente,*/
+/*// TODO ??? body:not([class*="attente"]) .attente,*/
 body.carte .attente {
   display: none;
 }
