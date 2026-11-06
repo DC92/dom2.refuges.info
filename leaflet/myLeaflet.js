@@ -17,6 +17,7 @@ class GeoJsonUrlBbox extends L.geoJson {
     super(null, options);
 
     this.url = url;
+    this.options = options;
 
     if (options.bbox)
       // Wait for the attachment to the map to get the map info for bbox
@@ -38,7 +39,7 @@ class GeoJsonUrlBbox extends L.geoJson {
   }
 
   fetchUrlData = function(map) {
-    fetch(this.url + (map ? '&bbox=' + map.getBounds().toBBoxString() : ''))
+    fetch(this.url + (this.options.optionalParams || '') + (map ? '&bbox=' + map.getBounds().toBBoxString() : ''))
       .catch((error) => console.error(error + ' fetching ' + this.url))
       .then((response) => response.json())
       .then((json) => {

@@ -11,12 +11,18 @@ const map = L.map('carte-accueil'),
   Object.values(tileLayers)[0]; // Par défaut, première couche déclarée
 
 fondDecarteActif.addTo(map);
+
+
+/*************
+ * CONTROLES *
+ *************/
 L.control.layers(tileLayers).addTo(map); // Sélecteur de couche de base
 controlesComuns(map).forEach((control) => control.addTo(map)); // Autres controles
 
-// Enregistre la position et la couche de base courantes
-positionMemoryControl(map);
 
+/************************
+ * POSITION DE LA CARTE *
+ ************************/
 if (polygoneAAfficher) {
   // Dessine le contour du polygone et centre la carte dessus
   const polygonLayer = JSON.parse(polygoneAAfficher.geometrie_geojson),
@@ -30,6 +36,9 @@ if (polygoneAAfficher) {
 } else
   // Place la carte au dernier emplacement
   map.setView([positionMemoryArray[1], positionMemoryArray[2]], positionMemoryArray[0]);
+
+// Enregistre la position et la couche de base courantes
+positionMemoryControl(map);
 
 
 /****************************
@@ -52,7 +61,7 @@ if (polygoneAAfficher && polygoneAAfficher.id_polygone_type === 11) {
       fillOpacity: 0.5, // Un peu plus visibles que sur les autres cartes car il n'y a que ça
     },
   }).addTo(map);
-  //TODO recadrer la carte toujours sur la largeur de la page ou mettre quelque chose à gauche
+  //TODO recadrer le <div> carte toujours sur la largeur de la page ou mettre quelque chose à gauche
 }
 
 // Carte normale ou page d'un massif
@@ -72,6 +81,31 @@ else {
     if (sessionStorage.checkedPoints.split(',').includes(type.id_point_type.toString()))
       emptyLayer.addTo(map); // Sélectionne l'entrée
   }
+
+// Couche des points de tous les types
+//TODO factoriser
+//DCMM TODO BUG n'efface pas le cluster quand déplace la carte
+const cluster = new L.MarkerClusterGroup({
+    spiderfyOnMaxZoom: true, // Overlapping markers will spiderfy when clicked
+    showCoverageOnHover: false, // Hides the cluster bounds polygon
+    maxClusterRadius: 30, // Règle le nombre de points versus clusters
+  }),
+  coucheVectoriellePoints = new CouchePointsWri({
+    serveurAPI: 'https://<?=$_SERVER["SERVER_NAME"]?>',
+    version: '<?=$vue->version_features?>',
+    optionalParams: '&type_points=23',
+    bbox: true,
+    etiquette: true,
+    clic: true,
+  });
+
+coucheVectoriellePoints.on('load', () => {
+  cluster.addLayer(coucheVectoriellePoints);
+});
+coucheVectoriellePoints.beginFetchData(map);
+cluster.addTo(map);
+
+  // OVERPASS //DCMM TODO BUG overpass ne fonctionne plus sur WRI
 
   // Sélecteur de couches en surimpression
   L.control.layers(null, overlays).addTo(map);
@@ -95,8 +129,6 @@ else {
     console.log(sessionStorage.checkedPoints); //DCMM
     //TODO recharger les points qui correspondent
   }
-
-  //DCMM TODO BUG overpass ne fonctionne plus sur WRI
 }
 
 /*//DCMM TODO
