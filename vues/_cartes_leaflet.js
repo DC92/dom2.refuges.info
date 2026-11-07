@@ -196,15 +196,7 @@ if (typeof sessionStorage.checkedPoints !== 'string')
   sessionStorage.checkedPoints = localStorage.checkedPoints || // de la dernière session
   typesPointsParDefaut; // par défaut
 
-/*class CouchePointsWri extends GeoJsonUrlBbox {
-  // On en fait une classe car on doit étendre une classe Leaflet
-  constructor(options) {
-    super(options.url, {
-      ...options,
-    });
-  }
-}*/
-
+// Couche de points avec bbox et cluster 
 class ClusterPoints extends L.MarkerClusterGroup {
   constructor(options) {
     super({
@@ -213,9 +205,20 @@ class ClusterPoints extends L.MarkerClusterGroup {
       maxClusterRadius: 30, // Règle le nombre de points versus clusters
     });
 
-    this.coucheVectorielle = new GeoJsonUrlBbox(options.url, {
-      ...options,
-    });
+    this.coucheVectorielle = new L.GeoJSON(null, options);
+
+    this.coucheVectorielle.fetchUrlData = function(map) {
+      fetch(options.url + (this.options.optionalParams || '') + (map ? '&bbox=' + map.getBounds().toBBoxString() : ''))
+        .catch((error) => console.error(error + ' fetching ' + this.url))
+        .then((response) => response.json())
+        .then((json) => {
+          if (json.features.length)
+            this.addData(json);
+
+          // Trigger for who needs it
+          this.fire('load');
+        });
+    }
 
     this.coucheVectorielle.on('load', () => { //TODO Faire un override d'une méthode
       this.addLayer(this.coucheVectorielle);
@@ -225,7 +228,8 @@ class ClusterPoints extends L.MarkerClusterGroup {
   // Overrides MarkerClusterGroup.onAdd to get the map
   onAdd(map) {
     super.onAdd(map);
-    this.coucheVectorielle.beginFetchData(map);
+
+    this.coucheVectorielle.fetchUrlData(map);
   }
 }
 
