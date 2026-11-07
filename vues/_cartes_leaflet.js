@@ -197,27 +197,27 @@ if (typeof sessionStorage.checkedPoints !== 'string')
   typesPointsParDefaut; // par défaut
 
 // Couche de points avec bbox et cluster 
-class ClusterPoints extends L.MarkerClusterGroup {
-  constructor(options) {
+class GeoJonAjaxBboxlayer extends L.MarkerClusterGroup {
+  constructor(url, options) {
     super({
       spiderfyOnMaxZoom: true, // Overlapping markers will spiderfy when clicked
       showCoverageOnHover: false, // Hides the cluster bounds polygon
       maxClusterRadius: 30, // Règle le nombre de points versus clusters
     });
 
+    this.url = url;
     this.coucheVectorielle = new L.GeoJSON(null, options);
-    const coucheVectorielle = this.coucheVectorielle,
-      cluster = this;
+  }
 
-    this.fetchUrlData = function(map) {
-      fetch(options.url + (map ? '&bbox=' + map.getBounds().toBBoxString() : ''))
-        .then((response) => response.json())
-        .then((json) => {
-          if (json.features.length)
-            coucheVectorielle.addData(json);
-          cluster.addLayer(coucheVectorielle);
-        });
-    }
+  fetchUrlData(map) {
+    fetch(this.url + (map ? '&bbox=' + map.getBounds().toBBoxString() : ''))
+      .then((response) => response.json())
+      .then((json) => {
+        if (json.features.length)
+          this.coucheVectorielle.addData(json);
+
+        this.addLayer(this.coucheVectorielle);
+      });
   }
 
   // Overrides MarkerClusterGroup.onAdd to get the map
@@ -225,25 +225,30 @@ class ClusterPoints extends L.MarkerClusterGroup {
     super.onAdd(map);
 
     this.fetchUrlData(map);
+
+    map.on('dragend zoomend', () => {
+      //this.clearLayers();
+      //this.fetchUrlData(map);
+      //this.refreshClusters();
+    });
   }
 }
 
 /* eslint-disable-next-line no-unused-vars */
-class ClusterPointsWri extends ClusterPoints {
+class ClusterPointsWri extends GeoJonAjaxBboxlayer {
   // On en fait une classe car on doit étendre une classe Leaflet
   constructor(options) {
-    super({
-      ...options,
+    const url = options.serveurAPI + '/api/' + (options.massif ? 'massif' : 'bbox') +
+      '?nb_points=all' +
+      (options.typePoints ? '&type_points=' + options.typePoints : '') +
+      (options.massif ? '&massif=' + options.massif : '') +
+      '&type_points=28' +
+      (options.version ? '&version=' + options.version : '') +
+      '&cache=' + 7 * 24 * 3600 +
+      (document.documentElement.lang === 'fr' ? '' : '&langue=' + document.documentElement.lang);
 
-      // Calcul de l'url
-      url: options.serveurAPI + '/api/' + (options.massif ? 'massif' : 'bbox') +
-        '?nb_points=all' +
-        (options.typePoints ? '&type_points=' + options.typePoints : '') +
-        (options.massif ? '&massif=' + options.massif : '') +
-        '&type_points=28' +
-        (options.version ? '&version=' + options.version : '') +
-        '&cache=' + 7 * 24 * 3600 +
-        (document.documentElement.lang === 'fr' ? '' : '&langue=' + document.documentElement.lang),
+    super(url, {
+      ...options,
 
       // Icônes
       pointToLayer: (feature, latlng) =>
