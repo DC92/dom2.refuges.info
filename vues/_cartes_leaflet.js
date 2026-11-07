@@ -206,30 +206,25 @@ class ClusterPoints extends L.MarkerClusterGroup {
     });
 
     this.coucheVectorielle = new L.GeoJSON(null, options);
+    const coucheVectorielle = this.coucheVectorielle,
+      cluster = this;
 
-    this.coucheVectorielle.fetchUrlData = function(map) {
-      fetch(options.url + (this.options.optionalParams || '') + (map ? '&bbox=' + map.getBounds().toBBoxString() : ''))
-        .catch((error) => console.error(error + ' fetching ' + this.url))
+    this.fetchUrlData = function(map) {
+      fetch(options.url + (map ? '&bbox=' + map.getBounds().toBBoxString() : ''))
         .then((response) => response.json())
         .then((json) => {
           if (json.features.length)
-            this.addData(json);
-
-          // Trigger for who needs it
-          this.fire('load');
+            coucheVectorielle.addData(json);
+          cluster.addLayer(coucheVectorielle);
         });
     }
-
-    this.coucheVectorielle.on('load', () => { //TODO Faire un override d'une méthode
-      this.addLayer(this.coucheVectorielle);
-    });
   }
 
   // Overrides MarkerClusterGroup.onAdd to get the map
   onAdd(map) {
     super.onAdd(map);
 
-    this.coucheVectorielle.fetchUrlData(map);
+    this.fetchUrlData(map);
   }
 }
 
@@ -245,6 +240,7 @@ class ClusterPointsWri extends ClusterPoints {
         '?nb_points=all' +
         (options.typePoints ? '&type_points=' + options.typePoints : '') +
         (options.massif ? '&massif=' + options.massif : '') +
+        '&type_points=28' +
         (options.version ? '&version=' + options.version : '') +
         '&cache=' + 7 * 24 * 3600 +
         (document.documentElement.lang === 'fr' ? '' : '&langue=' + document.documentElement.lang),

@@ -83,11 +83,7 @@ else {
   }
 
   // Couche des points de tous les types
-  new ClusterPointsWri({
-    ...argumentsApiWri,
-    optionalParams: '&type_points=28',
-    bbox: true,
-  }).addTo(map);
+  new ClusterPointsWri(argumentsApiWri).addTo(map);
 
   // OVERPASS //DCMM TODO BUG overpass ne fonctionne plus sur WRI
 
