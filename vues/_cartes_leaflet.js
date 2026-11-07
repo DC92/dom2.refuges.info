@@ -196,42 +196,14 @@ if (typeof sessionStorage.checkedPoints !== 'string')
   sessionStorage.checkedPoints = localStorage.checkedPoints || // de la dernière session
   typesPointsParDefaut; // par défaut
 
-class CouchePointsWri extends GeoJsonUrlBbox {
+/*class CouchePointsWri extends GeoJsonUrlBbox {
   // On en fait une classe car on doit étendre une classe Leaflet
   constructor(options) {
-    const url = options.serveurAPI + '/api/' + (options.massif ? 'massif' : 'bbox') +
-      '?nb_points=all' +
-      (options.typePoints ? '&type_points=' + options.typePoints : '') +
-      (options.massif ? '&massif=' + options.massif : '') +
-      (options.version ? '&version=' + options.version : '') +
-      '&cache=' + 7 * 24 * 3600 +
-      (document.documentElement.lang === 'fr' ? '' : '&langue=' + document.documentElement.lang);
-
-    super(url, {
+    super(options.url, {
       ...options,
-
-      onEachFeature: (feature, layer) => {
-        // Etiquettes
-        if (options.etiquette)
-          layer.bindTooltip(
-            feature.properties.nom, {
-              permanent: true,
-              direction: 'center',
-            }).openTooltip();
-
-        if (options.clic)
-          layer.on('click', () => {
-            location.href = feature.properties.lien || '/point/' + feature.id;
-          });
-        else
-          // Remove cursor pointer on hover
-          layer.on('mouseover', (evt) => {
-            evt.target.getElement().style.cursor = 'grab';
-          });
-      },
     });
   }
-}
+}*/
 
 class ClusterPoints extends L.MarkerClusterGroup {
   constructor(options) {
@@ -241,7 +213,7 @@ class ClusterPoints extends L.MarkerClusterGroup {
       maxClusterRadius: 30, // Règle le nombre de points versus clusters
     });
 
-    this.coucheVectorielle = new CouchePointsWri({
+    this.coucheVectorielle = new GeoJsonUrlBbox(options.url, {
       ...options,
     });
 
@@ -259,9 +231,19 @@ class ClusterPoints extends L.MarkerClusterGroup {
 
 /* eslint-disable-next-line no-unused-vars */
 class ClusterPointsWri extends ClusterPoints {
+  // On en fait une classe car on doit étendre une classe Leaflet
   constructor(options) {
     super({
       ...options,
+
+      // Calcul de l'url
+      url: options.serveurAPI + '/api/' + (options.massif ? 'massif' : 'bbox') +
+        '?nb_points=all' +
+        (options.typePoints ? '&type_points=' + options.typePoints : '') +
+        (options.massif ? '&massif=' + options.massif : '') +
+        (options.version ? '&version=' + options.version : '') +
+        '&cache=' + 7 * 24 * 3600 +
+        (document.documentElement.lang === 'fr' ? '' : '&langue=' + document.documentElement.lang),
 
       // Icônes
       pointToLayer: (feature, latlng) =>
@@ -272,6 +254,27 @@ class ClusterPointsWri extends ClusterPoints {
             iconAnchor: [12, 12],
           }),
         }),
+
+      onEachFeature: (feature, layer) => {
+        // Etiquettes
+        if (options.etiquette)
+          layer.bindTooltip(
+            feature.properties.nom, {
+              permanent: true,
+              direction: 'center',
+            }).openTooltip();
+
+        // Clics et curseur
+        if (options.clic)
+          layer.on('click', () => {
+            location.href = feature.properties.lien || '/point/' + feature.id;
+          });
+        else
+          // Supprime le pointeur de la souris au survol
+          layer.on('mouseover', (evt) => {
+            evt.target.getElement().style.cursor = 'grab';
+          });
+      },
     });
   }
 }

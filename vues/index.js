@@ -85,7 +85,7 @@ else {
   // Couche des points de tous les types
   new ClusterPointsWri({
     ...argumentsApiWri,
-    optionalParams: '&type_points=23',
+    optionalParams: '&type_points=28',
     bbox: true,
   }).addTo(map);
 
