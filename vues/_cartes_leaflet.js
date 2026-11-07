@@ -197,7 +197,7 @@ if (typeof sessionStorage.checkedPoints !== 'string')
   typesPointsParDefaut; // par défaut
 
 // Vector layer with bbox & cluster 
-class GeoJonAjaxBboxlayer extends L.MarkerClusterGroup {
+class GeoJonAjaxBboxLayer extends L.MarkerClusterGroup {
   constructor(url, options) {
     super({
       spiderfyOnMaxZoom: true, // Overlapping markers will spiderfy when clicked
@@ -205,19 +205,22 @@ class GeoJonAjaxBboxlayer extends L.MarkerClusterGroup {
       maxClusterRadius: 30, // Règle le nombre de points versus clusters
     });
 
-    this.url = url;
-    this.opt = options;
+    this._url = url;
+    this._opt = options;
   }
 
-  fetchUrlData(map) {
-    fetch(this.url + (map ? '&bbox=' + map.getBounds().toBBoxString() : ''))
+  fetchData(url) {
+    // Change the url if called from outside
+    if (url)
+      this._url = url;
+
+    fetch(this._url + '&bbox=' + this._map.getBounds().toBBoxString())
       .then((response) => response.json())
       .then((json) => {
-        // Clear existing layers
-        this.clearLayers();
+        this.clearLayers(); // Clear existing content
 
         // Add new vector layer with new geoJson features
-        const vectorLayer = new L.GeoJSON(null, this.opt);
+        const vectorLayer = new L.GeoJSON(null, this._opt);
 
         if (json.features.length)
           vectorLayer.addData(json);
@@ -230,14 +233,15 @@ class GeoJonAjaxBboxlayer extends L.MarkerClusterGroup {
   onAdd(map) {
     super.onAdd(map);
 
-    this.fetchUrlData(map); // Do it once at init
+    this._map = map;
+    this.fetchData(); // Do it once at init
 
-    map.on('dragend zoomend', () => this.fetchUrlData(map)); // Refresh the layer for each map movement
+    map.on('dragend zoomend', () => this.fetchData()); // Refresh the layer for each map movement
   }
 }
 
 /* eslint-disable-next-line no-unused-vars */
-class ClusterPointsWri extends GeoJonAjaxBboxlayer {
+class ClusterPointsWri extends GeoJonAjaxBboxLayer {
   // On en fait une classe car on doit étendre une classe Leaflet
   constructor(options) {
     const url = options.serveurAPI + '/api/' + (options.massif ? 'massif' : 'bbox') +
