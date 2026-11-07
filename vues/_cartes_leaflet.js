@@ -243,6 +243,34 @@ class CouchePointsWri extends GeoJsonUrlBbox {
   }
 }
 
+/* eslint-disable-next-line no-unused-vars */
+class ClusterPointsWri extends L.MarkerClusterGroup {
+  constructor(options) {
+    super({
+      spiderfyOnMaxZoom: true, // Overlapping markers will spiderfy when clicked
+      showCoverageOnHover: false, // Hides the cluster bounds polygon
+      maxClusterRadius: 30, // Règle le nombre de points versus clusters
+    });
+
+    this.coucheVectoriellePoints = new CouchePointsWri({
+      ...options,
+      optionalParams: '&type_points=23',
+      bbox: true,
+    });
+
+    this.coucheVectoriellePoints.on('load', () => {
+      this.addLayer(this.coucheVectoriellePoints);
+    });
+  }
+
+  //Overrides FeatureGroup.onAdd
+  onAdd(map) {
+    console.log(arguments); //DCMM
+    super.onAdd(map);
+    this.coucheVectoriellePoints.beginFetchData(map);
+  }
+}
+
 //TODO Les nouvelles cartes leaflet ne font pas appel à la clusterisation serveur, trop spécifique et complexe à mettre en oeuvre. On pourait la supprimer de l'API.
 
 /* eslint-disable-next-line no-unused-vars */

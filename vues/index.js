@@ -82,28 +82,8 @@ else {
       emptyLayer.addTo(map); // Sélectionne l'entrée
   }
 
-// Couche des points de tous les types
-//TODO factoriser
-//DCMM TODO BUG n'efface pas le cluster quand déplace la carte
-const cluster = new L.MarkerClusterGroup({
-    spiderfyOnMaxZoom: true, // Overlapping markers will spiderfy when clicked
-    showCoverageOnHover: false, // Hides the cluster bounds polygon
-    maxClusterRadius: 30, // Règle le nombre de points versus clusters
-  }),
-  coucheVectoriellePoints = new CouchePointsWri({
-    serveurAPI: 'https://<?=$_SERVER["SERVER_NAME"]?>',
-    version: '<?=$vue->version_features?>',
-    optionalParams: '&type_points=23',
-    bbox: true,
-    etiquette: true,
-    clic: true,
-  });
-
-coucheVectoriellePoints.on('load', () => {
-  cluster.addLayer(coucheVectoriellePoints);
-});
-coucheVectoriellePoints.beginFetchData(map);
-cluster.addTo(map);
+  // Couche des points de tous les types
+  new ClusterPointsWri(argumentsApiWri).addTo(map);
 
   // OVERPASS //DCMM TODO BUG overpass ne fonctionne plus sur WRI
 
