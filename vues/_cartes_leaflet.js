@@ -210,16 +210,6 @@ class CouchePointsWri extends GeoJsonUrlBbox {
     super(url, {
       ...options,
 
-      // Icônes
-      pointToLayer: (feature, latlng) =>
-        L.marker(latlng, {
-          icon: L.icon({
-            iconUrl: options.serveurAPI + '/images/icones/' + feature.properties.type.icone + '.svg',
-            iconSize: [24, 24],
-            iconAnchor: [12, 12],
-          }),
-        }),
-
       onEachFeature: (feature, layer) => {
         // Etiquettes
         if (options.etiquette)
@@ -243,8 +233,7 @@ class CouchePointsWri extends GeoJsonUrlBbox {
   }
 }
 
-/* eslint-disable-next-line no-unused-vars */
-class ClusterPointsWri extends L.MarkerClusterGroup {
+class ClusterPoints extends L.MarkerClusterGroup {
   constructor(options) {
     super({
       spiderfyOnMaxZoom: true, // Overlapping markers will spiderfy when clicked
@@ -252,22 +241,38 @@ class ClusterPointsWri extends L.MarkerClusterGroup {
       maxClusterRadius: 30, // Règle le nombre de points versus clusters
     });
 
-    this.coucheVectoriellePoints = new CouchePointsWri({
+    this.coucheVectorielle = new CouchePointsWri({
       ...options,
-      optionalParams: '&type_points=23',
-      bbox: true,
     });
 
-    this.coucheVectoriellePoints.on('load', () => {
-      this.addLayer(this.coucheVectoriellePoints);
+    this.coucheVectorielle.on('load', () => { //TODO Faire un override d'une méthode
+      this.addLayer(this.coucheVectorielle);
     });
   }
 
-  //Overrides FeatureGroup.onAdd
+  // Overrides MarkerClusterGroup.onAdd to get the map
   onAdd(map) {
-    console.log(arguments); //DCMM
     super.onAdd(map);
-    this.coucheVectoriellePoints.beginFetchData(map);
+    this.coucheVectorielle.beginFetchData(map);
+  }
+}
+
+/* eslint-disable-next-line no-unused-vars */
+class ClusterPointsWri extends ClusterPoints {
+  constructor(options) {
+    super({
+      ...options,
+
+      // Icônes
+      pointToLayer: (feature, latlng) =>
+        L.marker(latlng, {
+          icon: L.icon({
+            iconUrl: options.serveurAPI + '/images/icones/' + feature.properties.type.icone + '.svg',
+            iconSize: [24, 24],
+            iconAnchor: [12, 12],
+          }),
+        }),
+    });
   }
 }
 
