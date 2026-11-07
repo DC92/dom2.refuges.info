@@ -196,7 +196,7 @@ if (typeof sessionStorage.checkedPoints !== 'string')
   sessionStorage.checkedPoints = localStorage.checkedPoints || // de la dernière session
   typesPointsParDefaut; // par défaut
 
-// Couche de points avec bbox et cluster 
+// Vector layer with bbox & cluster 
 class GeoJonAjaxBboxlayer extends L.MarkerClusterGroup {
   constructor(url, options) {
     super({
@@ -206,17 +206,23 @@ class GeoJonAjaxBboxlayer extends L.MarkerClusterGroup {
     });
 
     this.url = url;
-    this.coucheVectorielle = new L.GeoJSON(null, options);
+    this.opt = options;
   }
 
   fetchUrlData(map) {
     fetch(this.url + (map ? '&bbox=' + map.getBounds().toBBoxString() : ''))
       .then((response) => response.json())
       .then((json) => {
-        if (json.features.length)
-          this.coucheVectorielle.addData(json);
+        // Clear existing layers
+        this.clearLayers();
 
-        this.addLayer(this.coucheVectorielle);
+        // Add new vector layer with new geoJson features
+        const vectorLayer = new L.GeoJSON(null, this.opt);
+
+        if (json.features.length)
+          vectorLayer.addData(json);
+
+        this.addLayer(vectorLayer);
       });
   }
 
@@ -224,13 +230,9 @@ class GeoJonAjaxBboxlayer extends L.MarkerClusterGroup {
   onAdd(map) {
     super.onAdd(map);
 
-    this.fetchUrlData(map);
+    this.fetchUrlData(map); // Do it once at init
 
-    map.on('dragend zoomend', () => {
-      //this.clearLayers();
-      //this.fetchUrlData(map);
-      //this.refreshClusters();
-    });
+    map.on('dragend zoomend', () => this.fetchUrlData(map)); // Refresh the layer for each map movement
   }
 }
 
