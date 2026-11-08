@@ -85,6 +85,7 @@ else {
   // Couche des points de tous les types
   const pointsWri = new ClusterPointsWri({
     ...argumentsApiWri,
+    massif: polygoneAAfficher ? polygoneAAfficher.id_polygone : 0,
     optionalParameter: '&type_points=' + sessionStorage.checkedPoints,
     hide: !sessionStorage.checkedPoints,
   }).addTo(map);
@@ -107,7 +108,6 @@ else {
   // OVERPASS //DCMM TODO BUG overpass ne fonctionne plus sur WRI
 }
 
-/*//DCMM TODO
 // Externalise le sélecteur de points pour les grandes largeurs de fenêtre
 const conteneurSelecteurExterneEl = document.getElementById('conteneur-selecteur-points'),
   conteneurDeuxiemeSelecteurEl = document.querySelector(':has(>.leaflet-control-layers)')
@@ -125,12 +125,32 @@ if (conteneurSelecteurExterneEl && selecteursPointsEl)
           conteneurSelecteurExterneEl.firstElementChild //TODO remove *ElementChild
         );
     }));
-*/
 
 /*****************
  * LIEN D'EXPORT *
  *****************/
 const exportCarteEl = document.getElementById('export-carte');
+
+// Mise à jour du bouton "exporter" quand la sélection change
+map.on('layeradd moveend', (evt) => {
+  const map = evt.target,
+    bne = map.getBounds()._northEast,
+    bsw = map.getBounds()._southWest,
+    fc = (coord) => Math.floor(coord * 10000) / 10000,
+    cc = (coord) => Math.ceil(coord * 10000) / 10000;
+
+  if (exportCarteEl) {
+    exportCarteEl.children[1].href = '/api/bbox' + //TODO remove *ElementChild
+      '?type_points=' + sessionStorage.checkedPoints +
+      '&nb_points=all' +
+      (polygoneAAfficher ? '&massif=' + polygoneAAfficher.id_polygone : '') +
+      '&bbox=' + fc(bsw.lng) + ',' + fc(bsw.lat) + ',' + cc(bne.lng) + ',' + cc(bne.lat) +
+      '&format=' + exportCarteEl.firstElementChild.value; //TODO remove *ElementChild
+
+    // Affiche seulement quand il y a quelque chose à exporter
+    exportCarteEl.style.display = sessionStorage.checkedPoints.length ? 'block' : 'none';
+  }
+});
 
 // Réponse au bouton "exporter"
 /* eslint-disable-next-line no-unused-vars */
@@ -142,25 +162,3 @@ function copyExportLink() {
     .then(() => alert('<?=json_encode(_("Lien copié dans le presse-papier"))?> :\n\n' +
       exportCarteEl.lastChild.href)); //TODO BUG undefined / remove *ElementChild
 }
-
-function mapMoved(_map) {
-  const bne = _map.getBounds()._northEast,
-    bsw = _map.getBounds()._southWest,
-    fc = (coord) => Math.floor(coord * 10000) / 10000,
-    cc = (coord) => Math.ceil(coord * 10000) / 10000;
-
-  if (exportCarteEl) {
-    exportCarteEl.children[1].href = '/api/bbox' + //TODO remove *ElementChild
-      '?type_points=' + checkedLayersTypes.join(',') +
-      '&nb_points=all' +
-      '&bbox=' + fc(bsw.lng) + ',' + fc(bsw.lat) + ',' + cc(bne.lng) + ',' + cc(bne.lat) +
-      '&format=' + exportCarteEl.firstElementChild.value; //TODO remove *ElementChild
-
-    // Affiche seulement quand il y a quelque chose à exporter
-    exportCarteEl.style.display = checkedLayersTypes.length ? 'block' : 'none';
-  }
-}
-/*
-map.on('overlayadd', () => mapMoved(map)); // For init
-map.on('moveend', () => mapMoved(map)); // For zoom & shifts
-*/
