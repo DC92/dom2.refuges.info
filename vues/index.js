@@ -71,6 +71,14 @@ else {
     typesPolygones = <?=json_encode($types_polygones)?>,
     overlays = {};
 
+  // Cluster des points de tous les types
+  const pointsWri = new ClusterPointsWri({
+    ...argumentsApiWri,
+    massif: polygoneAAfficher ? polygoneAAfficher.id_polygone : 0,
+    optionalParameter: '&type_points=' + sessionStorage.checkedPoints,
+    hide: !sessionStorage.checkedPoints,
+  }).addTo(map);
+
   // Génère de fausses lignes du sélecteur de couches de points pour récupérer leur état
   for (const [k, type] of Object.entries(typesPoints)) {
     const titre = '<img src="/images/icones/' + type.icone + '.svg"/> ' + type.nom_traduit,
@@ -83,14 +91,6 @@ else {
       layer.addTo(map); // Sélectionne l'entrée
   }
 
-  // Cluster des points de tous les types
-  const pointsWri = new ClusterPointsWri({
-    ...argumentsApiWri,
-    massif: polygoneAAfficher ? polygoneAAfficher.id_polygone : 0,
-    optionalParameter: '&type_points=' + sessionStorage.checkedPoints,
-    hide: !sessionStorage.checkedPoints,
-  }).addTo(map);
-
   // Lignes du sélecteur de couches de polygones
   for (const [k, type] of Object.entries(typesPolygones)) {
     const layer = new CouchePolygonesWri({
@@ -99,8 +99,6 @@ else {
     });
 
     overlays[type.nom_traduit] = layer;
-
-
     if (sessionStorage.checkedPolygons.split(',').includes(type.id.toString()))
       layer.addTo(map); // Sélectionne l'entrée
   }
@@ -124,7 +122,10 @@ else {
   //DCMM TODO BUG overpass ne fonctionne plus sur WRI
 }
 
-// Externalise le sélecteur de points pour les grandes largeurs de fenêtre
+/****************************************
+ * EXTERNALISE LE SÉLECTEUR DE POINTS   *
+ * pour les grandes largeurs de fenêtre *
+ ****************************************/
 const conteneurSelecteurExterneEl = document.getElementById('conteneur-selecteur-points'),
   conteneurDeuxiemeSelecteurEl = document.querySelector(':has(>.leaflet-control-layers)')
   .lastChild.lastChild, //TODO remove *ElementChild

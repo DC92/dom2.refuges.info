@@ -5,51 +5,59 @@
  * © Dominique Cavailhez 2026                    *
  *************************************************/
 
-/*****************************************
- * GeoJson layer from url with bbox      *
- *   bbox: true / false, default = false *
- *     add &bbox= to the url             *
- *   ...L.geoJson options                *
- *****************************************/
+/*****************************************************
+ * GeoJson layer from url with bbox & cluster        *
+ * optionalParameter : string to be added to the url *
+ * ...L.geoJson options                              *
+ *****************************************************/
 /* eslint-disable-next-line no-unused-vars */
-class GeoJsonUrlBbox extends L.geoJson {
-  //DCMM TODO DELETE
-  constructor(url, options = {}) {
-    super(null, options);
-
-    this.url = url;
-    this.options = options;
-
-    if (options.bbox)
-      // Wait for the attachment to the map to get the map info for bbox
-      this.on('add', (evt) => this.beginFetchData(evt.target._map));
-    else
-      // If no bbox, just fetch the whole layer at init
-      this.fetchUrlData();
-  }
-
-  beginFetchData = function(map) {
-    // Do it once at init
-    this.fetchUrlData(map);
-
-    // Get event when the map is moved to refresh the bbox
-    map.on('dragend zoomend', () => {
-      this.clearLayers();
-      this.fetchUrlData(map);
+class GeoJsonAjaxBboxLayer extends L.MarkerClusterGroup {
+  constructor(url, options) {
+    super({
+      spiderfyOnMaxZoom: true, // Overlapping markers will spiderfy when clicked
+      showCoverageOnHover: false, // Hides the cluster bounds polygon
+      maxClusterRadius: 30, // Adjust the number of points versus clusters
     });
+
+    this._url = url;
+    this._opt = options;
   }
 
-  fetchUrlData = function(map) {
-    fetch(this.url + (this.options.optionalParams || '') + (map ? '&bbox=' + map.getBounds().toBBoxString() : ''))
-      .catch((error) => console.error(error + ' fetching ' + this.url))
+  fetchData(options, url) {
+    // Change the options & url if called from outside
+    if (options)
+      this._opt = {
+        ...this._opt,
+        ...options,
+      };
+    if (url)
+      this._url = url;
+
+    fetch(this._url +
+        (this._opt.optionalParameter || '') +
+        '&bbox=' + this._map.getBounds().toBBoxString())
       .then((response) => response.json())
       .then((json) => {
-        if (json.features.length)
-          this.addData(json);
+        this.clearLayers(); // Clear existing content
 
-        // Trigger for who needs it
-        this.fire('load');
+        // Add new vector layer with new geoJson features
+        const vectorLayer = new L.GeoJSON(null, this._opt);
+
+        if (json.features.length && !this._opt.hide) {
+          vectorLayer.addData(json);
+          this.addLayer(vectorLayer);
+        }
       });
+  }
+
+  // Overrides MarkerClusterGroup.onAdd to get the map
+  onAdd(map) {
+    super.onAdd(map);
+
+    this._map = map;
+    this.fetchData(); // Do it once at init
+
+    map.on('dragend zoomend', () => this.fetchData()); // Refresh the layer for each map movement
   }
 }
 

@@ -1,4 +1,4 @@
-/* global GeoJsonUrlBbox, IGNTileLayer, MarkerCompass */
+/* global GeoJsonAjaxBboxLayer, IGNTileLayer, MarkerCompass */
 /* eslint-disable-next-line no-unused-vars */
 /* global positionMemoryArray:writable */
 
@@ -197,62 +197,12 @@ if (typeof sessionStorage.checkedPoints !== 'string')
   typesPointsParDefaut; // par défaut //TODO récupèrer celui de includes/config.php
 
 if (typeof sessionStorage.checkedPolygons !== 'string')
-  sessionStorage.checkedPolygons = localStorage.checkedPoints || // de la dernière session
+  sessionStorage.checkedPolygons = localStorage.checkedPolygons || // de la dernière session
   ''; // par défaut
 
-// Vector layer with bbox & cluster 
-class GeoJonAjaxBboxLayer extends L.MarkerClusterGroup {
-  constructor(url, options) {
-    super({
-      spiderfyOnMaxZoom: true, // Overlapping markers will spiderfy when clicked
-      showCoverageOnHover: false, // Hides the cluster bounds polygon
-      maxClusterRadius: 30, // Règle le nombre de points versus clusters
-    });
-
-    this._url = url;
-    this._opt = options;
-  }
-
-  fetchData(options) {
-    // Change the url if called from outside
-    if (options)
-      this._opt = {
-        ...this._opt,
-        ...options,
-      };
-
-    fetch(this._url +
-        (this._opt.optionalParameter || '') +
-        '&bbox=' + this._map.getBounds().toBBoxString())
-      .then((response) => response.json())
-      .then((json) => {
-        this.clearLayers(); // Clear existing content
-
-        // Add new vector layer with new geoJson features
-        const vectorLayer = new L.GeoJSON(null, this._opt);
-
-        if (json.features.length && !this._opt.hide) {
-          vectorLayer.addData(json);
-          this.addLayer(vectorLayer);
-        }
-      });
-  }
-
-  // Overrides MarkerClusterGroup.onAdd to get the map
-  onAdd(map) {
-    super.onAdd(map);
-
-    this._map = map;
-    this.fetchData(); // Do it once at init
-
-    map.on('dragend zoomend', () => this.fetchData()); // Refresh the layer for each map movement
-  }
-}
-
 /* eslint-disable-next-line no-unused-vars */
-class ClusterPointsWri extends GeoJonAjaxBboxLayer {
+class ClusterPointsWri extends GeoJsonAjaxBboxLayer {
   // On en fait une classe car on doit étendre une classe Leaflet
-
   constructor(options) {
     const url = options.serveurAPI + '/api/' + (options.massif ? 'massif' : 'bbox') +
       '?nb_points=all' + //TODO masquage de la couche si limite de points atteinte
@@ -265,16 +215,6 @@ class ClusterPointsWri extends GeoJonAjaxBboxLayer {
 
     super(url, {
       ...options,
-
-      // Icônes
-      pointToLayer: (feature, latlng) =>
-        L.marker(latlng, {
-          icon: L.icon({
-            iconUrl: options.serveurAPI + '/images/icones/' + feature.properties.type.icone + '.svg',
-            iconSize: [24, 24],
-            iconAnchor: [12, 12],
-          }),
-        }),
 
       onEachFeature: (feature, layer) => {
         // Etiquettes
@@ -296,56 +236,69 @@ class ClusterPointsWri extends GeoJonAjaxBboxLayer {
             evt.target.getElement().style.cursor = 'grab';
           });
       },
+
+      // Icônes
+      pointToLayer: (feature, latlng) =>
+        L.marker(latlng, {
+          icon: L.icon({
+            iconUrl: options.serveurAPI + '/images/icones/' + feature.properties.type.icone + '.svg',
+            iconSize: [24, 24],
+            iconAnchor: [12, 12],
+          }),
+        }),
     });
   }
 }
 
 /* eslint-disable-next-line no-unused-vars */
-class CouchePolygonesWri extends GeoJonAjaxBboxLayer {
+class CouchePolygonesWri extends GeoJsonAjaxBboxLayer {
   constructor(options) {
-    super(options.serveurAPI + '/api/polygones?' +
+    const url = options.serveurAPI + '/api/polygones?' +
       'type_polygon=' + options.typeId +
       (options.massif ? '&massif=' + options.massif : '') +
       (options.intersection ? '&intersection=' + options.intersection : '') +
-      '&cache=' + (7 * 24 * 3600), {
-        style: (feature) => ({
-          stroke: false,
-          color: feature.properties.couleur,
-          ...options.featureStyle,
-        }),
+      '&cache=' + (7 * 24 * 3600);
 
-        onEachFeature: (feature, layer) => {
-          // Etiquettes
-          if (options.etiquettes)
-            layer.bindTooltip(
-              feature.properties.nom
-              .replaceAll(/ ([a-z]?[a-z]?[a-z]) /gui, ' $1&nbsp;')
-              .replaceAll(/ /gu, '<br/>'), {
-                permanent: true,
-                direction: 'center',
-              }).openTooltip();
-          //TODO étiquette au survol
-          //TODO BUG affiche les étiquettes à l'init et pas aprés
+    super(url, {
+      onEachFeature: (feature, layer) => {
+        // Etiquettes
+        //TODO étiquette au survol
+        //TODO BUG affiche les étiquettes à l'init et pas aprés
+        if (options.etiquettes)
+          layer.bindTooltip(
+            feature.properties.nom
+            .replaceAll(/ ([a-z]?[a-z]?[a-z]) /gui, ' $1&nbsp;')
+            .replaceAll(/ /gu, '<br/>'), {
+              permanent: true,
+              direction: 'center',
+            }).openTooltip();
 
-          if (options.clic) {
-            layer.on('mouseover mouseout', (evt) => {
-              // Elargit le contour au survol
-              evt.target.setStyle({
-                stroke: evt.type === 'mouseover',
-              });
+        if (options.clic) {
+          layer.on('mouseover mouseout', (evt) => {
+            // Elargit le contour au survol
+            evt.target.setStyle({
+              stroke: evt.type === 'mouseover',
             });
+          });
 
-            layer.on('click', (evt) => {
-              location.href = '/nav/' + evt.sourceTarget.feature.id;
-            });
-          } else
-            // Remove cursor pointer on hover
-            layer.on('mouseover', (evt) => {
-              evt.target.getElement().style.cursor = 'grab';
-            });
-        },
-        ...options,
-      });
+          layer.on('click', (evt) => {
+            location.href = '/nav/' + evt.sourceTarget.feature.id;
+          });
+        } else
+          // Remove cursor pointer on hover
+          layer.on('mouseover', (evt) => {
+            evt.target.getElement().style.cursor = 'grab';
+          });
+      },
+
+      style: (feature) => ({
+        stroke: false,
+        color: feature.properties.couleur,
+        ...options.featureStyle,
+      }),
+
+      ...options,
+    });
   }
 }
 
@@ -362,10 +315,8 @@ function checklayerSelector(typesPoints, callback) {
         .filter((type) => el.parentElement.innerHTML.includes(type.icone + '.svg')) // Celui qui a la même icône
         .map((type) => type.id) // Récupère l'id du type
         .join(',')) // Ferme proprement
-      .filter(Boolean) // Filtre les lignes vides
       .join(','); // En fait un string
 
-    console.log(checkedPoints); //DCMM
     if (typeof callback === 'function')
       callback(checkedPoints);
   }
