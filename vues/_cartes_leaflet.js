@@ -191,10 +191,14 @@ const couchesIconesWRI = {
     'bus': '["highway"="bus_stop"]',
   };
 
-// Récupération de la mémorisation du sélecteur de couches
+// Récupération de la mémorisation des sélecteurs de couches
 if (typeof sessionStorage.checkedPoints !== 'string')
   sessionStorage.checkedPoints = localStorage.checkedPoints || // de la dernière session
-  typesPointsParDefaut; // par défaut
+  typesPointsParDefaut; // par défaut //TODO récupèrer celui de includes/config.php
+
+if (typeof sessionStorage.checkedPolygons !== 'string')
+  sessionStorage.checkedPolygons = localStorage.checkedPoints || // de la dernière session
+  ''; // par défaut
 
 // Vector layer with bbox & cluster 
 class GeoJonAjaxBboxLayer extends L.MarkerClusterGroup {
@@ -297,7 +301,7 @@ class ClusterPointsWri extends GeoJonAjaxBboxLayer {
 }
 
 /* eslint-disable-next-line no-unused-vars */
-class CouchePolygonesWri extends GeoJsonUrlBbox {
+class CouchePolygonesWri extends GeoJonAjaxBboxLayer {
   constructor(options) {
     super(options.serveurAPI + '/api/polygones?' +
       'type_polygon=' + options.typeId +
@@ -356,8 +360,9 @@ function checklayerSelector(typesPoints, callback) {
       .filter((el) => el.checked) // qui sont sélectionnés
       .map((el) => typesPoints // Reprend la liste des types de points
         .filter((type) => el.parentElement.innerHTML.includes(type.icone + '.svg')) // Celui qui a la même icône
-        .map((type) => type.id_point_type) // Récupère l'id du point type
+        .map((type) => type.id) // Récupère l'id du type
         .join(',')) // Ferme proprement
+      .filter(Boolean) // Filtre les lignes vides
       .join(','); // En fait un string
 
     console.log(checkedPoints); //DCMM

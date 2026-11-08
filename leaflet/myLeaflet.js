@@ -13,6 +13,7 @@
  *****************************************/
 /* eslint-disable-next-line no-unused-vars */
 class GeoJsonUrlBbox extends L.geoJson {
+  //DCMM TODO DELETE
   constructor(url, options = {}) {
     super(null, options);
 

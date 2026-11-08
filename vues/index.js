@@ -46,7 +46,7 @@ positionMemoryControl(map);
  ****************************/
 const argumentsApiWri = {
   serveurAPI: 'https://<?=$_SERVER["SERVER_NAME"]?>',
-  version: '<?=$vue->version_features?>',
+  version: <?=$vue->version_features?>,
   etiquettes: true,
   clic: true,
 };
@@ -68,27 +68,42 @@ if (polygoneAAfficher && polygoneAAfficher.id_polygone_type === 11) {
 else {
   // Couches points refuges.info (clustérisées ensembles)
   const typesPoints = <?=json_encode($types_points)?>,
+    typesPolygones = <?=json_encode($types_polygones)?>,
     overlays = {};
 
-  // Génère de fausses lignes du sélecteur de couches pour récupérer leur état
+  // Génère de fausses lignes du sélecteur de couches de points pour récupérer leur état
   for (const [k, type] of Object.entries(typesPoints)) {
-    const titre = '<img src="/images/icones/' + type.icone + '.svg"/> ' + type.nom_type_traduit,
-      emptyLayer = L.circle([0, 0], {
+    const titre = '<img src="/images/icones/' + type.icone + '.svg"/> ' + type.nom_traduit,
+      layer = L.circle([0, 0], { // Couche invisible
         stroke: false,
       });
 
-    overlays[titre] = emptyLayer;
-    if (sessionStorage.checkedPoints.split(',').includes(type.id_point_type.toString()))
-      emptyLayer.addTo(map); // Sélectionne l'entrée
+    overlays[titre] = layer;
+    if (sessionStorage.checkedPoints.split(',').includes(type.id.toString()))
+      layer.addTo(map); // Sélectionne l'entrée
   }
 
-  // Couche des points de tous les types
+  // Cluster des points de tous les types
   const pointsWri = new ClusterPointsWri({
     ...argumentsApiWri,
     massif: polygoneAAfficher ? polygoneAAfficher.id_polygone : 0,
     optionalParameter: '&type_points=' + sessionStorage.checkedPoints,
     hide: !sessionStorage.checkedPoints,
   }).addTo(map);
+
+  // Lignes du sélecteur de couches de polygones
+  for (const [k, type] of Object.entries(typesPolygones)) {
+    const layer = new CouchePolygonesWri({
+      ...argumentsApiWri,
+      typeId: type.id,
+    });
+
+    overlays[type.nom_traduit] = layer;
+
+
+    if (sessionStorage.checkedPolygons.split(',').includes(type.id.toString()))
+      layer.addTo(map); // Sélectionne l'entrée
+  }
 
   // Sélecteur de couches en surimpression
   L.control.layers(null, overlays).addTo(map);
@@ -105,7 +120,8 @@ else {
       });
     });
 
-  // OVERPASS //DCMM TODO BUG overpass ne fonctionne plus sur WRI
+  // Couches OSM Overpass
+  //DCMM TODO BUG overpass ne fonctionne plus sur WRI
 }
 
 // Externalise le sélecteur de points pour les grandes largeurs de fenêtre

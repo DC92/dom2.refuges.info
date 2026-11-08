@@ -15,16 +15,23 @@ require_once ("leaflet_libs.php");
 add_lib('overpass/dist/OverPassLayer.bundle.js', 'chemin_leaflet');
 add_lib('overpass/dist/OverPassLayer.css', 'chemin_leaflet');
 
-// Table servant à la construction du sélecteur de couches de points
+// Tables servant à la construction du sélecteur de couches
 $types_points = [];
 foreach (types_point_affichables() as $pt) {
   $types_points[] = [
-    'id_point_type' => $pt->id_point_type,
-    'nom_type' => $pt->nom_type,
-    'nom_type_traduit' => _($pt->nom_type),
+    'id' => $pt->id_point_type,
+    'nom_traduit' => _($pt->nom_type),
     'icone' => $config_wri['correspondance_type_icone'][replace_url($pt->nom_type)] ?? 'a63',
   ];
 }
+
+$types_polygones = [[
+  'id' => 1,
+  'nom_traduit' => _('massifs'),
+], [
+  'id' => 11,
+  'nom_traduit' => _('régions'),
+]];
 
 $vue->titre = _('Carte et informations sur les refuges, cabanes et abris de montagne');
 $vue->stat = stat_site ();
