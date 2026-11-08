@@ -209,13 +209,9 @@ class ClusterPointsWri extends GeoJsonAjaxBboxLayer {
       (options.typePoints ? '&type_points=' + options.typePoints : '') +
       (options.massif ? '&massif=' + options.massif : '') +
       (options.version ? '&version=' + options.version : '') +
-      '&cache=' + 7 * 24 * 3600 +
-      (document.documentElement.lang === 'fr' ? '' : '&langue=' + document.documentElement.lang);
-    //TODO Les nouvelles cartes leaflet ne font pas appel à la clusterisation serveur, trop spécifique et complexe à mettre en oeuvre. On pourait la supprimer de l'API.
-
+       (document.documentElement.lang === 'fr' ? '' : '&langue=' + document.documentElement.lang);
+ 
     super(url, {
-      ...options,
-
       onEachFeature: (feature, layer) => {
         // Etiquettes
         if (options.etiquette)
@@ -246,6 +242,8 @@ class ClusterPointsWri extends GeoJsonAjaxBboxLayer {
             iconAnchor: [12, 12],
           }),
         }),
+        
+      ...options,
     });
   }
 }
@@ -256,19 +254,18 @@ class CouchePolygonesWri extends GeoJsonAjaxBboxLayer {
     const url = options.serveurAPI + '/api/polygones?' +
       'type_polygon=' + options.typeId +
       (options.massif ? '&massif=' + options.massif : '') +
-      (options.intersection ? '&intersection=' + options.intersection : '') +
-      '&cache=' + (7 * 24 * 3600);
+      (options.intersection ? '&intersection=' + options.intersection : '')  ;
 
     super(url, {
       onEachFeature: (feature, layer) => {
         // Etiquettes
-        //TODO étiquette au survol
-        //TODO BUG affiche les étiquettes à l'init et pas aprés
         if (options.etiquettes)
           layer.bindTooltip(
             feature.properties.nom
             .replaceAll(/ ([a-z]?[a-z]?[a-z]) /gui, ' $1&nbsp;')
             .replaceAll(/ /gu, '<br/>'), {
+        //TODO BUG affiche les étiquettes à l'init et pas aprés
+        //TODO étiquette au survol
               permanent: true,
               direction: 'center',
             }).openTooltip();
