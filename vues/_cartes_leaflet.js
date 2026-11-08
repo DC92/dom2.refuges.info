@@ -209,12 +209,17 @@ class GeoJonAjaxBboxLayer extends L.MarkerClusterGroup {
     this._opt = options;
   }
 
-  fetchData(url) {
+  fetchData(options) {
     // Change the url if called from outside
-    if (url)
-      this._url = url;
+    if (options)
+      this._opt = {
+        ...this._opt,
+        ...options,
+      };
 
-    fetch(this._url + '&bbox=' + this._map.getBounds().toBBoxString())
+    fetch(this._url +
+        (this._opt.optionalParameter || '') +
+        '&bbox=' + this._map.getBounds().toBBoxString())
       .then((response) => response.json())
       .then((json) => {
         this.clearLayers(); // Clear existing content
@@ -222,10 +227,10 @@ class GeoJonAjaxBboxLayer extends L.MarkerClusterGroup {
         // Add new vector layer with new geoJson features
         const vectorLayer = new L.GeoJSON(null, this._opt);
 
-        if (json.features.length)
+        if (json.features.length && !this._opt.hide) {
           vectorLayer.addData(json);
-
-        this.addLayer(vectorLayer);
+          this.addLayer(vectorLayer);
+        }
       });
   }
 
@@ -248,7 +253,6 @@ class ClusterPointsWri extends GeoJonAjaxBboxLayer {
       '?nb_points=all' +
       (options.typePoints ? '&type_points=' + options.typePoints : '') +
       (options.massif ? '&massif=' + options.massif : '') +
-      '&type_points=28' +
       (options.version ? '&version=' + options.version : '') +
       '&cache=' + 7 * 24 * 3600 +
       (document.documentElement.lang === 'fr' ? '' : '&langue=' + document.documentElement.lang);
@@ -337,4 +341,28 @@ class CouchePolygonesWri extends GeoJsonUrlBbox {
         ...options,
       });
   }
+}
+
+// Mémorise le n° de type des point sélectionnés
+/* eslint-disable-next-line no-unused-vars */
+function checklayerSelector(typesPoints, callback) {
+  const inputEls = document.querySelectorAll('.leaflet-control-layers-overlays input[type=checkbox]');
+
+  function selecteurInputChanged() {
+    // Récupère la liste des id de types de points sélectionnés dans le sélecteur d'overlays
+    const checkedPoints = Array.from(inputEls) // Tous les checkbox
+      .filter((el) => el.checked) // qui sont sélectionnés
+      .map((el) => typesPoints // Reprend la liste des types de points
+        .filter((type) => el.parentElement.innerHTML.includes(type.icone + '.svg')) // Celui qui a la même icône
+        .map((type) => type.id_point_type) // Récupère l'id du point type
+        .join(',')) // Ferme proprement
+      .join(','); // En fait un string
+
+    console.log(checkedPoints); //DCMM
+    if (typeof callback === 'function')
+      callback(checkedPoints);
+  }
+
+  for (const el of inputEls)
+    el.addEventListener('change', selecteurInputChanged);
 }

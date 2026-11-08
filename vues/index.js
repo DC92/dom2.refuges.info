@@ -83,32 +83,28 @@ else {
   }
 
   // Couche des points de tous les types
-  new ClusterPointsWri(argumentsApiWri).addTo(map);
-
-  // OVERPASS //DCMM TODO BUG overpass ne fonctionne plus sur WRI
+  const pointsWri = new ClusterPointsWri({
+    ...argumentsApiWri,
+    optionalParameter: '&type_points=' + sessionStorage.checkedPoints,
+    hide: !sessionStorage.checkedPoints,
+  }).addTo(map);
 
   // Sélecteur de couches en surimpression
   L.control.layers(null, overlays).addTo(map);
 
-  // Mémorise le n° de type des point sélectionnés
-  const inputEls = document.querySelectorAll('.leaflet-control-layers-overlays input[type=checkbox]');
+  // Actions du sélecteur
+  checklayerSelector(
+    typesPoints,
+    (checkedPoints) => {
+      sessionStorage.checkedPoints = checkedPoints;
+      // Recharger les points qui correspondent
+      pointsWri.fetchData({
+        optionalParameter: '&type_points=' + sessionStorage.checkedPoints,
+        hide: !sessionStorage.checkedPoints,
+      });
+    });
 
-  for (let el of inputEls)
-    el.addEventListener('change', selecteurInputChanged);
-
-  function selecteurInputChanged() {
-    // Récupère la liste des id de types de points sélectionnés dans le sélecteur d'overlays
-    sessionStorage.checkedPoints = Array.from(inputEls) // Tous les checkbox
-      .filter((el) => el.checked) // Ceux qui sont sélectionnés
-      .map((el) => typesPoints // Reprend la liste des types de points
-        .filter((type) => el.parentElement.innerHTML.includes(type.icone + '.svg')) // Celui qui a la même icône
-        .map((type) => type.id_point_type) // Récupère l'id du point type
-        .join(',')) // Ferme proprement
-      .join(','); // En fait un string
-
-    console.log(sessionStorage.checkedPoints); //DCMM
-    //TODO recharger les points qui correspondent
-  }
+  // OVERPASS //DCMM TODO BUG overpass ne fonctionne plus sur WRI
 }
 
 /*//DCMM TODO
