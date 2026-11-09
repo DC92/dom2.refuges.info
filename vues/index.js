@@ -23,6 +23,9 @@ controlesComuns(map).forEach((control) => control.addTo(map)); // Autres control
 /************************
  * POSITION DE LA CARTE *
  ************************/
+// Enregistre la position et la couche de base courantes
+positionMemoryControl(map);
+
 if (polygoneAAfficher) {
   // Dessine le contour du polygone et centre la carte dessus
   const polygonLayer = JSON.parse(polygoneAAfficher.geometrie_geojson),
@@ -36,9 +39,6 @@ if (polygoneAAfficher) {
 } else
   // Place la carte au dernier emplacement
   map.setView([positionMemoryArray[1], positionMemoryArray[2]], positionMemoryArray[0]);
-
-// Enregistre la position et la couche de base courantes
-positionMemoryControl(map);
 
 
 /****************************

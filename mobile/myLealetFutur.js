@@ -9,7 +9,7 @@
   cursor: pointer;
 }
 
-//DCMM FUTUR PERMALINK
+// DCMM FUTUR PERMALINK
 /*****************************
  * Saving the map position   *
  * Lon, lat, zoom, baselayer *
@@ -27,14 +27,14 @@ function permalinkControl(map, defaut) {
   const regex = /#?([0-9.]+)\/([0-9.]+)\/([0-9.]+)\/?(.*)/u;
 
   const prio2 = (localStorage.permalink || sessionStorage.permalink || defaut || '6/2/47');
-  console.log(prio2); //DCMM
+  console.log(prio2); // DCMM
   const prio = prio2.match(regex);
-  console.log(prio); //DCMM
-  console.log(location.hash); //DCMM
+  console.log(prio); // DCMM
+  console.log(location.hash); // DCMM
   const hashmatch = location.hash.match(regex);
-  console.log(hashmatch); //DCMM
+  console.log(hashmatch); // DCMM
   prio.fill(...hashmatch); // Écrase les index 1, 2 et 3 par 0
-  console.log(prio); //DCMM
+  console.log(prio); // DCMM
 
   /*****************************************
    * Position et couche de fond par défaut *
@@ -82,7 +82,7 @@ function permalinkControl(map, defaut) {
   map.setView([permalinkArray[1], permalinkArray[2]], permalinkArray[0]);
 }
 
-//DCMM FUTUR HORS RESEAU
+// DCMM FUTUR HORS RESEAU
 /****************************************
  * OpenHikingMap tile preloading button *
  ****************************************/
@@ -135,7 +135,7 @@ const ControlPreload = L.Control.extend({
   }
 });
 
-//DCMM Modèle de classe
+// DCMM Modèle de classe
 /* eslint-disable-next-line no-unused-vars */
 class Newclass extends L.geoJson {
   constructor() {
@@ -143,7 +143,7 @@ class Newclass extends L.geoJson {
   }
 }
 
-//DCMM FUTUR
+// DCMM FUTUR
 /*******************************************
  * Display GPS distance via touch on a map *
  *******************************************/
