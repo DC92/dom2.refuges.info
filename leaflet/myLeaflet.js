@@ -8,6 +8,8 @@
 /*****************************************************
  * GeoJson layer from url with bbox & cluster        *
  * optionalParameter : string to be added to the url *
+ * optionalParameter: queries to be added to the url *
+ * hide: don't get the data & hide the layer         *
  * ...L.geoJson options                              *
  *****************************************************/
 /* eslint-disable-next-line no-unused-vars */
@@ -23,15 +25,16 @@ class GeoJsonAjaxBboxLayer extends L.MarkerClusterGroup {
     this._opt = options;
   }
 
+  // Load or refresh the display
   fetchData(options, url) {
-    // Change the options & url if called from outside
+    // Change the options & url if required
+    if (url)
+      this._url = url;
     if (options)
       this._opt = {
         ...this._opt,
         ...options,
       };
-    if (url)
-      this._url = url;
 
     fetch(this._url +
         (this._opt.optionalParameter || '') +
@@ -63,6 +66,7 @@ class GeoJsonAjaxBboxLayer extends L.MarkerClusterGroup {
 
 /****************************************************************
  * Leaflet from/to geoJson & GPX lat/lng coordinates conversion *
+ * Swap lon / lat & vice versa                                  *
  ****************************************************************/
 function flipLonLatRecursive(data) {
   if (Array.isArray(data) && typeof data[0] === 'number')
@@ -82,6 +86,8 @@ const ControlPolygonsUpload = L.Control.extend({
   },
 
   onAdd(map) {
+    super.onAdd(map);
+
     const buttonDiv = L.DomUtil.create('div', 'button-wrapper leaflet-control-upload');
 
     buttonDiv.innerHTML = '<button title="' + this.options.title + ' .geojson, .gml, .gpx, .json, .kml, .xml">' +
@@ -143,7 +149,7 @@ const ControlPolygonsUpload = L.Control.extend({
  *********************************************************/
 /* eslint-disable-next-line no-unused-vars */
 class MarkerCompass extends L.Marker {
-  constructor() {
+  constructor(options) {
     // Fix icon
     const iconMarker = L.divIcon({
         iconSize: [16, 16],
@@ -156,6 +162,7 @@ class MarkerCompass extends L.Marker {
 
       // Direction icon
       iconCompas = L.divIcon({
+        ...options,
         iconSize: [16, 16],
         iconAnchor: [8, 8],
         className: '',
@@ -177,7 +184,7 @@ class MarkerCompass extends L.Marker {
         // Add the direction to the icon if it is not already done.
         this.setIcon(iconCompas);
         this._icon.style.transformOrigin = 'center';
-        this.rotateIcon();
+        this._rotateIcon();
       }
     });
   }
@@ -187,11 +194,11 @@ class MarkerCompass extends L.Marker {
     super._setPos(pos);
 
     if (this.heading)
-      this.rotateIcon();
+      this._rotateIcon();
   }
 
   // Add or replace the icon rotation style
-  rotateIcon() {
+  _rotateIcon() {
     this._icon.style.transform =
       this._icon.style.transform.replaceAll(/rotateZ\([^)]+\)/gu, '') +
       ' rotateZ(' + (45 - parseInt(this.heading, 10)) + 'deg)';
@@ -206,6 +213,8 @@ let positionMemoryArray = []; // For use during the page lifetime.
 
 /* eslint-disable-next-line no-unused-vars */
 function positionMemoryControl(map) {
+  //TODO BUG pourquoi doit elle être placée avant map.setView ?
+  // TODO transform in a true control + url hack permalink
   ['baselayerchange', 'zoom', 'moveend'].forEach((evtName) => {
     map.on(evtName, () => {
       const baselayerSelector = document.querySelectorAll('.leaflet-control-layers-base input'),
@@ -242,8 +251,8 @@ function positionMemoryControl(map) {
  **********************************/
 /* eslint-disable-next-line no-unused-vars */
 class IGNTileLayer extends L.tileLayer {
-  constructor(url, paramsIGN, paramsLayer) {
-    const params = {
+  constructor(url, ignQueries, options) {
+    const queries = {
       request: 'GetTile',
       service: 'WMTS',
       version: '1.0.0',
@@ -253,16 +262,16 @@ class IGNTileLayer extends L.tileLayer {
       tilematrix: '{z}',
       tilerow: '{y}',
       tilecol: '{x}',
-      ...paramsIGN,
+      ...ignQueries,
     };
 
-    super(url + Object.entries(params).map(e => e.join('=')).join('&'), {
+    super(url + Object.entries(queries).map(e => e.join('=')).join('&'), {
       bounds: [
         [-75, -180],
         [81, 180],
       ],
       attribution: '<a href="https://www.geoportail.gouv.fr/">IGN Geoportail</a>',
-      ...paramsLayer,
+      ...options,
     });
   }
 }

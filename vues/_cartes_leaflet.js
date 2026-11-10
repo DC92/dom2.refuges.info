@@ -2,9 +2,10 @@
 /* eslint-disable-next-line no-unused-vars */
 /* global positionMemoryArray:writable */
 
-/*********************************************************************************
- * Ce fichier contient les paramètrages spécifiques et visibles sur refuges.info *
- *********************************************************************************/
+/*************************************************
+ * Ce fichier contient les paramètrages et       *
+ * fonctions communes aux cartes de refuges.info *
+ *************************************************/
 
 /*****************************************
  * POSITION ET COUCHE DE FOND PAR DÉFAUT *
@@ -191,26 +192,40 @@ const couchesIconesWRI = {
     'bus': '["highway"="bus_stop"]',
   };
 
+/***********************************************************
+ * FONCTIONS COMMUNES AUX CARTES DES PAGES DE REFUGES.INFO *
+ ***********************************************************/
 // Récupération de la mémorisation des sélecteurs de couches
 if (typeof sessionStorage.checkedPoints !== 'string')
   sessionStorage.checkedPoints = localStorage.checkedPoints || // de la dernière session
+  //DCMM TODO ne fonctionne plus entre sessions
   typesPointsParDefaut; // par défaut //TODO récupèrer celui de includes/config.php
 
 if (typeof sessionStorage.checkedPolygons !== 'string')
   sessionStorage.checkedPolygons = localStorage.checkedPolygons || // de la dernière session
   ''; // par défaut
 
+/***************************************************************
+ * couche vectorielle de points refuges.info                   *
+ * à partir de l'API, en mode BBOX et regroupement en clusters *
+ * Options de l'API : serveurAPI, typePoints, massif, version  *
+ *   etiquette: affiche le nom du point                        *
+ *   clic: clic redirige vers la page du point                 *
+ *   ...options de GeoJsonAjaxBboxLayer                        *
+ ***************************************************************/
 /* eslint-disable-next-line no-unused-vars */
 class ClusterPointsWri extends GeoJsonAjaxBboxLayer {
   // On en fait une classe car on doit étendre une classe Leaflet
+  //DCMM TODO ne pas appeler l'API si &type_points=&bbox
+
   constructor(options) {
     const url = options.serveurAPI + '/api/' + (options.massif ? 'massif' : 'bbox') +
       '?nb_points=all' + //TODO masquage de la couche si limite de points atteinte
       (options.typePoints ? '&type_points=' + options.typePoints : '') +
       (options.massif ? '&massif=' + options.massif : '') +
       (options.version ? '&version=' + options.version : '') +
-       (document.documentElement.lang === 'fr' ? '' : '&langue=' + document.documentElement.lang);
- 
+      (document.documentElement.lang === 'fr' ? '' : '&langue=' + document.documentElement.lang);
+
     super(url, {
       onEachFeature: (feature, layer) => {
         // Etiquettes
@@ -218,6 +233,7 @@ class ClusterPointsWri extends GeoJsonAjaxBboxLayer {
           layer.bindTooltip(
             feature.properties.nom, {
               permanent: true,
+              // TODO ?? sticky: true,
               direction: 'center',
             }).openTooltip();
 
@@ -242,19 +258,29 @@ class ClusterPointsWri extends GeoJsonAjaxBboxLayer {
             iconAnchor: [12, 12],
           }),
         }),
-        
+
       ...options,
     });
   }
 }
 
+/******************************************************************
+ * couche vectorielle de polygones refuges.info (massifs, zones ) *
+ * à partir de l'API et en mode BBOX                              *
+ * Options de l'API : serveurAPI, typePoints, massif, version  *
+ *   etiquette: affiche le nom du point                        *
+ *   clic: clic redirige vers la page du point                 *
+ *   layer : {options de GeoJsonAjaxBboxLayer }                           *
+ ***************************************************************/
 /* eslint-disable-next-line no-unused-vars */
 class CouchePolygonesWri extends GeoJsonAjaxBboxLayer {
+  //DCMM BUG mémorisation couches massifs et regions
+  //TODO ?? option etiquette
   constructor(options) {
     const url = options.serveurAPI + '/api/polygones?' +
-      'type_polygon=' + options.typeId +
+      'type_polygon=' + options.typeId + //TODO typeId => typePolygon ??
       (options.massif ? '&massif=' + options.massif : '') +
-      (options.intersection ? '&intersection=' + options.intersection : '')  ;
+      (options.intersection ? '&intersection=' + options.intersection : '');
 
     super(url, {
       onEachFeature: (feature, layer) => {
@@ -264,8 +290,8 @@ class CouchePolygonesWri extends GeoJsonAjaxBboxLayer {
             feature.properties.nom
             .replaceAll(/ ([a-z]?[a-z]?[a-z]) /gui, ' $1&nbsp;')
             .replaceAll(/ /gu, '<br/>'), {
-        //TODO BUG affiche les étiquettes à l'init et pas aprés
-        //TODO étiquette au survol
+              //TODO BUG affiche les étiquettes à l'init et pas aprés
+              //TODO étiquette au survol
               permanent: true,
               direction: 'center',
             }).openTooltip();
@@ -300,6 +326,7 @@ class CouchePolygonesWri extends GeoJsonAjaxBboxLayer {
 }
 
 // Mémorise le n° de type des point sélectionnés
+//TODO remonter dans myleaflet.js
 /* eslint-disable-next-line no-unused-vars */
 function checklayerSelector(typesPoints, callback) {
   const inputEls = document.querySelectorAll('.leaflet-control-layers-overlays input[type=checkbox]');

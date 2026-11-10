@@ -64,13 +64,3 @@ if ($controlleur->url_decoupee[0] == 'nav' && !empty($controlleur->url_decoupee[
 }
 
 $vue->bbox=$config_wri['bbox_page_accueil']; //point de vue et position initiale de la page //TODO metre en /vues/_cartes_leaflet.js
-
-// Zones couvertes
-$vue->zones_couvertes=[];
-$conditions = new stdClass;
-$conditions->ids_polygone_type=$config_wri['id_zone'];
-$zones=infos_polygones($conditions);
-if ($zones)
-  foreach ($zones as $zone)
-    $vue->zones_couvertes [ucfirst($zone->nom_polygone)] =
-      lien_polygone($zone)."?id_polygone_type=".$config_wri['id_massif'];

@@ -72,11 +72,11 @@ else {
     overlays = {};
 
   // Cluster des points de tous les types
+  sessionStorage.checkedPoints = typesPointsParDefaut; // Restaure l'affichage minimum des points du massif
   const pointsWri = new ClusterPointsWri({
     ...argumentsApiWri,
     massif: polygoneAAfficher ? polygoneAAfficher.id_polygone : 0,
     optionalParameter: '&type_points=' + sessionStorage.checkedPoints,
-    hide: !sessionStorage.checkedPoints,
   }).addTo(map);
 
   // Génère de fausses lignes du sélecteur de couches de points pour récupérer leur état
@@ -100,6 +100,7 @@ else {
 
     overlays[type.nom_traduit] = layer;
     if (sessionStorage.checkedPolygons.split(',').includes(type.id.toString()))
+      //DCMM TODO enregistrer les couches / factoriser la gestion pour points
       layer.addTo(map); // Sélectionne l'entrée
   }
 
