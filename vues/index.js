@@ -12,19 +12,17 @@ const map = L.map('carte-accueil'),
 
 fondDecarteActif.addTo(map);
 
-
 /*************
  * CONTROLES *
  *************/
 L.control.layers(tileLayers).addTo(map); // Sélecteur de couche de base
 controlesComuns(map).forEach((control) => control.addTo(map)); // Autres controles
 
-
-/************************
- * POSITION DE LA CARTE *
- ************************/
+/********************************************
+ * POLYGONE AFFICHÉ ET POSITION DE LA CARTE *
+ ********************************************/
 // Enregistre la position et la couche de base courantes
-positionMemoryControl(map);
+positionMemoryControl(map); //TODO BUG pourquoi doit-il être placé avant map.setView ?
 
 if (polygoneAAfficher) {
   // Dessine le contour du polygone et centre la carte dessus
@@ -40,10 +38,9 @@ if (polygoneAAfficher) {
   // Place la carte au dernier emplacement
   map.setView([positionMemoryArray[1], positionMemoryArray[2]], positionMemoryArray[0]);
 
-
-/****************************
- * COUCHES EN SURIMPRESSION *
- ****************************/
+/********************
+ * COUCHES OVERLAYS *
+ ********************/
 const argumentsApiWri = {
   serveurAPI: 'https://<?=$_SERVER["SERVER_NAME"]?>',
   version: <?=$vue->version_features?>,
@@ -71,8 +68,10 @@ else {
     typesPolygones = <?=json_encode($types_polygones)?>,
     overlays = {};
 
+  // Restaure l'affichage minimum des points du massif
+  sessionStorage.checkedPoints = typesPointsParDefaut;
+
   // Cluster des points de tous les types
-  sessionStorage.checkedPoints = typesPointsParDefaut; // Restaure l'affichage minimum des points du massif
   const pointsWri = new ClusterPointsWri({
     ...argumentsApiWri,
     massif: polygoneAAfficher ? polygoneAAfficher.id_polygone : 0,
@@ -88,7 +87,9 @@ else {
 
     overlays[titre] = layer;
     if (sessionStorage.checkedPoints.split(',').includes(type.id.toString()))
-      layer.addTo(map); // Sélectionne l'entrée
+      layer.addTo(map); // Affiche la couche et sélectionne l'entrée
+    else
+      layer.remove(); // Efface la couche et désélectionne l'entrée
   }
 
   // Lignes du sélecteur de couches de polygones
@@ -101,10 +102,14 @@ else {
     overlays[type.nom_traduit] = layer;
     if (sessionStorage.checkedPolygons.split(',').includes(type.id.toString()))
       //DCMM TODO enregistrer les couches / factoriser la gestion pour points
-      layer.addTo(map); // Sélectionne l'entrée
+      layer.addTo(map); // Affiche la couche et sélectionne l'entrée
+    else
+      layer.remove(); // Efface la couche et désélectionne l'entrée
   }
 
-  // Sélecteur de couches en surimpression
+  /*********************************
+   * SÉLECTEUR DE COUCHES OVERLAYS *
+   *********************************/
   L.control.layers(null, overlays).addTo(map);
 
   // Actions du sélecteur
@@ -112,6 +117,8 @@ else {
     typesPoints,
     (checkedPoints) => {
       sessionStorage.checkedPoints = checkedPoints;
+      localStorage.checkedPoints = checkedPoints;
+
       // Recharger les points qui correspondent
       pointsWri.fetchData({
         optionalParameter: '&type_points=' + sessionStorage.checkedPoints,
@@ -166,7 +173,7 @@ map.on('layeradd moveend', (evt) => {
       '&format=' + exportCarteEl.firstElementChild.value; //TODO remove *ElementChild
 
     // Affiche seulement quand il y a quelque chose à exporter
-    exportCarteEl.style.display = sessionStorage.checkedPoints.length ? 'block' : 'none';
+    exportCarteEl.style.display = sessionStorage.checkedPoints ? 'block' : 'none';
   }
 });
 

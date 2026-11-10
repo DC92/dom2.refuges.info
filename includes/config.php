@@ -107,8 +107,6 @@ $config_wri['id_zone_reglementee']=12; // sly 2020 : réserves natuelles, réser
 $config_wri['id_region_naturelle']=20;
 $config_wri['id_departement']=10;
 
-$config_wri['bbox_page_accueil']='-1.75,41.4,11,49.2';
-
 // C'est clair que c'est bizarre de mettre ces ids en dur, mais à certain endroits c'est bien pratique voire dur de faire autrement qu'interroger le bon id directement
 $config_wri['id_passage_delicat']=3;
 $config_wri['id_cabane_non_gardee']=7;

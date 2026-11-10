@@ -105,8 +105,8 @@ const ControlPolygonsUpload = L.Control.extend({
       reader.onload = () => {
         // We cannot use libraries because we want to convert lines into polygons
         const fileText = reader.result
-          .replaceAll(/[\n\r\t]/gu, ' ') // Remove CR LF & tabs     
-          .replaceAll(/ +/gu, ' '), // Remove multiple spaces   
+          .replaceAll(/[\n\r\t]/gu, ' ') // Remove CR LF & tabs
+          .replaceAll(/ +/gu, ' '), // Remove multiple spaces
           polygonsCoords = [];
 
         // Json, GeoJson
@@ -225,19 +225,19 @@ function positionMemoryControl(map) {
         if (lsInputEl.checked || !baseLayerName)
           baseLayerName = lsInputEl.parentElement.lastChild.innerText.trim(); //TODO remove *ElementChild
 
-      // To restart from this position at the next map change
+      // Store the values to resume from the last position at the start of the next session (page, tab)
       positionMemoryArray = [
-        map.getZoom().toFixed(1),
+        Math.max(5, Math.min(10, map.getZoom())), // In zoom limits
         pos.lat.toFixed(5),
         pos.lng.toFixed(5),
         encodeURI(baseLayerName),
       ];
-      sessionStorage.positionMemory = positionMemoryArray.join('/');
+      sessionStorage.positionMemory = positionMemoryArray.join('/'); // Store for the session
+      localStorage.positionMemory = sessionStorage.positionMemory; // Store for next sessions
 
-      // To resume from the last position at the start of the next session
-      const pa2 = Array.from(positionMemoryArray);
-      pa2[0] = Math.max(5, Math.min(10, pa2[0])); // In zoom limits
-      localStorage.positionMemory = pa2.join('/');
+      // Store the values to restart from this position at the next map change
+      positionMemoryArray[0] = Math.max(5, Math.min(10, map.getZoom())).toFixed(1); // In zoom limits
+      localStorage.positionMemory = positionMemoryArray.join('/');
 
       // Hides labels for large scales
       map.getContainer().classList[map.getZoom() < 8 ? 'add' : 'remove']('hide-tooltips');

@@ -62,5 +62,3 @@ if ($controlleur->url_decoupee[0] == 'nav' && !empty($controlleur->url_decoupee[
   if(count($polygones_bruts))
     $vue->polygone = $polygones_bruts[0];
 }
-
-$vue->bbox=$config_wri['bbox_page_accueil']; //point de vue et position initiale de la page //TODO metre en /vues/_cartes_leaflet.js

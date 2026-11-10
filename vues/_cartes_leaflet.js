@@ -7,12 +7,20 @@
  * fonctions communes aux cartes de refuges.info *
  *************************************************/
 
-/*****************************************
- * POSITION ET COUCHE DE FOND PAR DÉFAUT *
- *****************************************/
-localStorage.positionMemory ||= '5/46.5/5'; // S'il n'y a aucune donnée enregistrée
-sessionStorage.positionMemory ||= localStorage.positionMemory; // En début de session, on repart de la dernière position
+/**********************************
+ * POSITION ET COUCHES PAR DÉFAUT *
+ **********************************/
+const positionParDefaut = '5/46/5',
+  typesPointsParDefaut = '7,9,10',
+  polygonesParDefaut = '';
+
+sessionStorage.positionMemory ||= // Mémoire en cours de session
+  localStorage.positionMemory || // En début de session, on repart de la position de la dernière session
+  positionParDefaut; // S'il n'y a aucune donnée enregistrée
 positionMemoryArray = sessionStorage.positionMemory.split('/'); // Pour usage au cours de la durée de vie de la page.
+
+sessionStorage.checkedPoints ||= localStorage.checkedPoints || typesPointsParDefaut;
+sessionStorage.checkedPolygons ||= localStorage.checkedPolygons || polygonesParDefaut;
 
 /*****************************************
  * CONTRÔLES COMMUNS À TOUTES LES CARTES *
@@ -170,40 +178,22 @@ const coucheItineraires = L.tileLayer(
 /************************
  * COUCHES VECTORIELLES *
  ************************/
-/* eslint-disable-next-line no-unused-vars */
-const couchesIconesWRI = {
-    'Cabane non gardée': [7, 'cabane'],
-    'Refuge gardé': [10, 'cabane_red'],
-    'Gîte d\'étape': [9, 'cabane_green'],
-    'Abri naturel': [29, 'abri-naturel'],
-    'Point d\'eau': [23, 'pointdeau'],
-    'Passage délicat': [3, 'triangle_a33.10'],
-    'Bâtiment à investiguer': [28, 'cabane_white_black_a63'],
-  },
-  typesPointsParDefaut = '7,9,10',
+// Couches de points définies par /controleurs/*.php / $types_points
+// Couches de points définies par /controleurs/*.php / $types_polygones
 
-  /* eslint-disable-next-line no-unused-vars */
-  couchesOverpass = {
-    'hôtel': '["tourism"~"hotel|guest_house|chalet|hostel|apartment"]',
-    'camping': '["tourism"="camp_site"]',
-    'point d\'eau': '["natural"="spring"]({{bbox}});nwr["amenity"="drinking_water"]',
-    'ravitaillement': '["shop"~"supermarket|convenience"]',
-    'parking': '["amenity"="parking"]["access"!="private"]',
-    'bus': '["highway"="bus_stop"]',
-  };
+/* eslint-disable-next-line no-unused-vars */
+const couchesOverpass = {
+  'hôtel': '["tourism"~"hotel|guest_house|chalet|hostel|apartment"]',
+  'camping': '["tourism"="camp_site"]',
+  'point d\'eau': '["natural"="spring"]({{bbox}});nwr["amenity"="drinking_water"]',
+  'ravitaillement': '["shop"~"supermarket|convenience"]',
+  'parking': '["amenity"="parking"]["access"!="private"]',
+  'bus': '["highway"="bus_stop"]',
+};
 
 /***********************************************************
  * FONCTIONS COMMUNES AUX CARTES DES PAGES DE REFUGES.INFO *
  ***********************************************************/
-// Récupération de la mémorisation des sélecteurs de couches
-if (typeof sessionStorage.checkedPoints !== 'string')
-  sessionStorage.checkedPoints = localStorage.checkedPoints || // de la dernière session
-  //DCMM TODO ne fonctionne plus entre sessions
-  typesPointsParDefaut; // par défaut //TODO récupèrer celui de includes/config.php
-
-if (typeof sessionStorage.checkedPolygons !== 'string')
-  sessionStorage.checkedPolygons = localStorage.checkedPolygons || // de la dernière session
-  ''; // par défaut
 
 /***************************************************************
  * couche vectorielle de points refuges.info                   *
