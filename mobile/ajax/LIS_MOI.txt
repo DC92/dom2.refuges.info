@@ -1,2 +1,0 @@
-https://github.com/calvinmetcalf/leaflet-ajax/releases/tag/v2.1.0
-Download the v2.1.0 tag (/dist)
