@@ -65,64 +65,55 @@ else {
   // Couches points refuges.info (clustérisées ensembles)
   const typesPoints = <?=json_encode($types_points)?>,
     typesPolygones = <?=json_encode($types_polygones)?>;
- 
-  let pointsWri;//TODO éviter dette assignation
-
-const    overlays = {
-  ...ppppppp(typesPoints,typesPointsParDefaut,argumentsApiWri,polygoneAAfficher,map),
-};
 
   // Restaure l'affichage minimum des points du massif
   sessionStorage.checkedPoints = typesPointsParDefaut;
-   
-function ppppppp(typesPoints,typesPointsParDefaut,argumentsApiWri,polygoneAAfficher,map){
-const    overlaysPoints = {};
 
   // Cluster des points de tous les types
-   pointsWri = new ClusterPointsWri({
+  const pointsWri = new ClusterPointsWri({
     ...argumentsApiWri,
     massif: polygoneAAfficher ? polygoneAAfficher.id_polygone : 0,
     optionalParameter: '&type_points=' + sessionStorage.checkedPoints,
   }).addTo(map);
-  
-  // Génère de fausses lignes du sélecteur de couches de points pour récupérer leur état
-  for (const [k, type] of Object.entries(typesPoints)) {
-    const titre = '<img src="/images/icones/' + type.icone + '.svg"/> ' + type.nom_traduit,
-      layer = L.circle([0, 0], { // Couche invisible
-        stroke: false,
-      });
 
-    overlaysPoints[titre] = layer;
-    if (sessionStorage.checkedPoints.split(',').includes(type.id.toString()))
-      layer.addTo(map); // Affiche la couche et sélectionne l'entrée
-    else
-      layer.remove(); // Efface la couche et désélectionne l'entrée
-  }
-  
-  return overlaysPoints;
-}
-
-  // Lignes du sélecteur de couches de polygones
-  for (const [k, type] of Object.entries(typesPolygones)) {
-    const layer = new CouchePolygonesWri({
+  // Couches de polygones
+  for (const [i, type] of Object.entries(typesPolygones))
+    typesPolygones[i].layer = new CouchePolygonesWri({
       ...argumentsApiWri,
       typeId: type.id,
     });
 
-    overlays[type.nom_traduit] = layer;
-    if (sessionStorage.checkedPolygons.split(',').includes(type.id.toString()))
-      //DCMM TODO enregistrer les couches / factoriser la gestion pour points
-      layer.addTo(map); // Affiche la couche et sélectionne l'entrée
-    else
-      layer.remove(); // Efface la couche et désélectionne l'entrée
-  }
-
   /*********************************
    * SÉLECTEUR DE COUCHES OVERLAYS *
    *********************************/
-  L.control.layers(null, overlays).addTo(map);
+  L.control.layers(null, {
+    ...ppppppp(typesPoints, sessionStorage.checkedPoints, map),
+    ...ppppppp(typesPolygones, sessionStorage.checkedPolygons, map),
+  }).addTo(map);
 
-  // Actions du sélecteur (doit être exécuté une fois le control.layers déclaré)
+  function ppppppp(typeGeometrie, checkedGeometries, map) {
+    const overlaysTypes = {};
+
+    for (const [i, type] of Object.entries(typeGeometrie)) {
+      const titre = (type.icone ? '<img src="/images/icones/' + type.icone + '.svg"/> ' : '') +
+        type.nom_traduit,
+        layer = type.layer ||
+        // Couche invisible sélectionnée pour récupérer l'état de a coche
+        L.circle([0, 0], {
+          stroke: false,
+        });
+
+      overlaysTypes[titre] = layer;
+      if (checkedGeometries.split(',').includes(type.id.toString()))
+        layer.addTo(map); // Affiche la couche et sélectionne l'entrée
+      else
+        layer.remove(); // Efface la couche et désélectionne l'entrée
+    }
+
+    return overlaysTypes;
+  }
+
+  // Actions du sélecteur (doit être exécuté après la déclaration de control.layers)
   checklayerSelector(
     typesPoints,
     (checkedPoints) => {

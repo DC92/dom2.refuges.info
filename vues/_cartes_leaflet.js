@@ -319,7 +319,11 @@ class CouchePolygonesWri extends GeoJsonAjaxBboxLayer {
 //TODO remonter dans myleaflet.js
 /* eslint-disable-next-line no-unused-vars */
 function checklayerSelector(typesPoints, callback) {
+  //TODO attendre que le sélecteur soit déclaté
   const inputEls = document.querySelectorAll('.leaflet-control-layers-overlays input[type=checkbox]');
+
+console.log(typesPoints);//DCMM
+console.log(inputEls);//DCMM
 
   for (const elInput of inputEls)
     elInput.addEventListener('change', () => {
