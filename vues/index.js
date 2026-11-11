@@ -1,28 +1,27 @@
 /* global ClusterPointsWri, CouchePolygonesWri, couchesDeFond, couchesOverpass, coucheItineraires, controlesComuns */
 
-/*************************************
- * CARTE, COUCHE DE BASE ET POLYGONE *
- *************************************/
-// Carte, couche de base et polygone si /nav
-const map = L.map('carte-accueil'),
-  polygoneAAfficher =<?=json_encode($vue->polygone ?? null)?>,
-  tileLayers = couchesDeFond(<?=json_encode($config_wri['mapKeys'])?>),
+/**********************
+ * CARTE ET CONTROLES *
+ **********************/
+const map = L.map('carte-accueil');
+
+controlesComuns(map).forEach((control) => control.addTo(map)); // Autres controles
+
+/******************
+ * COUCHE DE FOND *
+ ******************/
+const tileLayers = couchesDeFond(<?=json_encode($config_wri['mapKeys'])?>),
   fondDecarteActif = tileLayers[decodeURI(positionMemoryArray[3])] || // Dernière couche affichée
   Object.values(tileLayers)[0]; // Par défaut, première couche déclarée
 
 fondDecarteActif.addTo(map);
-
-/*************
- * CONTROLES *
- *************/
 L.control.layers(tileLayers).addTo(map); // Sélecteur de couche de base
-controlesComuns(map).forEach((control) => control.addTo(map)); // Autres controles
+positionMemoryControl(map); // Enregistre la position et la couche de base courantes
 
 /********************************************
- * POLYGONE AFFICHÉ ET POSITION DE LA CARTE *
+ * POSITION DE LA CARTE ET POLYGONE AFFICHÉ *
  ********************************************/
-// Enregistre la position et la couche de base courantes
-positionMemoryControl(map); //TODO BUG pourquoi doit-il être placé avant map.setView ?
+const polygoneAAfficher = <?=json_encode($vue->polygone ?? null)?>;
 
 if (polygoneAAfficher) {
   // Dessine le contour du polygone et centre la carte dessus
@@ -38,9 +37,9 @@ if (polygoneAAfficher) {
   // Place la carte au dernier emplacement
   map.setView([positionMemoryArray[1], positionMemoryArray[2]], positionMemoryArray[0]);
 
-/********************
- * COUCHES OVERLAYS *
- ********************/
+/************************
+ * COUCHES SUPERPOSÉES  *
+ ************************/
 const argumentsApiWri = {
   serveurAPI: 'https://<?=$_SERVER["SERVER_NAME"]?>',
   version: <?=$vue->version_features?>,
