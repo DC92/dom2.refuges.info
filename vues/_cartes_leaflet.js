@@ -321,20 +321,19 @@ class CouchePolygonesWri extends GeoJsonAjaxBboxLayer {
 function checklayerSelector(typesPoints, callback) {
   const inputEls = document.querySelectorAll('.leaflet-control-layers-overlays input[type=checkbox]');
 
-  function selecteurInputChanged() {
-    // Récupère la liste des id de types de points sélectionnés dans le sélecteur d'overlays
-    const checkedPoints = Array.from(inputEls) // Tous les checkbox
-      .filter((el) => el.checked) // qui sont sélectionnés
-      .map((el) => typesPoints // Reprend la liste des types de points
-        .filter((type) => el.parentElement.innerHTML.includes(type.icone + '.svg')) // Celui qui a la même icône
-        .map((type) => type.id) // Récupère l'id du type
-        .join(',')) // Ferme proprement
-      .join(','); // En fait un string
+  for (const elInput of inputEls)
+    elInput.addEventListener('change', () => {
+      // Récupère la liste des id de types de points sélectionnés dans le sélecteur d'overlays
+      const checkedPoints = Array.from(inputEls) // Tous les checkbox
+        .filter((el) => el.checked) // qui sont sélectionnés
+        .map((el) =>
+          typesPoints // Reprend la liste des types de points
+          .filter((type) => el.parentElement.innerHTML.includes(type.icone + '.svg')) // Celui qui a la même icône
+          .map((type) => type.id) // Récupère l'id du type
+          .join(',') // Ferme proprement (en principe, c'est un tableau de 1)
+        ).join(','); // En fait un string
 
-    if (typeof callback === 'function')
-      callback(checkedPoints);
-  }
-
-  for (const el of inputEls)
-    el.addEventListener('change', selecteurInputChanged);
+      if (typeof callback === 'function')
+        callback(checkedPoints);
+    });
 }
