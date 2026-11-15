@@ -81,6 +81,7 @@ const     categoriesCouches=  {
   }).addTo(map);*/
   
   // Couches de polygones
+  if(0)//DCMM
   for (const [i, type] of Object.entries( categoriesCouches.    polygones)) {
     const layer=new CouchePolygonesWri({
       ...argumentsApiWri,
@@ -99,12 +100,13 @@ console.log(typeof cat.id);//DCMM
     cat.layer.addTo(map);
 */
  
-    // Sélecteur de couches overlays *
- new  ControlOverlaysLayers(
- categoriesCouches,
+    // Sélecteur de couches overlays
+addControlOverlays(
+map,
  argumentsApiWri,
+ categoriesCouches,
   polygoneAAfficher ? polygoneAAfficher.id_polygone : 0,
-  ).addTo(map);
+  ) ;
    
 /*  const typesPoints = <?=json_encode($types_points)?>,
     typesPolygones = <?=json_encode($types_polygones)?>;*/

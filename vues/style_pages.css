@@ -349,10 +349,6 @@ a:hover {
   cursor: pointer;
 }
 
-.leaflet-control-layers-list span {
-  text-transform: capitalize;
-}
-
 /* Overpass popups */
 .leaflet-popup-content {
   margin: 3px;
