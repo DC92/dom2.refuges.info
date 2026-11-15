@@ -12,15 +12,15 @@
  **********************************/
 const positionParDefaut = '5/46/5',
   typesPointsParDefaut = '7,9,10',
-  polygonesParDefaut = '';
+  polygonesParDefaut = '1,10'; //DCMM
 
 sessionStorage.positionMemory ||= // Mémoire en cours de session
   localStorage.positionMemory || // En début de session, on repart de la position de la dernière session
   positionParDefaut; // S'il n'y a aucune donnée enregistrée
 positionMemoryArray = sessionStorage.positionMemory.split('/'); // Pour usage au cours de la durée de vie de la page.
 
-sessionStorage.checkedPoints ||= localStorage.checkedPoints || typesPointsParDefaut;
-sessionStorage.checkedPolygons ||= localStorage.checkedPolygons || polygonesParDefaut;
+sessionStorage.points ||= localStorage.points || typesPointsParDefaut;
+sessionStorage.polygones ||= localStorage.polygones || polygonesParDefaut;
 
 /*****************************************
  * CONTRÔLES COMMUNS À TOUTES LES CARTES *
@@ -255,16 +255,15 @@ class ClusterPointsWri extends GeoJsonAjaxBboxLayer {
 }
 
 /******************************************************************
- * couche vectorielle de polygones refuges.info (massifs, zones ) *
+ * Couche vectorielle de polygones refuges.info (massifs, zones ) *
  * à partir de l'API et en mode BBOX                              *
- * Options de l'API : serveurAPI, typePoints, massif, version  *
- *   etiquette: affiche le nom du point                        *
- *   clic: clic redirige vers la page du point                 *
- *   layer : {options de GeoJsonAjaxBboxLayer }                           *
- ***************************************************************/
+ * Options de l'API : serveurAPI, typePoints, massif, version     *
+ *   etiquette: affiche le nom du point                           *
+ *   clic: clic redirige vers la page du point                    *
+ *   layer : {options de GeoJsonAjaxBboxLayer }                   *
+ ******************************************************************/
 /* eslint-disable-next-line no-unused-vars */
 class CouchePolygonesWri extends GeoJsonAjaxBboxLayer {
-  //DCMM BUG mémorisation couches massifs et regions
   //TODO ?? option etiquette
   constructor(options) {
     const url = options.serveurAPI + '/api/polygones?' +
@@ -315,16 +314,274 @@ class CouchePolygonesWri extends GeoJsonAjaxBboxLayer {
   }
 }
 
+/******************************************************************
+ *                           *
+ ***************************************************************/
+/* eslint-disable-next-line no-unused-vars */
+class ControlOverlaysLayers extends L.control.layers {
+  constructor(overlaysCategories, argumentsApiWri, idPolygoneFiltre) {
+    const overlays = {};
+    console.log(overlaysCategories); //DCMM
+
+    for (const [cat, ovl] of Object.entries(overlaysCategories))
+      //{
+      //console.log(cat);//DCMM
+      //console.log(ovl);//DCMM
+      for (const [i, type] of Object.entries(ovl)) {
+        //console.log(i);//DCMM
+        //console.log(type);//DCMM
+
+        const titre = (type.icone ?
+            '<img src="/images/icones/' + type.icone + '.svg"> ' :
+            '') +
+          type.nom_traduit;
+
+        overlays[titre] = type.layer ||
+          // Couche invisible sélectionnée pour récupérer l'état de la coche
+          L.circle([0, 0], {
+            stroke: false,
+          });
+      }
+    /* switch(cat){
+       case'points':
+            // Couche invisible sélectionnée pour récupérer l'état de la coche
+     overlays[titre]=        L.circle([0, 0], {          stroke: false,         });
+       break;
+       
+       case'polygones':
+     overlays[titre]=   new CouchePolygonesWri({
+          ...argumentsApiWri,
+          typeId: type.id,
+        })        ; }  */
+    // }
+
+    // Déclare le contrôle
+    super(null, overlays);
+
+    // Intercepte la méthode pour attendre que les éléments du sélecteur soient créés
+    this.addTo = function(map) {
+      L.Control.Layers.prototype.addTo.call(this, map);
+
+      // Cluster des points sélectionnés
+      const pointsWri = new ClusterPointsWri({
+        ...argumentsApiWri,
+        massif: idPolygoneFiltre,
+        optionalParameter: '&type_points=' + sessionStorage.points, // A mofifier dynamiquement
+      }).addTo(map);
+
+      /*
+console.log(overlaysCategories.polygones);//DCMM
+console.log(sessionStorage.polygones.split(','));//DCMMMM
+// Affichage des polygones sélectionnés
+for (const [i, cat] of Object.entries(overlaysCategories.polygones)){
+console.log(cat.id);//DCMM
+console.log(typeof cat.id);//DCMM
+  if(sessionStorage.polygones.split(',').includes(cat.id.toString()))
+    cat.layer.addTo(map);
+console.log(cat.layer);//DCMM
+                     }*/
+
+      // Insére un listener dans tous les contrôles du sélecteur d'overlays
+      const inputEls = document.querySelectorAll('.leaflet-control-layers-overlays input[type=checkbox]');
+
+      for (const elInput of inputEls)
+        elInput.addEventListener('change', () => {
+          // Liste des cases cochées
+          const selectedInputsHTML = Array.from(
+              document.querySelectorAll('.leaflet-control-layers-overlays input[type=checkbox]')
+            ).filter((el) => el.checked)
+            .map((el) => el.parentElement.innerHTML);
+
+          console.log(selectedInputsHTML); //DCMM
+
+        });
+    }
+  }
+}
+
+
+
+/////////////////////
+// Récupère la liste des id de types de points sélectionnés dans le sélecteur d'overlays
+/*
+const checkedPoints = Array.from(inputEls) // Tous les checkbox
+  .filter((el) => el.checked) // qui sont sélectionnés
+  .map((el) =>
+    typesPoints // Reprend la liste des types de points
+    .filter((type) => el.parentElement.innerHTML.includes(type.icone + '.svg')) // Celui qui a la même icône
+    .map((type) => type.id) // Récupère l'id du type
+    .join(',') // Ferme proprement (en principe, c'est un tableau de 1)
+  ).join(','); // En fait un string
+
+if (typeof callback === 'function')
+  callback(checkedPoints);*/
+/*
+    for (const [i, type] of Object.entries(typeGeometrie)) {//TODO simplifier
+console.log(arguments);//DCMM
+    }
+      const titre = (type.icone ? '<img src="/images/icones/' + type.icone + '.svg"> ' : '') +
+        type.nom_traduit,
+        layer = type.layer ||
+        // Couche invisible sélectionnée pour récupérer l'état de a coche
+        L.circle([0, 0], {
+          stroke: false, 
+        });
+        */
+/*//TODO A FAIRE PLUS TARD
+      overlaysTypes[titre] = layer;
+      if (checkedGeometries.split(',').includes(type.id.toString()))
+        layer.addTo(map); // Affiche la couche et sélectionne l'entrée
+      else
+        layer.remove(); // Efface la couche et désélectionne l'entrée
+      */
+
+// Fusionne les différentes catégories pour créer le controle
+/*    const overlays=Object.assign({},...Object.values(overlaysCategories));
+    
+  console.log(overlaysCategories);//DCMM
+console.log(overlays);//DCMM
+*/
+
+/*new  ControlOverlaysLayers(  {
+    points:ppppppp(typesPoints, sessionStorage.checkedPoints, map),
+    polygones:ppppppp(typesPolygones, sessionStorage.checkedPolygons, map),
+  }).addTo(map);*/
+
+function ppppppp(typeGeometrie, checkedGeometries, map) {
+  const overlaysTypes = {};
+
+  for (const [i, type] of Object.entries(typeGeometrie)) { //TODO simplifier
+    const titre = (type.icone ? '<img src="/images/icones/' + type.icone + '.svg"> ' : '') +
+      type.nom_traduit,
+      layer = type.layer ||
+      // Couche invisible sélectionnée pour récupérer l'état de a coche
+      L.circle([0, 0], {
+        stroke: false,
+      });
+    /*//TODO A FAIRE PLUS TARD
+          overlaysTypes[titre] = layer;
+          if (checkedGeometries.split(',').includes(type.id.toString()))
+            layer.addTo(map); // Affiche la couche et sélectionne l'entrée
+          else
+            layer.remove(); // Efface la couche et désélectionne l'entrée
+          */
+  }
+
+  return overlaysTypes;
+}
+
+/***************************************************************/
+/***************************************************************/
+/* eslint-disable-next-line no-unused-vars */
+class ControlOverlaysLayers111 extends L.control.layers {
+  constructor(overlaysCategories22) {
+    console.log(overlaysCategories22); //DCMM
+    console.log(overlaysCategories22.points); //DCMM
+    console.log(overlaysCategories22.polygones); //DCMM
+
+    const overlaysCategories = {
+      points: ppppppp(overlaysCategories22.points, sessionStorage.checkedPoints),
+      polygones: ppppppp(overlaysCategories22.polygones, sessionStorage.checkedPolygons),
+      //TODO polygones VS polygones
+    };
+    // Fusionne les différentes catégories pour créer le controle
+    const overlays = Object.assign({}, ...Object.values(overlaysCategories));
+    super(null, overlays);
+
+    // Intercepte la méthode pour atendre que les éléments du sélecteur soient créés
+    this.addTo = function(map) {
+      L.Control.Layers.prototype.addTo.call(this, map);
+
+      // Etablit la liste des cases cochées
+      const selectedInputsHTML = Array.from(
+          document.querySelectorAll('.leaflet-control-layers-overlays input[type=checkbox]')
+        ).filter((el) => el.checked)
+        .map((el) => el.parentElement.innerHTML);
+
+      console.log(overlaysCategories); //DCMM
+
+      // Parcours les catégories et les types de points de chaque catégories
+      for (const [cat, ovl] of Object.entries(overlaysCategories)) {
+        for (const [a, b] of Object.entries(ovl)) {
+          //console.log(b);//DCMM
+          //console.log(cat);//DCMM
+          //console.log(ovl);//DCMM
+          //console.log(selectedInputsHTML);//DCMM
+
+          // Sélectionne la case qui correspond au type, si elle est cochée
+          const checkedPoints = selectedInputsHTML
+            .filter((html) => html.includes(a))
+            /*
+        .map((html) =>{
+console.log(html);//DCMM
+console.log(a);//DCMM
+console.log(html.includes(a ));//DCMM
+          return html;
+        })
+        
+        <input type="checkbox" class="leaflet-control-layers-selector" checked=""><span> 
+        <img src="/images/icones/cabane.svg"> cabane non gardée</span>
+        <img src="/images/icones/cabane.svg"/> cabane non gardée
+        
+        
+        .map((el) =>
+          typesPoints // Reprend la liste des types de points
+          .filter((type) => el.parentElement.innerHTML.includes(type.icone + '.svg')) // Celui qui a la même icône
+          .map((type) => type.id) // Récupère l'id du type
+          .join(',') // Ferme proprement (en principe, c'est un tableau de 1)
+        )
+        .join(',')
+        */
+            .map((e) => {
+              console.log(cat); //DCMM
+              console.log(ovl); //DCMM
+              console.log(a); //DCMM
+              console.log(b); //DCMM
+              console.log(e); //DCMM
+              return e;
+            });
+
+          console.log(checkedPoints); //DCMM
+        }
+
+      }
+      //console.log(elInput);//DCMM
+
+      /////////////////////////////////////////////////
+      if (0)
+        for (const elInput of inputEls) {
+          elInput.addEventListener('change', () => {
+            // Sauvegarde la sélection des couches
+
+            // Récupère la liste des id de types de points sélectionnés dans le sélecteur d'overlays
+            /*
+                  const checkedPoints = Array.from(inputEls) // Tous les checkbox
+                    .filter((el) => el.checked) // qui sont sélectionnés
+                    .map((el) =>
+                      typesPoints // Reprend la liste des types de points
+                      .filter((type) => el.parentElement.innerHTML.includes(type.icone + '.svg')) // Celui qui a la même icône
+                      .map((type) => type.id) // Récupère l'id du type
+                      .join(',') // Ferme proprement (en principe, c'est un tableau de 1)
+                    )
+                    .join(',')
+                    .map((e)=>{
+            console.log(e);//DCMM
+                    });
+            */
+
+          });
+        }
+    };
+  }
+}
+
 // Mémorise le n° de type des point sélectionnés
 //TODO remonter dans myleaflet.js
-/* eslint-disable-next-line no-unused-vars */
+/* eslint-disable-next-line no-unused-vars 
 function checklayerSelector(typesPoints, callback) {
-  //TODO attendre que le sélecteur soit déclaté
+  //TODO attendre que le sélecteur soit déclaré
   const inputEls = document.querySelectorAll('.leaflet-control-layers-overlays input[type=checkbox]');
-
-console.log(typesPoints);//DCMM
-console.log(inputEls);//DCMM
-
+ 
   for (const elInput of inputEls)
     elInput.addEventListener('change', () => {
       // Récupère la liste des id de types de points sélectionnés dans le sélecteur d'overlays
@@ -340,4 +597,4 @@ console.log(inputEls);//DCMM
       if (typeof callback === 'function')
         callback(checkedPoints);
     });
-}
+}*/
