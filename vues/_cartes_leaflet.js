@@ -12,7 +12,7 @@
  **********************************/
 const positionParDefaut = '5/46/5',
   typesPointsParDefaut = '7,9,10',
-  polygonesParDefaut = '1,122'; //DCMM
+  polygonesParDefaut = '';
 
 sessionStorage.positionMemory ||= // Mémoire en cours de session
   localStorage.positionMemory || // En début de session, on repart de la position de la dernière session
@@ -323,17 +323,9 @@ function addControlOverlays(
   idPolygoneFiltre,
 ) {
   const overlays = {};
-  //    titresLignes={};//DCMM DELETE
 
   for (const [cat, ovl] of Object.entries(categoriesCouches))
-    //{
-    //console.log(cat);//DCMM
-    //console.log(ovl);//DCMM
     for (const type of Object.values(ovl)) {
-      //console.log(i);//DCMM
-      //console.log(type);//DCMM
-      //   titresLignes[' '+        type.nom_traduit]=type.id;
-
       // Sélecteur d'overlays
       const titre = (type.icone ?
           '<img src="/images/icones/' + type.icone + '.svg"> ' :
@@ -353,14 +345,13 @@ function addControlOverlays(
         });
       overlays[titre] = layer;
 
-      // Initialisation des sélections antérieures
+      // Affichage des sélections antérieures à l'init
       if (sessionStorage[cat].split(',').includes(type.id.toString()))
         layer.addTo(map);
     }
 
   // Sélecteur de couche
   L.control.layers(null, overlays).addTo(map);
-  console.log(overlays); //DCMM
 
   // Cluster des points sélectionnés
   new ClusterPointsWri({
@@ -374,46 +365,21 @@ function addControlOverlays(
 
   for (const elInput of inputEls) {
     elInput.addEventListener('change', () => {
-      // Liste des cases cochées
-      const selectedInputsText = Array.from(
-          document.querySelectorAll('.leaflet-control-layers-overlays input[type=checkbox]')
-        ).filter((el) => el.checked)
-        .map((el) => el.parentElement.innerText.trim());
 
-      // console.log(selectedInputsText); //DCMM
+      // Sélectionne les numéros de types de points qui correspond aux lignes cochées
+      sessionStorage.points = Array.from(inputEls) // Les <inputs> du sélecteur d'overlays
+        .filter((el) => el.checked) // Qui sont cochés
+        .map((el) => el.parentElement.innerText.trim())
+        .map((titreCase) => // Cherche le titre de la case
+          categoriesCouches.points // Dans la categories des couches de points
+          .filter((type) => titreCase === type.nom_traduit) // Filtre les couches qui correspondent
+          .map((type) => type.id) // Traduit en id
+          .join(',') // Résoud s'il y en a plusierrs
+        ).filter(Boolean) // Filtre les réponses vides
+        .join(','); // Joint les id des types
 
-      // Sélectionne la case qui correspond au type, si elle est cochée
-      const checkedPoints = selectedInputsText
-        //   .filter((nomTraduit) => nomTraduit.includes(type.nomTraduit))
-        .map((nomTraduit) => {
-          //console.log('*'+nomTraduit+'*');//DCMM
-
-          /*   console.log(
-        categoriesCouches.points
-        .filter((type)=>{
-//console.log(nomTraduit);//DCMM
-//console.log(cat.nomTraduit);//DCMM
-return nomTraduit===type.nomTraduit;
-        })
-        .map((type)=>type.id)
-        .join(',')
-        );//DCMM
-        */
-
-          //console.log(a);//DCMM
-          //console.log(nomTraduit.includes(a ));//DCMM
-          return categoriesCouches.points
-            .filter((type) => {
-              //console.log(nomTraduit);//DCMM
-              //console.log(cat.nom_traduit);//DCMM
-              return nomTraduit === type.nom_traduit;
-            })
-            .map((type) => type.id)
-            .filter((ids) => ids !== '')
-            .join(',');
-        });
-      console.log(checkedPoints); //DCMM
-
+      console.log(sessionStorage.points); //DCMM
+      //TODO recharger la couche points
     });
   }
 }
