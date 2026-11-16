@@ -322,10 +322,13 @@ function addControlOverlays(
   categoriesCouches,
   idPolygoneFiltre,
 ) {
-  const overlays = {};
+  const overlays = {}, // Liste à fournir à L.control.layers
+    correspondance = {}; // Traduction du titre de la ligne en type_id
 
   for (const [cat, ovl] of Object.entries(categoriesCouches))
     for (const type of Object.values(ovl)) {
+      correspondance[type.nom_traduit] = type.id;
+
       // Sélecteur d'overlays
       const titre = (type.icone ?
           '<img src="/images/icones/' + type.icone + '.svg"> ' :
@@ -354,7 +357,7 @@ function addControlOverlays(
   L.control.layers(null, overlays).addTo(map);
 
   // Cluster des points sélectionnés
-  new ClusterPointsWri({
+  const clusterPoints = new ClusterPointsWri({
     ...argumentsApiWri,
     massif: idPolygoneFiltre,
     optionalParameter: '&type_points=' + sessionStorage.points, // A mofifier dynamiquement
@@ -365,21 +368,19 @@ function addControlOverlays(
 
   for (const elInput of inputEls) {
     elInput.addEventListener('change', () => {
-
-      // Sélectionne les numéros de types de points qui correspond aux lignes cochées
+      // Numéros de types de points qui correspond aux lignes cochées
       sessionStorage.points = Array.from(inputEls) // Les <inputs> du sélecteur d'overlays
         .filter((el) => el.checked) // Qui sont cochés
-        .map((el) => el.parentElement.innerText.trim())
-        .map((titreCase) => // Cherche le titre de la case
-          categoriesCouches.points // Dans la categories des couches de points
-          .filter((type) => titreCase === type.nom_traduit) // Filtre les couches qui correspondent
-          .map((type) => type.id) // Traduit en id
-          .join(',') // Résoud s'il y en a plusierrs
-        ).filter(Boolean) // Filtre les réponses vides
-        .join(','); // Joint les id des types
+        .map((el) => el.parentElement.innerText.trim()) // Isole le titre
+        .map((titreCase) => correspondance[titreCase]) // Traduit en type_id
+        .filter(Boolean) // Filtre les réponses vides (coches massifs, ...)
+        .join(','); // En fait une string
 
-      console.log(sessionStorage.points); //DCMM
-      //TODO recharger la couche points
+      // Recharge la couche points
+      //DCMM TODO BUG devrait ne pas appeler l'API et supprimer les points si pas d'options
+      clusterPoints.fetchData({
+        optionalParameter: '&type_points=' + sessionStorage.points,
+      });
     });
   }
 }

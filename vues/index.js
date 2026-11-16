@@ -69,88 +69,16 @@ else {
 const     categoriesCouches=  {
     points:<?=json_encode($types_points)?>,
     polygones:<?=json_encode($types_polygones)?>,
+    //DCMM TODO couche itinéraires
   };
 
-// Couches de points initialisées par ControlOverlaysLayers
-
-  // Cluster des points de tous les types
-  /*const pointsWri = new ClusterPointsWri({
-    ...argumentsApiWri,
-    massif: polygoneAAfficher ? polygoneAAfficher.id_polygone : 0,
-    optionalParameter: '&type_points=' + sessionStorage.checkedPoints,
-  }).addTo(map);*/
-  
-  // Couches de polygones
-  if(0)//DCMM
-  for (const [i, type] of Object.entries( categoriesCouches.    polygones)) {
-    const layer=new CouchePolygonesWri({
-      ...argumentsApiWri,
-      typeId: type.id,
-    });
-    
-    categoriesCouches.    polygones[i].layer = layer;
-  if(sessionStorage.polygones.split(',').includes(type.id.toString()))
-    layer.addTo(map);
-  }
- /*
- for (const [i, cat] of Object.entries(overlaysCategories.polygones)){
-console.log(cat.id);//DCMM
-console.log(typeof cat.id);//DCMM
-  if(sessionStorage.polygones.split(',').includes(cat.id.toString()))
-    cat.layer.addTo(map);
-*/
- 
-    // Sélecteur de couches overlays
-addControlOverlays(
-map,
- argumentsApiWri,
- categoriesCouches,
-  polygoneAAfficher ? polygoneAAfficher.id_polygone : 0,
-  ) ;
-   
-/*  const typesPoints = <?=json_encode($types_points)?>,
-    typesPolygones = <?=json_encode($types_polygones)?>;*/
-  
-/*new  ControlOverlaysLayers(  {
-    points:ppppppp(typesPoints, sessionStorage.checkedPoints, map),
-    polygones:ppppppp(typesPolygones, sessionStorage.checkedPolygons, map),
-  }).addTo(map);
-
-  function ppppppp(typeGeometrie, checkedGeometries, map) {
-    const overlaysTypes = {};
-
-    for (const [i, type] of Object.entries(typeGeometrie)) {//TODO simplifier
-      const titre = (type.icone ? '<img src="/images/icones/' + type.icone + '.svg"> ' : '') +
-        type.nom_traduit,
-        layer = type.layer ||
-        // Couche invisible sélectionnée pour récupérer l'état de a coche
-        L.circle([0, 0], {
-          stroke: false, 
-        });
-
-      overlaysTypes[titre] = layer;
-      if (checkedGeometries.split(',').includes(type.id.toString()))
-        layer.addTo(map); // Affiche la couche et sélectionne l'entrée
-      else
-        layer.remove(); // Efface la couche et désélectionne l'entrée
-    }
-
-    return overlaysTypes;
-  }*/
-
-  // Actions du sélecteur (doit être exécuté après la déclaration de control.layers)
-/*  checklayerSelector(
-    typesPoints,
-    (checkedPoints) => {
-      sessionStorage.checkedPoints = checkedPoints;
-      localStorage.checkedPoints = checkedPoints;
-
-      // Recharger les points qui correspondent
-      pointsWri.fetchData({
-        optionalParameter: '&type_points=' + sessionStorage.checkedPoints,
-        hide: !sessionStorage.checkedPoints,
-      });
-    });*/
+  // Sélecteur de couches overlays
+  addControlOverlays(
+    map,
+    argumentsApiWri,
+    categoriesCouches,
+    polygoneAAfficher ? polygoneAAfficher.id_polygone : 0,
+  );
 
   // Couches OSM Overpass
   //DCMM TODO BUG overpass ne fonctionne plus sur WRI
