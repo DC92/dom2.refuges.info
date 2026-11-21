@@ -63,7 +63,7 @@ if (polygoneAAfficher && polygoneAAfficher.id_polygone_type === 11) {
 // CARTE NORMALE OU PAGE D'UN MASSIF
 else {
   // Restaure l'affichage minimum des points du massif
-  sessionStorage.checkedPoints = typesPointsParDefaut;
+  sessionStorage.points = typesPointsParDefaut;
 
 // Définition des entrées du sélecteur
 const     categoriesCouches=  {
@@ -120,14 +120,14 @@ map.on('layeradd moveend', (evt) => {
 
   if (exportCarteEl) {
     exportCarteEl.children[1].href = '/api/bbox' + //TODO remove *ElementChild
-      '?type_points=' + sessionStorage.checkedPoints +
+      '?type_points=' + sessionStorage.points +
       '&nb_points=all' +
       (polygoneAAfficher ? '&massif=' + polygoneAAfficher.id_polygone : '') +
       '&bbox=' + fc(bsw.lng) + ',' + fc(bsw.lat) + ',' + cc(bne.lng) + ',' + cc(bne.lat) +
       '&format=' + exportCarteEl.firstElementChild.value; //TODO remove *ElementChild
 
     // Affiche seulement quand il y a quelque chose à exporter
-    exportCarteEl.style.display = sessionStorage.checkedPoints ? 'block' : 'none';
+    exportCarteEl.style.display = sessionStorage.points ? 'block' : 'none';
   }
 });
 

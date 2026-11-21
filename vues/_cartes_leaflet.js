@@ -335,11 +335,12 @@ function addControlOverlays(
   idPolygoneFiltre,
 ) {
   const overlays = {}, // Liste à fournir à L.control.layers
-    correspondance = {}; // Traduction du titre de la ligne en type_id
+    typeDuNom = {}; // Traduction du titre de la ligne en type_id
 
   for (const [cat, ovl] of Object.entries(categoriesCouches))
     for (const type of Object.values(ovl)) {
-      correspondance[type.nom_traduit] = type.id;
+      typeDuNom[type.nom_traduit] = type;
+      typeDuNom[type.nom_traduit].cat = cat;
 
       // Sélecteur d'overlays
       const titre = (type.icone ?
@@ -376,18 +377,31 @@ function addControlOverlays(
     typePoints: sessionStorage.points, // Paramètre à mofifier dynamiquement
   }).addTo(map);
 
-  // Insére un listener dans tous les contrôles du sélecteur d'overlays
+  // Les <inputs> du sélecteur d'overlays
   const inputEls = document.querySelectorAll('.leaflet-control-layers-overlays input[type=checkbox]');
 
+  // Insére un listener dans tous les contrôles du sélecteur d'overlays
   for (const elInput of inputEls) {
     elInput.addEventListener('change', () => {
+      const selectionTypesId = {
+        points: [],
+        polygones: [],
+      };
+
       // Numéros de types de points qui correspond aux lignes cochées
       sessionStorage.points = Array.from(inputEls) // Les <inputs> du sélecteur d'overlays
         .filter((el) => el.checked) // Qui sont cochés
         .map((el) => el.parentElement.innerText.trim()) // Isole le titre
-        .map((titreCase) => correspondance[titreCase]) // Traduit en type_id
-        .filter(Boolean) // Filtre les réponses vides (coches massifs, ...)
-        .join(','); // En fait une string
+        .forEach((titreCase) => {
+          selectionTypesId[typeDuNom[titreCase].cat]
+            .push(typeDuNom[titreCase].id);
+        });
+
+      for (const cat in selectionTypesId)
+        localStorage[cat] = // Mémorise pour la prochaine fenêtre
+        /* eslint-disable-next-line no-multi-assign */
+        sessionStorage[cat] = // Mémorise pour le prochain chargement de la page
+        selectionTypesId[cat].join(','); // En fait une string
 
       // Recharge la couche points
       if (sessionStorage.points === '')
