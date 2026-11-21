@@ -12,15 +12,27 @@
  **********************************/
 const positionParDefaut = '5/46/5',
   typesPointsParDefaut = '7,9,10',
-  polygonesParDefaut = '';
+  typePolygonesParDefaut = '';
 
 sessionStorage.positionMemory ||= // Mémoire en cours de session
   localStorage.positionMemory || // En début de session, on repart de la position de la dernière session
   positionParDefaut; // S'il n'y a aucune donnée enregistrée
+
 positionMemoryArray = sessionStorage.positionMemory.split('/'); // Pour usage au cours de la durée de vie de la page.
 
-sessionStorage.points ||= localStorage.points || typesPointsParDefaut;
-sessionStorage.polygones ||= localStorage.polygones || polygonesParDefaut;
+if (typeof sessionStorage.points === 'undefined') { // Mémoire de la session courante
+  if (typeof localStorage.points === 'string')
+    sessionStorage.points = localStorage.points; // Mémoire de la session précédente
+  else
+    sessionStorage.points = typesPointsParDefaut;
+}
+
+if (typeof sessionStorage.polygones === 'undefined') {
+  if (typeof localStorage.polygones === 'string')
+    sessionStorage.polygones = localStorage.polygones;
+  else
+    sessionStorage.polygones = typePolygonesParDefaut;
+}
 
 /*****************************************
  * CONTRÔLES COMMUNS À TOUTES LES CARTES *
@@ -205,8 +217,6 @@ const couchesOverpass = {
  ***************************************************************/
 class ClusterPointsWri extends GeoJsonAjaxBboxLayer {
   // On en fait une classe car on doit étendre une classe Leaflet
-  //DCMM TODO ne pas appeler l'API si &type_points=&bbox
-
   constructor(options) {
     const url = options.serveurAPI + '/api/' + (options.massif ? 'massif' : 'bbox') +
       '?nb_points=all' + //TODO masquage de la couche si limite de points atteinte
@@ -312,9 +322,11 @@ class CouchePolygonesWri extends GeoJsonAjaxBboxLayer {
   }
 }
 
-/******************************************************************
- *                           *
- ***************************************************************/
+/**************************************************
+ * SÉLECTEUR DE COUCHES OVERLAYS                  *
+ * Déclare le sélecteur et le rattache à la carte *
+ * Gére la mémorisation des couches sélectionnées *
+ **************************************************/
 /* eslint-disable-next-line no-unused-vars */
 function addControlOverlays(
   map,
@@ -335,6 +347,7 @@ function addControlOverlays(
           '') +
         type.nom_traduit,
         layer = cat === 'polygones' ?
+        type.layer || // Couche spécifique (Itinéraires)
         new CouchePolygonesWri({
           ...argumentsApiWri,
           typeId: type.id,
@@ -348,7 +361,7 @@ function addControlOverlays(
         });
       overlays[titre] = layer;
 
-      // Affichage des sélections antérieures à l'init
+      // Initialisation de l'affichage des sélections précédentes
       if (sessionStorage[cat].split(',').includes(type.id.toString()))
         layer.addTo(map);
     }
@@ -360,7 +373,7 @@ function addControlOverlays(
   const clusterPoints = new ClusterPointsWri({
     ...argumentsApiWri,
     massif: idPolygoneFiltre,
-    optionalParameter: '&type_points=' + sessionStorage.points, // A mofifier dynamiquement
+    typePoints: sessionStorage.points, // Paramètre à mofifier dynamiquement
   }).addTo(map);
 
   // Insére un listener dans tous les contrôles du sélecteur d'overlays
@@ -377,10 +390,12 @@ function addControlOverlays(
         .join(','); // En fait une string
 
       // Recharge la couche points
-      //DCMM TODO BUG devrait ne pas appeler l'API et supprimer les points si pas d'options
-      clusterPoints.fetchData({
-        optionalParameter: '&type_points=' + sessionStorage.points,
-      });
+      if (sessionStorage.points === '')
+        clusterPoints.clearLayers();
+      else
+        clusterPoints.fetchData({
+          optionalParameter: '&type_points=' + sessionStorage.points,
+        });
     });
   }
 }

@@ -5,13 +5,11 @@
  * © Dominique Cavailhez 2026                    *
  *************************************************/
 
-/*****************************************************
- * GeoJson layer from url with bbox & cluster        *
- * optionalParameter : string to be added to the url *
- * optionalParameter: queries to be added to the url *
- * hide: don't get the data & hide the layer         *
- * ...L.geoJson options                              *
- *****************************************************/
+/*************************************************
+ * GeoJson layer from url with bbox & cluster    *
+ * hide: don't get the data & hide the layer     *
+ * ...L.geoJson options                          *
+ *************************************************/
 /* eslint-disable-next-line no-unused-vars */
 class GeoJsonAjaxBboxLayer extends L.MarkerClusterGroup {
   constructor(url, options) {
@@ -36,9 +34,12 @@ class GeoJsonAjaxBboxLayer extends L.MarkerClusterGroup {
         ...options,
       };
 
-    fetch(this._url +
-        (this._opt.optionalParameter || '') +
-        '&bbox=' + this._map.getBounds().toBBoxString())
+    if (this._opt.typePoints && !this._opt.hide)
+      fetch(
+        this._url +
+        '&type_points=' + this._opt.typePoints +
+        '&bbox=' + this._map.getBounds().toBBoxString()
+      )
       .then((response) => response.json())
       .then((json) => {
         this.clearLayers(); // Clear existing content
@@ -46,11 +47,11 @@ class GeoJsonAjaxBboxLayer extends L.MarkerClusterGroup {
         // Add new vector layer with new geoJson features
         const vectorLayer = new L.GeoJSON(null, this._opt);
 
-        if (json.features.length && !this._opt.hide) {
-          vectorLayer.addData(json);
-          this.addLayer(vectorLayer);
-        }
+        vectorLayer.addData(json);
+        this.addLayer(vectorLayer);
       });
+    else
+      this.clearLayers(); // Clear existing content
   }
 
   // Overrides MarkerClusterGroup.onAdd to get the map
