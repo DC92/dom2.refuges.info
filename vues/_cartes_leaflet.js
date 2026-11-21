@@ -408,7 +408,7 @@ function addControlOverlays(
         clusterPoints.clearLayers();
       else
         clusterPoints.fetchData({
-          optionalParameter: '&type_points=' + sessionStorage.points,
+          typePoints: sessionStorage.points,
         });
     });
   }
