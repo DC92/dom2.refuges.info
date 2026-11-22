@@ -3,6 +3,7 @@
 // Extension autonome : aucun fichier du coeur de phpBB n'est modifié, tout passe par les événements (core.*).
 //  - champ 'texte'       : id_objet = post_id  ; texte au même format que phpbb3_posts.post_text (XML s9e)
 //  - champ 'titre_sujet' : id_objet = topic_id ; texte brut échappé comme phpbb3_topics.topic_title
+//  - champ 'contact_admin_info' : id_objet = 0 ; texte d'information du formulaire de contact (extension contactadmin), même format que phpbb3_config_text.config_value
 // Une traduction n'est utilisée que si hash_source = md5(source actuelle) : source modifiée => retour à l'original.
 // Langue : celle du forum ($user->lang_name, posée par l'extension couplage d'après le cookie "langue"). En français : rien ne change.
 
@@ -25,14 +26,16 @@ class listener implements EventSubscriberInterface
 
   protected $db;
   protected $user;
+  protected $template;
   protected $cache_texte = [];  // post_id  => ['texte'=>, 'hash'=>, 'src'=>] | null
   protected $cache_titre = [];  // topic_id => ['texte'=>, 'hash'=>] | null
   protected $cache_forum = [];  // forum_id => ['nom'=>, 'description'=>] (texte traduit ou null)
 
-  public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\user $user)
+  public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\user $user, \phpbb\template\template $template)
   {
     $this->db = $db;
     $this->user = $user;
+    $this->template = $template;
   }
 
   static public function getSubscribedEvents()
@@ -48,6 +51,7 @@ class listener implements EventSubscriberInterface
       'core.make_jumpbox_modify_forum_list'        => 'jumpbox',
       'core.viewforum_modify_page_title'           => 'viewforum_titre',
       'core.viewtopic_assign_template_vars_before' => 'viewtopic_forum',
+      'core.page_footer'                           => 'contact_info',
     ];
   }
 
@@ -185,6 +189,22 @@ class listener implements EventSubscriberInterface
       $d['forum_desc'] = $t['description'];
     }
     $event['topic_data'] = $d;
+  }
+
+  // --- formulaire de contact (extension rmcgirr83/contactadmin) ------------------------------------------------
+  // Le contrôleur a déjà assigné CONTACT_INFO (texte français de l'admin) : on le remplace par la traduction si le hash correspond
+  public function contact_info()
+  {
+    $langue = $this->langue();
+    if (!$langue || strpos($this->user->page['page_name'] ?? '', 'contactadmin') === false) return;
+    $r = $this->db->sql_query("SELECT config_name, config_value FROM ".CONFIG_TEXT_TABLE." WHERE config_name LIKE 'contact_admin_info%'");
+    $d = [];
+    while ($l = $this->db->sql_fetchrow($r)) $d[$l['config_name']] = $l['config_value'];
+    $this->db->sql_freeresult($r);
+    if (empty($d['contact_admin_info'])) return;
+    $t = $this->charge('contact_admin_info', [0], $langue)[0];
+    if (!$t || $t['hash'] !== md5($d['contact_admin_info'])) return;
+    $this->template->assign_var('CONTACT_INFO', generate_text_for_display($t['texte'], $d['contact_admin_info_uid'] ?? '', $d['contact_admin_info_bitfield'] ?? '', (int)($d['contact_admin_info_flags'] ?? 7)));
   }
 
   // --- viewtopic -----------------------------------------------------------------------------------------------
