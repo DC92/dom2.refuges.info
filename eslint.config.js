@@ -100,10 +100,10 @@ export default [{
     "no-loss-of-precision": "warn",
     ////"no-magic-numbers": "warn",
     "no-misleading-character-class": "warn",
-    "no-multi-assign": "warn",
+    //"no-multi-assign": "warn",
     ////"no-multi-str": "warn",
     "no-negated-condition": "warn",
-    "no-nested-ternary": "warn",
+    //"no-nested-ternary": "warn",
     "no-new": "warn",
     "no-new-func": "warn",
     "no-new-native-nonconstructor": "warn",
@@ -201,22 +201,25 @@ export default [{
     "vars-on-top": "warn",
     "yoda": "warn",
   },
+
   languageOptions: {
     globals: {
-      // Windows / debug
+      // Browser
       alert: "readonly",
       Blob: "readonly",
       caches: "readonly",
       clearInterval: "readonly",
       confirm: "readonly",
-      console: "readonly",
       document: "readonly",
+      draggable: "readonly",
       Event: "readonly",
       fetch: "readonly",
       FileReader: "readonly",
+      HTMLElement: "readonly",
       localStorage: "readonly",
       location: "readonly",
       navigator: "readonly",
+      ondragend: "readonly",
       screen: "readonly",
       self: "readonly",
       sessionStorage: "readonly",
@@ -225,6 +228,9 @@ export default [{
       URL: "readonly",
       URLSearchParams: "readonly",
       window: "readonly",
+
+      // Debug
+      console: "readonly",
 
       // Leaflet
       L: "readonly",

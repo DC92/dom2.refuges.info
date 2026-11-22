@@ -356,7 +356,6 @@ function addControlOverlays(
           '<img src="/images/icones/' + type.icone + '.svg"> ' :
           '') +
         type.nom_traduit,
-        /* eslint-disable-next-line no-nested-ternary */
         layer = type.layer ? type.layer : // Couche spécifique (Itinéraires)
         cat === 'polygones' ? new CouchePolygonesWri({
           ...argumentsApiWri,
@@ -410,7 +409,6 @@ function addControlOverlays(
 
       for (const cat in selectionTypesId)
         localStorage[cat] = // Mémorise pour la prochaine fenêtre
-        /* eslint-disable-next-line no-multi-assign */
         sessionStorage[cat] = // Mémorise pour le prochain chargement de la page
         selectionTypesId[cat].join(','); // En fait une string
 
