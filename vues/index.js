@@ -67,7 +67,7 @@ else {
     sessionStorage.points = typesPointsParDefaut;
 
   const entreeCoucheItineraires = { //TODO mettre dans _cartes_leaflet
-    //TODO BUG ne se supprtpose pas à certaines couches
+    //TODO BUG ne se superpose pas à certaines couches
     id: 1, // Indice dans la catégorie tilesOverlays, juste pour l'identifier
     nom_traduit: 'itinéraires',
     layer: coucheItineraires,
@@ -113,7 +113,7 @@ else {
  ****************************************/
 const conteneurSelecteurExterneEl = document.getElementById('conteneur-selecteur-points'),
   conteneurDeuxiemeSelecteurEl = document.querySelector(':has(>.leaflet-control-layers)')
-  .lastChild.lastChild, //TODO remove *ElementChild
+  .lastChild.lastChild, //BEST remove *ElementChild
   selecteursPointsEl = document.querySelector('.leaflet-control-layers-overlays:has(img)');
 
 if (conteneurSelecteurExterneEl && selecteursPointsEl)
@@ -124,7 +124,7 @@ if (conteneurSelecteurExterneEl && selecteursPointsEl)
       else
         conteneurSelecteurExterneEl.insertBefore(
           selecteursPointsEl,
-          conteneurSelecteurExterneEl.firstElementChild //TODO remove *ElementChild
+          conteneurSelecteurExterneEl.firstElementChild //BEST remove *ElementChild
         );
     }));
 
@@ -142,12 +142,12 @@ map.on('layeradd moveend', (evt) => {
     cc = (coord) => Math.ceil(coord * 10000) / 10000;
 
   if (exportCarteEl) {
-    exportCarteEl.children[1].href = '/api/bbox' + //TODO remove *ElementChild
+    exportCarteEl.children[1].href = '/api/bbox' + //BEST remove *ElementChild
       '?type_points=' + sessionStorage.points +
       '&nb_points=all' +
       (polygoneAAfficher ? '&massif=' + polygoneAAfficher.id_polygone : '') +
       '&bbox=' + fc(bsw.lng) + ',' + fc(bsw.lat) + ',' + cc(bne.lng) + ',' + cc(bne.lat) +
-      '&format=' + exportCarteEl.firstElementChild.value; //TODO remove *ElementChild
+      '&format=' + exportCarteEl.firstElementChild.value; //BEST remove *ElementChild
 
     // Affiche seulement quand il y a quelque chose à exporter
     exportCarteEl.style.display = sessionStorage.points ? 'block' : 'none';
@@ -158,9 +158,10 @@ map.on('layeradd moveend', (evt) => {
 /* eslint-disable-next-line no-unused-vars */
 function copyExportLink() {
   //TODO BUG affiche les ""
-  //TODO traiter les pages /nav massifs
+  //TODO traiter les pages /nav massifs dans le lien export (critère polygone intersect)
   if (exportCarteEl)
-    navigator.clipboard.writeText(exportCarteEl.lastChild.href) //TODO remove *ElementChild
+    navigator.clipboard.writeText(exportCarteEl.lastChild.href) //BEST remove *ElementChild
     .then(() => alert('<?=json_encode(_("Lien copié dans le presse-papier"))?> :\n\n' +
-      exportCarteEl.lastChild.href)); //TODO BUG undefined / remove *ElementChild
+      exportCarteEl.lastChild.href)); //TODO BUG undefined
+      //BEST remove *ElementChild
 }

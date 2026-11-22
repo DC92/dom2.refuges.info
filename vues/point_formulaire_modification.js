@@ -52,7 +52,7 @@ positionMemoryControl(map);
 /*********************
  * COUCHE DES POINTS *
  *********************/
-//TODO factoriser
+//BEST factoriser //DCMM reprendre suivant index.js
 const cluster = new L.MarkerClusterGroup({
     spiderfyOnMaxZoom: true, // Overlapping markers will spiderfy when clicked
     showCoverageOnHover: false, // Hides the cluster bounds polygon

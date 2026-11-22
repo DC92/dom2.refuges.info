@@ -99,9 +99,9 @@ map.on('pm:remove', layerChanged); // A la suppression du polygone
 
 // Sélecteur de format d'export
 function formatChange() { // Réponse au changement d'état de l'input select
-  exportPolygonEl.lastElementChild.href = '/api/polygones' + //TODO remove *ElementChild
+  exportPolygonEl.lastElementChild.href = '/api/polygones' + //BEST remove *ElementChild
     '?massif=' + polygoneId +
-    '&format=' + exportPolygonEl.firstElementChild.value; //TODO remove *ElementChild
+    '&format=' + exportPolygonEl.firstElementChild.value; //BEST remove *ElementChild
 }
 
 if (exportPolygonEl)
