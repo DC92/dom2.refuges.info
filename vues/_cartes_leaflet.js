@@ -43,6 +43,9 @@ if (typeof sessionStorage.tilesOverlays === 'undefined') {
     sessionStorage.tilesOverlays = typeTilesOverlaysParDefaut;
 }
 
+// Les couches overpass sont désactivées à chaque réchargement de page
+sessionStorage.couchesOverpass = '';
+
 /*****************************************
  * CONTRÔLES COMMUNS À TOUTES LES CARTES *
  *****************************************/
@@ -82,6 +85,7 @@ function controlesComuns(map) {
  *******************/
 /* eslint-disable-next-line no-unused-vars */
 function couchesDeFond(layerKeys) {
+  //TODO revoir suivant les couches de www...
   return {
     //DCMM Pour tests, à enlever à la fin
     'Google': L.tileLayer('https://mt0.google.com/vt/lyrs=r&x={x}&y={y}&z={z}'),
@@ -204,6 +208,7 @@ const coucheItineraires = L.tileLayer(
 
 /* eslint-disable-next-line no-unused-vars */
 const couchesOverpass = {
+  //TODO employer un codage moins bidouille !
   'hôtel': '["tourism"~"hotel|guest_house|chalet|hostel|apartment"]',
   'camping': '["tourism"="camp_site"]',
   'point d\'eau': '["natural"="spring"]({{bbox}});nwr["amenity"="drinking_water"]',
@@ -371,7 +376,7 @@ function addControlOverlays(
       overlays[titre] = layer;
 
       // Initialisation de l'affichage des sélections précédentes
-      if (sessionStorage[cat].split(',').includes(type.id.toString()))
+      if (sessionStorage[cat] && sessionStorage[cat].split(',').includes(type.id.toString()))
         layer.addTo(map);
     }
 
@@ -393,9 +398,11 @@ function addControlOverlays(
     elInput.addEventListener('change', () => {
       // Code exécuté lors du changement de sélection d'un overlay
       const selectionTypesId = {
+        //TODO moins bidouille SVP !
         points: [],
         polygones: [],
         tilesOverlays: [],
+        couchesOverpass: [],
       };
 
       // Numéros de types de points qui correspond aux lignes cochées

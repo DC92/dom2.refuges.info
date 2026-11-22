@@ -63,8 +63,35 @@ if (polygoneAAfficher && polygoneAAfficher.id_polygone_type === 11) {
 // CARTE NORMALE (/) OU PAGE D'UN MASSIF (/nav/id_de_massif)
 else {
   // Restaure l'affichage minimum des points du massif
-  if (polygoneAAfficher && polygoneAAfficher.id_polygone_type === 1) 
+  if (polygoneAAfficher && polygoneAAfficher.id_polygone_type === 1)
     sessionStorage.points = typesPointsParDefaut;
+
+  const entreeCoucheItineraires = { //TODO mettre dans _cartes_leaflet
+    //TODO BUG ne se supprtpose pas à certaines couches
+    id: 1, // Indice dans la catégorie tilesOverlays, juste pour l'identifier
+    nom_traduit: 'itinéraires',
+    layer: coucheItineraires,
+  };
+
+  const entreeCouchesOverpass = [];
+
+  // Couches OSM OverPass
+  for (const [nom, query] of Object.entries(couchesOverpass)) {
+    entreeCouchesOverpass.push({
+      id: nom, // Juste pour l'identifier
+      nom_traduit: nom,
+      layer: new L.OverPassLayer({
+        query: '(nwr' + query + '({{bbox}}););out center;',
+        markerIcon: L.icon({
+          iconUrl: 'https://<?=$_SERVER["SERVER_NAME"]?>/images/icones/' + nom.replaceAll('ô', 'o').replaceAll(/[^a-z]/gu, '') + '.svg',
+          iconSize: [24, 24],
+          iconAnchor: [12, 12],
+        }),
+        minZoom: 12,
+        minZoomIndicatorEnabled: false,
+      }),
+    });
+  }
 
   // Sélecteur de couches overlays
   addControlOverlays(
@@ -72,14 +99,9 @@ else {
     argumentsApiWri, {
       // Liste des couches
       points: <?=json_encode($types_points)?>,
-      polygones: <?=json_encode($types_polygones)?>,
-      tilesOverlays: [{
-        id: 1, // Juste pour l'identifier
-        nom_traduit: 'itinéraires',
-        layer: coucheItineraires,
-      }],
-      //DCMM TODO Couches OSM Overpass
-      //DCMM TODO _path: this.options.interpreterPath || '/api/interpreter',
+      polygones: <?=json_encode($types_polygones)?>, //DCMM TODO ne s'affiche pas
+      tilesOverlays: [entreeCoucheItineraires],
+      couchesOverpass: entreeCouchesOverpass,
     },
     polygoneAAfficher ? polygoneAAfficher.id_polygone : 0,
   );
