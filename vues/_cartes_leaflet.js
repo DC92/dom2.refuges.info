@@ -10,9 +10,10 @@
 /**********************************
  * POSITION ET COUCHES PAR DÉFAUT *
  **********************************/
-const positionParDefaut = '5/46/5',
-  typesPointsParDefaut = '7,9,10',
-  typePolygonesParDefaut = '';
+const positionParDefaut = '5/46/5', // Zoom/lat/lon
+  typesPointsParDefaut = '7,9,10', // Cabanes, ...
+  typePolygonesParDefaut = '', // Massifs, ...
+  typeTilesOverlaysParDefaut = ''; // Itinéraires, ...
 
 sessionStorage.positionMemory ||= // Mémoire en cours de session
   localStorage.positionMemory || // En début de session, on repart de la position de la dernière session
@@ -21,6 +22,7 @@ sessionStorage.positionMemory ||= // Mémoire en cours de session
 positionMemoryArray = sessionStorage.positionMemory.split('/'); // Pour usage au cours de la durée de vie de la page.
 
 if (typeof sessionStorage.points === 'undefined') { // Mémoire de la session courante
+  // Teste le type pour ne pas confondre pas de valeurs et une sélection vide
   if (typeof localStorage.points === 'string')
     sessionStorage.points = localStorage.points; // Mémoire de la session précédente
   else
@@ -32,6 +34,13 @@ if (typeof sessionStorage.polygones === 'undefined') {
     sessionStorage.polygones = localStorage.polygones;
   else
     sessionStorage.polygones = typePolygonesParDefaut;
+}
+
+if (typeof sessionStorage.tilesOverlays === 'undefined') {
+  if (typeof localStorage.tilesOverlays === 'string')
+    sessionStorage.tilesOverlays = localStorage.tilesOverlays;
+  else
+    sessionStorage.tilesOverlays = typeTilesOverlaysParDefaut;
 }
 
 /*****************************************
@@ -347,9 +356,9 @@ function addControlOverlays(
           '<img src="/images/icones/' + type.icone + '.svg"> ' :
           '') +
         type.nom_traduit,
-        layer = cat === 'polygones' ?
-        type.layer || // Couche spécifique (Itinéraires)
-        new CouchePolygonesWri({
+        /* eslint-disable-next-line no-nested-ternary */
+        layer = type.layer ? type.layer : // Couche spécifique (Itinéraires)
+        cat === 'polygones' ? new CouchePolygonesWri({
           ...argumentsApiWri,
           typeId: type.id,
           optionalParameter: idPolygoneFiltre ?
@@ -383,9 +392,11 @@ function addControlOverlays(
   // Insére un listener dans tous les contrôles du sélecteur d'overlays
   for (const elInput of inputEls) {
     elInput.addEventListener('change', () => {
+      // Code exécuté lors du changement de sélection d'un overlay
       const selectionTypesId = {
         points: [],
         polygones: [],
+        tilesOverlays: [],
       };
 
       // Numéros de types de points qui correspond aux lignes cochées

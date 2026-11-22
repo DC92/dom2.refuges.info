@@ -65,23 +65,22 @@ else {
   // Restaure l'affichage minimum des points du massif
   sessionStorage.points = typesPointsParDefaut;
 
-// Définition des entrées du sélecteur
-const     categoriesCouches=  {
-    points:<?=json_encode($types_points)?>,
-    polygones:<?=json_encode($types_polygones)?>,
-    //DCMM TODO couche itinéraires
-  };
-
   // Sélecteur de couches overlays
   addControlOverlays(
     map,
-    argumentsApiWri,
-    categoriesCouches,
+    argumentsApiWri, {
+      // Liste des couches
+      points: <?=json_encode($types_points)?>,
+      polygones: <?=json_encode($types_polygones)?>,
+      tilesOverlays: [{
+        id: 1, // Juste pour l'identifier
+        nom_traduit: 'itinéraires',
+        layer: coucheItineraires,
+      }],
+      //DCMM TODO Couches OSM Overpass
+    },
     polygoneAAfficher ? polygoneAAfficher.id_polygone : 0,
   );
-
-  // Couches OSM Overpass
-  //DCMM TODO BUG overpass ne fonctionne plus sur WRI
 }
 
 /****************************************
