@@ -47,7 +47,7 @@ const argumentsApiWri = {
   clic: true,
 };
 
-// CAS DE LA CARTE D'UNE ZONE
+// CAS DE LA CARTE D'UNE ZONE (/nav/id_de_zone)
 if (polygoneAAfficher && polygoneAAfficher.id_polygone_type === 11) {
   new CouchePolygonesWri({ // On affiche les massifs
     ...argumentsApiWri,
@@ -60,10 +60,11 @@ if (polygoneAAfficher && polygoneAAfficher.id_polygone_type === 11) {
   //TODO recadrer le <div> carte toujours sur la largeur de la page ou mettre quelque chose à gauche
 }
 
-// CARTE NORMALE OU PAGE D'UN MASSIF
+// CARTE NORMALE (/) OU PAGE D'UN MASSIF (/nav/id_de_massif)
 else {
   // Restaure l'affichage minimum des points du massif
-  sessionStorage.points = typesPointsParDefaut;
+  if (polygoneAAfficher && polygoneAAfficher.id_polygone_type === 1) 
+    sessionStorage.points = typesPointsParDefaut;
 
   // Sélecteur de couches overlays
   addControlOverlays(
