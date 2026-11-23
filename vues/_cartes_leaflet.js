@@ -356,28 +356,36 @@ function addControlOverlays(
       typeDuNom[type.nom_traduit] = type;
       typeDuNom[type.nom_traduit].cat = cat;
 
-      // Sélecteur d'overlays
       const titre = (type.icone ?
-          '<img src="/images/icones/' + type.icone + '.svg"> ' :
-          '') +
-        type.nom_traduit,
-        layer = type.layer ? type.layer : // Couche spécifique (Itinéraires)
-        cat === 'polygones' ? new CouchePolygonesWri({
-          ...argumentsApiWri,
-          typeId: type.id,
-          optionalParameter: idPolygoneFiltre ?
-            '&intersection=' + idPolygoneFiltre : // A mofifier dynamiquement
-            '',
-        }) :
-        // Couche invisible sélectionnable permettant récupérer l'état de la sélection
-        L.circle([0, 0], {
-          stroke: false,
-        });
-      overlays[titre] = layer;
+        '<img src="/images/icones/' + type.icone + '.svg"> ' :
+        '') + type.nom_traduit;
 
-      // Initialisation de l'affichage des sélections précédentes
+      // Lignes du sélecteur
+      switch (cat) {
+        case 'points':
+          // Couche invisible sélectionnable permettant récupérer l'état de la sélection
+          overlays[titre] = L.circle([0, 0], {
+            stroke: false,
+          });
+          break;
+
+        case 'polygones':
+          overlays[titre] = new CouchePolygonesWri({
+            ...argumentsApiWri,
+            typeId: type.id,
+            /*    optionalParameter: idPolygoneFiltre ?
+                  '&intersection=' + idPolygoneFiltre : // A mofifier dynamiquement
+                  '',*/
+          });
+          break;
+
+        default:
+          overlays[titre] = type.layer;
+      }
+
+      // Affichage des lignes sélectionnées
       if (sessionStorage[cat] && sessionStorage[cat].split(',').includes(type.id.toString()))
-        layer.addTo(map);
+        overlays[titre].addTo(map);
     }
 
   // Sélecteur de couche
