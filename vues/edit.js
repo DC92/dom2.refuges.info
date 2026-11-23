@@ -38,7 +38,7 @@ if (editJsonEl.value) {
 new CouchePolygonesWri({
   serveurAPI: 'https://<?=$_SERVER["SERVER_NAME"]?>',
   version: '<?=$vue->version_features?>',
-  typeId: 1, // Massifs
+  typePolygon: 1, // Massifs
   bbox: true, // Pour ne pas ralentir le snapping
   pmIgnore: true, // Pour qu'ils ne soient pas modifiables
   snapIgnore: false, // Pour que les polygones en édition puisse coller aux contours de massifs

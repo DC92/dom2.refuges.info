@@ -5,14 +5,28 @@
  * © Dominique Cavailhez 2026                    *
  *************************************************/
 
+// remove empty attributes from obejct
+// Source - https://stackoverflow.com/a/38340730
+function removeEmpty(obj) {
+  return Object.keys(obj)
+    .filter((k) => obj[k])
+    .reduce((acc, k) => {
+      acc[k] = obj[k];
+      return acc;
+    }, {});
+}
+
 /*************************************************
  * GeoJson layer from url with bbox & cluster    *
- * hide: don't get the data & hide the layer     *
- * ...L.geoJson options                          *
+ * Cluster points, not polygons                  *
+ * params : {name:'value', ...}                  *
+ * options :                                     *
+ *   hide: don't get the data & hide the layer   *
+ *   ...L.geoJson options                        *
  *************************************************/
 /* eslint-disable-next-line no-unused-vars */
 class GeoJsonAjaxBboxLayer extends L.MarkerClusterGroup {
-  constructor(url, options) {
+  constructor(url, params, options) {
     super({
       spiderfyOnMaxZoom: true, // Overlapping markers will spiderfy when clicked
       showCoverageOnHover: false, // Hides the cluster bounds polygon
@@ -20,26 +34,28 @@ class GeoJsonAjaxBboxLayer extends L.MarkerClusterGroup {
     });
 
     this._url = url;
+    this._par = params;
     this._opt = options;
   }
 
   // Load or refresh the display
-  fetchData(options, url) {
-    // Change the options & url if required
-    if (url)
-      this._url = url;
-    if (options)
-      this._opt = {
-        ...this._opt,
-        ...options,
-      };
+  fetchData(url, params, options) {
+    // Update url, params, options
+    this._url = url || this._url;
+    this._par = removeEmpty({
+      ...this._par,
+      ...params,
+      bbox: this._map.getBounds().toBBoxString(),
+    });
+    this._opt = {
+      ...this._opt,
+      ...options,
+    };
 
-    if (this._opt.typePoints && !this._opt.hide)
-      fetch(
-        this._url +
-        '&type_points=' + this._opt.typePoints +
-        '&bbox=' + this._map.getBounds().toBBoxString()
-      )
+    if (this._opt.hide)
+      this.clearLayers(); // Clear existing content
+    else
+      fetch(this._url + '?' + new URLSearchParams(this._par).toString())
       .then((response) => response.json())
       .then((json) => {
         this.clearLayers(); // Clear existing content
@@ -50,8 +66,6 @@ class GeoJsonAjaxBboxLayer extends L.MarkerClusterGroup {
         vectorLayer.addData(json);
         this.addLayer(vectorLayer);
       });
-    else
-      this.clearLayers(); // Clear existing content
   }
 
   // Overrides MarkerClusterGroup.onAdd to get the map

@@ -51,7 +51,7 @@ const argumentsApiWri = {
 if (polygoneAAfficher && polygoneAAfficher.id_polygone_type === 11) {
   new CouchePolygonesWri({ // On affiche les massifs
     ...argumentsApiWri,
-    typeId: 1, // Les polygones de massifs
+    typePolygon: 1, // Les polygones de massifs
     intersection: polygoneAAfficher.id_polygone, // Les massifs concernés et c'est tout
     featureStyle: {
       fillOpacity: 0.5, // Un peu plus visibles que sur les autres cartes car il n'y a que ça

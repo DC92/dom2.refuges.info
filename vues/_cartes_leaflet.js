@@ -229,6 +229,7 @@ const couchesOverpass = {
  *   clic: clic redirige vers la page du point                 *
  *   ...options de GeoJsonAjaxBboxLayer                        *
  ***************************************************************/
+/* eslint-disable-next-line no-unused-vars */
 class ClusterPointsWri extends GeoJsonAjaxBboxLayer {
   // On en fait une classe car on doit étendre une classe Leaflet
   constructor(options) {
@@ -280,20 +281,24 @@ class ClusterPointsWri extends GeoJsonAjaxBboxLayer {
 /******************************************************************
  * Couche vectorielle de polygones refuges.info (massifs, zones ) *
  * à partir de l'API et en mode BBOX                              *
- * Options de l'API : serveurAPI, typePoints, massif, version     *
- *   etiquette: affiche le nom du point                           *
- *   clic: clic redirige vers la page du point                    *
+ * Paramètres de l'API :                                          *
+ *   serveurAPI: Host                                             *
+ *   typePolygon: 1 (massifs), 11 (régions)                       *
+ *   intersection (id) : Les polygones dans une région            *
+ * Options de la couche :                                         *
+ *   etiquette: (boolean) affiche le nom du point                 *
+ *   clic: (boolean) url de redirirection                         *
+ *   featureStyle: {options de style d'affichage des polygones}   *
  *   layer : {options de GeoJsonAjaxBboxLayer }                   *
  ******************************************************************/
 class CouchePolygonesWri extends GeoJsonAjaxBboxLayer {
-  //TODO ?? option etiquette
   constructor(options) {
-    const url = options.serveurAPI + '/api/polygones?' +
-      'type_polygon=' + options.typeId + //TODO typeId => typePolygon ??
-      (options.massif ? '&massif=' + options.massif : '') +
-      (options.intersection ? '&intersection=' + options.intersection : '');
-
-    super(url, {
+    super(options.serveurAPI + '/api/polygones', {
+      //DCMM TODO url,params, options
+      'type_polygon': options.typePolygon,
+      massif: options.massif,
+      intersection: options.intersection,
+    }, {
       onEachFeature: (feature, layer) => {
         // Etiquettes
         if (options.etiquettes)
@@ -372,7 +377,7 @@ function addControlOverlays(
         case 'polygones':
           overlays[titre] = new CouchePolygonesWri({
             ...argumentsApiWri,
-            typeId: type.id,
+            typePolygon: type.id,
             /*    optionalParameter: idPolygoneFiltre ?
                   '&intersection=' + idPolygoneFiltre : // A mofifier dynamiquement
                   '',*/
@@ -392,11 +397,13 @@ function addControlOverlays(
   L.control.layers(null, overlays).addTo(map);
 
   // Cluster des points sélectionnés
+  /*
   const clusterPoints = new ClusterPointsWri({
     ...argumentsApiWri,
     massif: idPolygoneFiltre,
     typePoints: sessionStorage.points, // Paramètre à mofifier dynamiquement
   }).addTo(map);
+  */
 
   // Les <inputs> du sélecteur d'overlays
   const inputEls = document.querySelectorAll('.leaflet-control-layers-overlays input[type=checkbox]');
