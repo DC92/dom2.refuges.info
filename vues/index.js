@@ -1,8 +1,6 @@
-/* global ClusterPointsWri, CouchePolygonesWri, couchesDeFond, couchesOverpass, coucheItineraires, controlesComuns */
-
-/**********************
- * CARTE ET CONTROLES *
- **********************/
+/**********************************
+ * CONSTANTES, CARTE ET CONTROLES *
+ *********************************/
 const serveurAPI = 'https://<?=$_SERVER["SERVER_NAME"]?>',
   polygoneAAfficher = <?=json_encode($vue->polygone ?? null)?>,
   versionAPI = <?=$vue->version_features?>,
@@ -64,13 +62,21 @@ else {
     sessionStorage.points = typesPointsParDefaut;
 
   const entreeCoucheItineraires = { //TODO mettre dans _cartes_leaflet
-    //TODO BUG ne se superpose pas à certaines couches
-    id: 1, // Indice dans la catégorie tilesOverlays, juste pour l'identifier
-    nom_traduit: 'itinéraires',
-    layer: coucheItineraires,
-  };
-
-  const entreeCouchesOverpass = [];
+      //TODO BUG ne se superpose pas à certaines couches
+      id: 1, // Indice dans la catégorie tilesOverlays, juste pour l'identifier
+      nom_traduit: 'itinéraires',
+      layer: coucheItineraires,
+    },
+    couchesOverpass = {
+      //TODO employer un codage moins bidouille !
+      'hôtel': '["tourism"~"hotel|guest_house|chalet|hostel|apartment"]',
+      'camping': '["tourism"="camp_site"]',
+      'point d\'eau': '["natural"="spring"]({{bbox}});nwr["amenity"="drinking_water"]',
+      'ravitaillement': '["shop"~"supermarket|convenience"]',
+      'parking': '["amenity"="parking"]["access"!="private"]',
+      'bus': '["highway"="bus_stop"]',
+    },
+    entreeCouchesOverpass = [];
 
   // Couches OSM OverPass
   for (const [nom, query] of Object.entries(couchesOverpass)) {

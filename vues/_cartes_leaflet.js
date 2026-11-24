@@ -1,4 +1,4 @@
-/* global GeoJsonAjaxBboxLayer, IGNTileLayer, MarkerCompass */
+/* global IGNTileLayer, CouchePolygonesWri, MarkerCompass */
 /* eslint-disable-next-line no-unused-vars */
 /* global positionMemoryArray:writable */
 
@@ -200,143 +200,6 @@ const coucheItineraires = L.tileLayer(
     //TODO BUG Zindex : ne s'affiche pas sur Espagne, photo maxar & photo Google
   });
 
-/************************
- * COUCHES VECTORIELLES *
- ************************/
-// Couches de points définies par /controleurs/*.php / $types_points
-// Couches de points définies par /controleurs/*.php / $types_polygones
-
-/* eslint-disable-next-line no-unused-vars */
-const couchesOverpass = {
-  //TODO employer un codage moins bidouille !
-  'hôtel': '["tourism"~"hotel|guest_house|chalet|hostel|apartment"]',
-  'camping': '["tourism"="camp_site"]',
-  'point d\'eau': '["natural"="spring"]({{bbox}});nwr["amenity"="drinking_water"]',
-  'ravitaillement': '["shop"~"supermarket|convenience"]',
-  'parking': '["amenity"="parking"]["access"!="private"]',
-  'bus': '["highway"="bus_stop"]',
-};
-
-/***********************************************************
- * FONCTIONS COMMUNES AUX CARTES DES PAGES DE REFUGES.INFO *
- ***********************************************************/
-
-/***************************************************************
- * couche vectorielle de points refuges.info                   *
- * à partir de l'API, en mode BBOX et regroupement en clusters *
- * Options de l'API : serveurAPI, typePoints, massif, version  *
- *   etiquette: affiche le nom du point                        *
- *   clic: clic redirige vers la page du point                 *
- *   ...options de GeoJsonAjaxBboxLayer                        *
- ***************************************************************/
-/* eslint-disable-next-line no-unused-vars */
-class ClusterPointsWri extends GeoJsonAjaxBboxLayer {
-  // On en fait une classe car on doit étendre une classe Leaflet
-  constructor(options) {
-    const url = options.serveurAPI + '/api/' + (options.massif ? 'massif' : 'bbox') +
-      '?nb_points=all' + //TODO masquage de la couche si limite de points atteinte
-      (options.typePoints ? '&type_points=' + options.typePoints : '') +
-      (options.massif ? '&massif=' + options.massif : '') +
-      (options.version ? '&version=' + options.version : '') +
-      (document.documentElement.lang === 'fr' ? '' : '&langue=' + document.documentElement.lang);
-
-    super(url, {
-      onEachFeature: (feature, layer) => {
-        // Etiquettes
-        if (options.etiquette)
-          layer.bindTooltip(
-            feature.properties.nom, {
-              permanent: true,
-              // TODO ?? sticky: true,
-              direction: 'center',
-            }).openTooltip();
-
-        // Clics et curseur
-        if (options.clic)
-          layer.on('click', () => {
-            location.href = feature.properties.lien || '/point/' + feature.id;
-          });
-        else
-          // Supprime le pointeur de la souris au survol
-          layer.on('mouseover', (evt) => {
-            evt.target.getElement().style.cursor = 'grab';
-          });
-      },
-
-      // Icônes
-      pointToLayer: (feature, latlng) =>
-        L.marker(latlng, {
-          icon: L.icon({
-            iconUrl: options.serveurAPI + '/images/icones/' + feature.properties.type.icone + '.svg',
-            iconSize: [24, 24],
-            iconAnchor: [12, 12],
-          }),
-        }),
-
-      ...options,
-    });
-  }
-}
-
-/******************************************************************
- * Couche vectorielle de polygones refuges.info (massifs, zones ) *
- * à partir de l'API et en mode BBOX                              *
- * Paramètres de l'API :                                          *
- *   host: https://www.refuges.info                                             *
- *   typePolygon: 1 (massifs), 11 (régions)                       *
- *   intersection (id) : Les polygones dans une région            *
- * Options de la couche :                                         *
- *   etiquette: (boolean) affiche le nom du point                 *
- *   clic: (boolean) url de redirirection                         *
- *   featureStyle: {options de style d'affichage des polygones}   *
- *   layer : {options de GeoJsonAjaxBboxLayer }                   *
- ******************************************************************/
-class CouchePolygonesWri extends GeoJsonAjaxBboxLayer {
-  constructor(host, params = {}, options = {}) {
-    super(host + '/api/polygones',
-      params, {
-        onEachFeature: (feature, layer) => {
-          // Etiquettes
-          if (options.etiquettes)
-            layer.bindTooltip(
-              feature.properties.nom
-              .replaceAll(/ ([a-z]?[a-z]?[a-z]) /gui, ' $1&nbsp;')
-              .replaceAll(/ /gu, '<br/>'), {
-                //TODO BUG affiche les étiquettes à l'init et pas aprés
-                //TODO étiquette au survol
-                permanent: true,
-                direction: 'center',
-              }).openTooltip();
-
-          if (options.clic) {
-            layer.on('mouseover mouseout', (evt) => {
-              // Elargit le contour au survol
-              evt.target.setStyle({
-                stroke: evt.type === 'mouseover',
-              });
-            });
-
-            layer.on('click', (evt) => {
-              location.href = '/nav/' + evt.sourceTarget.feature.id;
-            });
-          } else
-            // Remove cursor pointer on hover
-            layer.on('mouseover', (evt) => {
-              evt.target.getElement().style.cursor = 'grab';
-            });
-        },
-
-        style: (feature) => ({
-          stroke: false,
-          color: feature.properties.couleur,
-          ...options.featureStyle,
-        }),
-
-        ...options,
-      });
-  }
-}
-
 /**************************************************
  * SÉLECTEUR DE COUCHES OVERLAYS                  *
  * Déclare le sélecteur et le rattache à la carte *
@@ -392,7 +255,7 @@ function addControlOverlays(
   L.control.layers(null, overlays).addTo(map);
 
   // Cluster des points sélectionnés
-  /*
+  /*//DCMM DELETE
   const clusterPoints = new ClusterPointsWri({
     ...argumentsApiWri,
     massif: idPolygoneFiltre,
@@ -412,7 +275,7 @@ function addControlOverlays(
         points: [],
         polygones: [],
         tilesOverlays: [],
-        couchesOverpass: [],
+        couchesOverpass: [], //TODO déclarer par défaut
       };
 
       // Numéros de types de points qui correspond aux lignes cochées
@@ -431,7 +294,7 @@ function addControlOverlays(
 
       // Recharge la couche points
       if (sessionStorage.points === '')
-        clusterPoints.clearLayers();
+        clusterPoints.clearLayers(); //DCMM BUG 'clusterPoints' is not defined
       else
         clusterPoints.fetchData({
           typePoints: sessionStorage.points,
