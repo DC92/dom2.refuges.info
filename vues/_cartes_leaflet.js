@@ -282,7 +282,7 @@ class ClusterPointsWri extends GeoJsonAjaxBboxLayer {
  * Couche vectorielle de polygones refuges.info (massifs, zones ) *
  * à partir de l'API et en mode BBOX                              *
  * Paramètres de l'API :                                          *
- *   serveurAPI: Host                                             *
+ *   host: https://www.refuges.info                                             *
  *   typePolygon: 1 (massifs), 11 (régions)                       *
  *   intersection (id) : Les polygones dans une région            *
  * Options de la couche :                                         *
@@ -292,52 +292,48 @@ class ClusterPointsWri extends GeoJsonAjaxBboxLayer {
  *   layer : {options de GeoJsonAjaxBboxLayer }                   *
  ******************************************************************/
 class CouchePolygonesWri extends GeoJsonAjaxBboxLayer {
-  constructor(options) {
-    super(options.serveurAPI + '/api/polygones', {
-      //DCMM TODO url,params, options
-      'type_polygon': options.typePolygon,
-      massif: options.massif,
-      intersection: options.intersection,
-    }, {
-      onEachFeature: (feature, layer) => {
-        // Etiquettes
-        if (options.etiquettes)
-          layer.bindTooltip(
-            feature.properties.nom
-            .replaceAll(/ ([a-z]?[a-z]?[a-z]) /gui, ' $1&nbsp;')
-            .replaceAll(/ /gu, '<br/>'), {
-              //TODO BUG affiche les étiquettes à l'init et pas aprés
-              //TODO étiquette au survol
-              permanent: true,
-              direction: 'center',
-            }).openTooltip();
+  constructor(host, params = {}, options = {}) {
+    super(host + '/api/polygones',
+      params, {
+        onEachFeature: (feature, layer) => {
+          // Etiquettes
+          if (options.etiquettes)
+            layer.bindTooltip(
+              feature.properties.nom
+              .replaceAll(/ ([a-z]?[a-z]?[a-z]) /gui, ' $1&nbsp;')
+              .replaceAll(/ /gu, '<br/>'), {
+                //TODO BUG affiche les étiquettes à l'init et pas aprés
+                //TODO étiquette au survol
+                permanent: true,
+                direction: 'center',
+              }).openTooltip();
 
-        if (options.clic) {
-          layer.on('mouseover mouseout', (evt) => {
-            // Elargit le contour au survol
-            evt.target.setStyle({
-              stroke: evt.type === 'mouseover',
+          if (options.clic) {
+            layer.on('mouseover mouseout', (evt) => {
+              // Elargit le contour au survol
+              evt.target.setStyle({
+                stroke: evt.type === 'mouseover',
+              });
             });
-          });
 
-          layer.on('click', (evt) => {
-            location.href = '/nav/' + evt.sourceTarget.feature.id;
-          });
-        } else
-          // Remove cursor pointer on hover
-          layer.on('mouseover', (evt) => {
-            evt.target.getElement().style.cursor = 'grab';
-          });
-      },
+            layer.on('click', (evt) => {
+              location.href = '/nav/' + evt.sourceTarget.feature.id;
+            });
+          } else
+            // Remove cursor pointer on hover
+            layer.on('mouseover', (evt) => {
+              evt.target.getElement().style.cursor = 'grab';
+            });
+        },
 
-      style: (feature) => ({
-        stroke: false,
-        color: feature.properties.couleur,
-        ...options.featureStyle,
-      }),
+        style: (feature) => ({
+          stroke: false,
+          color: feature.properties.couleur,
+          ...options.featureStyle,
+        }),
 
-      ...options,
-    });
+        ...options,
+      });
   }
 }
 
@@ -349,9 +345,9 @@ class CouchePolygonesWri extends GeoJsonAjaxBboxLayer {
 /* eslint-disable-next-line no-unused-vars */
 function addControlOverlays(
   map,
-  argumentsApiWri,
+  options,
   categoriesCouches,
-  idPolygoneFiltre,
+  idPolygoneFiltre, //DCMM TODO ????
 ) {
   const overlays = {}, // Liste à fournir à L.control.layers
     typeDuNom = {}; // Traduction du titre de la ligne en type_id
@@ -368,20 +364,19 @@ function addControlOverlays(
       // Lignes du sélecteur
       switch (cat) {
         case 'points':
-          // Couche invisible sélectionnable permettant récupérer l'état de la sélection
+          // Couche invisible sélectionnable permettant de récupérer l'état de la sélection
           overlays[titre] = L.circle([0, 0], {
             stroke: false,
           });
           break;
 
         case 'polygones':
-          overlays[titre] = new CouchePolygonesWri({
-            ...argumentsApiWri,
-            typePolygon: type.id,
-            /*    optionalParameter: idPolygoneFiltre ?
-                  '&intersection=' + idPolygoneFiltre : // A mofifier dynamiquement
-                  '',*/
-          });
+          overlays[titre] = new CouchePolygonesWri(
+            options.serveurAPI, {
+              'type_polygon': type.id,
+            },
+            options,
+          );
           break;
 
         default:

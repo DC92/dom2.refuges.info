@@ -3,7 +3,10 @@
 /**********************
  * CARTE ET CONTROLES *
  **********************/
-const map = L.map('carte-accueil');
+const serveurAPI = 'https://<?=$_SERVER["SERVER_NAME"]?>',
+  polygoneAAfficher = <?=json_encode($vue->polygone ?? null)?>,
+  versionAPI = <?=$vue->version_features?>,
+  map = L.map('carte-accueil');
 
 controlesComuns(map).forEach((control) => control.addTo(map)); // Autres controles
 
@@ -21,8 +24,6 @@ positionMemoryControl(map); // Enregistre la position et la couche de base coura
 /********************************************
  * POSITION DE LA CARTE ET POLYGONE AFFICHÉ *
  ********************************************/
-const polygoneAAfficher = <?=json_encode($vue->polygone ?? null)?>;
-
 if (polygoneAAfficher) {
   // Dessine le contour du polygone et centre la carte dessus
   const polygonLayer = JSON.parse(polygoneAAfficher.geometrie_geojson),
@@ -40,19 +41,15 @@ if (polygoneAAfficher) {
 /************************
  * COUCHES SUPERPOSÉES  *
  ************************/
-const argumentsApiWri = {
-  serveurAPI: 'https://<?=$_SERVER["SERVER_NAME"]?>',
-  version: <?=$vue->version_features?>,
-  etiquettes: true,
-  clic: true,
-};
-
 // CAS DE LA CARTE D'UNE ZONE (/nav/id_de_zone)
 if (polygoneAAfficher && polygoneAAfficher.id_polygone_type === 11) {
-  new CouchePolygonesWri({ // On affiche les massifs
-    ...argumentsApiWri,
-    typePolygon: 1, // Les polygones de massifs
+  new CouchePolygonesWri(serveurAPI, {
+    'type_polygon': 1, // Les polygones de massifs
     intersection: polygoneAAfficher.id_polygone, // Les massifs concernés et c'est tout
+    version: versionAPI,
+  }, { // On affiche les massifs
+    etiquettes: true,
+    clic: true,
     featureStyle: {
       fillOpacity: 0.5, // Un peu plus visibles que sur les autres cartes car il n'y a que ça
     },
@@ -95,8 +92,12 @@ else {
 
   // Sélecteur de couches overlays
   addControlOverlays(
-    map,
-    argumentsApiWri, {
+    map, {
+      serveurAPI: serveurAPI,
+      version: versionAPI,
+      etiquettes: true,
+      clic: true,
+    }, {
       // Liste des couches
       points: <?=json_encode($types_points)?>,
       polygones: <?=json_encode($types_polygones)?>, //DCMM TODO ne s'affiche pas
@@ -163,5 +164,5 @@ function copyExportLink() {
     navigator.clipboard.writeText(exportCarteEl.lastChild.href) //BEST remove *ElementChild
     .then(() => alert('<?=json_encode(_("Lien copié dans le presse-papier"))?> :\n\n' +
       exportCarteEl.lastChild.href)); //TODO BUG undefined
-      //BEST remove *ElementChild
+  //BEST remove *ElementChild
 }

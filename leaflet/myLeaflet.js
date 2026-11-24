@@ -5,6 +5,17 @@
  * © Dominique Cavailhez 2026                    *
  *************************************************/
 
+/***********
+ * Helpers *
+ ***********/
+// Swap lon/lat between Leaflet to geoJson & GPX
+function flipLonLatRecursive(arrayOfLonLat) {
+  if (Array.isArray(arrayOfLonLat) && typeof arrayOfLonLat[0] === 'number')
+    return [arrayOfLonLat[1], arrayOfLonLat[0]];
+
+  return arrayOfLonLat.map(item => flipLonLatRecursive(item));
+}
+
 // remove empty attributes from obejct
 // Source - https://stackoverflow.com/a/38340730
 function removeEmpty(obj) {
@@ -26,7 +37,7 @@ function removeEmpty(obj) {
  *************************************************/
 /* eslint-disable-next-line no-unused-vars */
 class GeoJsonAjaxBboxLayer extends L.MarkerClusterGroup {
-  constructor(url, params, options) {
+  constructor(url, params = {}, options = {}) {
     super({
       spiderfyOnMaxZoom: true, // Overlapping markers will spiderfy when clicked
       showCoverageOnHover: false, // Hides the cluster bounds polygon
@@ -39,8 +50,8 @@ class GeoJsonAjaxBboxLayer extends L.MarkerClusterGroup {
   }
 
   // Load or refresh the display
-  fetchData(url, params, options) {
-    // Update url, params, options
+  fetchData(url, params = {}, options = {}) {
+    // Update url, params={}, options={}
     this._url = url || this._url;
     this._par = removeEmpty({
       ...this._par,
@@ -77,17 +88,6 @@ class GeoJsonAjaxBboxLayer extends L.MarkerClusterGroup {
 
     map.on('dragend zoomend', () => this.fetchData()); // Refresh the layer for each map movement
   }
-}
-
-/****************************************************************
- * Leaflet from/to geoJson & GPX lat/lng coordinates conversion *
- * Swap lon / lat & vice versa                                  *
- ****************************************************************/
-function flipLonLatRecursive(data) {
-  if (Array.isArray(data) && typeof data[0] === 'number')
-    return [data[1], data[0]];
-
-  return data.map(item => flipLonLatRecursive(item));
 }
 
 /**********************
