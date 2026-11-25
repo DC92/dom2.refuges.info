@@ -9,6 +9,7 @@
  * Helpers *
  ***********/
 // Swap lon/lat between Leaflet to geoJson & GPX
+//TODO latLngToCoords(latlng: LatLng, precision?: Number|false): Position
 function flipLonLatRecursive(arrayOfLonLat) {
   if (Array.isArray(arrayOfLonLat) && typeof arrayOfLonLat[0] === 'number')
     return [arrayOfLonLat[1], arrayOfLonLat[0]];
@@ -25,6 +26,18 @@ function removeEmpty(obj) {
       acc[k] = obj[k];
       return acc;
     }, {});
+}
+
+function roundBounds(bounds, decimals) {
+  const factor = 10 ** decimals,
+    round = (num) => Math.round(num * factor) / factor,
+    sw = bounds.getSouthWest(),
+    ne = bounds.getNorthEast();
+
+  return L.latLngBounds(
+    [round(sw.lat), round(sw.lng)],
+    [round(ne.lat), round(ne.lng)]
+  );
 }
 
 /*************************************************
@@ -50,12 +63,12 @@ class GeoJsonAjaxBboxLayer extends L.MarkerClusterGroup {
 
   // Load or refresh the display
   fetchData(url, params = {}, options = {}) {
-    // Update url, params={}, options={}
+    // Update arguments
     this._url = url || this._url;
     this._par = removeEmpty({
       ...this._par,
       ...params,
-      bbox: this._map.getBounds().toBBoxString(),
+      bbox: roundBounds(this._map.getBounds(), 5).toBBoxString(),
     });
     this._opt = {
       ...this._opt,
@@ -104,11 +117,10 @@ class ClusterPointsWri extends GeoJsonAjaxBboxLayer {
   constructor(host, params = {}, options = {}) {
     super(host + '/api/bbox', {
       'nb_points': 'all', //TODO masquage de la couche si limite de points atteinte
-      'type_points': options.typePoints,
-      massif: options.massif,
-      version: options.version,
+      'type_points': params.typePoints,
+      massif: params.massif,
+      version: params.version,
       langue: document.documentElement.lang === 'fr' ? '' : document.documentElement.lang,
-      ...params,
     }, {
       onEachFeature: (feature, layer) => {
         // Etiquettes
@@ -136,7 +148,7 @@ class ClusterPointsWri extends GeoJsonAjaxBboxLayer {
       pointToLayer: (feature, latlng) =>
         L.marker(latlng, {
           icon: L.icon({
-            iconUrl: options.serveurAPI + '/images/icones/' + feature.properties.type.icone + '.svg',
+            iconUrl: host + '/images/icones/' + feature.properties.type.icone + '.svg',
             iconSize: [24, 24],
             iconAnchor: [12, 12],
           }),

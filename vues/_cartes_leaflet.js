@@ -295,8 +295,8 @@ function addControlOverlays(
       if (sessionStorage.points === '')
         clusterPoints.clearLayers();
       else
-        clusterPoints.fetchData({
-          typePoints: sessionStorage.points,
+        clusterPoints.fetchData(null, {
+          'type_points': sessionStorage.points,
         });
     });
   }
