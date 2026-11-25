@@ -62,7 +62,7 @@ else {
     sessionStorage.points = typesPointsParDefaut;
 
   const entreeCoucheItineraires = { //TODO mettre dans _cartes_leaflet
-      //TODO BUG ne se superpose pas à certaines couches
+      //DCMM TODO BUG ne se superpose pas à certaines couches
       id: 1, // Indice dans la catégorie tilesOverlays, juste pour l'identifier
       nom_traduit: 'itinéraires',
       layer: coucheItineraires,
@@ -106,7 +106,7 @@ else {
     }, {
       // Liste des couches
       points: <?=json_encode($types_points)?>,
-      polygones: <?=json_encode($types_polygones)?>, //DCMM TODO ne s'affiche pas
+      polygones: <?=json_encode($types_polygones)?>, 
       tilesOverlays: [entreeCoucheItineraires],
       couchesOverpass: entreeCouchesOverpass,
     },

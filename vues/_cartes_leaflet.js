@@ -1,4 +1,4 @@
-/* global IGNTileLayer, CouchePolygonesWri, MarkerCompass */
+/* global ClusterPointsWri, IGNTileLayer, CouchePolygonesWri, MarkerCompass */
 /* eslint-disable-next-line no-unused-vars */
 /* global positionMemoryArray:writable */
 
@@ -85,7 +85,7 @@ function controlesComuns(map) {
  *******************/
 /* eslint-disable-next-line no-unused-vars */
 function couchesDeFond(layerKeys) {
-  //TODO revoir suivant les couches de www...
+  //DCMM TODO revoir suivant les couches de www...
   return {
     //DCMM Pour tests, à enlever à la fin
     'Google': L.tileLayer('https://mt0.google.com/vt/lyrs=r&x={x}&y={y}&z={z}'),
@@ -197,7 +197,7 @@ function couchesDeFond(layerKeys) {
 const coucheItineraires = L.tileLayer(
   'https://tile.waymarkedtrails.org/hiking/{z}/{x}/{y}.png', {
     maxZoom: 18,
-    //TODO BUG Zindex : ne s'affiche pas sur Espagne, photo maxar & photo Google
+    //DCMM TODO BUG Zindex : ne s'affiche pas sur Espagne, photo maxar & photo Google
   });
 
 /**************************************************
@@ -255,13 +255,12 @@ function addControlOverlays(
   L.control.layers(null, overlays).addTo(map);
 
   // Cluster des points sélectionnés
-  /*//DCMM DELETE
-  const clusterPoints = new ClusterPointsWri({
-    ...argumentsApiWri,
-    massif: idPolygoneFiltre,
-    typePoints: sessionStorage.points, // Paramètre à mofifier dynamiquement
-  }).addTo(map);
-  */
+  const clusterPoints = new ClusterPointsWri(
+    options.serveurAPI, {
+      typePoints: sessionStorage.points, // Paramètre à mofifier dynamiquement
+      massif: idPolygoneFiltre, // Si /nav/<n° massif>
+    }, {}, //DCMM TODO options de la couche
+  ).addTo(map);
 
   // Les <inputs> du sélecteur d'overlays
   const inputEls = document.querySelectorAll('.leaflet-control-layers-overlays input[type=checkbox]');
@@ -275,7 +274,7 @@ function addControlOverlays(
         points: [],
         polygones: [],
         tilesOverlays: [],
-        couchesOverpass: [], //TODO déclarer par défaut
+        couchesOverpass: [], //TODO Ne pas générer d'erreur si non déclaré
       };
 
       // Numéros de types de points qui correspond aux lignes cochées
@@ -294,7 +293,7 @@ function addControlOverlays(
 
       // Recharge la couche points
       if (sessionStorage.points === '')
-        clusterPoints.clearLayers(); //DCMM BUG 'clusterPoints' is not defined
+        clusterPoints.clearLayers();
       else
         clusterPoints.fetchData({
           typePoints: sessionStorage.points,

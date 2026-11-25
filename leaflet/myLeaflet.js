@@ -61,11 +61,12 @@ class GeoJsonAjaxBboxLayer extends L.MarkerClusterGroup {
       ...this._opt,
       ...options,
     };
+    const uri = this._url + '?' + new URLSearchParams(this._par).toString();
 
     if (this._opt.hide)
       this.clearLayers(); // Clear existing content
     else
-      fetch(this._url + '?' + new URLSearchParams(this._par).toString())
+      fetch(uri)
       .then((response) => response.json())
       .then((json) => {
         this.clearLayers(); // Clear existing content
@@ -100,15 +101,15 @@ class GeoJsonAjaxBboxLayer extends L.MarkerClusterGroup {
 /* eslint-disable-next-line no-unused-vars */
 class ClusterPointsWri extends GeoJsonAjaxBboxLayer {
   // On en fait une classe car on doit étendre une classe Leaflet
-  constructor(options) {
-    const url = options.serveurAPI + '/api/' + (options.massif ? 'massif' : 'bbox') +
-      '?nb_points=all' + //TODO masquage de la couche si limite de points atteinte
-      (options.typePoints ? '&type_points=' + options.typePoints : '') +
-      (options.massif ? '&massif=' + options.massif : '') +
-      (options.version ? '&version=' + options.version : '') +
-      (document.documentElement.lang === 'fr' ? '' : '&langue=' + document.documentElement.lang);
-
-    super(url, {
+  constructor(host, params = {}, options = {}) {
+    super(host + '/api/bbox', {
+      'nb_points': 'all', //TODO masquage de la couche si limite de points atteinte
+      'type_points': options.typePoints,
+      massif: options.massif,
+      version: options.version,
+      langue: document.documentElement.lang === 'fr' ? '' : document.documentElement.lang,
+      ...params,
+    }, {
       onEachFeature: (feature, layer) => {
         // Etiquettes
         if (options.etiquette)
