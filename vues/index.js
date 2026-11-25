@@ -83,7 +83,8 @@ else {
     entreeCouchesOverpass.push({
       id: nom, // Juste pour l'identifier
       nom_traduit: nom,
-      layer: new L.OverPassLayer({
+      layer: new L.OverPassLayer({//TODO label on hover
+        endPoint: '<?=$config_wri["mapKeys"]["overpass"] ?? "https://overpass-api.de/api/"?>',
         query: '(nwr' + query + '({{bbox}}););out center;',
         markerIcon: L.icon({
           iconUrl: 'https://<?=$_SERVER["SERVER_NAME"]?>/images/icones/' + nom.replaceAll('ô', 'o').replaceAll(/[^a-z]/gu, '') + '.svg',
@@ -169,6 +170,6 @@ function copyExportLink() {
   if (exportCarteEl)
     navigator.clipboard.writeText(exportCarteEl.lastChild.href) //BEST remove *ElementChild
     .then(() => alert('<?=json_encode(_("Lien copié dans le presse-papier"))?> :\n\n' +
-      exportCarteEl.lastChild.href)); //TODO BUG undefined
+      exportCarteEl.lastChild.href)); //DCMM TODO BUG undefined
   //BEST remove *ElementChild
 }

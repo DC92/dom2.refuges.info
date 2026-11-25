@@ -76,7 +76,7 @@ class GeoJsonAjaxBboxLayer extends L.MarkerClusterGroup {
     };
     const uri = this._url + '?' + new URLSearchParams(this._par).toString();
 
-    if (this._opt.hide)
+    if (typeof this._opt.hide === 'function' ? this._opt.hide() : this._opt.hide)
       this.clearLayers(); // Clear existing content
     else
       fetch(uri)
@@ -122,6 +122,8 @@ class ClusterPointsWri extends GeoJsonAjaxBboxLayer {
       version: params.version,
       langue: document.documentElement.lang === 'fr' ? '' : document.documentElement.lang,
     }, {
+      hide: () => !params.typePoints, //DCMM TODO ne marche pas en zoom et déplace
+
       onEachFeature: (feature, layer) => {
         // Etiquettes
         if (options.etiquette)
@@ -183,7 +185,7 @@ class CouchePolygonesWri extends GeoJsonAjaxBboxLayer {
             feature.properties.nom
             .replaceAll(/ ([a-z]?[a-z]?[a-z]) /gui, ' $1&nbsp;')
             .replaceAll(/ /gu, '<br/>'), {
-              //TODO BUG affiche les étiquettes à l'init et pas aprés
+              //DCMM TODO BUG affiche les étiquettes à l'init et pas aprés
               //TODO étiquette au survol
               permanent: true,
               direction: 'center',
