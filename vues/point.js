@@ -1,27 +1,19 @@
-/* global couchesDeFond, coucheItineraires, positionMemoryArray, positionMemoryControl, controlesComuns */
-
-// Initialisation de la carte
 const map = L.map('carte-point');
 
-// Couches tuilées
-const tileLayers = couchesDeFond(<?=json_encode($config_wri["mapKeys"])?>),
+controlesComuns(map).forEach((control) => control.addTo(map));
+
+// Couches de fond
+const tileLayers = couchesDeFond(<?=json_encode($config_wri['mapKeys'])?>),
   fondDecarteActif = tileLayers[decodeURI(positionMemoryArray[3])] || // Dernière couche affichée
   Object.values(tileLayers)[0]; // Par défaut, première couche déclarée
 
 fondDecarteActif.addTo(map);
-
-// Contrôles
-controlesComuns(map).forEach((control) => control.addTo(map));
-
-L.control.layers(tileLayers, {
-  '<?=_("itinéraires")?>': coucheItineraires,
-}).addTo(map); // Sélecteur de couches
-
-positionMemoryControl(map); // Mémorise lon, lat zoom & baselayer
+L.control.layers(tileLayers).addTo(map); // Sélecteur de couche de fond
+positionMemoryControl(map); // Enregistre la position et la couche de base courantes
 
 // Marqueur de position de cabane
 const marqueur = L.marker(
-  ['<?=$vue->point->latitude?>', '<?=$vue->point->longitude?>'], {
+  [<?=$vue->point->latitude?>, '<?=$vue->point->longitude?>'], {
     icon: L.icon({
       iconUrl: '/images/cadre.svg',
       iconSize: [32, 44],
@@ -30,8 +22,30 @@ const marqueur = L.marker(
   }
 ).addTo(map);
 
-// Lance le chargement de la carte
+// Position de la carte
 map.setView(marqueur.getLatLng(), 15);
+
+
+
+// Sélecteur de couches overlays
+addControlOverlays(map, {
+  // Liste des couches
+  points: 'all',
+  tilesOverlays: [entreeCoucheItineraires],
+  //   couchesOverpass: entreeCouchesOverpass,
+}, {
+  serveurAPI: 'https://<?=$_SERVER["SERVER_NAME"]?>',
+  version: <?=$vue->version_features?>,
+  etiquettes: true,
+  clic: true,
+}, );
+
+/*
+///////////////////////////////////////////////////
+// COUCHES OVERLAYS
+L.control.layers(tileLayers, {
+  '<?=_("itinéraires")?>': coucheItineraires,
+}).addTo(map); // Sélecteur de couches
 
 // Couche des points de tous les types
 //TODO factoriser
@@ -52,4 +66,4 @@ coucheVectoriellePoints.on('load', () => {
   cluster.addLayer(coucheVectoriellePoints);
 });
 coucheVectoriellePoints.beginFetchData(map);
-cluster.addTo(map);
+cluster.addTo(map);*/

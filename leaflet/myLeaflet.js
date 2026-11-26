@@ -115,14 +115,14 @@ class GeoJsonAjaxBboxLayer extends L.MarkerClusterGroup {
 class ClusterPointsWri extends GeoJsonAjaxBboxLayer {
   // On en fait une classe car on doit étendre une classe Leaflet
   constructor(host, params = {}, options = {}) {
-    super(host + '/api/bbox', {
+    super(host + (params.massif ? '/api/massif' : '/api/bbox'), {
       'nb_points': 'all', //TODO masquage de la couche si limite de points atteinte
       'type_points': params.typePoints,
       massif: params.massif,
       version: params.version,
       langue: document.documentElement.lang === 'fr' ? '' : document.documentElement.lang,
     }, {
-      hide: () => !params.typePoints, //DCMM TODO ne marche pas en zoom et déplace
+      hide: () => !params.typePoints, //DCMM ne marche pas en zoom et déplace
 
       onEachFeature: (feature, layer) => {
         // Etiquettes
@@ -176,6 +176,7 @@ class ClusterPointsWri extends GeoJsonAjaxBboxLayer {
  ******************************************************************/
 /* eslint-disable-next-line no-unused-vars */
 class CouchePolygonesWri extends GeoJsonAjaxBboxLayer {
+  //TODO label on hover
   constructor(host, params = {}, options = {}) {
     super(host + '/api/polygones', params, {
       onEachFeature: (feature, layer) => {
@@ -185,7 +186,7 @@ class CouchePolygonesWri extends GeoJsonAjaxBboxLayer {
             feature.properties.nom
             .replaceAll(/ ([a-z]?[a-z]?[a-z]) /gui, ' $1&nbsp;')
             .replaceAll(/ /gu, '<br/>'), {
-              //DCMM TODO BUG affiche les étiquettes à l'init et pas aprés
+              //DCMM BUG affiche les étiquettes à l'init et pas aprés
               //TODO étiquette au survol
               permanent: true,
               direction: 'center',
@@ -218,6 +219,36 @@ class CouchePolygonesWri extends GeoJsonAjaxBboxLayer {
       ...options,
     });
   }
+}
+
+/**************************
+ * Couches OSM - Overpass *
+ **************************/
+/* eslint-disable-next-line no-unused-vars */
+function couchesOverpass(definitionCouchesOverpass, options = {}) {
+  const layers = [];
+
+  // Couches OSM OverPass
+  for (const [nom, query] of Object.entries(definitionCouchesOverpass)) {
+    layers.push({
+      id: nom, // Juste pour l'identifier
+      'nom_traduit': nom,
+      layer: new L.OverPassLayer({ //TODO label on hover
+        endPoint: options.overpassApi || 'https://overpass-api.de/api/',
+        query: '(nwr' + query + '({{bbox}}););out center;',
+        markerIcon: L.icon({
+          iconUrl: options.iconApi + nom
+            .replaceAll('ô', 'o')
+            .replaceAll(/[^a-z]/gu, '') + '.svg',
+          iconSize: [24, 24],
+          iconAnchor: [12, 12],
+        }),
+        minZoom: 12,
+        minZoomIndicatorEnabled: false,
+      }),
+    });
+  }
+  return layers;
 }
 
 /**********************

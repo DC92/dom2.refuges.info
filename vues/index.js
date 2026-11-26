@@ -1,27 +1,27 @@
-/**********************************
- * CONSTANTES, CARTE ET CONTROLES *
- *********************************/
-const serveurAPI = 'https://<?=$_SERVER["SERVER_NAME"]?>',
-  polygoneAAfficher = <?=json_encode($vue->polygone ?? null)?>,
-  versionAPI = <?=$vue->version_features?>,
-  map = L.map('carte-accueil');
+/**********************
+ * CARTE ET CONTROLES *
+ **********************/
+const map = L.map('carte-accueil');
 
 controlesComuns(map).forEach((control) => control.addTo(map)); // Autres controles
 
-/******************
- * COUCHE DE FOND *
- ******************/
+/*******************
+ * COUCHES DE FOND *
+ *******************/
 const tileLayers = couchesDeFond(<?=json_encode($config_wri['mapKeys'])?>),
   fondDecarteActif = tileLayers[decodeURI(positionMemoryArray[3])] || // Dernière couche affichée
   Object.values(tileLayers)[0]; // Par défaut, première couche déclarée
 
 fondDecarteActif.addTo(map);
-L.control.layers(tileLayers).addTo(map); // Sélecteur de couche de base
+L.control.layers(tileLayers).addTo(map); // Sélecteur de couche de fond
 positionMemoryControl(map); // Enregistre la position et la couche de base courantes
+//DCMM remonte le zoom au rechargement de la carte
 
 /********************************************
  * POSITION DE LA CARTE ET POLYGONE AFFICHÉ *
  ********************************************/
+const polygoneAAfficher = <?=json_encode($vue->polygone ?? null)?>;
+
 if (polygoneAAfficher) {
   // Dessine le contour du polygone et centre la carte dessus
   const polygonLayer = JSON.parse(polygoneAAfficher.geometrie_geojson),
@@ -33,18 +33,23 @@ if (polygoneAAfficher) {
   massifLayer.addTo(map);
   map.fitBounds(massifLayer.getBounds());
 } else
-  // Place la carte au dernier emplacement
-  map.setView([positionMemoryArray[1], positionMemoryArray[2]], positionMemoryArray[0]);
+  // Place la carte au dernier emplacement visualisé
+  //TODO mettre dans un vrai contrôle mieux formalisé
+  map.setView(
+    [positionMemoryArray[1], positionMemoryArray[2]],
+    positionMemoryArray[0]
+  );
+//DCMM remonte le zoom au rechargement de la carte
 
 /************************
  * COUCHES SUPERPOSÉES  *
  ************************/
 // CAS DE LA CARTE D'UNE ZONE (/nav/id_de_zone)
 if (polygoneAAfficher && polygoneAAfficher.id_polygone_type === 11) {
-  new CouchePolygonesWri(serveurAPI, {
+  new CouchePolygonesWri('https://<?=$_SERVER["SERVER_NAME"]?>', {
     'type_polygon': 1, // Les polygones de massifs
-    intersection: polygoneAAfficher.id_polygone, // Les massifs concernés et c'est tout
-    version: versionAPI,
+    intersection: polygoneAAfficher.id_polygone, // Les massifs concernés
+    version: <?=$vue->version_features?>,
   }, { // On affiche les massifs
     etiquettes: true,
     clic: true,
@@ -61,13 +66,19 @@ else {
   if (polygoneAAfficher && polygoneAAfficher.id_polygone_type === 1)
     sessionStorage.points = typesPointsParDefaut;
 
-  const entreeCoucheItineraires = { //TODO mettre dans _cartes_leaflet
-      //DCMM TODO BUG ne se superpose pas à certaines couches
+  // Sélecteur de couches overlays
+  addControlOverlays(map, {
+    // Liste des couches
+    points: <?=json_encode($types_points)?>,
+    polygones: <?=json_encode($types_polygones)?>,
+    tilesOverlays: [{ //TODO mettre dans _cartes_leaflet
+      //DCMM BUG ne se superpose pas à certaines couches
       id: 1, // Indice dans la catégorie tilesOverlays, juste pour l'identifier
-      nom_traduit: 'itinéraires',
+      'nom_traduit': 'itinéraires', //TODO camel case ??? (vient de /controleurs/index.php
       layer: coucheItineraires,
-    },
-    couchesOverpass = {
+    }],
+    <?php if(empty($vue->polygone)) {?>
+    overpass: couchesOverpass({
       //TODO employer un codage moins bidouille !
       'hôtel': '["tourism"~"hotel|guest_house|chalet|hostel|apartment"]',
       'camping': '["tourism"="camp_site"]',
@@ -75,50 +86,25 @@ else {
       'ravitaillement': '["shop"~"supermarket|convenience"]',
       'parking': '["amenity"="parking"]["access"!="private"]',
       'bus': '["highway"="bus_stop"]',
-    },
-    entreeCouchesOverpass = [];
-
-  // Couches OSM OverPass
-  for (const [nom, query] of Object.entries(couchesOverpass)) {
-    entreeCouchesOverpass.push({
-      id: nom, // Juste pour l'identifier
-      nom_traduit: nom,
-      layer: new L.OverPassLayer({//TODO label on hover
-        endPoint: '<?=$config_wri["mapKeys"]["overpass"] ?? "https://overpass-api.de/api/"?>',
-        query: '(nwr' + query + '({{bbox}}););out center;',
-        markerIcon: L.icon({
-          iconUrl: 'https://<?=$_SERVER["SERVER_NAME"]?>/images/icones/' + nom.replaceAll('ô', 'o').replaceAll(/[^a-z]/gu, '') + '.svg',
-          iconSize: [24, 24],
-          iconAnchor: [12, 12],
-        }),
-        minZoom: 12,
-        minZoomIndicatorEnabled: false,
-      }),
-    });
-  }
-
-  // Sélecteur de couches overlays
-  addControlOverlays(
-    map, {
-      serveurAPI: serveurAPI,
-      version: versionAPI,
-      etiquettes: true,
-      clic: true,
     }, {
-      // Liste des couches
-      points: <?=json_encode($types_points)?>,
-      polygones: <?=json_encode($types_polygones)?>, 
-      tilesOverlays: [entreeCoucheItineraires],
-      couchesOverpass: entreeCouchesOverpass,
-    },
-    polygoneAAfficher ? polygoneAAfficher.id_polygone : 0,
-  );
+      overpassApi: '<?=$config_wri["mapKeys"]["overpass"]??""?>',
+      iconApi: 'https://<?=$_SERVER["SERVER_NAME"]?>/images/icones/',
+    }),
+    <?php } ?>
+  }, {
+    serveurAPI: 'https://<?=$_SERVER["SERVER_NAME"]?>',
+    version: <?=$vue->version_features?>,
+    etiquettes: true,
+    clic: true,
+    idPolygoneFiltre: polygoneAAfficher ? polygoneAAfficher.id_polygone : 0,
+  }, );
 }
 
 /****************************************
  * EXTERNALISE LE SÉLECTEUR DE POINTS   *
  * pour les grandes largeurs de fenêtre *
  ****************************************/
+//TODO remonter dans myLeaflet ??
 const conteneurSelecteurExterneEl = document.getElementById('conteneur-selecteur-points'),
   conteneurDeuxiemeSelecteurEl = document.querySelector(':has(>.leaflet-control-layers)')
   .lastChild.lastChild, //BEST remove *ElementChild
@@ -139,6 +125,7 @@ if (conteneurSelecteurExterneEl && selecteursPointsEl)
 /*****************
  * LIEN D'EXPORT *
  *****************/
+//TODO remonter dans myLeaflet ??
 const exportCarteEl = document.getElementById('export-carte');
 
 // Mise à jour du bouton "exporter" quand la sélection change
@@ -170,6 +157,6 @@ function copyExportLink() {
   if (exportCarteEl)
     navigator.clipboard.writeText(exportCarteEl.lastChild.href) //BEST remove *ElementChild
     .then(() => alert('<?=json_encode(_("Lien copié dans le presse-papier"))?> :\n\n' +
-      exportCarteEl.lastChild.href)); //DCMM TODO BUG undefined
+      exportCarteEl.lastChild.href)); //DCMM BUG undefined
   //BEST remove *ElementChild
 }

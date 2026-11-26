@@ -12,14 +12,15 @@
  **********************************/
 const positionParDefaut = '5/46/5', // Zoom/lat/lon
   typesPointsParDefaut = '7,9,10', // Cabanes, ...
-  typePolygonesParDefaut = '', // Massifs, ...
+  typePolygonesParDefaut = '1', // Massifs, ...
   typeTilesOverlaysParDefaut = ''; // Itinéraires, ...
 
 sessionStorage.positionMemory ||= // Mémoire en cours de session
   localStorage.positionMemory || // En début de session, on repart de la position de la dernière session
   positionParDefaut; // S'il n'y a aucune donnée enregistrée
 
-positionMemoryArray = sessionStorage.positionMemory.split('/'); // Pour usage au cours de la durée de vie de la page.
+// Pour usage au cours de la durée de vie de la page.
+positionMemoryArray = sessionStorage.positionMemory.split('/');
 
 if (typeof sessionStorage.points === 'undefined') { // Mémoire de la session courante
   // Teste le type pour ne pas confondre pas de valeurs et une sélection vide
@@ -44,7 +45,7 @@ if (typeof sessionStorage.tilesOverlays === 'undefined') {
 }
 
 // Les couches overpass sont désactivées à chaque réchargement de page
-sessionStorage.couchesOverpass = '';
+sessionStorage.overpass = '';
 
 /*****************************************
  * CONTRÔLES COMMUNS À TOUTES LES CARTES *
@@ -85,7 +86,7 @@ function controlesComuns(map) {
  *******************/
 /* eslint-disable-next-line no-unused-vars */
 function couchesDeFond(layerKeys) {
-  //DCMM TODO revoir suivant les couches de www...
+  //DCMM revoir suivant les couches de www...
   return {
     //DCMM Pour tests, à enlever à la fin
     'Google': L.tileLayer('https://mt0.google.com/vt/lyrs=r&x={x}&y={y}&z={z}'),
@@ -197,7 +198,7 @@ function couchesDeFond(layerKeys) {
 const coucheItineraires = L.tileLayer(
   'https://tile.waymarkedtrails.org/hiking/{z}/{x}/{y}.png', {
     maxZoom: 18,
-    //DCMM TODO BUG Zindex : ne s'affiche pas sur Espagne, photo maxar & photo Google
+    //DCMM BUG Zindex : ne s'affiche pas sur Espagne, photo maxar & photo Google
   });
 
 /**************************************************
@@ -208,9 +209,8 @@ const coucheItineraires = L.tileLayer(
 /* eslint-disable-next-line no-unused-vars */
 function addControlOverlays(
   map,
-  options,
   categoriesCouches,
-  idPolygoneFiltre, //DCMM TODO ????
+  options,
 ) {
   const overlays = {}, // Liste à fournir à L.control.layers
     typeDuNom = {}; // Traduction du titre de la ligne en type_id
@@ -247,7 +247,8 @@ function addControlOverlays(
       }
 
       // Affichage des lignes sélectionnées
-      if (sessionStorage[cat] && sessionStorage[cat].split(',').includes(type.id.toString()))
+      if (sessionStorage[cat] &&
+        sessionStorage[cat].split(',').includes(type.id.toString()))
         overlays[titre].addTo(map);
     }
 
@@ -258,8 +259,8 @@ function addControlOverlays(
   const clusterPoints = new ClusterPointsWri(
     options.serveurAPI, {
       typePoints: sessionStorage.points, // Paramètre à mofifier dynamiquement
-      massif: idPolygoneFiltre, // Si /nav/<n° massif>
-    }, {}, //DCMM TODO options de la couche
+      massif: options.idPolygoneFiltre, // Si /nav/<n° massif> //DCMM BUG KO
+    }
   ).addTo(map);
 
   // Les <inputs> du sélecteur d'overlays
@@ -274,7 +275,7 @@ function addControlOverlays(
         points: [],
         polygones: [],
         tilesOverlays: [],
-        couchesOverpass: [], //TODO Ne pas générer d'erreur si non déclaré
+        overpass: [], //TODO Ne pas générer d'erreur si non déclaré
       };
 
       // Numéros de types de points qui correspond aux lignes cochées
