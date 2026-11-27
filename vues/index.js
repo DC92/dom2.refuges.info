@@ -69,7 +69,7 @@ else {
   // Sélecteur de couches overlays
   addControlOverlays(map, {
     // Liste des couches
-    points: <?=json_encode($types_points)?>,
+    points: <?=json_encode($types_points)?>, //DCMM BUG n'est pas persistant dans les choix
     polygones: <?=json_encode($types_polygones)?>,
     tilesOverlays: [{ //TODO mettre dans _cartes_leaflet
       //DCMM BUG ne se superpose pas à certaines couches
@@ -77,7 +77,7 @@ else {
       'nom_traduit': 'itinéraires', //TODO camel case ??? (vient de /controleurs/index.php
       layer: coucheItineraires,
     }],
-    <?php if(empty($vue->polygone)) {?>
+    <?php if(empty($vue->polygone)) {?> // Pour la carte d'accueil uniquement
     overpass: couchesOverpass({
       //TODO employer un codage moins bidouille !
       'hôtel': '["tourism"~"hotel|guest_house|chalet|hostel|apartment"]',

@@ -11,7 +11,21 @@ fondDecarteActif.addTo(map);
 L.control.layers(tileLayers).addTo(map); // Sélecteur de couche de fond
 positionMemoryControl(map); // Enregistre la position et la couche de base courantes
 
-// Marqueur de position de cabane
+// Sélecteur de couches overlays (on ne peut contrôler que la couche itinéraires)
+L.control.layers(null, {
+  '<?=_("itinéraires")?>': coucheItineraires,
+}).addTo(map); // Sélecteur de couches
+
+// Cluster des points de tous les tupes
+const clusterPoints = new ClusterPointsWri(
+  'https://<?=$_SERVER["SERVER_NAME"]?>', {
+    typePoints: 'all',
+  }, {
+    labels: true, //DCMM n'affiche pas
+  }
+).addTo(map);
+
+// Marqueur de position du point
 const marqueur = L.marker(
   [<?=$vue->point->latitude?>, '<?=$vue->point->longitude?>'], {
     icon: L.icon({
@@ -24,46 +38,3 @@ const marqueur = L.marker(
 
 // Position de la carte
 map.setView(marqueur.getLatLng(), 15);
-
-
-
-// Sélecteur de couches overlays
-addControlOverlays(map, {
-  // Liste des couches
-  points: 'all',
-  tilesOverlays: [entreeCoucheItineraires],
-  //   couchesOverpass: entreeCouchesOverpass,
-}, {
-  serveurAPI: 'https://<?=$_SERVER["SERVER_NAME"]?>',
-  version: <?=$vue->version_features?>,
-  etiquettes: true,
-  clic: true,
-}, );
-
-/*
-///////////////////////////////////////////////////
-// COUCHES OVERLAYS
-L.control.layers(tileLayers, {
-  '<?=_("itinéraires")?>': coucheItineraires,
-}).addTo(map); // Sélecteur de couches
-
-// Couche des points de tous les types
-//TODO factoriser
-const cluster = new L.MarkerClusterGroup({
-    spiderfyOnMaxZoom: true, // Overlapping markers will spiderfy when clicked
-    showCoverageOnHover: false, // Hides the cluster bounds polygon
-    maxClusterRadius: 30, // Règle le nombre de points versus clusters
-  }),
-  coucheVectoriellePoints = new CouchePointsWri({
-    serveurAPI: 'https://<?=$_SERVER["SERVER_NAME"]?>',
-    version: '<?=$vue->version_features?>',
-    bbox: true,
-    etiquette: true,
-    clic: true,
-  });
-
-coucheVectoriellePoints.on('load', () => {
-  cluster.addLayer(coucheVectoriellePoints);
-});
-coucheVectoriellePoints.beginFetchData(map);
-cluster.addTo(map);*/

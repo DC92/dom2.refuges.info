@@ -106,9 +106,11 @@ class GeoJsonAjaxBboxLayer extends L.MarkerClusterGroup {
 /***************************************************************
  * couche vectorielle de points refuges.info                   *
  * à partir de l'API, en mode BBOX et regroupement en clusters *
- * Options de l'API : serveurAPI, typePoints, massif, version  *
- *   etiquette: affiche le nom du point                        *
- *   clic: clic redirige vers la page du point                 *
+ *   Host servant l'API (https://www.refuges.info)             *
+ *   Paramètres de l'API: typePoints, massif, version          *
+ *   Options de la couche:                                     *
+ *     etiquette (booléen):affiche le nom du point             *
+ *     clic (booléen): edirige vers la page du point           *
  *   ...options de GeoJsonAjaxBboxLayer                        *
  ***************************************************************/
 /* eslint-disable-next-line no-unused-vars */
