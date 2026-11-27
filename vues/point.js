@@ -16,7 +16,7 @@ L.control.layers(null, {
   '<?=_("itinéraires")?>': coucheItineraires,
 }).addTo(map); // Sélecteur de couches
 
-// Cluster des points de tous les tupes
+// Cluster des points de tous les types
 const clusterPoints = new ClusterPointsWri(
   'https://<?=$_SERVER["SERVER_NAME"]?>', {
     typePoints: 'all',

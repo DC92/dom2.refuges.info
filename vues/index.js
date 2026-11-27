@@ -51,7 +51,7 @@ if (polygoneAAfficher && polygoneAAfficher.id_polygone_type === 11) {
     intersection: polygoneAAfficher.id_polygone, // Les massifs concernés
     version: <?=$vue->version_features?>,
   }, { // On affiche les massifs
-    etiquettes: true,
+    labels: true,
     clic: true,
     featureStyle: {
       fillOpacity: 0.5, // Un peu plus visibles que sur les autres cartes car il n'y a que ça
@@ -94,7 +94,7 @@ else {
   }, {
     serveurAPI: 'https://<?=$_SERVER["SERVER_NAME"]?>',
     version: <?=$vue->version_features?>,
-    etiquettes: true,
+    labels: true,
     clic: true,
     idPolygoneFiltre: polygoneAAfficher ? polygoneAAfficher.id_polygone : 0,
   }, );

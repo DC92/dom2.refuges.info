@@ -1,7 +1,3 @@
-/* global couchesDeFond, ClusterPointsWri, positionMemoryControl, positionMemoryArray, controlesComuns */
-
-//TODO Garder zoom carte modif à la création de point
-
 // Utilitaire de saisie des boutons du formulaire
 /* eslint-disable-next-line no-unused-vars */
 function afficheEtSet(el, affiche, valeur) {
@@ -28,7 +24,7 @@ document.querySelectorAll('form#form_point .booleen input[type=radio]').forEach(
  * GESTION DE LA CARTE *
  ***********************/
 const map = L.map('carte-saisie');
-
+ 
 // Couches tuilées
 const tileLayers = couchesDeFond(<?=json_encode($config_wri["mapKeys"])?>);
 // Chargement du fond de carte actif
@@ -40,7 +36,10 @@ L.control.layers(tileLayers).addTo(map);
 
 // Initialisation de la position de la carte
 <?php if(empty($vue->point->id_point)) { ?>
-  map.setView([positionMemoryArray[1], positionMemoryArray[2]], 15);
+  map.setView(
+    [positionMemoryArray[1], positionMemoryArray[2]],
+    positionMemoryArray[0]
+  );
 <?php } else { ?>
   map.setView([<?=$vue->point->latitude?>,<?=$vue->point->longitude?>], 12);
 <?php } ?>
@@ -48,29 +47,17 @@ L.control.layers(tileLayers).addTo(map);
 // Mémorisation des glissements de la carte
 positionMemoryControl(map);
 
-
 /*********************
  * COUCHE DES POINTS *
  *********************/
-//BEST factoriser //DCMM reprendre suivant index.js
-const cluster = new L.MarkerClusterGroup({
-    spiderfyOnMaxZoom: true, // Overlapping markers will spiderfy when clicked
-    showCoverageOnHover: false, // Hides the cluster bounds polygon
-    maxClusterRadius: 30, // Règle le nombre de points versus clusters
-  }),
-  coucheVectoriellePoints = new CouchePointsWri({
-    serveurAPI: 'https://<?=$_SERVER["SERVER_NAME"]?>',
-    version: '<?=$vue->version_features?>',
-    bbox: true,
-  });
-
-coucheVectoriellePoints.on('load', () => {
-  cluster.addLayer(coucheVectoriellePoints);
-});
-coucheVectoriellePoints.beginFetchData(map);
-cluster.addTo(map);
-
-
+ 
+// Cluster des points de tous les types
+const clusterPoints = new ClusterPointsWri(
+  'https://<?=$_SERVER["SERVER_NAME"]?>', {
+    typePoints: 'all',
+   }
+).addTo(map);
+ 
 /***********************
  * GESTION DU MARQUEUR *
  ***********************/
@@ -95,12 +82,13 @@ marqueur.on('mouseover', (evt) => {
 function deplacerMarqueur(ll) {
   marqueur.setLatLng(ll);
 
-  champsPositionEls[1].value = Math.round(ll.lng * 100000) / 100000;
-  champsPositionEls[2].value = Math.round(ll.lat * 100000) / 100000;
+  champsPositionEls[1].value =  ll.lng .toFixed(5);
+  champsPositionEls[2].value =  ll.lat .toFixed(5);
 
   champsPositionEls[0].value =
     '{"type":"Point","coordinates":[' +
-    champsPositionEls[1].value + ',' + champsPositionEls[2].value +
+      champsPositionEls[1].value + ',' + 
+      champsPositionEls[2].value +
     ']}';
 }
 

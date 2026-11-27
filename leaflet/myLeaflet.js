@@ -29,6 +29,7 @@ function removeEmpty(obj) {
 }
 
 function roundBounds(bounds, decimals) {
+  //TODO .toFixed(decimals)
   const factor = 10 ** decimals,
     round = (num) => Math.round(num * factor) / factor,
     sw = bounds.getSouthWest(),
@@ -109,7 +110,7 @@ class GeoJsonAjaxBboxLayer extends L.MarkerClusterGroup {
  *   Host servant l'API (https://www.refuges.info)             *
  *   Paramètres de l'API: typePoints, massif, version          *
  *   Options de la couche:                                     *
- *     etiquette (booléen):affiche le nom du point             *
+ *     labels (booléen):affiche le nom du point             *
  *     clic (booléen): edirige vers la page du point           *
  *   ...options de GeoJsonAjaxBboxLayer                        *
  ***************************************************************/
@@ -128,7 +129,7 @@ class ClusterPointsWri extends GeoJsonAjaxBboxLayer {
 
       onEachFeature: (feature, layer) => {
         // Etiquettes
-        if (options.etiquette)
+        if (options.labels)
           layer.bindTooltip(
             feature.properties.nom, {
               permanent: true,
@@ -171,7 +172,7 @@ class ClusterPointsWri extends GeoJsonAjaxBboxLayer {
  *   typePolygon: 1 (massifs), 11 (régions)                       *
  *   intersection (id) : Les polygones dans une région            *
  * Options de la couche :                                         *
- *   etiquette: (boolean) affiche le nom du point                 *
+ *   labels: (boolean) affiche le nom du point                 *
  *   clic: (boolean) url de redirirection                         *
  *   featureStyle: {options de style d'affichage des polygones}   *
  *   layer : {options de GeoJsonAjaxBboxLayer }                   *
@@ -183,7 +184,7 @@ class CouchePolygonesWri extends GeoJsonAjaxBboxLayer {
     super(host + '/api/polygones', params, {
       onEachFeature: (feature, layer) => {
         // Etiquettes
-        if (options.etiquettes)
+        if (options.labels)
           layer.bindTooltip(
             feature.properties.nom
             .replaceAll(/ ([a-z]?[a-z]?[a-z]) /gui, ' $1&nbsp;')
