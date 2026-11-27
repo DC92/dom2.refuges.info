@@ -1,6 +1,6 @@
 // Initialisation de la carte
 const map = L.map('carte-edit', {
-    pmIgnore: false,
+    pmIgnore: false, // Prise en compte de toutes les couches vectorielles par l'éditeur Geoman
   }),
   tileLayers = couchesDeFond(<?=json_encode($config_wri["mapKeys"])?>),
   polygoneId = <?=$vue->polygone->id_polygone??0?>,
@@ -11,9 +11,13 @@ const map = L.map('carte-edit', {
 controlesComuns(map).forEach((control) => control.addTo(map));
 L.control.layers(tileLayers, ).addTo(map);
 map.doubleClickZoom.disable();
+
+/*//DCMM
 new ControlPolygonsUpload({
   title: '<?=_("Importer un fichier")?>',
 }).addTo(map);
+*/
+
 positionMemoryControl(map);
 
 // Chargement du fond de carte actif
@@ -35,14 +39,14 @@ if (editJsonEl.value) {
 }
 
 // Couche de massifs en fond pour servir de base au snapping
-new CouchePolygonesWri({
-  serveurAPI: 'https://<?=$_SERVER["SERVER_NAME"]?>',
-  version: '<?=$vue->version_features?>',
-  typePolygon: 1, // Massifs
-  bbox: true, // Pour ne pas ralentir le snapping
-  pmIgnore: true, // Pour qu'ils ne soient pas modifiables
-  snapIgnore: false, // Pour que les polygones en édition puisse coller aux contours de massifs
-}).addTo(map);
+new CouchePolygonesWri(
+  'https://<?=$_SERVER["SERVER_NAME"]?>', {
+    'type_polygon': 1, // Massifs
+    version: <?=$vue->version_features?>,
+  }, { // On affiche les massifs
+    pmIgnore: true, // Pour qu'ils ne soient pas modifiables
+    snapIgnore: false, // Pour que les polygones en édition puisse coller aux contours de massifs
+  }).addTo(map);
 
 // Editeur
 map.pm.addControls({

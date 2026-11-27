@@ -46,17 +46,18 @@ if (polygoneAAfficher) {
  ************************/
 // CAS DE LA CARTE D'UNE ZONE (/nav/id_de_zone)
 if (polygoneAAfficher && polygoneAAfficher.id_polygone_type === 11) {
-  new CouchePolygonesWri('https://<?=$_SERVER["SERVER_NAME"]?>', {
-    'type_polygon': 1, // Les polygones de massifs
-    intersection: polygoneAAfficher.id_polygone, // Les massifs concernés
-    version: <?=$vue->version_features?>,
-  }, { // On affiche les massifs
-    labels: true,
-    clic: true,
-    featureStyle: {
-      fillOpacity: 0.5, // Un peu plus visibles que sur les autres cartes car il n'y a que ça
-    },
-  }).addTo(map);
+  new CouchePolygonesWri(
+    'https://<?=$_SERVER["SERVER_NAME"]?>', {
+      'type_polygon': 1, // Les polygones de massifs
+      intersection: polygoneAAfficher.id_polygone, // Les massifs concernés
+      version: <?=$vue->version_features?>,
+    }, { // On affiche les massifs
+      labels: true,
+      clic: true,
+      featureStyle: {
+        fillOpacity: 0.5, // Un peu plus visibles que sur les autres cartes car il n'y a que ça
+      },
+    }).addTo(map);
   //TODO recadrer le <div> carte toujours sur la largeur de la page ou mettre quelque chose à gauche
 }
 
