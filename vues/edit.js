@@ -12,11 +12,9 @@ controlesComuns(map).forEach((control) => control.addTo(map));
 L.control.layers(tileLayers, ).addTo(map);
 map.doubleClickZoom.disable();
 
-/*//DCMM
 new ControlPolygonsUpload({
   title: '<?=_("Importer un fichier")?>',
 }).addTo(map);
-*/
 
 positionMemoryControl(map);
 

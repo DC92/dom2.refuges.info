@@ -265,8 +265,6 @@ const ControlPolygonsUpload = L.Control.extend({
   },
 
   onAdd(map) {
-    super.onAdd(map);
-
     const buttonDiv = L.DomUtil.create('div', 'button-wrapper leaflet-control-upload');
 
     buttonDiv.innerHTML = '<button title="' + this.options.title + ' .geojson, .gml, .gpx, .json, .kml, .xml">' +
