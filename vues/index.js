@@ -73,7 +73,6 @@ else {
     points: <?=json_encode($types_points)?>, //DCMM BUG n'est pas persistant dans les choix
     polygones: <?=json_encode($types_polygones)?>,
     tilesOverlays: [{ //TODO mettre dans _cartes_leaflet
-      //DCMM BUG ne se superpose pas à certaines couches
       id: 1, // Indice dans la catégorie tilesOverlays, juste pour l'identifier
       'nom_traduit': 'itinéraires', //TODO camel case ??? (vient de /controleurs/index.php
       layer: coucheItineraires,

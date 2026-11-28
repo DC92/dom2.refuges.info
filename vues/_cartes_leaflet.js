@@ -197,8 +197,8 @@ function couchesDeFond(layerKeys) {
 /* eslint-disable-next-line no-unused-vars */
 const coucheItineraires = L.tileLayer(
   'https://tile.waymarkedtrails.org/hiking/{z}/{x}/{y}.png', {
+    pane: 'overlayPane', // Permet l'affichage au dessus des baseLayers
     maxZoom: 18,
-    //DCMM BUG Zindex : ne s'affiche pas sur Espagne, photo maxar & photo Google
   });
 
 /**************************************************
@@ -259,7 +259,7 @@ function addControlOverlays(
   const clusterPoints = new ClusterPointsWri(
     options.serveurAPI, {
       typePoints: sessionStorage.points, // Paramètre à mofifier dynamiquement
-      massif: options.idPolygoneFiltre, // Si /nav/<n° massif> //DCMM BUG KO
+      massif: options.idPolygoneFiltre, // Si /nav/<n° massif> //DCMM BUG KO ????
     }
   ).addTo(map);
 
