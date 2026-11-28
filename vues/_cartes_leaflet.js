@@ -208,6 +208,7 @@ const coucheItineraires = L.tileLayer(
  * Déclare le sélecteur et le rattache à la carte *
  * Gére la mémorisation des couches sélectionnées *
  **************************************************/
+//TODO documenter options
 /* eslint-disable-next-line no-unused-vars */
 function addControlOverlays(
   map,
@@ -304,5 +305,25 @@ function addControlOverlays(
           'type_points': sessionStorage.points,
         });
     });
+  }
+
+  // Externalise le sélecteur de points pour les grandes largeurs de fenêtre
+  if (options.externalContainer) {
+    const conteneurSelecteurExterneEl = document.getElementById(options.externalContainer.containerElId),
+      conteneurDeuxiemeSelecteurEl = document.querySelector(':has(>.leaflet-control-layers)')
+      .lastChild.lastChild, //BEST remove *ElementChild
+      selecteursPointsEl = document.querySelector('.leaflet-control-layers-overlays:has(img)');
+
+    if (conteneurSelecteurExterneEl && selecteursPointsEl)
+      ['load', 'resize'].forEach(evtName =>
+        window.addEventListener(evtName, () => {
+          if (window.innerWidth < options.externalContainer.minWindowWidth)
+            conteneurDeuxiemeSelecteurEl.appendChild(selecteursPointsEl);
+          else
+            conteneurSelecteurExterneEl.insertBefore(
+              selecteursPointsEl,
+              conteneurSelecteurExterneEl.firstElementChild //BEST remove *ElementChild
+            );
+        }));
   }
 }

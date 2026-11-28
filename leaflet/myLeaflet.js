@@ -17,15 +17,16 @@ function flipLonLatRecursive(arrayOfLonLat) {
   return arrayOfLonLat.map(item => flipLonLatRecursive(item));
 }
 
-// remove empty attributes from obejct
+// Remove empty attributes from obejct
 // Source - https://stackoverflow.com/a/38340730
 function removeEmpty(obj) {
   return Object.keys(obj)
-    .filter((k) => obj[k])
+    .filter((k) => obj[k]) // Filter empty properties
     .reduce((acc, k) => {
-      acc[k] = obj[k];
-      return acc;
-    }, {});
+        acc[k] = obj[k]; // Add property
+        return acc;
+      }, {} // Start with empty object
+    );
 }
 
 function roundBounds(bounds, decimals) {
@@ -37,7 +38,7 @@ function roundBounds(bounds, decimals) {
 
   return L.latLngBounds(
     [round(sw.lat), round(sw.lng)],
-    [round(ne.lat), round(ne.lng)]
+    [round(ne.lat), round(ne.lng)],
   );
 }
 
@@ -104,19 +105,19 @@ class GeoJsonAjaxBboxLayer extends L.MarkerClusterGroup {
   }
 }
 
-/***************************************************************
- * couche vectorielle de points refuges.info                   *
- * à partir de l'API, en mode BBOX et regroupement en clusters *
- *   Host servant l'API (https://www.refuges.info)             *
- *   Paramètres de l'API: typePoints, massif, version          *
- *   Options de la couche:                                     *
- *     labels (booléen):affiche le nom du point             *
- *     clic (booléen): edirige vers la page du point           *
- *   ...options de GeoJsonAjaxBboxLayer                        *
- ***************************************************************/
+/********************************************************
+ * Vector layer for refuges.info points                 *
+ * sourced from the API, using BBOX mode and clustering *
+ *   Host serving the API (https://www.refuges.info)    *
+ *   API parameters: typePoints, massif, version        *
+ *   Layer options:                                     *
+ *     labels (boolean): displays the point name        *
+ *     clic (boolean): redirects to the point's page    *
+ *   ...options for GeoJsonAjaxBboxLayer                *
+ ********************************************************/
 /* eslint-disable-next-line no-unused-vars */
 class ClusterPointsWri extends GeoJsonAjaxBboxLayer {
-  // On en fait une classe car on doit étendre une classe Leaflet
+  // We make it a class because we need to extend a Leaflet class
   constructor(host, params = {}, options = {}) {
     super(host + (params.massif ? '/api/massif' : '/api/bbox'), {
       'nb_points': 'all', //TODO masquage de la couche si limite de points atteinte
@@ -128,28 +129,28 @@ class ClusterPointsWri extends GeoJsonAjaxBboxLayer {
       hide: () => !params.typePoints, //DCMM ne marche pas en zoom et déplace
 
       onEachFeature: (feature, layer) => {
-        // Etiquettes
+        // Labels
         if (options.labels)
           layer.bindTooltip(
             feature.properties.nom, {
               permanent: true,
-              // TODO ?? sticky: true,
+              //TODO ?? sticky: true,
               direction: 'center',
             }).openTooltip();
 
-        // Clics et curseur
+        // Clicks and cursor
         if (options.clic)
           layer.on('click', () => {
             location.href = feature.properties.lien || '/point/' + feature.id;
           });
         else
-          // Supprime le pointeur de la souris au survol
+          // Removes the mouse pointer on hover
           layer.on('mouseover', (evt) => {
             evt.target.getElement().style.cursor = 'grab';
           });
       },
 
-      // Icônes
+      // Icons
       pointToLayer: (feature, latlng) =>
         L.marker(latlng, {
           icon: L.icon({
@@ -164,39 +165,38 @@ class ClusterPointsWri extends GeoJsonAjaxBboxLayer {
   }
 }
 
-/******************************************************************
- * Couche vectorielle de polygones refuges.info (massifs, zones ) *
- * à partir de l'API et en mode BBOX                              *
- * Paramètres de l'API :                                          *
- *   host: https://www.refuges.info                                             *
- *   typePolygon: 1 (massifs), 11 (régions)                       *
- *   intersection (id) : Les polygones dans une région            *
- * Options de la couche :                                         *
- *   labels: (boolean) affiche le nom du point                 *
- *   clic: (boolean) url de redirirection                         *
- *   featureStyle: {options de style d'affichage des polygones}   *
- *   layer : {options de GeoJsonAjaxBboxLayer }                   *
- ******************************************************************/
+/*************************************************************
+ * refuges.info polygon vector layer (mountain ranges, areas) *
+ * based on the API and using BBOX mode                       *
+ * API parameters:                                            *
+ *   host: https://www.refuges.info                           *
+ *   typePolygon: 1 (mountain ranges), 11 (regions)           *
+ *   intersection (id): Polygons within a region              *
+ * Layer options:                                             *
+ *   labels: (boolean) displays the name of the feature       *
+ *   clic: (boolean) redirection URL                          *
+ *   featureStyle: {polygon display style options}            *
+ *   layer: {GeoJsonAjaxBboxLayer options}                    *
+ *************************************************************/
 /* eslint-disable-next-line no-unused-vars */
 class CouchePolygonesWri extends GeoJsonAjaxBboxLayer {
-  //TODO label on hover
   constructor(host, params = {}, options = {}) {
     super(host + '/api/polygones', params, {
       onEachFeature: (feature, layer) => {
-        // Etiquettes
+        // Labels
+        //TODO label on hover
         if (options.labels)
           layer.bindTooltip(
             feature.properties.nom
             .replaceAll(/ ([a-z]?[a-z]?[a-z]) /gui, ' $1&nbsp;')
             .replaceAll(/ /gu, '<br/>'), {
-              //TODO étiquette au survol
               permanent: true,
               direction: 'center',
             }).openTooltip();
 
         if (options.clic) {
           layer.on('mouseover mouseout', (evt) => {
-            // Elargit le contour au survol
+            // Expands the outline on hover
             evt.target.setStyle({
               stroke: evt.type === 'mouseover',
             });
@@ -231,15 +231,15 @@ function couchesOverpass(definitionCouchesOverpass, options = {}) {
   const layers = [];
 
   // Couches OSM OverPass
-  for (const [nom, query] of Object.entries(definitionCouchesOverpass)) {
+  for (const [name, query] of Object.entries(definitionCouchesOverpass)) {
     layers.push({
-      id: nom, // Juste pour l'identifier
-      'nom_traduit': nom,
+      id: name, // Just to identify it
+      'nom_traduit': name,
       layer: new L.OverPassLayer({ //TODO label on hover
         endPoint: options.overpassApi || 'https://overpass-api.de/api/',
         query: '(nwr' + query + '({{bbox}}););out center;',
         markerIcon: L.icon({
-          iconUrl: options.iconApi + nom
+          iconUrl: options.iconApi + name
             .replaceAll('ô', 'o')
             .replaceAll(/[^a-z]/gu, '') + '.svg',
           iconSize: [24, 24],

@@ -78,6 +78,7 @@ else {
   // Sélecteur de couches overlays
   addControlOverlays(map, {
     // Liste des couches
+    //DCMM /nav/massif les points ne cliquent pas / les massifs et régions ne dervraient pas cliquer
     points: <?=json_encode($types_points)?>, //DCMM BUG n'est pas persistant dans les choix
     polygones: <?=json_encode($types_polygones)?>,
     <?php if(empty($vue->polygone)) {?> // Pour la carte d'accueil uniquement
@@ -100,34 +101,13 @@ else {
     labels: true,
     clic: true,
     idPolygoneFiltre: polygoneAAfficher ? polygoneAAfficher.id_polygone : 0,
-    /*externalContainer:{
-      id:'conteneur-selecteur-points',
-      minWidth:800,
-    },*/
+    // Externalise le sélecteur
+    externalContainer: {
+      containerElId: 'conteneur-selecteur-points',
+      minWindowWidth: 800,
+    },
   }, );
 }
-
-/****************************************
- * EXTERNALISE LE SÉLECTEUR DE POINTS   *
- * pour les grandes largeurs de fenêtre *
- ****************************************/
-//TODO remonter dans myLeaflet ??
-const conteneurSelecteurExterneEl = document.getElementById('conteneur-selecteur-points'),
-  conteneurDeuxiemeSelecteurEl = document.querySelector(':has(>.leaflet-control-layers)')
-  .lastChild.lastChild, //BEST remove *ElementChild
-  selecteursPointsEl = document.querySelector('.leaflet-control-layers-overlays:has(img)');
-
-if (conteneurSelecteurExterneEl && selecteursPointsEl)
-  ['load', 'resize'].forEach(evtName =>
-    window.addEventListener(evtName, () => {
-      if (window.innerWidth < 800)
-        conteneurDeuxiemeSelecteurEl.appendChild(selecteursPointsEl);
-      else
-        conteneurSelecteurExterneEl.insertBefore(
-          selecteursPointsEl,
-          conteneurSelecteurExterneEl.firstElementChild //BEST remove *ElementChild
-        );
-    }));
 
 /*****************
  * LIEN D'EXPORT *
