@@ -86,8 +86,8 @@ function controlesComuns(map) {
  *******************/
 /* eslint-disable-next-line no-unused-vars */
 function couchesDeFond(layerKeys) {
-  //DCMM revoir suivant les couches de www...
   return {
+    //TODO traduire les titres
     //DCMM Pour tests, à enlever à la fin
     'Google': L.tileLayer('https://mt0.google.com/vt/lyrs=r&x={x}&y={y}&z={z}'),
     OpenCycleMap: L.tileLayer(
@@ -103,10 +103,10 @@ function couchesDeFond(layerKeys) {
         format: 'image/png',
       }),
     //TODO https://leaflet-extras.github.io/leaflet-providers/preview/
-    //TODO Autriche
     //DCMM FIN pour développements ultérieurs
 
     // Cartes libres
+    //DCMM KO
     OpenHikingMap: L.tileLayer(
       'https://tile.openmaps.fr/openhikingmap/{z}/{x}/{y}.png', {
         maxZoom: 18,
@@ -161,6 +161,7 @@ function couchesDeFond(layerKeys) {
           '<a href="https://prod-swishop-s3.s3.eu-central-1.amazonaws.com/2022-04/symbols_fr_0.pdf">Légende</a>',
         maxZoom: 18,
       }),
+    //TODO Autriche (Kompass)
     Espagne: new IGNTileLayer(
       'https://www.ign.es/wmts/mapa-raster?', {
         layer: 'MTN',
@@ -196,6 +197,7 @@ function couchesDeFond(layerKeys) {
 // Couche overlay sélectionnable
 /* eslint-disable-next-line no-unused-vars */
 const coucheItineraires = L.tileLayer(
+  //DCMM n'est pas mémorisée
   'https://tile.waymarkedtrails.org/hiking/{z}/{x}/{y}.png', {
     pane: 'overlayPane', // Permet l'affichage au dessus des baseLayers
     maxZoom: 18,
@@ -212,6 +214,7 @@ function addControlOverlays(
   categoriesCouches,
   options,
 ) {
+  //TODO remonter en myLeaflet.js
   const overlays = {}, // Liste à fournir à L.control.layers
     typeDuNom = {}; // Traduction du titre de la ligne en type_id
 
@@ -283,7 +286,8 @@ function addControlOverlays(
         .filter((el) => el.checked) // Qui sont cochés
         .map((el) => el.parentElement.innerText.trim()) // Isole le titre
         .forEach((titreCase) => {
-          selectionTypesId[typeDuNom[titreCase].cat]
+          if (typeDuNom[titreCase])
+            selectionTypesId[typeDuNom[titreCase].cat]
             .push(typeDuNom[titreCase].id);
         });
 

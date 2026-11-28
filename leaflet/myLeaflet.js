@@ -189,7 +189,6 @@ class CouchePolygonesWri extends GeoJsonAjaxBboxLayer {
             feature.properties.nom
             .replaceAll(/ ([a-z]?[a-z]?[a-z]) /gui, ' $1&nbsp;')
             .replaceAll(/ /gu, '<br/>'), {
-              //DCMM BUG affiche les étiquettes à l'init et pas aprés
               //TODO étiquette au survol
               permanent: true,
               direction: 'center',

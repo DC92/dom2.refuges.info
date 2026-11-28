@@ -8,13 +8,16 @@ const tileLayers = couchesDeFond(<?=json_encode($config_wri['mapKeys'])?>),
   Object.values(tileLayers)[0]; // Par défaut, première couche déclarée
 
 fondDecarteActif.addTo(map);
-L.control.layers(tileLayers).addTo(map); // Sélecteur de couche de fond
-positionMemoryControl(map); // Enregistre la position et la couche de base courantes
 
-// Sélecteur de couches overlays (on ne peut contrôler que la couche itinéraires)
-L.control.layers(null, {
-  '<?=_("itinéraires")?>': coucheItineraires,
-}).addTo(map); // Sélecteur de couches
+// Sélecteur de couches de fond
+L.control.layers(
+  tileLayers, {
+    '<?=_("itinéraires")?>': coucheItineraires,
+  },
+).addTo(map);
+
+// Enregistre la position et la couche de base courantes
+positionMemoryControl(map);
 
 // Cluster des points de tous les types
 const clusterPoints = new ClusterPointsWri(

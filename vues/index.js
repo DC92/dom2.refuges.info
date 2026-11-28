@@ -13,8 +13,16 @@ const tileLayers = couchesDeFond(<?=json_encode($config_wri['mapKeys'])?>),
   Object.values(tileLayers)[0]; // Par défaut, première couche déclarée
 
 fondDecarteActif.addTo(map);
-L.control.layers(tileLayers).addTo(map); // Sélecteur de couche de fond
-positionMemoryControl(map); // Enregistre la position et la couche de base courantes
+
+// Sélecteur de couches de fond
+L.control.layers(
+  tileLayers, {
+    '<?=_("itinéraires")?>': coucheItineraires,
+  },
+).addTo(map);
+
+// Enregistre la position et la couche de base courantes
+positionMemoryControl(map);
 //DCMM remonte le zoom au rechargement de la carte
 
 /********************************************
@@ -72,11 +80,6 @@ else {
     // Liste des couches
     points: <?=json_encode($types_points)?>, //DCMM BUG n'est pas persistant dans les choix
     polygones: <?=json_encode($types_polygones)?>,
-    tilesOverlays: [{ //TODO mettre dans _cartes_leaflet
-      id: 1, // Indice dans la catégorie tilesOverlays, juste pour l'identifier
-      'nom_traduit': 'itinéraires', //TODO camel case ??? (vient de /controleurs/index.php
-      layer: coucheItineraires,
-    }],
     <?php if(empty($vue->polygone)) {?> // Pour la carte d'accueil uniquement
     overpass: couchesOverpass({
       //TODO employer un codage moins bidouille !
@@ -97,6 +100,10 @@ else {
     labels: true,
     clic: true,
     idPolygoneFiltre: polygoneAAfficher ? polygoneAAfficher.id_polygone : 0,
+    /*externalContainer:{
+      id:'conteneur-selecteur-points',
+      minWidth:800,
+    },*/
   }, );
 }
 
